@@ -1,0 +1,25 @@
+
+@font-face {
+    font-family: Roboto;
+    src: url('Roboto-Regular.ttf');
+}
+body {
+    font-family: Roboto;
+    color: #7D7D7D !important;
+    background-color: var(--color-bg) !important;
+}
+
+.smat-rounded {
+    border-radius: 30px !important;
+}
+select{
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    padding: 5px;
+}
+  
+.card {
+    border: 0px !important;
+    border-radius: 20px;
+}

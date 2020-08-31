@@ -1,0 +1,66 @@
+<?php
+
+use Illuminate\Support\Facades\Route;
+
+/*
+|--------------------------------------------------------------------------
+| Web Routes
+|--------------------------------------------------------------------------
+|
+| Here is where you can register web routes for your application. These
+| routes are loaded by the RouteServiceProvider within a group which
+| contains the "web" middleware group. Now create something great!
+|
+*/
+
+//Define View Routes Here.
+
+
+Route::get('/home', function () {
+    return view('modules.home');
+});
+
+
+
+Route::get('/userAnalysis', function () {
+    return view('modules.userAnalysis');
+})->middleware('auth');
+
+Route::get('/historicalAnalysis', function () {
+    return view('modules.historicalAnalysis');
+})->middleware('auth');
+
+Route::get('/networkAnalysis', function () {
+    return view('modules.networkAnalysis');
+})->middleware('auth');
+
+Route::get('/locationMonitor', function () {
+    return view('modules.locationMonitor');
+})->middleware('auth');
+
+Route::get('/trendAnalysis', function () {
+    return view('modules.trendAnalysis');
+})->middleware('auth');
+
+//Few Auth Routes
+Auth::routes();
+Route::get('/logout', 'Auth\LoginController@logout')->name('logout' );
+
+
+
+//Define API routes requiring middleware here.
+Route::group(['prefix' => 'smat'], function () {
+    Route::get('ua','Home@home');
+    Route::get('topMentions','Home@getTopMentions');
+});
+
+
+
+//Define API routes requiring middleware here.
+Route::group(['prefix' => 'login'], function () {
+    Route::get('getud','Auth\LoginController@getua');
+   
+});
+
+
+//Routes for Historical Analysis
