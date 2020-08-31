@@ -30,10 +30,16 @@ class QueryBuilder{
                             $input_args_10sec = $ut_obj->get_10sec_list($to_datetime, $from_datetime);
                         else
                             echo 'hour';
-                    }
-                    else if($feature_option == 'co_occur'){
+                    }else if($feature_option == 'co_occur'){
                         $query_class = $this->get_query_class($token, 'co_occur', $co_occur_option);
                         $prepared_statement_10sec = "SELECT created_date, created_time, token_name2, count_list from token_co_occur WHERE created_date = ? AND class=" . $query_class . " AND created_time = ? AND token_name1='" . $token . "'";
+                        if($range_type == '10sec')
+                            $input_args_10sec = $ut_obj->get_10sec_list($to_datetime, $from_datetime);
+                        else
+                            echo 'hour';
+                    }else if($feature_option == 'tweet'){
+                        $query_class = $this->get_query_class($token);
+                        $prepared_statement_10sec = "SELECT tweetidlist from token_count WHERE created_date = ? AND class=" . $query_class . " AND created_time = ? AND token_name='" . $token . "'";
                         if($range_type == '10sec')
                             $input_args_10sec = $ut_obj->get_10sec_list($to_datetime, $from_datetime);
                         else

@@ -3,9 +3,29 @@ namespace App\Library;
 use Cassandra;
 use DateTime;
 use DateTimeZone;
-date_default_timezone_set('UTC');  //enable to get datetime as UTC
-// date_default_timezone_set('Asia/Kolkata');  //enable to get datetime as local
+// date_default_timezone_set('UTC');  //enable to get datetime as UTC
+date_default_timezone_set('Asia/Kolkata');  //enable to get datetime as local
 class Utilities{
+    /**
+    * Get from datetime and to datetime based on interval
+    *
+    * @return array
+    */
+    public function fromDatetime_toDatetime_generator_basedOn_interval($interval){
+        //  $datetimeobj = new DateTime('2020-08-24 20:18:00');
+         $datetimeobj = new DateTime();
+         $datetime = $datetimeobj->format('Y-m-d H:i:s');
+         $datetime =  date('Y-m-d H:i:s', strtotime($datetime) - 60);
+         $datetime = new DateTime($datetime);
+         $temp_sec = (int) ($datetime->format('s')) % 10;
+         $t = '-' . strval($temp_sec) . ' second';
+         $datetime = $datetime->format('Y-m-d H:i:s');
+         $toTime = date('Y-m-d H:i:s', strtotime($t, strtotime($datetime)));
+         $fromTime = date('Y-m-d H:i:s', strtotime($toTime)-$interval);
+         $dateTimeArgs = [$fromTime,$toTime];
+         return $dateTimeArgs;
+    }
+    
     /**
     * Get 10sec list 
     *

@@ -171,7 +171,7 @@ class HistoricalAnalysisController extends Controller
         }else{
             $final_result["data"] = $temp_arr;
         }
-        return json_encode($final_result);
+        return ($final_result);
     }
     
     
@@ -200,12 +200,14 @@ class HistoricalAnalysisController extends Controller
                     $t = $row['created_date'];
                     $datetime1 = $ut_obj->get_date_time_from_cass_date_obj($t, "Y-m-d") . ' ' . $row['created_time'];
                     $count_list = $row['count_list']->values();
+                    // echo json_encode($count_list);
+                    // echo "-------";
                     /*
                         pos index -> 0, 3, 6, 9
                         neg index -> 1, 4, 7, 10
                         neu index -> 2, 5, 8, 11
                         
-                        pos -> 0*3+0=0, 1*3+0=3, 2*3+0=3, 3*3+0=3
+                        pos -> 0*3+0=0, 1*3+0=3, 2*3+0=6, 3*3+0=9
                         neg -> 0*3+1=1, 1*3+1=4, 2*3+1=7, 3*3+1=10
                         neu -> 0*3+2=2, 1*3+2=5, 2*3+2=8, 3*3+2=11
                     */
@@ -385,8 +387,77 @@ class HistoricalAnalysisController extends Controller
      * @return json
      */
     public function get_tweets($to_datetime=null, $from_datetime=null, $token=null,  $range_type=null){
-        
+        $db_object = new DBmodelAsync;
+        $db_object_not_async = new DBmodel;
+        $qb_obj = new QB;
+        $ut_obj = new Ut;
+        $final_result = array();
+        $stm_list_hour = null;
+        $stm_list_10sec = null;
+        $stm_list_day = null;
+        $stm_list_10sec = $qb_obj->get_statement($to_datetime, $from_datetime, $token, '10sec', 'tweet');
+        $tweet_id_list = array();
+        $i = 0;
+        if ($range_type == "10sec") {
+            $result_async_from_db = $db_object->executeAsync_query($stm_list_10sec[1], $stm_list_10sec[0]);
+            foreach ($result_async_from_db as $rows) {
+                foreach ($rows as $row) {
+                    $tweet_list = $row['tweetidlist']->values();
+                    // echo json_encode($tweet_list);
+                    foreach($tweet_list as $t){
+                        // echo json_encode($t->values());
+                        $tweet_l =  $t->values();
+                        foreach($tweet_l as $t1){
+                            if($t1 != "0")
+                                array_push($tweet_id_list, $t1);
+                        }
+                    }
+                }
+            }
+        } 
+        $final_result["range_type"] = $range_type;
+        $final_result["chart_type"] = "tweet";
+        $final_result["data"] = $tweet_id_list;
+        return ($final_result);
     }
+
+
+     /**
+     * get tweet info by tweet_id_list
+     *
+     * @return json
+     */
+    public function get_tweets_info()
+    {
+        $final_result = array();
+
+        $prepared_statement = "SELECT t_location,datetime,tid,author,author_id,author_profile_image,author_screen_name,sentiment,quoted_source_id,tweet_text,retweet_source_id,media_list,type,category from tweet_info_by_id_test WHERE tid=?";
+        $tweet_id_list = $_GET['tweet_id_list'];
+        $input_args = array();
+        foreach ($tweet_id_list as $value) {
+            array_push($input_args, array($value));
+        }
+
+        $db_object = new DBmodelAsync;
+
+        $result_async_from_db = $db_object->executeAsync_query($input_args, $prepared_statement,'raw');
+        foreach ($result_async_from_db as $rows) {
+            foreach ($rows as $row) {
+                $media_list_temp = array();
+                $media_list = $row["media_list"];
+                if (!is_null($media_list)) {
+                    foreach ($media_list as $m) {
+                        array_push($media_list_temp, array($m["media_type"], $m["media_url"]));
+                    }
+                }
+
+                $temp_arr = array("t_location" => $row["t_location"], "datetime" => $this->get_date_time_from_cass_date_obj($row["datetime"], 'Y-m-d H:i:s'), "tid" => $row["tid"], "author" => $row["author"], "author_id" => $row["author_id"], "author_profile_image" => $row["author_profile_image"], "author_screen_name" => $row["author_screen_name"], "sentiment" => $row["sentiment"]->value(), "quoted_source_id" => $row["quoted_source_id"], "tweet_text" => $row["tweet_text"], "retweet_source_id" => $row["retweet_source_id"], "media_list" => $media_list_temp, "type" =>  $row["type"]);
+                array_push($final_result, $temp_arr);
+            }
+        }
+        echo json_encode($final_result);
+    }
+
     
     
     /**

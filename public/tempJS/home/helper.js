@@ -13,7 +13,7 @@ export const getFreqDistData = (interval, query) => {
             freqData = response;
     
         }
-    });
+    }); 
     return freqData;
 }
 
@@ -111,3 +111,21 @@ export const getTopData = (interval) => {
 return topDataTemp;
 }
 
+
+
+export const getTweetIDsFromController = (interval, query) => {
+    var tweetData;
+    $.ajax({
+        type: "GET",
+        url: 'smat/getTweetIDs',
+        contentType: "application/json",
+        data:{interval,query},
+        dataType: "json",
+        async: false,
+        success: function (response) {
+            tweetData = response.data;
+        }
+    });
+return tweetData;
+
+}

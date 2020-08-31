@@ -1,9 +1,14 @@
+  
+var frequencyChartInt = null , sentimentChartInterval=null, barChartInterval = null;
+export  const clearChartIntervals = () =>{
+  clearInterval(frequencyChartInt);
+  clearInterval(sentimentChartInterval);
+  clearInterval(barChartInterval);
+}
 
-
-import { generateTweets  } from './Home.js';
 
 export const generateFrequencyChart = (data,query,div) => {
-
+  clearChartIntervals();
   let finalTime;
   var chart = am4core.create(div, am4charts.XYChart);
   am4core.useTheme(am4themes_animated);
@@ -16,7 +21,7 @@ export const generateFrequencyChart = (data,query,div) => {
             value1:freq[1],
             value2:freq[5],
             value3:freq[3],
-            value4:freq[2],
+            value4:freq[2], 
             value5:freq[4],
             });
     }
@@ -32,8 +37,8 @@ catch(err) {
 console.log('Final Time couldnot be initialized',err);
 }
 
- 
-  setInterval(() => {
+console.log('FINAL TIME' ,finalTime );
+ const updateFreqChart = function () {
   $.ajax({
     type: "GET",
     url: 'smat/updateFreqDist',
@@ -42,8 +47,11 @@ console.log('Final Time couldnot be initialized',err);
     data: { finalTime,query },
     async: false,
     success: function (response) {
-    if(response['data'].length > 0){
-            finalTime=response['data'][0][0];
+        
+            finalTime=response[0]['finalTime'];
+            response = response[0]['data'];
+            console.log(response);
+            if(response['data'].length > 0){
              chart.addData({
                 "date": new Date(response['data'][0][0]),
                 "value1": response['data'][0][1],
@@ -55,15 +63,15 @@ console.log('Final Time couldnot be initialized',err);
               },1);
               
                   chart.invalidateRawData();
-                   freqSummary(chart.data);
-    }
-
+                  
+            }
+            freqSummary(chart.data);
     }
   });
-}, 10000);
+ } 
   
-  
-  
+   
+frequencyChartInt =  setInterval(updateFreqChart, 10000);
   
   
   // Create axes
@@ -101,7 +109,8 @@ console.log('Final Time couldnot be initialized',err);
 
 
 export const generateSentimentChart = (data,query, div) => {
-let finalTime;
+  clearChartIntervals();
+  let finalTime;
   var chart = am4core.create(div, am4charts.XYChart);
    am4core.useTheme(am4themes_animated);
   // Themes end
@@ -134,31 +143,33 @@ let finalTime;
         console.log('Final Time couldnot be initialized',err);
     }
 
+  const updateSentiChart = () => {
+    $.ajax({
+      type: "GET",
+      url: 'smat/updateSentiDist',
+      contentType: "application/json",
+      dataType: "json",
+      data: { finalTime,query },
+      async: false,
+      success: function (response) {
+    
+              finalTime=response['data'][0][0];
+                 chart.addData({
+                  "date": new Date(response['data'][0][0]),
+                  "value1": response['data'][0][1],
+                  "value2": response['data'][0][2],
+                  "value3": response['data'][0][3]
+                });
+                   chart.invalidateRawData();
+                   sentiSummaryTotalFinder(chart.data);
+      
+  
+      }
+    });
+  }
 
-  setInterval(() => {
-  $.ajax({
-    type: "GET",
-    url: 'smat/updateSentiDist',
-    contentType: "application/json",
-    dataType: "json",
-    data: { finalTime,query },
-    async: false,
-    success: function (response) {
-    if(response['data'].length > 0){
-            finalTime=response['data'][0][0];
-               chart.addData({
-                "date": new Date(response['data'][0][0]),
-                "value1": response['data'][0][1],
-                "value2": response['data'][0][2],
-                "value3": response['data'][0][3]
-              });
-                 chart.invalidateRawData();
-                 sentiSummaryTotalFinder(chart.data);
-    }
+  sentimentChartInterval = setInterval(updateSentiChart,10000);
 
-    }
-  });
-}, 10000);
 
 
 
@@ -223,10 +234,7 @@ series3.dataFields.dateX = "date";
 
 
 export const generateBarChart = (data = null, query , div ,type) => {
-for(let i=0; i<100; i++)
-{
-    window.clearInterval(i);
-}
+  clearChartIntervals();
   $('#' + div).html('<div class="col-lg" id="bar_chart"></div> ');
   // Themes begin
 
@@ -317,29 +325,49 @@ for(let i=0; i<100; i++)
   series.tooltipText = " {categoryY}: {valueX.value}" + "(Click to Know More)";
   series.columns.template.width = am4core.percent(50);
   let finalTime = data[0]['finalTime'];
-  setInterval(function () {
-   console.log(type);
+  const updateBarChart = () =>{
+    console.log(type);
 
-  $.ajax({
-    type: "GET",
-    url: 'smat/updateBarPlotRealTime',
-    contentType: "application/json",
-    dataType: "json",
-    data: { finalTime,query,option:type},
-    async: false,
-    success: function (response) {
-    finalTime = response[0]['finalTime']; 
-    response = response[0]['data'];
-    console.log(finalTime);
-    let dataTemp = response;
-      if (dataTemp) {
-        let lenofTempData = Object.keys(dataTemp).length - 1;
-        if (lenofTempData > 1) {
-          for (let i = 0; i <= lenofTempData; i++) {
+    $.ajax({
+      type: "GET",
+      url: 'smat/updateBarPlotRealTime',
+      contentType: "application/json",
+      dataType: "json",
+      data: { finalTime,query,option:type},
+      async: false,
+      success: function (response) {
+      finalTime = response[0]['finalTime']; 
+      response = response[0]['data'];
+      console.log(finalTime);
+      let dataTemp = response;
+        if (dataTemp) {
+          let lenofTempData = Object.keys(dataTemp).length - 1;
+          if (lenofTempData > 1) {
+            for (let i = 0; i <= lenofTempData; i++) {
+              let flag = false;
+              for (let j = 0; j <= chart.data.length - 1; j++) {
+                if (dataTemp[i]['handle'] == chart.data[j]['token']) {
+                  chart.data[j]['count'] += dataTemp[i]["count"];
+                  chart.invalidateRawData();
+                  flag = false;
+                  break;
+                } else {
+                  flag = true;
+                }
+              }
+              if (flag == true) {
+                chart.addData({
+                  "token": dataTemp[i]['handle'],
+                  "count": dataTemp[i]['count']
+                });
+              }
+            }
+          } else {
+  
             let flag = false;
             for (let j = 0; j <= chart.data.length - 1; j++) {
-              if (dataTemp[i]['handle'] == chart.data[j]['token']) {
-                chart.data[j]['count'] += dataTemp[i]["count"];
+              if (dataTemp['handle'] == chart.data[j]['token']) {
+                chart.data[j]['count'] += dataTemp["count"];
                 chart.invalidateRawData();
                 flag = false;
                 break;
@@ -349,49 +377,24 @@ for(let i=0; i<100; i++)
             }
             if (flag == true) {
               chart.addData({
-                "token": dataTemp[i]['handle'],
-                "count": dataTemp[i]['count']
+                "token": dataTemp['handle'],
+                "count": dataTemp['count']
               });
+  
             }
+  
           }
-        } else {
-
-          let flag = false;
-          for (let j = 0; j <= chart.data.length - 1; j++) {
-            if (dataTemp['handle'] == chart.data[j]['token']) {
-              chart.data[j]['count'] += dataTemp["count"];
-              chart.invalidateRawData();
-              flag = false;
-              break;
-            } else {
-              flag = true;
-            }
-          }
-          if (flag == true) {
-            chart.addData({
-              "token": dataTemp['handle'],
-              "count": dataTemp['count']
-            });
-
-          }
-
+  
+  
         }
-
-
+      
+  
       }
-    
+    });
+  }
+  barChartInterval =  setInterval(updateBarChart, 10000)
 
-    }
-  });
  
- 
-    // am4core.array.each(chart.data, function (item) {
-    //   item.count += Math.round(Math.random() * 200 - 100);
-    //   item.count = Math.abs(item.count);
-    // })
-    // chart.invalidateRawData();
-  }, 10000)
-
   categoryAxis.sortBySeries = series;
   chart.cursor = new am4charts.XYCursor();
 

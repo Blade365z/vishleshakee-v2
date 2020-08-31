@@ -75,7 +75,8 @@ Route::group(['prefix' => 'smat'], function () {
     Route::get('/updateSentiDist','Home@updateSentiDistGraphRealtime');
     Route::get('/updateBarPlotRealTime','Home@updateTopCoocureDataRealtime');
     Route::get('/getTopTrendingData','Home@getTopTrendingData'); 
-     
+    Route::get('/getTweetIDs','Home@getTweetIDData'); 
+  
      
 });
 
@@ -97,6 +98,7 @@ Route::group(['prefix' => 'HA'], function () {
     Route::get('coOccurDataFormatterHA', 'HistoricalAnalysisController@data_formatter_for_co_occur');
     Route::get('topDataHA', 'HistoricalAnalysisController@get_top_data_ha');
     Route::get('tweetsHA', 'HistoricalAnalysisController@get_tweets_ha');
+    Route::get('getTweetsInfo', 'HistoricalAnalysisController@get_tweets_info');
 });
 
 

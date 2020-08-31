@@ -31,7 +31,7 @@
                         <li class="btn  btn-outline clickable  smat-rounded interval-buttons-public  mx-2" value="30">30 Mins</li>
                         <li class="btn  btn-outline clickable smat-rounded  interval-buttons-public  mx-2" value="45">45 Mins</li>
                         <li class="btn  btn-outline clickable smat-rounded  interval-buttons-public mx-2" value="1">1 Hour</li>
-                        <li class="btn  btn-outline  clickable smat-rounded interval-buttons-public mx-2" value="5">5 Hours</li>
+                        <!-- <li class="btn  btn-outline  clickable smat-rounded interval-buttons-public mx-2" value="2">2 Hours</li> -->
 
                     </div>
                 </div>
@@ -267,6 +267,7 @@ var incoming = {!! json_encode($query) !!}
 <script type="module" src="public/amcharts4/core.js"></script>
 <script type="module" src="public/amcharts4/charts.js"></script>
 <script type="module" src="public/amcharts4/themes/animated.js"></script>
+<script type="module" src="public/bootpag/bootpag-min.js"></script>
 <script type="module" src="public/tempJS/home/Home.js"></script>
 
 

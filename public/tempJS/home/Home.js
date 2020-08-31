@@ -11,7 +11,7 @@ MODE LIST:
 */
 
 //Imports from helper.js
-import { getFreqDistData, getTopCooccurData, getMe, getSentiDistData, getTopData } from './helper.js';
+import { getFreqDistData, getTopCooccurData, getMe, getSentiDistData, getTopData ,getTweetIDsFromController} from './helper.js';
 import { generateFrequencyChart, generateSentimentChart, generateBarChart } from './chartHelper.js';
 
 //Global variables 
@@ -25,7 +25,7 @@ const publicAnalysisResultDivTitle = 'result-div-title';
 const publicAnalysisResultDivSubTitle = 'result-div-subtitle';
 const modeDict = { '000': 'Frequency Distribution', '001': 'Sentiment Distribution', '002': 'Top Mentions', '003': 'Top Active Users', '004': 'Locations', '005': 'Tweet Information' };
 const modeTitle = { '000': 'Zoom and click to know more.', '001': 'Zoom and click to know more.', '002': 'Click on the bar to analyse further.', '003': 'Click on the bar to analyse further.', '004': 'Click on the markers to know more.', '005': 'Raw tweets posted by the users.' }
-const intervalValues = { '15': 900, '30': 1800, '45': 2700, '1': 3600, '5': 18000 };
+const intervalValues = { '15': 900, '30': 1800, '45': 2700, '1': 3600, '2': 7200 };
 const categoryColor = { 'normal': 'text-normal', 'com': 'text-com', 'sec': 'text-sec', 'seccom': 'text-seccom' }
 
 var TopTrendingData;
@@ -36,6 +36,9 @@ $(document).ready(function () {
 
 
   TopTrendingData = getTopData(interval);
+  let mainPublicCardHeight = $('#main-public-dash').height();
+  $('#public-trending').css('height',mainPublicCardHeight-60);
+
 
 
   generatePublicHashtags(TopTrendingData, 'all');
@@ -165,10 +168,17 @@ $(document).ready(function () {
   });
 
 
+//update public hahstag every 1 min 
+
+let updatePublicHashtagOneMinInt = setInterval(updatePublicTrendingHashtagsEveryOneMiute,10000);
+
 
 });
 
-
+const updatePublicTrendingHashtagsEveryOneMiute = () => {
+    TopTrendingData = getTopData(interval);
+    generatePublicHashtags(TopTrendingData, 'all');
+}
 
 const frequencyPublic = () => {
   for (let i = 0; i <= 100; i++)
@@ -197,13 +207,16 @@ const coOccurPublic = (type) => {
   let coOccurData = getTopCooccurData(interval, query, type);
   generateBarChart(coOccurData, query, publicAnalysisResultDiv, type);
 }
-
+ 
 
 
 const tweetPublic = () => {
   $('#public-summary-2').html('<div class="btn-group"><button type="button" class="btn btn-white smat-rounded dropdown-toggle text-normal" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Filter Tweets</button><div class="dropdown-menu dropdown-menu-right"><li class="dropdown-item clickable filter-pos-tweets"><i class="fa fa-circle text-pos " aria-hidden="true"></i> Positive Tweets</li><li class="dropdown-item clickable filter-neg-tweets"><i class="fa fa-circle text-neg " aria-hidden="true"></i> Negative Tweets</li><li class="dropdown-item clickable filter-neu-tweets"> <i class="fa fa-circle text-neu" aria-hidden="true"></i> Neutral Tweets</li><li class="dropdown-item clickable filter-normal-tweets"> <i class="fa fa-circle text-normal" aria-hidden="true"></i> Normal Tweets</li><li class="dropdown-item clickable filter-com-tweets"> <i class="fa fa-circle text-com" aria-hidden="true"></i> Communal Tweets</li><li class="dropdown-item clickable filter-sec-tweets"> <i class="fa fa-circle text-sec" aria-hidden="true"></i> Security Tweets</li><li class="dropdown-item clickable filter-seccom-tweets"> <i class="fa fa-circle text-seccom" aria-hidden="true"></i> Communal and Security Tweets</li></div></div>');
-  generateTweets(publicAnalysisResultDiv);
+  $('#resultdiv').html('<div id="tweetDivPublic"> </div><div> <div class="float-center" id="tweetDivPublicpage-selection"></div>  </div>')
 
+
+  let tweetIDs = getTweetIDsFromController(interval,query);
+  tweets_pagination(tweetIDs, 6, 'result-div');
 }
 
 const makePublicAnalysisReady = (mode) => {
@@ -229,59 +242,6 @@ const renderSentimentSummary = (div1, div2) => {
 
 
 
-export const generateTweets = (div) => {
-  $('#' + div).html("");
-  // for (let i = 0; i < 7; i++) {
-  //   $('#' + div).append('<div class="border p-2 "><div class="d-flex"><div class="profilePictureDiv p-1 text-center"><img src="public/img/amitabh.jpg" style="height:33px;border-radius:50%" /></div><div> <p class="pt-1 m-0 font-weight-bold"> Amitabh Baruah </p><p class="smat-dash-title pull-text-top m-0 "> @amitabh.baruah12 </p></div> <div class="px-1 pt-1" >  <i class="fa fa-circle text-sec" aria-hidden="true"></i>   <i class="fa fa-circle text-neg" aria-hidden="true"></i> </div></div><div style="width:80%;"><p class="smat-tweet-body-text mb-1">It is so sad indeed what happened recently at #GalwanValley . My sincere condolences to the bereaved families. It is time to teach china a lesson . #IndianArmy #JaiHind #ShameOnChina </p></div><div class="d-flex"><p class="m-0 smat-tweet-body-text font-weight-bold"> <span>  2020-03-12  &nbsp </span> <span> Guwahati, India</span> &nbsp  <span class="text-normal clickable"> Track Tweet</span>   </p> </div></div>');
-  // }
-  let tweetData = tweetProvider();
-  tweetData.forEach(tweet => {
-   //TODO :: 1. sentiment 2. category 3. Media 4.Location 5.Pagination
-    let sentiment = '' , category = '' , media='',location='';
-    if(tweet.sentiment===0){
-      sentiment = 'pos';
-    }else if (tweet.sentiment===1){
-      sentiment = 'neg';
-    }else{
-      sentiment = 'neu';
-    }
-
-    $('#' + div).append('<div class="border p-2 "><div class="d-flex"><div class="profilePictureDiv p-1 text-center mx-2"><img src="'+tweet.author_profile_image+'" style="height:33px;border-radius:50%" /></div><div> <p class="pt-1 m-0 font-weight-bold">'+tweet.author+' </p><p class="smat-dash-title pull-text-top m-0 "> @'+tweet.author_screen_name+' </p></div> <div class="px-1 pt-1" >  <i class="fa fa-circle text-sec" aria-hidden="true"></i>   <i class="fa fa-circle text-neg" aria-hidden="true"></i> </div></div><div style="width:80%;"><p class="smat-tweet-body-text mb-1">'+tweet.tweet_text+'</p></div><div id="" class="row d-flex justify-content-center tweet_media_body_' +tweet['tid'] +'" ></div><div class="d-flex"><p class="m-0 smat-tweet-body-text font-weight-bold"> <span>  '+tweet.datetime+'  &nbsp </span> <span> Guwahati, India</span> &nbsp  <span class="text-normal clickable"> Track Tweet</span>   </p> </div></div>');
-
-
-
-  if (tweet['media_list'].length > 0) {
-    $('.tweet_media_body_' + tweet['tid']).html(
-      '<div class="row d-flex justify-content center" style="width:60%;height:90%;padding:20px;"><div class="col " id="tweet_media_body_' +
-      tweet['tid'] +
-      '_0"></div><div class="col-3 "> <div class="row " id="tweet_media_body_' +
-      tweet['tid'] +
-      '_1" style="height:33%;overflow:hidden;">  </div>  <div class="row " id="tweet_media_body_' +
-      tweet['tid'] +
-      '_3" style="height:33%;overflow:hidden;"> </div> <div class="row " id="tweet_media_body_' +
-      tweet['tid'] +
-      '_4" style="height:33%;overflow:hidden;">  </div> </div></div>'
-    )
-    for (var i = 0; i < tweet['media_list'].length; i++) {
-      if (tweet['media_list'][i][0] == 'photo') {
-        $('#tweet_media_body_' + tweet['tid'] + '_' + i).html(
-          '<img  class="image_content" src="' +
-          tweet['media_list'][i][1] +
-          '" width="100%" height="100%">'
-        )
-      } else if (tweet['media_list'][i][0] == 'video') { 
-        $('#tweet_media_body_' + tweet['tid'] + '_' + i).html(
-          '<video width="100%" height=auto controls><source src="' +
-          tweet['media_list'][i][1] +
-          '" type="video/mp4"></video>'
-        )
-      }
-    }
-  }
-
-});
-
-}
 
 
 
@@ -306,13 +266,152 @@ const generatePublicHashtags = (data, filterArgument = null) => {
 
 
 
-const tweetProvider = () => {
-  let tempData = [{ "t_location": null, "datetime": "2020-08-03 22:56:54", "tid": "1290421413778776067", "author": "GlobalPandemic.NET", "author_id": "166326763", "author_profile_image": "https:\/\/pbs.twimg.com\/profile_images\/1242182806274523136\/mlr_RoKf_normal.jpg", "author_screen_name": "GlobalPandemics", "sentiment": 1, "quoted_source_id": null, "tweet_text": "ALERT: 'We Have Made Mistakes': Norway Cruise Company Reports\nCOVID-19 Outbreak - Global Pandemic News | #Coronavirus #COVID19 #Protests - https:\/\/t.co\/1fuUcEr8y7 https:\/\/t.co\/05W3K1JgRr", "retweet_source_id": null, "media_list": [["photo", "https:\/\/pbs.twimg.com\/media\/Eeh_b-QU0AAqYfP.jpg"]], "type": "Tweet" }, { "t_location": null, "datetime": "2020-08-03 22:56:54", "tid": "1290421413778776067", "author": "GlobalPandemic.NET", "author_id": "166326763", "author_profile_image": "https:\/\/pbs.twimg.com\/profile_images\/1242182806274523136\/mlr_RoKf_normal.jpg", "author_screen_name": "GlobalPandemics", "sentiment": 1, "quoted_source_id": null, "tweet_text": "ALERT: 'We Have Made Mistakes': Norway Cruise Company Reports\nCOVID-19 Outbreak - Global Pandemic News | #Coronavirus #COVID19 #Protests - https:\/\/t.co\/1fuUcEr8y7 https:\/\/t.co\/05W3K1JgRr", "retweet_source_id": null, "media_list": [["photo", "https:\/\/pbs.twimg.com\/media\/Eeh_b-QU0AAqYfP.jpg"]], "type": "Tweet" }, { "t_location": null, "datetime": "2020-08-03 22:56:54", "tid": "1290421413778776067", "author": "GlobalPandemic.NET", "author_id": "166326763", "author_profile_image": "https:\/\/pbs.twimg.com\/profile_images\/1242182806274523136\/mlr_RoKf_normal.jpg", "author_screen_name": "GlobalPandemics", "sentiment": 1, "quoted_source_id": null, "tweet_text": "ALERT: 'We Have Made Mistakes': Norway Cruise Company Reports\nCOVID-19 Outbreak - Global Pandemic News | #Coronavirus #COVID19 #Protests - https:\/\/t.co\/1fuUcEr8y7 https:\/\/t.co\/05W3K1JgRr", "retweet_source_id": null, "media_list": [["photo", "https:\/\/pbs.twimg.com\/media\/Eeh_b-QU0AAqYfP.jpg"]], "type": "Tweet" }, { "t_location": null, "datetime": "2020-08-03 22:56:54", "tid": "1290421413778776067", "author": "GlobalPandemic.NET", "author_id": "166326763", "author_profile_image": "https:\/\/pbs.twimg.com\/profile_images\/1242182806274523136\/mlr_RoKf_normal.jpg", "author_screen_name": "GlobalPandemics", "sentiment": 1, "quoted_source_id": null, "tweet_text": "ALERT: 'We Have Made Mistakes': Norway Cruise Company Reports\nCOVID-19 Outbreak - Global Pandemic News | #Coronavirus #COVID19 #Protests - https:\/\/t.co\/1fuUcEr8y7 https:\/\/t.co\/05W3K1JgRr", "retweet_source_id": null, "media_list": [["photo", "https:\/\/pbs.twimg.com\/media\/Eeh_b-QU0AAqYfP.jpg"]], "type": "Tweet" }, { "t_location": null, "datetime": "2020-08-03 22:56:54", "tid": "1290421413778776067", "author": "GlobalPandemic.NET", "author_id": "166326763", "author_profile_image": "https:\/\/pbs.twimg.com\/profile_images\/1242182806274523136\/mlr_RoKf_normal.jpg", "author_screen_name": "GlobalPandemics", "sentiment": 1, "quoted_source_id": null, "tweet_text": "ALERT: 'We Have Made Mistakes': Norway Cruise Company Reports\nCOVID-19 Outbreak - Global Pandemic News | #Coronavirus #COVID19 #Protests - https:\/\/t.co\/1fuUcEr8y7 https:\/\/t.co\/05W3K1JgRr", "retweet_source_id": null, "media_list": [["photo", "https:\/\/pbs.twimg.com\/media\/Eeh_b-QU0AAqYfP.jpg"]], "type": "Tweet" }, { "t_location": null, "datetime": "2020-08-03 22:56:54", "tid": "1290421413778776067", "author": "GlobalPandemic.NET", "author_id": "166326763", "author_profile_image": "https:\/\/pbs.twimg.com\/profile_images\/1242182806274523136\/mlr_RoKf_normal.jpg", "author_screen_name": "GlobalPandemics", "sentiment": 1, "quoted_source_id": null, "tweet_text": "ALERT: 'We Have Made Mistakes': Norway Cruise Company Reports\nCOVID-19 Outbreak - Global Pandemic News | #Coronavirus #COVID19 #Protests - https:\/\/t.co\/1fuUcEr8y7 https:\/\/t.co\/05W3K1JgRr", "retweet_source_id": null, "media_list": [["photo", "https:\/\/pbs.twimg.com\/media\/Eeh_b-QU0AAqYfP.jpg"]], "type": "Tweet" }, { "t_location": null, "datetime": "2020-08-03 22:56:54", "tid": "1290421413778776067", "author": "GlobalPandemic.NET", "author_id": "166326763", "author_profile_image": "https:\/\/pbs.twimg.com\/profile_images\/1242182806274523136\/mlr_RoKf_normal.jpg", "author_screen_name": "GlobalPandemics", "sentiment": 1, "quoted_source_id": null, "tweet_text": "ALERT: 'We Have Made Mistakes': Norway Cruise Company Reports\nCOVID-19 Outbreak - Global Pandemic News | #Coronavirus #COVID19 #Protests - https:\/\/t.co\/1fuUcEr8y7 https:\/\/t.co\/05W3K1JgRr", "retweet_source_id": null, "media_list": [["photo", "https:\/\/pbs.twimg.com\/media\/Eeh_b-QU0AAqYfP.jpg"]], "type": "Tweet" }, { "t_location": null, "datetime": "2020-08-03 22:56:54", "tid": "1290421413778776067", "author": "GlobalPandemic.NET", "author_id": "166326763", "author_profile_image": "https:\/\/pbs.twimg.com\/profile_images\/1242182806274523136\/mlr_RoKf_normal.jpg", "author_screen_name": "GlobalPandemics", "sentiment": 1, "quoted_source_id": null, "tweet_text": "ALERT: 'We Have Made Mistakes': Norway Cruise Company Reports\nCOVID-19 Outbreak - Global Pandemic News | #Coronavirus #COVID19 #Protests - https:\/\/t.co\/1fuUcEr8y7 https:\/\/t.co\/05W3K1JgRr", "retweet_source_id": null, "media_list": [["photo", "https:\/\/pbs.twimg.com\/media\/Eeh_b-QU0AAqYfP.jpg"]], "type": "Tweet" }];
 
 
-  return tempData;
+window.onresize = function(event) {
+  let mainPublicCardHeight = $('#main-public-dash').height();
+  $('#public-trending').css('height',mainPublicCardHeight-93);
+
+};
+
+
+
+
+
+
+
+const  tweets_pagination = (data_list, max_per_page, chart_draw_div_id) => {
+  //per page max (max_per_page)
+     var tweet_div_page_selection = '#' + chart_draw_div_id + 'page-selection';
+
+    console.log(tweet_div_page_selection);
+    $(tweet_div_page_selection).empty();
+    $(tweet_div_page_selection).removeData("twbs-pagination");
+    $(tweet_div_page_selection).unbind("page");
+
+  var total_length = data_list.length; // total_length = 384
+  var slot = total_length / max_per_page; // total_length = 3
+  slot = (total_length % max_per_page) ? slot + 1 : slot; //if total_length = 384 ? 3+1 : 3
+
+  // by deafult get first page (max (max_per_page))
+  var num = 1;
+  var start_index = (num - 1) * max_per_page;
+  var final_index = start_index + (max_per_page - 1);
+  var slice_tid_list = data_list.slice(start_index, (final_index + 1));
+  get_tweets_info_AjaxRequest(slice_tid_list, function (result) {
+      generate_tweets_div(result, chart_draw_div_id);
+  });
+  //.......................................END
+
+    $(tweet_div_page_selection).bootpag({
+      total: slot,
+      page: 1,
+      maxVisible: 10
+  }).on('page', function (event, num) {
+    $("#" + chart_draw_div_id).scrollTop(0);
+      /* *******************
+      //if max_per_page = 100
+      //when num = 0 --> start_index = 0 , final_index = 99
+      //when num = 1 --> start_index = 100 , final_index = 199
+      //when num = 2 --> start_index = 200 , final_index = 299
+      // start_index=(1-1)*100 = 0*100 = 0, where num=1
+      // final_index=0+(100-1) = 0+99, from 0-->99=100
+      // slice_tid_list = data_list.slice(0, (99+1))
+      ******************  */
+      var start_index = (num - 1) * max_per_page;
+      var final_index = start_index + (max_per_page - 1);
+      var slice_tid_list = data_list.slice(start_index, (final_index + 1)); // slice list including 100 element 
+
+      /* ****** 
+      // depend on num --> tweet_id list will change on that div id = "content" and 
+      // get tweet_info of those tweet_ids and show on div
+      ****** */
+      get_tweets_info_AjaxRequest(slice_tid_list, function (result) {
+          generate_tweets_div(result, chart_draw_div_id);
+      });
+  });
 }
 
+const get_tweets_info_AjaxRequest = (slice_tid_list, callback) =>  {
+  $.ajax({
+          url: 'HA/getTweetsInfo',
+          type: 'GET',
+          dataType: 'JSON',
+          data: {
+              tweet_id_list: slice_tid_list
+          }
+      })
+      .done(function (res) {
+          callback(res);
+      })
+      .fail(function () {
+          console.log("fd error");
+      })
+}
+
+export const generate_tweets_div = (tweetData,div) => {
+  $('#' + div).html("");
+  tweetData.forEach(tweet => {
+ 
+    let sentiment = '' , category = '' , media='',location='';
+    if(tweet.sentiment===0){
+      sentiment = 'pos';
+    }else if (tweet.sentiment===1){
+      sentiment = 'neg';
+    }else{
+      sentiment = 'neu';
+    }
+
+    if(tweet.t_location){
+      location = tweet.t_location;
+    }
+
+    if(tweet.category){
+      if(category==='normal'){
+
+      }else if(category==='sec'){
+
+      }else if(category==='comsec'){
+        
+      }else{
+
+      }
+    }
+
+
+    $('#' + div).append('<div class="border p-2 "><div class="d-flex"><div class="profilePictureDiv p-1 text-center mx-2"><img src="'+tweet.author_profile_image+'" style="height:33px;border-radius:50%" /></div><div> <p class="pt-1 m-0 font-weight-bold">'+tweet.author+' </p><p class="smat-dash-title pull-text-top m-0 "> @'+tweet.author_screen_name+' </p></div> <div class="px-1 pt-1" >  <i class="fa fa-circle  mx-2 text-'+sentiment+'" aria-hidden="true"></i> </div></div><div style="width:80%;"><p class="smat-tweet-body-text mb-1">'+tweet.tweet_text+'</p></div><div id="" class="row d-flex justify-content-center tweet_media_body_' +tweet['tid'] +'" ></div><div class="d-flex"><p class="m-0 smat-tweet-body-text font-weight-bold"> <span>  '+tweet.datetime+'  &nbsp </span> <span>'+location+'</span> &nbsp  <span class="text-normal clickable"> Track Tweet</span>   </p> </div></div>');
 
 
 
+  if (tweet['media_list'].length > 0) {
+    $('.tweet_media_body_' + tweet['tid']).html(
+      '<div class="row d-flex justify-content center" style="width:60%;height:90%;padding:20px;"><div class="col tweet_media_body_' +
+      tweet['tid'] +
+      '_0"></div><div class="col-3 "> <div class="row  tweet_media_body_' +
+      tweet['tid'] +
+      '_1" style="height:33%;overflow:hidden;">  </div>  <div class="row tweet_media_body_' +
+      tweet['tid'] +
+      '_3" style="height:33%;overflow:hidden;"> </div> <div class="row tweet_media_body_' +
+      tweet['tid'] +
+      '_4" style="height:33%;overflow:hidden;">  </div> </div></div>'
+    )
+    for (var i = 0; i < tweet['media_list'].length; i++) {
+      if (tweet['media_list'][i][0] == 'photo') {
+        $('.tweet_media_body_' + tweet['tid'] + '_' + i).html(
+          '<img  class="image_content" src="' +
+          tweet['media_list'][i][1] +
+          '" width="100%" height="100%">'
+        )
+      } else if (tweet['media_list'][i][0] == 'video') { 
+        $('.tweet_media_body_' + tweet['tid'] + '_' + i).html(
+          '<video width="100%" height=auto controls><source src="' +
+          tweet['media_list'][i][1] +
+          '" type="video/mp4"></video>'
+        )
+      }
+    }
+  }
+
+});
+
+}

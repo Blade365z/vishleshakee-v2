@@ -262,8 +262,7 @@ color:white;
 }
 
 #public-trending {
-    max-height: 435px;
-    min-height: 435px;
+    height:350px;
     overflow-x: hidden;
     overflow-y: scroll;
 }
@@ -519,8 +518,7 @@ select{
         font-size: 15px;
     }
     #public-trending {
-        max-height: 485px;
-        min-height: 485px;
+        height:350px;
         overflow-x: hidden;
         overflow-y: scroll;
     }
@@ -564,8 +562,7 @@ select{
     font-size:13px;
 }
   #public-trending {
-        max-height: 415px;
-        min-height: 415px;
+    height:350px;
         overflow-x: hidden;
         overflow-y: scroll;
     }
@@ -603,8 +600,7 @@ select{
         font-size: 13px;
     }
     #public-trending {
-        max-height: 440px;
-        min-height: 440px;
+        height:350px;
         overflow-x: hidden;
         overflow-y: scroll;
     }

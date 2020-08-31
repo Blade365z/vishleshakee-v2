@@ -4,7 +4,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Vishleshake-v2</title>
+    <title>TEST DOMAIN</title>
     <script src="public/js/app.js" ></script>
     
     <link href="public/css/app.css" rel="stylesheet">
