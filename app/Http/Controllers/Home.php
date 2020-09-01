@@ -95,7 +95,8 @@ class Home extends Controller
         $query = $_GET['query'];
         $sentiDistObj = new HistoricalAnalysisController;
         $sentiData = $sentiDistObj->get_sentiment_distribution_data($fromTime, $fromTime, $query, '10sec');
-        return ($sentiData);
+        $finalData = array(['data' => $sentiData, 'finalTime' => $fromTime]);
+        return ($finalData);
     }
     public function getTopCoocurDataPublic()
     {

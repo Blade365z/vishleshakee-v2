@@ -1,13 +1,13 @@
-  
-var frequencyChartInt = null , sentimentChartInterval=null, barChartInterval = null;
-export  const clearChartIntervals = () =>{
+
+var frequencyChartInt = null, sentimentChartInterval = null, barChartInterval = null;
+export const clearChartIntervals = () => {
   clearInterval(frequencyChartInt);
   clearInterval(sentimentChartInterval);
   clearInterval(barChartInterval);
 }
 
 
-export const generateFrequencyChart = (data,query,div) => {
+export const generateFrequencyChart = (data, query, div) => {
   clearChartIntervals();
   let finalTime;
   var chart = am4core.create(div, am4charts.XYChart);
@@ -16,64 +16,64 @@ export const generateFrequencyChart = (data,query,div) => {
 
   var dataTemp = [];
   for (const [key, freq] of Object.entries(data['data'])) {
-            dataTemp.push({
-            date:new Date(freq[0]) ,
-            value1:freq[1],
-            value2:freq[5],
-            value3:freq[3],
-            value4:freq[2], 
-            value5:freq[4],
-            });
-    }
-  
-  
-  
+    dataTemp.push({
+      date: new Date(freq[0]),
+      value1: freq[1],
+      value2: freq[5],
+      value3: freq[3],
+      value4: freq[2],
+      value5: freq[4],
+    });
+  }
+
+
+
   chart.data = dataTemp;
   freqSummary(chart.data);
   try {
-  finalTime = data['data'][data['data'].length-1][0];
-    }
-catch(err) {
-console.log('Final Time couldnot be initialized',err);
-}
+    finalTime = data['data'][data['data'].length - 1][0];
+  }
+  catch (err) {
+    console.log('Final Time couldnot be initialized', err);
+  }
 
-console.log('FINAL TIME' ,finalTime );
- const updateFreqChart = function () {
-  $.ajax({
-    type: "GET",
-    url: 'smat/updateFreqDist',
-    contentType: "application/json",
-    dataType: "json",
-    data: { finalTime,query },
-    async: false,
-    success: function (response) {
-        
-            finalTime=response[0]['finalTime'];
-            response = response[0]['data'];
-            console.log(response);
-            if(response['data'].length > 0){
-             chart.addData({
-                "date": new Date(response['data'][0][0]),
-                "value1": response['data'][0][1],
-                "value2": response['data'][0][5],
-                "value3": response['data'][0][3],
-                "value4": response['data'][0][2],
-                "value5": response['data'][0][4]
-                
-              },1);
-              
-                  chart.invalidateRawData();
-                  
-            }
-            freqSummary(chart.data);
-    }
-  });
- } 
-  
-   
-frequencyChartInt =  setInterval(updateFreqChart, 10000);
-  
-  
+  console.log('FINAL TIME', finalTime);
+  const updateFreqChart = function () {
+    $.ajax({
+      type: "GET",
+      url: 'smat/updateFreqDist',
+      contentType: "application/json",
+      dataType: "json",
+      data: { finalTime, query },
+      async: false,
+      success: function (response) {
+
+        finalTime = response[0]['finalTime'];
+        response = response[0]['data'];
+       
+        if (response['data'].length > 0) {
+          chart.addData({
+            "date": new Date(response['data'][0][0]),
+            "value1": response['data'][0][1],
+            "value2": response['data'][0][5],
+            "value3": response['data'][0][3],
+            "value4": response['data'][0][2],
+            "value5": response['data'][0][4]
+
+          }, 1);
+
+          chart.invalidateRawData();
+          freqSummary(chart.data);
+        }
+
+      }
+    });
+  }
+
+
+  frequencyChartInt = setInterval(updateFreqChart, 10000);
+
+
   // Create axes
   var dateAxis = chart.xAxes.push(new am4charts.DateAxis());
 
@@ -85,7 +85,7 @@ frequencyChartInt =  setInterval(updateFreqChart, 10000);
   series.dataFields.valueY = "value1";
   series.dataFields.dateX = "date";
   series.tooltipText = "{value1}"
-  series.stroke = am4core.color("#297EB4"); 
+  series.stroke = am4core.color("#297EB4");
   series.tooltip.pointerOrientation = "vertical";
 
   chart.cursor = new am4charts.XYCursor();
@@ -97,8 +97,8 @@ frequencyChartInt =  setInterval(updateFreqChart, 10000);
   circleBullet.circle.strokeWidth = 0;
 
   circleBullet.events.on("hit", function (ev) {
-      $('#tweetsModal').modal('show');
-      generateTweets('tweets-modal-div');
+    $('#tweetsModal').modal('show');
+    generateTweets('tweets-modal-div');
   });
   //chart.scrollbarY = new am4core.Scrollbar();
   chart.scrollbarX = new am4core.Scrollbar();
@@ -108,27 +108,27 @@ frequencyChartInt =  setInterval(updateFreqChart, 10000);
 }
 
 
-export const generateSentimentChart = (data,query, div) => {
+export const generateSentimentChart = (data, query, div) => {
   clearChartIntervals();
   let finalTime;
   var chart = am4core.create(div, am4charts.XYChart);
-   am4core.useTheme(am4themes_animated);
+  am4core.useTheme(am4themes_animated);
   // Themes end
 
   chart.hiddenState.properties.opacity = 0; // this creates initial fade-in
 
   var dataTemp = [];
   for (const [key, senti] of Object.entries(data['data'])) {
-            dataTemp.push({
-            date:new Date(senti[0]),
-            value1:parseInt(senti[1]),
-            value2:parseInt(senti[2]),
-            value3:parseInt(senti[3])
-            });
-    }
-  
-  
-  
+    dataTemp.push({
+      date: new Date(senti[0]),
+      value1: parseInt(senti[1]),
+      value2: parseInt(senti[2]),
+      value3: parseInt(senti[3])
+    });
+  }
+
+
+
   chart.data = dataTemp;
   sentiSummaryTotalFinder(chart.data);
   chart.colors.list = [
@@ -137,11 +137,11 @@ export const generateSentimentChart = (data,query, div) => {
     am4core.color("#F75E4E") //neu
   ];
   try {
-        finalTime = data['data'][data['data'].length-1][0];
-    }
-    catch(err) {
-        console.log('Final Time couldnot be initialized',err);
-    }
+    finalTime = data['data'][data['data'].length - 1][0];
+  }
+  catch (err) {
+    console.log('Final Time couldnot be initialized', err);
+  }
 
   const updateSentiChart = () => {
     $.ajax({
@@ -149,26 +149,28 @@ export const generateSentimentChart = (data,query, div) => {
       url: 'smat/updateSentiDist',
       contentType: "application/json",
       dataType: "json",
-      data: { finalTime,query },
+      data: { finalTime, query },
       async: false,
       success: function (response) {
-    
-              finalTime=response['data'][0][0];
-                 chart.addData({
-                  "date": new Date(response['data'][0][0]),
-                  "value1": response['data'][0][1],
-                  "value2": response['data'][0][2],
-                  "value3": response['data'][0][3]
-                });
-                   chart.invalidateRawData();
-                   sentiSummaryTotalFinder(chart.data);
-      
-  
+        finalTime = response[0]['finalTime'];
+        response = response[0]['data'];
+       
+        if (response['data'].length > 0) {
+          chart.addData({
+            "date": new Date(response['data'][0][0]),
+            "value1": response['data'][0][1],
+            "value2": response['data'][0][2],
+            "value3": response['data'][0][3]
+          });
+          chart.invalidateRawData();
+          sentiSummaryTotalFinder(chart.data);
+        }
+
       }
     });
   }
 
-  sentimentChartInterval = setInterval(updateSentiChart,10000);
+  sentimentChartInterval = setInterval(updateSentiChart, 10000);
 
 
 
@@ -190,7 +192,7 @@ export const generateSentimentChart = (data,query, div) => {
   series1.columns.template.tooltipText =
     "{name}: {valueY.totalPercent.formatNumber('#.00')}%";
   series1.name = "Positive";
-series1.dataFields.dateX = "date";
+  series1.dataFields.dateX = "date";
   series1.dataFields.valueY = "value1";
   series1.dataFields.valueYShow = "totalPercent";
   series1.dataItems.template.locations.categoryX = 0.5;
@@ -203,7 +205,7 @@ series1.dataFields.dateX = "date";
   series2.columns.template.tooltipText =
     "{name}: {valueY.totalPercent.formatNumber('#.00')}%";
   series2.name = "Neutral";
-series2.dataFields.dateX = "date";
+  series2.dataFields.dateX = "date";
   series2.dataFields.valueY = "value2";
   series2.dataFields.valueYShow = "totalPercent";
   series2.dataItems.template.locations.categoryX = 0.5;
@@ -217,7 +219,7 @@ series2.dataFields.dateX = "date";
   series3.columns.template.tooltipText =
     "{name}: {valueY.totalPercent.formatNumber('#.00')}%";
   series3.name = "Negative";
-series3.dataFields.dateX = "date";
+  series3.dataFields.dateX = "date";
   series3.dataFields.valueY = "value3";
   series3.dataFields.valueYShow = "totalPercent";
   series3.dataItems.template.locations.categoryX = 0.5;
@@ -233,7 +235,7 @@ series3.dataFields.dateX = "date";
 
 
 
-export const generateBarChart = (data = null, query , div ,type) => {
+export const generateBarChart = (data = null, query, div, type) => {
   clearChartIntervals();
   $('#' + div).html('<div class="col-lg" id="bar_chart"></div> ');
   // Themes begin
@@ -244,42 +246,42 @@ export const generateBarChart = (data = null, query , div ,type) => {
   var chart = am4core.create('bar_chart', am4charts.XYChart);
   let dataCaptured = data[0]['data'];
   let totalNumberOfNodes = data[0]['nodes'];
-  chart.data = generateChartData(dataCaptured,type);
+  chart.data = generateChartData(dataCaptured, type);
   function generateChartData(data, type) {
-            var chartData = [];
-            if (type == 'mention') {
-                data.forEach(element => {
-                    chartData.push({
-                        "token": element['handle'],
-                        "count": element['count'],
+    var chartData = [];
+    if (type == 'mention') {
+      data.forEach(element => {
+        chartData.push({
+          "token": element['handle'],
+          "count": element['count'],
 
-                    });
-                });
-            }
-            else if (type == 'user') {
-                data.forEach(element => {
-                    chartData.push({
-                        "token": element['handle'],
-                        "count": element['count'],
+        });
+      });
+    }
+    else if (type == 'user') {
+      data.forEach(element => {
+        chartData.push({
+          "token": element['handle'],
+          "count": element['count'],
 
-                    });
-                    
-                    // chartData.push({
-                    //     "token": element['author_screen_name'],
-                    //     "count": element['count'],
-                    //     "id": element['id'],
-                    //     "pic": element['profile_picture'],
-                    //     "handle": element['author']
-                    // });
-                });
-            }
+        });
 
-            return chartData;
-        }
+        // chartData.push({
+        //     "token": element['author_screen_name'],
+        //     "count": element['count'],
+        //     "id": element['id'],
+        //     "pic": element['profile_picture'],
+        //     "handle": element['author']
+        // });
+      });
+    }
 
-  
-  
- 
+    return chartData;
+  }
+
+
+
+
 
   //create category axis for names
   var categoryAxis = chart.yAxes.push(new am4charts.CategoryAxis());
@@ -325,7 +327,7 @@ export const generateBarChart = (data = null, query , div ,type) => {
   series.tooltipText = " {categoryY}: {valueX.value}" + "(Click to Know More)";
   series.columns.template.width = am4core.percent(50);
   let finalTime = data[0]['finalTime'];
-  const updateBarChart = () =>{
+  const updateBarChart = () => {
     console.log(type);
 
     $.ajax({
@@ -333,13 +335,13 @@ export const generateBarChart = (data = null, query , div ,type) => {
       url: 'smat/updateBarPlotRealTime',
       contentType: "application/json",
       dataType: "json",
-      data: { finalTime,query,option:type},
+      data: { finalTime, query, option: type },
       async: false,
       success: function (response) {
-      finalTime = response[0]['finalTime']; 
-      response = response[0]['data'];
-      console.log(finalTime);
-      let dataTemp = response;
+        finalTime = response[0]['finalTime'];
+        response = response[0]['data'];
+        console.log(finalTime);
+        let dataTemp = response;
         if (dataTemp) {
           let lenofTempData = Object.keys(dataTemp).length - 1;
           if (lenofTempData > 1) {
@@ -363,7 +365,7 @@ export const generateBarChart = (data = null, query , div ,type) => {
               }
             }
           } else {
-  
+
             let flag = false;
             for (let j = 0; j <= chart.data.length - 1; j++) {
               if (dataTemp['handle'] == chart.data[j]['token']) {
@@ -380,21 +382,21 @@ export const generateBarChart = (data = null, query , div ,type) => {
                 "token": dataTemp['handle'],
                 "count": dataTemp['count']
               });
-  
+
             }
-  
+
           }
-  
-  
+
+
         }
-      
-  
+
+
       }
     });
   }
-  barChartInterval =  setInterval(updateBarChart, 10000)
+  barChartInterval = setInterval(updateBarChart, 10000)
 
- 
+
   categoryAxis.sortBySeries = series;
   chart.cursor = new am4charts.XYCursor();
 
@@ -404,40 +406,40 @@ export const generateBarChart = (data = null, query , div ,type) => {
 
 
 
-const freqSummary = (data)  => {
+const freqSummary = (data) => {
 
-     let freqTotal = 0 ,totalNormal= 0 , totalSec =0,totalCom=0,totalSecCom=0;
-     data.forEach(element => {
-        freqTotal +=element['value1'];
-        totalNormal +=element['value2'];
-        totalSec +=element['value3'];
-        totalCom +=element['value4'];
-        totalSecCom +=element['value5'];
-    
-     });
-    
-            $('#freqTotalPublic').text(freqTotal);
-            $('#publicNormalTotal').text(totalNormal);
-            $('#publicSecTotal').text(totalSec);
-            $('#publicComTotal').text(totalCom);
-            $('#publicSecComTotal').text(totalSecCom);
-            
-        
-    
-    
+  let freqTotal = 0, totalNormal = 0, totalSec = 0, totalCom = 0, totalSecCom = 0;
+  data.forEach(element => {
+    freqTotal += element['value1'];
+    totalNormal += element['value2'];
+    totalSec += element['value3'];
+    totalCom += element['value4'];
+    totalSecCom += element['value5'];
+
+  });
+
+  $('#freqTotalPublic').text(freqTotal);
+  $('#publicNormalTotal').text(totalNormal);
+  $('#publicSecTotal').text(totalSec);
+  $('#publicComTotal').text(totalCom);
+  $('#publicSecComTotal').text(totalSecCom);
+
+
+
+
 }
 
 
 
 const sentiSummaryTotalFinder = (data) => {
-let totalPos = 0 , totalNeg = 0 ,totalNeu = 0;
- data.forEach(element => {
-    totalPos+=element['value1'],
-    totalNeu+=element['value2'],
-    totalNeg+=element['value3']
-});
-let sentiTotalArray = [totalPos,totalNeu,totalNeg];
-generateSentimentSummaryBar(sentiTotalArray);
+  let totalPos = 0, totalNeg = 0, totalNeu = 0;
+  data.forEach(element => {
+    totalPos += element['value1'],
+      totalNeu += element['value2'],
+      totalNeg += element['value3']
+  });
+  let sentiTotalArray = [totalPos, totalNeu, totalNeg];
+  generateSentimentSummaryBar(sentiTotalArray);
 }
 
 const generateSentimentSummaryBar = (sentiTotalArray) => {
@@ -448,7 +450,7 @@ const generateSentimentSummaryBar = (sentiTotalArray) => {
   $('#publicPosTotal').text(total_pos);
   $('#publicNegTotal').text(total_neg);
   $('#publicNeuTotal').text(total_neu);
-  
+
 
   var total = total_pos + total_neg + total_neu;
 

@@ -225,7 +225,7 @@ class HistoricalAnalysisController extends Controller
         $final_result["range_type"] = $range_type;
         $final_result["chart_type"] = "sent_dist";
         $final_result["data"] = $temp_arr;
-        return json_encode($final_result);
+        return ($final_result);
     }
     
     
@@ -377,7 +377,7 @@ class HistoricalAnalysisController extends Controller
             $hash_arr[$h] = array($v, $cat);
         }
         $final_result["chart_type"] = "top";
-        $final_result["data"] = $hash_arr;
+        $final_result["data"] = array_slice($hash_arr, 0, $limit);
         return ($final_result);
     }
     
@@ -429,6 +429,7 @@ class HistoricalAnalysisController extends Controller
      */
     public function get_tweets_info()
     {
+        $ut_obj = new Ut;
         $final_result = array();
 
         $prepared_statement = "SELECT t_location,datetime,tid,author,author_id,author_profile_image,author_screen_name,sentiment,quoted_source_id,tweet_text,retweet_source_id,media_list,type,category from tweet_info_by_id_test WHERE tid=?";
@@ -451,7 +452,7 @@ class HistoricalAnalysisController extends Controller
                     }
                 }
 
-                $temp_arr = array("t_location" => $row["t_location"], "datetime" => $this->get_date_time_from_cass_date_obj($row["datetime"], 'Y-m-d H:i:s'), "tid" => $row["tid"], "author" => $row["author"], "author_id" => $row["author_id"], "author_profile_image" => $row["author_profile_image"], "author_screen_name" => $row["author_screen_name"], "sentiment" => $row["sentiment"]->value(), "quoted_source_id" => $row["quoted_source_id"], "tweet_text" => $row["tweet_text"], "retweet_source_id" => $row["retweet_source_id"], "media_list" => $media_list_temp, "type" =>  $row["type"]);
+                $temp_arr = array("t_location" => $row["t_location"], "datetime" => $ut_obj->get_date_time_from_cass_date_obj($row["datetime"], 'Y-m-d H:i:s'), "tid" => $row["tid"], "author" => $row["author"], "author_id" => $row["author_id"], "author_profile_image" => $row["author_profile_image"], "author_screen_name" => $row["author_screen_name"], "sentiment" => $row["sentiment"]->value(), "quoted_source_id" => $row["quoted_source_id"], "tweet_text" => $row["tweet_text"], "retweet_source_id" => $row["retweet_source_id"], "media_list" => $media_list_temp, "type" =>  $row["type"]);
                 array_push($final_result, $temp_arr);
             }
         }

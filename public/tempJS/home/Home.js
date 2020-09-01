@@ -164,13 +164,13 @@ $(document).ready(function () {
     }
     else if (MODE == "005") {
       tweetPublic();
-    }
+    } 
   });
 
 
 //update public hahstag every 1 min 
 
-let updatePublicHashtagOneMinInt = setInterval(updatePublicTrendingHashtagsEveryOneMiute,10000);
+let updatePublicHashtagOneMinInt = setInterval(updatePublicTrendingHashtagsEveryOneMiute,15000);
 
 
 });
@@ -212,11 +212,11 @@ const coOccurPublic = (type) => {
 
 const tweetPublic = () => {
   $('#public-summary-2').html('<div class="btn-group"><button type="button" class="btn btn-white smat-rounded dropdown-toggle text-normal" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Filter Tweets</button><div class="dropdown-menu dropdown-menu-right"><li class="dropdown-item clickable filter-pos-tweets"><i class="fa fa-circle text-pos " aria-hidden="true"></i> Positive Tweets</li><li class="dropdown-item clickable filter-neg-tweets"><i class="fa fa-circle text-neg " aria-hidden="true"></i> Negative Tweets</li><li class="dropdown-item clickable filter-neu-tweets"> <i class="fa fa-circle text-neu" aria-hidden="true"></i> Neutral Tweets</li><li class="dropdown-item clickable filter-normal-tweets"> <i class="fa fa-circle text-normal" aria-hidden="true"></i> Normal Tweets</li><li class="dropdown-item clickable filter-com-tweets"> <i class="fa fa-circle text-com" aria-hidden="true"></i> Communal Tweets</li><li class="dropdown-item clickable filter-sec-tweets"> <i class="fa fa-circle text-sec" aria-hidden="true"></i> Security Tweets</li><li class="dropdown-item clickable filter-seccom-tweets"> <i class="fa fa-circle text-seccom" aria-hidden="true"></i> Communal and Security Tweets</li></div></div>');
-  $('#resultdiv').html('<div id="tweetDivPublic"> </div><div> <div class="float-center" id="tweetDivPublicpage-selection"></div>  </div>')
+  $('#result-div').html('<div id="tweetDivPublic"> </div><div> <div class="float-center " id="tweetDivPublicpage-selection"></div>  </div>')
 
 
   let tweetIDs = getTweetIDsFromController(interval,query);
-  tweets_pagination(tweetIDs, 6, 'result-div');
+  tweets_pagination(tweetIDs, 6, 'tweetDivPublic');
 }
 
 const makePublicAnalysisReady = (mode) => {
@@ -379,7 +379,7 @@ export const generate_tweets_div = (tweetData,div) => {
     }
 
 
-    $('#' + div).append('<div class="border p-2 "><div class="d-flex"><div class="profilePictureDiv p-1 text-center mx-2"><img src="'+tweet.author_profile_image+'" style="height:33px;border-radius:50%" /></div><div> <p class="pt-1 m-0 font-weight-bold">'+tweet.author+' </p><p class="smat-dash-title pull-text-top m-0 "> @'+tweet.author_screen_name+' </p></div> <div class="px-1 pt-1" >  <i class="fa fa-circle  mx-2 text-'+sentiment+'" aria-hidden="true"></i> </div></div><div style="width:80%;"><p class="smat-tweet-body-text mb-1">'+tweet.tweet_text+'</p></div><div id="" class="row d-flex justify-content-center tweet_media_body_' +tweet['tid'] +'" ></div><div class="d-flex"><p class="m-0 smat-tweet-body-text font-weight-bold"> <span>  '+tweet.datetime+'  &nbsp </span> <span>'+location+'</span> &nbsp  <span class="text-normal clickable"> Track Tweet</span>   </p> </div></div>');
+    $('#' + div).append('<div class="border p-2 "><div class="d-flex"><div class="profilePictureDiv p-1 text-center mr-2"><img src="'+tweet.author_profile_image+'" style="height:33px;border-radius:50%" /></div><div> <p class="pt-1 m-0 font-weight-bold">'+tweet.author+' </p><p class="smat-dash-title pull-text-top m-0 "> @'+tweet.author_screen_name+' </p></div> <div class="px-1 pt-1" >  <i class="fa fa-circle  mx-2 text-'+sentiment+'" aria-hidden="true"></i> </div></div><div style="width:80%;"><p class="smat-tweet-body-text mb-1">'+tweet.tweet_text+'</p></div><div id="" class="row d-flex justify-content-center tweet_media_body_' +tweet['tid'] +'" ></div><div class="d-flex"><p class="m-0 smat-tweet-body-text font-weight-bold"> <span>  '+tweet.datetime+'  &nbsp </span> <span>'+location+'</span> &nbsp  <span class="text-normal clickable"> Track Tweet</span>   </p> </div></div>');
 
 
 

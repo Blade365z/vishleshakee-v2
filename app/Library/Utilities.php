@@ -36,13 +36,12 @@ class Utilities{
         $diff_value_in_sec = $this->get_difference_between_two_datetime($to_datetime, $from_datetime, $option='sec');
         for ($i = 0; $i <= ($diff_value_in_sec/10); $i++) {
             $to_date_time_list = $this->separate_date_time($to_datetime);
-            $cass_date_obj = $this->convert_php_date_obj_to_cass_date_obj(strtotime($to_date_time_list[0])); //convert php date_obj to cass_date_obj
+            $cass_date_obj = $this->convert_php_date_obj_to_cass_date_obj(strtotime($to_date_time_list[0]. ' 18:30:00')); //convert php date_obj to cass_date_obj
             array_push($tenSec_array,  array($cass_date_obj, $to_date_time_list[1]));
             if($to_datetime == $from_datetime)
                 break;
             $to_datetime_tmp = strtotime('-10 seconds', strtotime($to_datetime));
-            $to_datetime = date('Y-m-d H:i:s', $to_datetime_tmp);
-            
+            $to_datetime = date('Y-m-d H:i:s', $to_datetime_tmp);            
         }
         return array_reverse($tenSec_array);
     }
@@ -126,6 +125,10 @@ class Utilities{
     */
     public function convert_php_date_obj_to_cass_date_obj($timestamp_obj)
     {
+        // echo $timestamp_obj;
+        // echo "----";
+        // echo (new Cassandra\Date($timestamp_obj));
+        // echo "****";
         return new Cassandra\Date($timestamp_obj);
     }
     
