@@ -4,12 +4,12 @@
     User Analysis
 </div>
 <div class="mb-3">
-    <form id="naInputInputs">
+    <form id="uaSearchForm">
 
         <div id="naInputPanel">
             <div class="form-group  text-normal  border smat-rounded d-flex  mr-2 px-2 py-1  bg-white" id="uaSearchInput">
                 <i class="fa fa-search px-1 pt-2" aria-hidden="true" style="margin-top:5px"></i>
-                <input type="text" class="form-control" name="query" id="queryNA" placeholder="Query" style="border:0px;" autocomplete="OFF" required>
+                <input type="text" class="form-control" name="query" id="queryUASearch" placeholder="Query" style="border:0px;" autocomplete="OFF" required>
             </div>
 
 
@@ -80,7 +80,7 @@
 </div>
 <div class="row mt-3">
     <div class="col-md-5">
-        <div class="card shadow">
+        <div class="card shadow" id="userInfoDiv">
             <div class="card-body">
                 <div class="dFlexBut">
                     <div class="text-center">
@@ -94,7 +94,7 @@
 
                 </div>
                 <div class="mt-3 table-responsive-xl" id="uaTable">
-                    <table class="table table-borderless">
+                    <table class="table table-borderless"  id="uaUserInfo">
 
                         <tbody>
                             <tr>
@@ -114,7 +114,7 @@
                             </tr>
                             <tr>
                                 <th class="py-0 px-3 text-dark" scope="row">Bio:</th>
-                                <td class="p-0 text-dark ">Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum is simply dummy text of the printing and typesetting industry. </td>
+                                <td class="p-0 text-dark ">Lorem my text of the printing and typesetting industry. </td>
 
                             </tr>
                             <tr>
@@ -146,7 +146,7 @@
         </div>
     </div>
     <div class="col-md-7">
-        <div class="card shadow">
+        <div class="card shadow" id="userTweetDiv">
             <div class="card-body">
                 <div id="uaTweetsNav">
 

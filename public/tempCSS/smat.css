@@ -5,7 +5,7 @@
     --color-normal: #297EB4;
     --color-sec: #3D3D3D;
     --color-com: #ff0055;
-    --color-seccom: #FF00FF;
+    --color-com_sec: #FF00FF;
     --color-pos: #33CCCC;
     --color-neg: #FC5F4F;
     --color-neu: #FFC060;
@@ -21,6 +21,43 @@
     font-family: Roboto;
     src: url('Roboto-Regular.ttf');
 }
+
+#result-div tspan{
+    font-size:12px;
+}
+.smat-dash-title {
+    font-size: 11px ;
+}
+.interval-buttons-public{
+    font-size:13px;
+}
+.author_searched:hover{
+color:var(--color-active) !important;
+cursor: pointer;
+}
+.smat-box-title-large {
+    /* color: var(--color-text); */
+    font-size: 1.3em ;
+    font-weight: 550;
+}
+
+.smat-box-title {
+    /* color: var(--color-text) !important; */
+    font-size: 1.1em ;
+    font-weight: 550;
+}
+    
+.smat-mainHeading {
+    font-size: 33px;
+}
+
+.verifiedIcon{
+    height:13px;
+}
+
+.divLoader{
+    height:35px;
+}
 .smat-normal-text{
     font-size:15px;
 }
@@ -33,9 +70,7 @@
     background-color: var(--color-active) !important;
 }
 
-.smat-mainHeading {
-    font-size: 33px;
-}
+
 
 .btn-neg {
     background-color: var(--color-neg) !important;
@@ -63,9 +98,6 @@ body {
     background-color: var(--color-active);
 }
 
-li {
-    border-radius: 10px !important;
-}
 
 
 
@@ -92,9 +124,6 @@ li {
     box-shadow: 0 0 0 0.2rem rgba(255, 255, 255, 0) !important;
 }
 
-.smat-tweet-body-text {
-    font-size: 13px;
-}
 
 .smat-nav-active {
     background-color: rgba(202, 202, 202, 0.082);
@@ -104,21 +133,12 @@ li {
     color: #0a0a0a !important;
 }
 
-.smat-box-title {
-    /* color: var(--color-text) !important; */
-    font-size: 1.1em !important;
-    font-weight: 550;
-}
 
 .form-control:disabled, .form-control[readonly] {
     background-color: var(--color-white);
 }
 
-.smat-box-title-large {
-    /* color: var(--color-text); */
-    font-size: 1.3em !important;
-    font-weight: 550;
-}
+
 
 .smat-list {
     list-style: none !important;
@@ -151,7 +171,7 @@ color:white;
 }
 .hashtags {
     /* color: var(--color-text-dark) !important; */
-    font-size: 15px;
+    font-size: 13px;
     margin: 0px;
     /* font-weight: 700; */
 }
@@ -165,9 +185,11 @@ color:white;
     text-decoration: underline;
 }
 
-.smat-dash-title {
-    font-size: 13px;
-}
+
+
+
+
+
 
 #analysis-panel-public {
     width: 90%;
@@ -236,8 +258,8 @@ color:white;
     color: var(--color-com);
 }
 
-.text-seccom {
-    color: var(--color-seccom);
+.text-com_sec {
+    color: var(--color-com_sec);
 }
 
 .text-pos {
@@ -393,7 +415,7 @@ select{
     margin-right:10px;
 }
 .profilePicLarge{
-    height:80px;
+    height:70px;
     border-radius: 50%;
 }
 
@@ -402,10 +424,10 @@ select{
 }
 .userHandleLarge{
     font-size:1em;
-    margin-top:-13px;
+    margin-top:-8px;
 }
 .userNameLarge{
-    font-size:2em;
+    font-size:1.5em;
 }
 #uaTweetsDiv{
     height:350px;
@@ -423,6 +445,12 @@ select{
     height:400px;
     overflow-x: hidden;
     overflow-y: auto;
+}
+#uaUserInfo{
+    font-size:13px ;
+}
+.tweet-details{
+    font-szie:13px;
 }
 @media (max-width: 767.98px) {
     .dFlexBut{
@@ -515,13 +543,19 @@ select{
         font-weight: 550;
     }
     .smat-dash-title {
-        font-size: 15px;
+        font-size: 13px;
     }
     #public-trending {
         height:350px;
         overflow-x: hidden;
         overflow-y: scroll;
     }
+    .hashtags{
+        font-size:14px;
+    }
+
+
+    
     .container {
         max-width: 1480px !important;
     }
@@ -580,6 +614,8 @@ select{
         max-width: 1340px !important;
     }
     
+
+
 #result-div {
     height: 395px ;
     overflow-x: hidden !important;
@@ -588,17 +624,33 @@ select{
     .nav-link {
         font-size: 15px;
     }
-    .smat-box-title-large {
-        font-size: 21px !important;
-        font-weight: 550;
-    }
-    .smat-box-title {
-        font-size: 17px !important;
-        font-weight: 550;
+
+    #result-div tspan{
+        font-size:22px;
     }
     .smat-dash-title {
-        font-size: 13px;
+        font-size: 11px !important;
     }
+    
+    .smat-box-title-large {
+        /* color: var(--color-text); */
+        font-size: 1.3em !important;
+        font-weight: 550;
+    }
+    
+    .smat-box-title {
+        /* color: var(--color-text) !important; */
+        font-size: 1.1em !important;
+        font-weight: 550;
+    }
+        
+    .smat-mainHeading {
+        font-size: 33px;
+    }
+    
+
+
+
     #public-trending {
         height:350px;
         overflow-x: hidden;

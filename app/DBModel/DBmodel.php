@@ -61,8 +61,7 @@ class DBmodel extends Model
 
 
     public function execute_query($statement, $options = null, $type=null)
-    {
-        
+    {        
         $session = $this->establish_db_connection($type);
 
         if ($options) {

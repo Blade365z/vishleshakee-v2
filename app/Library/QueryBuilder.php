@@ -10,51 +10,55 @@ class QueryBuilder{
     *
     * @return array containing prepared_statement and parameter
     */
-    public function get_statement($to_datetime, $from_datetime, $token=null, $range_type=null, $feature_option=null, $co_occur_option=null, $async=true, $limit = null, $first_row = false){
+    public function get_statement($to_datetime, $from_datetime, $token=null, $range_type=null, $feature_option=null, $co_occur_option=null, $async=true, $limit = null, $id_list=null){
         $ut_obj = new Ut;
         $final_res = null;
-        if(($range_type == '10sec') or ($range_type == 'hour')){
-            if($from_datetime and $to_datetime and $token){
-                if($async){
-                    if($feature_option == 'freq'){
-                        $query_class = $this->get_query_class($token);
-                        $prepared_statement_10sec = "SELECT created_date, created_time, category_class_list, count_list from token_count WHERE created_date = ? AND class=" . $query_class . " AND created_time = ? AND token_name='" . $token . "'";
-                        if($range_type == '10sec')
-                            $input_args_10sec = $ut_obj->get_10sec_list($to_datetime, $from_datetime);
-                        else
-                            echo 'hour';
-                    }else if($feature_option == 'sent'){
-                        $query_class = $this->get_query_class($token);
-                        $prepared_statement_10sec = "SELECT created_date, created_time, category_class_list, count_list from token_count WHERE created_date = ? AND class=" . $query_class . " AND created_time = ? AND token_name='" . $token . "'";
-                        if($range_type == '10sec')
-                            $input_args_10sec = $ut_obj->get_10sec_list($to_datetime, $from_datetime);
-                        else
-                            echo 'hour';
-                    }else if($feature_option == 'co_occur'){
-                        $query_class = $this->get_query_class($token, 'co_occur', $co_occur_option);
-                        $prepared_statement_10sec = "SELECT created_date, created_time, token_name2, count_list from token_co_occur WHERE created_date = ? AND class=" . $query_class . " AND created_time = ? AND token_name1='" . $token . "'";
-                        if($range_type == '10sec')
-                            $input_args_10sec = $ut_obj->get_10sec_list($to_datetime, $from_datetime);
-                        else
-                            echo 'hour';
-                    }else if($feature_option == 'tweet'){
-                        $query_class = $this->get_query_class($token);
-                        $prepared_statement_10sec = "SELECT tweetidlist from token_count WHERE created_date = ? AND class=" . $query_class . " AND created_time = ? AND token_name='" . $token . "'";
-                        if($range_type == '10sec')
-                            $input_args_10sec = $ut_obj->get_10sec_list($to_datetime, $from_datetime);
-                        else
-                            echo 'hour';
+        
+        if(($feature_option == 'freq') or ($feature_option == 'sent') or ($feature_option == 'co_occur') or ($feature_option == 'tweet')){
+            if(($range_type == '10sec') or ($range_type == 'hour')){
+                if($from_datetime and $to_datetime and $token){
+                    if($async){
+                        if($feature_option == 'freq'){
+                            $query_class = $this->get_query_class($token);
+                            $prepared_statement_10sec = "SELECT created_date, created_time, category_class_list, count_list from token_count WHERE created_date = ? AND class=" . $query_class . " AND created_time = ? AND token_name='" . $token . "'";
+                            if($range_type == '10sec')
+                                $input_args_10sec = $ut_obj->get_10sec_list($to_datetime, $from_datetime);
+                            else
+                                echo 'hour';
+                        }else if($feature_option == 'sent'){
+                            $query_class = $this->get_query_class($token);
+                            $prepared_statement_10sec = "SELECT created_date, created_time, category_class_list, count_list from token_count WHERE created_date = ? AND class=" . $query_class . " AND created_time = ? AND token_name='" . $token . "'";
+                            if($range_type == '10sec')
+                                $input_args_10sec = $ut_obj->get_10sec_list($to_datetime, $from_datetime);
+                            else
+                                echo 'hour';
+                        }else if($feature_option == 'co_occur'){
+                            $query_class = $this->get_query_class($token, 'co_occur', $co_occur_option);
+                            $prepared_statement_10sec = "SELECT created_date, created_time, token_name2, count_list from token_co_occur WHERE created_date = ? AND class=" . $query_class . " AND created_time = ? AND token_name1='" . $token . "'";
+                            if($range_type == '10sec')
+                                $input_args_10sec = $ut_obj->get_10sec_list($to_datetime, $from_datetime);
+                            else
+                                echo 'hour';
+                        }else if($feature_option == 'tweet'){
+                            $query_class = $this->get_query_class($token);
+                            $prepared_statement_10sec = "SELECT category_class_list, tweetidlist from token_count WHERE created_date = ? AND class=" . $query_class . " AND created_time = ? AND token_name='" . $token . "'";
+                            if($range_type == '10sec')
+                                $input_args_10sec = $ut_obj->get_10sec_list($to_datetime, $from_datetime);
+                            else
+                                echo 'hour';
+                        }
+                        $final_res[0] = $prepared_statement_10sec;
+                        $final_res[1] = $input_args_10sec;
+                    }else{
+                        //not assync
                     }
-                    $final_res[0] = $prepared_statement_10sec;
-                    $final_res[1] = $input_args_10sec;
-                }else{
-                    //not assync
                 }
+            }else if($range_type == 'day'){
+                // for day
             }
-        }else if($range_type == 'day'){
-            // for day
         }
         
+
         $feature_option_split = explode("_", $feature_option); //$feature_option = 'top_hashtag'/'top_mention'
         if($feature_option_split[0] == 'top'){
             $query_class = $this->get_query_class($feature_option_split[1], $feature_option_split[0]);
@@ -70,6 +74,33 @@ class QueryBuilder{
             }
             else if($range_type == 'day'){
                 
+            }
+        }
+
+
+        if($feature_option == 'tweet_info'){
+            $final_res[0] = "SELECT t_location,datetime,tid,author,author_id,author_profile_image,author_screen_name,sentiment,quoted_source_id,tweet_text,retweet_source_id,media_list,type,category from tweet_info_by_id_test WHERE tid=?";
+            $input_args = array();
+            foreach ($id_list as $value) {
+                array_push($input_args, array($value));
+            }
+            $final_res[1] = $input_args;
+        }
+
+
+        if($feature_option == 'user_info'){
+            if($async){
+                $final_res[0] = "SELECT author_id, author, author_screen_name, profile_image_url_https from user_record WHERE author_id=?";
+                $input_args = array();
+                foreach ($id_list as $value) {
+                    $value = str_replace('$','', $value);
+                    array_push($input_args, array($value));
+                }
+                $final_res[1] = $input_args;
+            }else{
+                // $token = '$821712536215362' 
+                $token = str_replace('$','', $token);
+                $final_res[0] = "SELECT author_id, author, author_screen_name, profile_image_url_https from user_record WHERE author_id=" . "'" .$token."'";
             }
         }
         

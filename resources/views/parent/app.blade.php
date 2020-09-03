@@ -7,9 +7,7 @@
     <title>TEST DOMAIN</title>
     <script src="public/js/app.js" ></script>
 
-
-      <link href="public/bootstrap.css" rel="stylesheet">
-    <!-- <link href="public/css/app.css" rel="stylesheet"> -->
+    <link href="public/css/app.css" rel="stylesheet">
     <link href="public/datepicker/datepicker-min.css" rel="stylesheet">
     <link href="public/tempCSS/smat.css" rel="stylesheet">
     <link href="public/font-awesome/css/all.css" rel="stylesheet">
@@ -20,6 +18,7 @@
 <div class="container" id="main-wrapper">
         @include("inc.navbar")
         @include('inc.publicTweets')
+        @include('inc.userSearchModal')
         @yield('content')
     </div>
     @include("inc.footer")

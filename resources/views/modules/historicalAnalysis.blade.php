@@ -1,5 +1,6 @@
 @extends('parent.app')
 @section('content')
+
 <div class="smat-mainHeading ">
     Historical Analysis
 </div>

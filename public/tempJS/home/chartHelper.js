@@ -1,4 +1,11 @@
 
+import {getTweetIDsFromController} from './helper.js'
+import {TweetsGenerator} from '../utilitiesJS/TweetGenerator.js'
+
+
+
+
+
 var frequencyChartInt = null, sentimentChartInterval = null, barChartInterval = null;
 export const clearChartIntervals = () => {
   clearInterval(frequencyChartInt);
@@ -36,8 +43,6 @@ export const generateFrequencyChart = (data, query, div) => {
   catch (err) {
     console.log('Final Time couldnot be initialized', err);
   }
-
-  console.log('FINAL TIME', finalTime);
   const updateFreqChart = function () {
     $.ajax({
       type: "GET",
@@ -97,8 +102,20 @@ export const generateFrequencyChart = (data, query, div) => {
   circleBullet.circle.strokeWidth = 0;
 
   circleBullet.events.on("hit", function (ev) {
+    // $('#tweetsModal').modal('show');
+    let datetime_obj = ev.target.dataItem.component.tooltipDataItem.dataContext;
+    let time = (datetime_obj['date'].toLocaleTimeString('en-US', {
+      hour12: false
+    }));
+    let month = datetime_obj['date'].getMonth() + 1;
+    month = month < 10 ? '0' + month : '' + month;
+    let capturedDate = (datetime_obj['date'].getFullYear() + '-' + month + '-' + datetime_obj['date'].getDate()) +' '+ time;
+
+   
+    let freqOnClickTweetData  = getTweetIDsFromController(null,query,capturedDate,capturedDate);
+    TweetsGenerator(freqOnClickTweetData, 6, 'tweets-modal-div');
     $('#tweetsModal').modal('show');
-    generateTweets('tweets-modal-div');
+    
   });
   //chart.scrollbarY = new am4core.Scrollbar();
   chart.scrollbarX = new am4core.Scrollbar();
@@ -408,13 +425,13 @@ export const generateBarChart = (data = null, query, div, type) => {
 
 const freqSummary = (data) => {
 
-  let freqTotal = 0, totalNormal = 0, totalSec = 0, totalCom = 0, totalSecCom = 0;
+  let freqTotal = 0, totalNormal = 0, totalSec = 0, totalCom = 0, totalcom_sec = 0;
   data.forEach(element => {
     freqTotal += element['value1'];
     totalNormal += element['value2'];
     totalSec += element['value3'];
     totalCom += element['value4'];
-    totalSecCom += element['value5'];
+    totalcom_sec += element['value5'];
 
   });
 
@@ -422,7 +439,7 @@ const freqSummary = (data) => {
   $('#publicNormalTotal').text(totalNormal);
   $('#publicSecTotal').text(totalSec);
   $('#publicComTotal').text(totalCom);
-  $('#publicSecComTotal').text(totalSecCom);
+  $('#publiccom_secTotal').text(totalcom_sec);
 
 
 

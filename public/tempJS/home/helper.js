@@ -113,17 +113,26 @@ return topDataTemp;
 
 
 
-export const getTweetIDsFromController = (interval, query) => {
+export const getTweetIDsFromController = (interval=null, query , fromTime=null,toTime=null,filter=null) => {
     var tweetData;
+    let Args;
+    if(interval==null && fromTime!=null){
+        Args = {fromTime,toTime,query}
+    }else{
+        Args = {interval,query}
+    }
+    if(filter!==null){
+        Args = {fromTime,toTime,query,filter}
+    }
     $.ajax({
         type: "GET",
         url: 'smat/getTweetIDs',
         contentType: "application/json",
-        data:{interval,query},
+        data:Args,
         dataType: "json",
         async: false,
         success: function (response) {
-            tweetData = response.data;
+            tweetData = response;
         }
     });
 return tweetData;

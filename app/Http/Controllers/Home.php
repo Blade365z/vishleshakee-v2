@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Controllers\HistoricalAnalysisController;
+use App\Http\Controllers\CommonController;
 use DateTime;
 use Illuminate\Support\Facades\Auth;
 
@@ -55,7 +55,7 @@ class Home extends Controller
             return response()->json(['error' => 'interval  or query not set'], 404);
         }
         $dateTimeArgs = $this->CurrentDateTimeGeneratorPublic($interval);
-        $freqDistObj = new HistoricalAnalysisController;
+        $freqDistObj = new CommonController;
 
         $freqData = $freqDistObj->get_frequency_distribution_data($dateTimeArgs[1], $dateTimeArgs[0], $query, '10sec', true, true);
         return ($freqData);
@@ -65,7 +65,7 @@ class Home extends Controller
         $fromTime = $_GET['finalTime'];
         $fromTime = date('Y-m-d H:i:s', strtotime($fromTime) + 10);
         $query = $_GET['query'];
-        $freqDistObj = new HistoricalAnalysisController;
+        $freqDistObj = new CommonController;
         $freqData = $freqDistObj->get_frequency_distribution_data($fromTime, $fromTime, $query, '10sec', true, true);
         $finalData = array(['data' => $freqData, 'finalTime' => $fromTime]);
         return ($finalData);
@@ -84,7 +84,7 @@ class Home extends Controller
         }
 
         $dateTimeArgs = $this->CurrentDateTimeGeneratorPublic($interval);
-        $sentiDistObj = new HistoricalAnalysisController;
+        $sentiDistObj = new CommonController;
         $sentiData = $sentiDistObj->get_sentiment_distribution_data($dateTimeArgs[1], $dateTimeArgs[0], $query, '10sec');
         return $sentiData;
     }
@@ -93,7 +93,7 @@ class Home extends Controller
         $fromTime = $_GET['finalTime'];
         $fromTime = date('Y-m-d H:i:s', strtotime($fromTime) + 10);
         $query = $_GET['query'];
-        $sentiDistObj = new HistoricalAnalysisController;
+        $sentiDistObj = new CommonController;
         $sentiData = $sentiDistObj->get_sentiment_distribution_data($fromTime, $fromTime, $query, '10sec');
         $finalData = array(['data' => $sentiData, 'finalTime' => $fromTime]);
         return ($finalData);
@@ -111,7 +111,7 @@ class Home extends Controller
             return response()->json(['error' => 'interval  or query not set'], 404);
         }
         $dateTimeArgs = $this->CurrentDateTimeGeneratorPublic($interval);
-        $haObj = new HistoricalAnalysisController;
+        $haObj = new CommonController;
         $data = $haObj->get_co_occur_data($dateTimeArgs[1], $dateTimeArgs[0], $query, '10sec', $option, null, true);
         $finalData = array(['data' => $data, 'finalTime' => $dateTimeArgs[1]]);
         return ($finalData);
@@ -123,7 +123,7 @@ class Home extends Controller
         $fromTime = date('Y-m-d H:i:s', strtotime($fromTime) + 10);
         $query = $_GET['query'];
         $option = $_GET['option'];
-        $haObj = new HistoricalAnalysisController;
+        $haObj = new CommonController;
         $data = $haObj->get_co_occur_data($fromTime, $fromTime, $query, '10sec', $option, null, false, true);
         $finalData = array(['data' => $data, 'finalTime' => $fromTime]);
         return $finalData;
@@ -140,25 +140,51 @@ class Home extends Controller
             return response()->json(['error' => 'interval  or query not set'], 404);
         }
         $dateTimeArgs = $this->CurrentDateTimeGeneratorPublic($interval);
-        $haObj = new HistoricalAnalysisController;
+        $haObj = new CommonController;
         $data = $haObj->get_top_data($dateTimeArgs[1], $dateTimeArgs[0], 'top_hashtag', $limit = 50, null);
         return $data;
     }
 
-    public function getTweetIDData(){
-        if (isset($_GET['interval']) && isset($_GET['query'])) {
-            $interval = $_GET['interval'];
-            if ($interval > 86400) {
-                return response()->json(['error' => 'Not Allowed'], 404);
+    public function getTweetIDData()
+    {
+        if (!isset($_GET['fromTime']) || !isset($_GET['toTime'])) {
+            if (isset($_GET['interval']) && isset($_GET['query'])) {
+                $interval = $_GET['interval'];
+                if ($interval > 86400) {
+                    return response()->json(['error' => 'Not Allowed'], 404);
+                }
+                $query = $_GET['query'];
+            } else {
+                return response()->json(['error' => 'interval  or query not set'], 404);
             }
-            $query = $_GET['query'];
+            $dateTimeArgs = $this->CurrentDateTimeGeneratorPublic($interval);
+            $fromTime = $dateTimeArgs[0];
+            $toTime = $dateTimeArgs[1];
         } else {
-            return response()->json(['error' => 'interval  or query not set'], 404);
+            $fromTime = $_GET['fromTime'];
+            $toTime = $_GET['toTime'];
+            $query = $_GET['query'];
         }
-        $dateTimeArgs = $this->CurrentDateTimeGeneratorPublic($interval);
-        $haObj = new HistoricalAnalysisController;
-        $data = $haObj->get_tweets($dateTimeArgs[1], $dateTimeArgs[0], $query, '10sec');
-        return $data;
-}
+        if (isset($_GET['filter'])) {
+            $filter = $_GET['filter'];
+        } else {
+            $filter = null;
+        }
+        $haObj = new CommonController;
+        $data = $haObj->get_tweets($toTime, $fromTime, $query, '10sec', $filter);
+        $finalData = array(['data' => $data, 'fromTime' => $fromTime, 'toTime' => $toTime]);
+        return $finalData;
+    }
 
+    public function getRawTweets()
+    {
+        if (isset($_GET['tweet_id_list'])) {
+            $tIDlist = $_GET['tweet_id_list'];
+        } else {
+            return response()->json(['error' => 'No Data Captured'], 404);
+        }
+        $haObj = new CommonController;
+        $data = $haObj->get_tweets_info($tIDlist);
+        return $data;
+    }
 }
