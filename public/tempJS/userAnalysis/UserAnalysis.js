@@ -1,19 +1,23 @@
 //User Analysis Logic For Vishleshakee version 2.0 , Deployed by OSINT Lab ,IIT-G
 //Witten By :: Mala Das , Amitabh Boruah 
 
+//Use camelCase please notations:)
+
 
 
 //Imports
 import { generateFreqDistChart, generateSentimentChart, generateBarChart } from './chartHelper.js';
 import { formulateUserSearch } from '../utilitiesJS/userSearch.js'
-import { getSuggestionsForUA ,getUserDetails} from './helper.js'
+import { getSuggestionsForUA, getUserDetails,getFreqDistDataForUA } from './helper.js'
+import { getCurrentDate ,getRangeType  } from '../utilitiesJS/smatDate.js'
+import {generateFreqDistBarChart,generateFrequencyLineChart} from '../utilitiesJS/smatChartBuilder.js'
 
 
 //Global Declaration
 var suggestionPopularIDs = ['$18839785', '$1447949844', '$1346439824', '$405427035', '$3171712086', '$1153045459', '$24705126', '$131188226', '$2570829264', '$207809313', '$2584552812', '$336611577', '$841609973687762944', '$4743651972', '$2166444230', '$3314976162', '$627355202', '$295833852', '$97217966', '$478469228', '$2541363451', '$39240673'];
 
 var suggestionPopularNewsHandleIDs = ['$19897138', '$16343974', '$39240673', '$240649814', '$42606652', '$321271735', '$372754427', '$6509832', '$6433472', '$36327407', '$37034483', '$20751449', '$112404600', '$438156528', '$739053070932287488', '$267158021', '$128555221', '$742143', '$759251', '$701725963', '$55186601', '$28785486'];
-var SearchID;   //Global Variable to keep Track of current search
+var SearchID, fromDate, toDate;   //Global Variable to keep Track of current search
 
 
 
@@ -28,15 +32,21 @@ var SearchID;   //Global Variable to keep Track of current search
 
 //Logic Implementation 
 $(document).ready(function () {
+    fromDate = getCurrentDate();
+    toDate = getCurrentDate();
+
     $('.nav-item ').removeClass('smat-nav-active');
     $('#nav-UA').addClass('smat-nav-active');
-    generateSuggestions(suggestionPopularIDs, 'suggUsers','users')
-    generateSuggestions(suggestionPopularNewsHandleIDs, 'suggNews','news')
+    generateSuggestions(suggestionPopularIDs, 'suggUsers', 'users')
+    generateSuggestions(suggestionPopularNewsHandleIDs, 'suggNews', 'news')
     // generateSuggestions(null, 'suggNews')
     generateTweets('uaTweetsDiv')
-    let tweetDivHeight = $('#userInfoDiv').height();
-    generateFreqDistChart(null, 'freqContentUA');
-    freqSummaryGenerator(null, null);
+
+  
+    $('#fromDateUA').val(fromDate);
+    $('#toDateUA').val(toDate);
+
+    
     $('#uaSearchForm').on('submit', function (e) {
         e.preventDefault();
         let tokenCapturedForSearch = $('#queryUASearch').val();
@@ -45,12 +55,12 @@ $(document).ready(function () {
     });
 
 
-    $('.suggHandles').on('click',function(){
+    $('.suggHandles').on('click', function () {
         let capturedToken = $(this).attr('value');
         initateUserSearch(capturedToken);
     })
 
-
+    let tweetDivHeight = $('#userInfoDiv').height();
     $('#uaTweetsDiv').css('height', tweetDivHeight - 10 + 'px');
     $('#frqTabUA').on('click', function () {
         generateFreqDistChart(null, 'freqContentUA');
@@ -65,7 +75,7 @@ $(document).ready(function () {
         generateBarChart(null, 'mentionsContentUA');
         generateBarChartSummary(null, 'summaryContent-1', 'hour');
     });
-    let suggShowFLag = 0;
+    let suggShowFLag = 1;
     $('#showUAsugg').on('click', function () {
         if (suggShowFLag == 0) {
             $('#suggDiv').css('display', 'flex');
@@ -79,42 +89,82 @@ $(document).ready(function () {
 });
 
 const generateSuggestions = (userIDArray, div, type = null) => {
-    let cookie = 'smat-'+type+'-suggestionJSON';
+    let cookie = 'smat-' + type + '-suggestionJSON';
     let helperResult;
-    if(localStorage.getItem(cookie)){
-         helperResult = JSON.parse(localStorage.getItem(cookie));
-    }else{
-         helperResult = getSuggestionsForUA(userIDArray);
-         localStorage.setItem(cookie,JSON.stringify(helperResult));
-        }
+    if (localStorage.getItem(cookie)) {
+        helperResult = JSON.parse(localStorage.getItem(cookie));
+    } else {
+        helperResult = getSuggestionsForUA(userIDArray);
+        localStorage.setItem(cookie, JSON.stringify(helperResult));
+    }
     let counter = 0;
     let index = 1;
     helperResult.forEach(element => {
         counter++;
         if (counter === 12)
             index = 2
-        $('#' + div + '-' + index).append('<div class="suggHandles" title="'+element[1]+'"  value="'+element[0]+'"> <img src="' + element[3] + '" class="profilePicSmall UAProfilePicture" /> </div>');
+        $('#' + div + '-' + index).append('<div class="suggHandles" title="' + element[1] + '"  value="' + element[0] + '"> <img src="' + element[3] + '" class="profilePicSmall UAProfilePicture" /> </div>');
     });
 
 }
 
-
-
-
 const initateUserSearch = (id) => {
     SearchID = id
     let userDetals = getUserDetails(SearchID);
-    
+    makePageReady(userDetals);
+    let rangeType  = getRangeType(fromDate,toDate);
+    frequencyDistributionUA(SearchID,'days',fromDate,toDate,null,'freqContentUA',false);
+}
+const makePageReady = (userDetails) => {
+    $("#currentUAProfilePic").attr("src", userDetails.profile_image_url_https.includes('_normal') ? userDetails.profile_image_url_https.replace('_normal', '') : userDetails.profile_image_url_https);
+    $('#currentUAUserName').text(userDetails.author);
+    $('#showingResultsFor').text(userDetails.author);
+    $('#currentUAVerified').html(userDetails.verified === "True" ? '<img class="verifiedIcon" src="public/icons/smat-verified.png"/>' : '');
+
+    $('#currentUAUserHandle').text('@' + userDetails.author_screen_name);
+    $('#userDetailsID').text(SearchID.replace('$', ''));
+    $('#userDetailsJOINEDON').text(userDetails.created_at.seconds);
+    $('#userDetailsLOCATION').text(userDetails.location == null ? 'Location not shared by user' : userDetails.location);
+    $('#userDetailsBIO').text(userDetails.description == null ? 'Bio not available' : userDetails.description);
+    $('#userDetailsURL').html(userDetails.url == null ? 'URL not available' : '<a href=' + userDetails.url + ' target="_blank">' + userDetails.url + '</a>');
+
+    let tweetDivHeight = $('#userInfoDiv').height();
+    $('#uaTweetsDiv').css('height', tweetDivHeight - 10 + 'px');
+
+
 }
 
 
-
-
-
-
-
-
-
+export const frequencyDistributionUA = (query=null,rangeType,fromDate=null,toDate=null,toTime=null,div,appendArg=false) => {
+    let freqData;
+    let chartDivID,summaryDivID;
+    if(appendArg){
+        $('.'+rangeType+'-charts').remove();
+        let chartDivTemp = div+'-'+rangeType+'-chart';
+        let summaryDivTemp= div+'-'+rangeType+'-summary';
+       $('#'+div).after('<div class="'+rangeType+'-charts"> <div id="'+summaryDivTemp+'"></div><div class="uaTab" id="'+chartDivTemp+'"></div> </div>');
+       chartDivID=chartDivTemp;
+       summaryDivID=summaryDivTemp;
+    }else{
+         summaryDivID = div+'-summary';
+         chartDivID = div+'-chart';
+        //TODO::Condition for tweets to be done 
+        $('#'+div).html('<div id="'+summaryDivID+'"></div><div class="uaTab" id="'+chartDivID+'"></div>');
+    }
+    // generateFreqDistChart(null, chartDivID);
+    // freqSummaryGenerator(null, summaryDivID);
+    if(rangeType=='days'){
+        freqData = getFreqDistDataForUA(query,fromDate,toDate,null,rangeType);
+        generateFreqDistBarChart(query,freqData,rangeType,chartDivID);
+    }else if(rangeType == 'hour'){
+        freqData = getFreqDistDataForUA(query,fromDate,toDate,null,rangeType);
+        generateFreqDistBarChart(query,freqData,rangeType,chartDivID);
+    }else{
+        freqData = getFreqDistDataForUA(query,fromDate,toDate,null,rangeType);
+        generateFrequencyLineChart(query,freqData,rangeType,chartDivID);
+    }
+    // freqSummaryGenerator();
+}
 
 export const generateTweets = (div) => {
     $('#uaTweetsNav').html('<span class="text-dark mr-4" > Tweets posted by the user</span> <div class="btn-group"><button type="button" class="btn btn-white smat-rounded dropdown-toggle text-normal" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Filter Tweets</button><div class="dropdown-menu dropdown-menu-right"><li class="dropdown-item clickable filter-pos-tweets"><i class="fa fa-circle text-pos " aria-hidden="true"></i> Positive Tweets</li><li class="dropdown-item clickable filter-neg-tweets"><i class="fa fa-circle text-neg " aria-hidden="true"></i> Negative Tweets</li><li class="dropdown-item clickable filter-neu-tweets"> <i class="fa fa-circle text-neu" aria-hidden="true"></i> Neutral Tweets</li><li class="dropdown-item clickable filter-normal-tweets"> <i class="fa fa-circle text-normal" aria-hidden="true"></i> Normal Tweets</li><li class="dropdown-item clickable filter-com-tweets"> <i class="fa fa-circle text-com" aria-hidden="true"></i> Communal Tweets</li><li class="dropdown-item clickable filter-sec-tweets"> <i class="fa fa-circle text-sec" aria-hidden="true"></i> Security Tweets</li><li class="dropdown-item clickable filter-seccom-tweets"> <i class="fa fa-circle text-seccom" aria-hidden="true"></i> Communal and Security Tweets</li></div></div>');
@@ -128,7 +178,7 @@ export const generateTweets = (div) => {
 
 
 const freqSummaryGenerator = (data = null, div = null) => {
-    $('#summaryContent-1').html('<div class="d-flex px-4"><div><p class=" smat-box-title-large m-0 font-weight-bold text-dark ">23312</p><p class="pull-text-top m-0 smat-dash-title ">Tweets Arrived</p></div><div class="mx-2"><p class=" smat-box-title-large m-0 font-weight-bold text-dark ">4430</p><p class="pull-text-top m-0 smat-dash-title ">on 23 May 2020</p></div></div>')
+    $('#'+div).html('<div class="d-flex px-4"><div><p class=" smat-box-title-large m-0 font-weight-bold text-dark ">23312</p><p class="pull-text-top m-0 smat-dash-title ">Tweets Arrived</p></div><div class="mx-2"><p class=" smat-box-title-large m-0 font-weight-bold text-dark ">4430</p><p class="pull-text-top m-0 smat-dash-title ">on 23 May 2020</p></div></div>')
 
 }
 

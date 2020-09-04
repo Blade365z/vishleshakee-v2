@@ -113,7 +113,8 @@ export const generateFrequencyChart = (data, query, div) => {
 
    
     let freqOnClickTweetData  = getTweetIDsFromController(null,query,capturedDate,capturedDate);
-    TweetsGenerator(freqOnClickTweetData, 6, 'tweets-modal-div');
+    let tweetIDs = freqOnClickTweetData[0]['data']['data'];
+    TweetsGenerator(tweetIDs, 4, 'tweets-modal-div');
     $('#tweetsModal').modal('show');
     
   });

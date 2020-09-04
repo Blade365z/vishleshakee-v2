@@ -16,6 +16,8 @@ import { generateFrequencyChart, generateSentimentChart, generateBarChart } from
 import { TweetsGenerator } from '../utilitiesJS/TweetGenerator.js';
 import { getCompleteMap } from '../utilitiesJS/getMap.js';
 
+
+
 //Global variables 
 var MODE = '000';
 var interval = 900;
@@ -224,8 +226,8 @@ const tweetPublic = () => {
   $('#public-summary-2').html('<div class="btn-group"><button type="button" class="btn btn-white smat-rounded dropdown-toggle text-normal" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Filter Tweets</button><div class="dropdown-menu dropdown-menu-right"><li class="dropdown-item clickable filter-tweets" value="all"> Show all tweets</li><li class="dropdown-item clickable filter-tweets" value="pos"><i class="fa fa-circle text-pos " aria-hidden="true"></i> Positive Tweets</li><li class="dropdown-item clickable filter-tweets" value="neg"><i class="fa fa-circle text-neg " aria-hidden="true"></i> Negative Tweets</li><li class="dropdown-item clickable filter-tweets" value="neu"> <i class="fa fa-circle text-neu" aria-hidden="true"></i> Neutral Tweets</li><li class="dropdown-item clickable filter-tweets" value="normal"> <i class="fa fa-circle text-normal" aria-hidden="true"></i> Normal Tweets</li><li class="dropdown-item clickable filter-tweets" value="com"> <i class="fa fa-circle text-com" aria-hidden="true"></i> Communal Tweets</li><li class="dropdown-item clickable filter-tweets" value="sec"> <i class="fa fa-circle text-sec" aria-hidden="true"></i> Security Tweets</li><li class="dropdown-item clickable filter-tweets" value="com_sec"> <i class="fa fa-circle text-com_sec" aria-hidden="true"></i> Communal and Security Tweets</li></div></div>');
 
   let helperData = getTweetIDsFromController(interval, query);
-
   let tweetIDs = helperData[0]['data']['data'];
+  
   queriedTweetFromTime = helperData[0]['fromTime'];
   queriedTweetToTime = helperData[0]['toTime'];
   // console.log(tweetIDs);
@@ -270,5 +272,8 @@ const generatePublicHashtags = (data, filterArgument = null) => {
 
 const generatePublicLocations = () => {
   //TODO::Rajdeep
-  getCompleteMap('result-div');
+  $('#result-div').html('<div id="result-div-map" style="height:400px;"></div>');
+  getCompleteMap('result-div-map',query,interval);
+  
+  
 }

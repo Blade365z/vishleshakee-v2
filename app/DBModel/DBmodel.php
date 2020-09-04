@@ -40,18 +40,15 @@ class DBmodel extends Model
     public function establish_db_connection($type_arg)
     {
         // $osint_DB = parse_ini_file("/var/www/osint_conf.ini"); // The Database Configuration file
-        // $userId = env('CASSANDRA_UNAME');
-        // $pwd =  env('CASSANDRA_PASS');
-        // $cassandra_nodes = env('CASSANDRA_NODES');
-        // if($type_arg=='raw'){
-        //     $keyspace =  env('KEYSPACE1');
-        // }else{
-        //     $keyspace =  env('KEYSPACE2');
-        // }
-        $userId = 'cassandra';
-        $pwd = 'cassandra';
-        $keyspace = 'processed_keyspace';
-        $cassandra_nodes = '172.16.117.201, 172.16.117.202, 172.16.117.204';
+        $userId = env('CASSANDRA_UNAME');
+        $pwd =  env('CASSANDRA_PASS');
+        $cassandra_nodes = env('CASSANDRA_NODES');
+        $keyspace =  env('KEYSPACE');
+      
+        // $userId = 'cassandra';
+        // $pwd = 'cassandra';
+        // $keyspace = 'processed_keyspace';
+        // $cassandra_nodes = '172.16.117.201, 172.16.117.202, 172.16.117.204';
         
         $cluster = Cassandra::cluster()->withRoundRobinLoadBalancingPolicy()->withContactPoints($cassandra_nodes)->withDefaultConsistency(Cassandra::CONSISTENCY_LOCAL_QUORUM)->withDefaultPageSize(100000000000000)->withCredentials($userId, $pwd)->withPort(9042)->withPersistentSessions(true)->withConnectTimeout(900)->build();
         $session   = $cluster->connect($keyspace);

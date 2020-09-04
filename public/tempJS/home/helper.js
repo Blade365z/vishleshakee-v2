@@ -1,4 +1,14 @@
+//Helper functions for User Analysis (Authenticated) of 
+//Social Mediia Analysis Tool Vishleshakee developed at OSINT Lab ,IIT-G
+//Written by :: Mala Das , Amitabh Boruah.
 
+
+//Use camelCase please notations:)
+
+//PLEASE NOTE that the range types are :: 1. days , 2.hour , 3.10sec
+
+
+//Logic Starts here 
 export const getFreqDistData = (interval, query) => {
     var freqData;
     $.ajax({

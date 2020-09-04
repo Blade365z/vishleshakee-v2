@@ -36,7 +36,7 @@
                     </div>
                 </div>
         <div>
-            <p class="smat-box-title-large m-0">Showing Results for <span class="smat-value font-weight-bold text-normal" id="publicCurrentQuery">  </span> </p>
+            <p class="smat-box-title-large m-0">Showing results for <span class="smat-value font-weight-bold text-normal" id="publicCurrentQuery">  </span> </p>
         </div>
         
         <div class="card shadow mt-2" id="main-public-dash">

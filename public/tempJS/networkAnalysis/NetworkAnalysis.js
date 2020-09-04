@@ -2,7 +2,7 @@
 
 
 import {roshan} from './visualizer.js';
-
+import {render_graph} from './helper.js';
 
 let totalQueries;
 let searchRecords = [];
@@ -25,9 +25,12 @@ $(document).ready(function () {
     });
 
     $('body').on('click', 'div .networkCardDetails', function () {
+        console.log(searchRecords);
         let index = $(this).attr('value');
         let cardData = searchRecords[index - 1];
-        initiateNetworkAnalysis(cardData);
+        showing_results_for(cardData);
+        console.log("Hello");
+        render_graph("data","networkDiv");
     })
 
 })
@@ -44,8 +47,13 @@ const generateCards = (id, query, fromDateTemp, toDateTemp, noOfNodesTemp, naTyp
 function padNumber(d) {
     return (d < 10) ? '0' + d.toString() : d.toString();
 }
-const initiateNetworkAnalysis = (cardData) => {
+
+const  showing_results_for = (cardData) => {
     let data = cardData;
     $('#naShowingResForTitle').text(data['query']);
+
+}
+
+const view_graph = () => {
 
 }

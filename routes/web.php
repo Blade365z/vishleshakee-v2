@@ -87,7 +87,14 @@ Route::group(['prefix' => 'HA'], function () {
 });
 
 //Define API routes requiring middleware here for Network Analysis
-Route::group(['prefix' => 'NA'], function () {
+Route::group(['prefix' => 'na'], function () {
+    Route::get('generateNetwork','networkAnalysisController@generateNetwork');
+    Route::get('graph_view_data_formator','networkAnalysisController@graph_view_data_formator_for_rendering_in_visjs');
+    Route::get('readcsv','networkAnalysisController@read_csv_file');
+
+
+    
+    //For network evolution
     Route::get('nettest', 'networkAnalysisEvolution@tester');
     Route::get('jobsubmit', 'networkAnalysisEvolution@jobSubmission');
 });
@@ -97,5 +104,13 @@ Route::group(['prefix' => 'UA'], function () {
     Route::get('/userlist', 'UserAnalysisController@first_list');
     Route::get('/getpagingstate','UserAnalysisController@get_page_state_token');
     Route::get('/getSuggestedUsers','UserAnalysisController@getSuggestedUsers');
-    
+    Route::get('/getUserDetails','UserAnalysisController@getUserDetails');
+    Route::get('/getFrequencyDataForUser','UserAnalysisController@getFrequencyDataForUser');
+ 
 });
+
+
+//Define API routes requiring middleware here for Map
+Route::group(['prefix' => 'LM'], function () {
+    Route::get('mapTweet', 'LocationMap@locationTweet');
+    });

@@ -24,7 +24,7 @@
     </form>
 </div>
 
-<div class="row" id="suggDiv" style="display:none;">
+<div class="row" id="suggDiv" >
     <div class="col-md-6">
         <div class="card shadow mb-2">
             <div class="card-body">
@@ -58,7 +58,7 @@
 
 </div>
 <div class="mt-3">
-    <p class="smat-box-title-large m-0">Showing Results for <span class="smat-value font-weight-bold text-dark"> Amitabh Boruah</span> </p>
+    <p class="smat-box-title-large m-0">Showing results for <span class="smat-value font-weight-bold text-normal" id="showingResultsFor"> </span> </p>
 
     <div>
 
@@ -71,11 +71,11 @@
         <div class="d-flex mb-3">
             <div class="form-group   my-0  mr-2  border smat-rounded d-flex px-2 py-1  bg-white">
                 <i class="far fa-calendar-alt mx-2 text-normal " style="margin-top:11px;"></i>
-                <input type="text" class="form-control datepicker-here " name="fromDate" id="fromDateNA" placeholder="From Date" onkeydown="return false;" style="border:0px;" autocomplete="OFF" data-language='en' required>
+                <input type="text" class="form-control datepicker-here " name="fromDate" id="fromDateUA" placeholder="From Date" onkeydown="return false;" style="border:0px;" autocomplete="OFF" data-language='en' required>
             </div>
             <div class="form-group  my-0  mr-2 border smat-rounded d-flex px-2 py-1  bg-white">
                 <i class="far fa-calendar-alt mx-2 text-normal" style="margin-top:11px;"></i>
-                <input type="text" class="form-control datepicker-here " name="toDate" id="toDateNA" placeholder="To Date" onkeydown="return false;" style="border:0px;" autocomplete="OFF" data-language='en' required>
+                <input type="text" class="form-control datepicker-here " name="toDate" id="toDateUA" placeholder="To Date" onkeydown="return false;" style="border:0px;" autocomplete="OFF" data-language='en' required>
             </div>
 
             <button class="btn  btn-primary  " id="submit-btn" type="submit" style="border-radius:50%;margin-top:5px;"> <span>Go </span> </button>
@@ -87,11 +87,13 @@
             <div class="card-body">
                 <div class="dFlexBut">
                     <div class="text-center">
-                        <img src="public/img/amitabh.jpg" class="profilePicLarge" />
+                        <img  class="profilePicLarge" id="currentUAProfilePic" />
                     </div>
                     <div class="mt-2">
-                        <p class="userNameLarge mx-2 mb-0 text-dark">Amitabh Boruah</p>
-                        <p class="userHandleLarge mx-2 mb-0 text-dark">@blade365z</p>
+                        <div class="text-center"> 
+                        <span class="userNameLarge mx-2 mb-1 text-dark"   id="currentUAUserName"> </span><span id="currentUAVerified"> </span>
+</div>
+                        <p class="userHandleLarge mx-2 mb-0 text-dark" id="currentUAUserHandle"></p>
                     </div>
 
 
@@ -102,29 +104,29 @@
                         <tbody>
                             <tr>
                                 <th class="py-0 px-3 text-dark" scope="row">User ID:</th>
-                                <td class="p-0 text-dark ">321009</td>
+                                <td class="p-0 text-dark " id="userDetailsID"></td>
 
                             </tr>
                             <tr>
                                 <th class="py-0 px-3 text-dark " scope="row">Joined_On:</th>
-                                <td class="p-0 text-dark ">Mon Marh 2016 15:21 +0000 2009</td>
+                                <td class="p-0 text-dark " id="userDetailsJOINEDON"> </td>
 
                             </tr>
                             <tr>
                                 <th class="py-0 px-3 text-dark" scope="row">Location:</th>
-                                <td class="p-0 text-dark ">Guwahati,Assam</td>
+                                <td class="p-0 text-dark " id="userDetailsLOCATION"></td>
 
                             </tr>
                             <tr>
                                 <th class="py-0 px-3 text-dark" scope="row">Bio:</th>
-                                <td class="p-0 text-dark ">Lorem my text of the printing and typesetting industry. </td>
+                                <td class="p-0 text-dark "id="userDetailsBIO" ></td>
 
                             </tr>
                     
                 
                             <tr>
                                 <th class="py-0 px-3 text-dark" scope="row">URL:</th>
-                                <td class="p-0 text-dark ">https://t.co/Qwkca100 </td>
+                                <td class="p-0 text-dark " id="userDetailsURL"> </td>
 
                             </tr>
                         </tbody>
@@ -185,16 +187,13 @@
 
             </div>
             <div class="tab-content" id="pills-tabContent">
-                <div class="" id="summaryContent-1">
-
-                </div>
+                
                 <div class="tab-pane fade show active haTab" id="freqContentUA" role="tabpanel" aria-labelledby="freqContentUA"> </div>
                 <div class="tab-pane fade haTab " id="sentiContentUA" role="tabpanel" aria-labelledby="sentiContentUA">Sentiment </div>
                 <div class="tab-pane fade haTab" id="mentionsContentUA" role="tabpanel" aria-labelledby="mentionsContentUA">Mentions Tab</div>
-                <div class="tab-pane fade haTab" id="usersContentUA" role="tabpanel" aria-labelledby="usersContentUA">Active Users Tab</div>
+          
                 <div class="tab-pane fade haTab " id="hashtagsContentTab" role="tabpanel" aria-labelledby="hashtagsContentTab">hashtagsContentTab</div>
-                <div class="tab-pane fade haTab " id="tweetsContentUA" role="tabpanel" aria-labelledby="tweetsContentUA">tweetsContentUA </div>
-                <div class="tab-pane fade haTab " id="sensitivityContentUA" role="tabpanel" aria-labelledby="sensitivityContentUA">sensitivityContentUA </div>
+             
                 <div class="tab-pane fade haTab " id="locationContentUA" role="tabpanel" aria-labelledby="locationContentUA">locationContentUA </div>
 
             </div>

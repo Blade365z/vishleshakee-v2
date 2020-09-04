@@ -355,8 +355,6 @@ color:white;
 }
 
 .haTab {
-    min-height: 350px;
-    max-height: 350px;
     overflow-x: hidden;
     overflow-y: auto;
 }
@@ -455,6 +453,10 @@ select{
 .UAProfilePicture:hover{
      opacity: 0.5;
     cursor: pointer !important;
+}
+.uaTab{
+    min-height: 330px;
+    max-height: 330px;
 }
 @media (max-width: 767.98px) {
     .dFlexBut{
@@ -571,8 +573,7 @@ select{
         margin-top: -10px !important;
     }
     .haTab {
-        min-height: 400px;
-        max-height: 400px;
+     
         overflow-x: hidden;
         overflow-y: auto;
     }
@@ -665,9 +666,10 @@ select{
         min-height: 300px;
         max-height: 300px;
     }
-    .haTab {
-        min-height: 335px;
-        max-height: 335px;
+   
+    .uaTab{
+        min-height: 330px;
+        max-height: 330px;
     }
 }
 

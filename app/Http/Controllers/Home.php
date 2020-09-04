@@ -145,7 +145,7 @@ class Home extends Controller
         return $data;
     }
 
-    public function getTweetIDData()
+    public function getTweetIDData($intervalArg = null, $queryArg = null)
     {
         if (!isset($_GET['fromTime']) || !isset($_GET['toTime'])) {
             if (isset($_GET['interval']) && isset($_GET['query'])) {
@@ -154,6 +154,10 @@ class Home extends Controller
                     return response()->json(['error' => 'Not Allowed'], 404);
                 }
                 $query = $_GET['query'];
+            } else if ($intervalArg && $queryArg) {
+                $interval = $intervalArg;
+                $query = $queryArg;
+
             } else {
                 return response()->json(['error' => 'interval  or query not set'], 404);
             }

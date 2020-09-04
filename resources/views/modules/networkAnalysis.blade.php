@@ -1,7 +1,19 @@
 @extends('parent.app')
 @section('content')
+
+<style type="text/css">
+    .networkDiv {
+      width: 600px;
+      height: 400px;
+      border: 1px solid lightgray;
+    }
+  </style>
+
 <div class="smat-mainHeading ">
     Network Analysis
+</div>
+
+<div id="test">
 </div>
 <div class="mb-3">
     <form id="naInputInputs">
@@ -308,6 +320,7 @@
     </div>
 </div>
 
-
+<link href="public/tempCSS/vis.css" rel="stylesheet" />
+<script type="text/javascript" src="public/tempJS/networkAnalysis/vis.js"></script>
 <script type="module" src="public/tempJS/networkAnalysis/NetworkAnalysis.js"></script>
 @endsection

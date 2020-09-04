@@ -125,7 +125,7 @@ class QueryBuilder{
             }else{
                 // $token = '$821712536215362' 
                 $token = str_replace('$','', $token);
-                $final_res[0] = "SELECT author_id, author, author_screen_name, profile_image_url_https from user_record WHERE author_id=" . "'" .$token."'";
+                $final_res[0] = "SELECT author_id, author, author_screen_name, profile_image_url_https,description,created_at,url,verified,location from user_record WHERE author_id=" . "'" .$token."'";
             }
         }
         
