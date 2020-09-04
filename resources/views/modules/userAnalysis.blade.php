@@ -59,13 +59,21 @@
 </div>
 <div class="mt-3">
     <p class="smat-box-title-large m-0">Showing Results for <span class="smat-value font-weight-bold text-dark"> Amitabh Boruah</span> </p>
+
+    <div>
+
+    </div>
+</div>
+<div class="row mt-3">
+    <div class="col-md-5">
+        <div id="date-divUA"> 
     <form id="uaDateForm">
-        <div class="d-flex">
-            <div class="form-group  dateinputForm my-0  mr-2  border smat-rounded d-flex px-2 py-1  bg-white">
+        <div class="d-flex mb-3">
+            <div class="form-group   my-0  mr-2  border smat-rounded d-flex px-2 py-1  bg-white">
                 <i class="far fa-calendar-alt mx-2 text-normal " style="margin-top:11px;"></i>
                 <input type="text" class="form-control datepicker-here " name="fromDate" id="fromDateNA" placeholder="From Date" onkeydown="return false;" style="border:0px;" autocomplete="OFF" data-language='en' required>
             </div>
-            <div class="form-group dateinputForm my-0  mr-2 border smat-rounded d-flex px-2 py-1  bg-white">
+            <div class="form-group  my-0  mr-2 border smat-rounded d-flex px-2 py-1  bg-white">
                 <i class="far fa-calendar-alt mx-2 text-normal" style="margin-top:11px;"></i>
                 <input type="text" class="form-control datepicker-here " name="toDate" id="toDateNA" placeholder="To Date" onkeydown="return false;" style="border:0px;" autocomplete="OFF" data-language='en' required>
             </div>
@@ -74,12 +82,7 @@
 
         </div>
     </form>
-    <div>
-
-    </div>
 </div>
-<div class="row mt-3">
-    <div class="col-md-5">
         <div class="card shadow" id="userInfoDiv">
             <div class="card-body">
                 <div class="dFlexBut">
@@ -117,21 +120,8 @@
                                 <td class="p-0 text-dark ">Lorem my text of the printing and typesetting industry. </td>
 
                             </tr>
-                            <tr>
-                                <th class="py-0 px-3 text-dark" scope="row">Followers:</th>
-                                <td class="p-0 text-dark ">631252 </td>
-
-                            </tr>
-                            <tr>
-                                <th class="py-0 px-3 text-dark" scope="row">Following:</th>
-                                <td class="p-0 text-dark ">11 </td>
-
-                            </tr>
-                            <tr>
-                                <th class="py-0 px-3 text-dark" scope="row">Tweets:</th>
-                                <td class="p-0 text-dark ">1122 </td>
-
-                            </tr>
+                    
+                
                             <tr>
                                 <th class="py-0 px-3 text-dark" scope="row">URL:</th>
                                 <td class="p-0 text-dark ">https://t.co/Qwkca100 </td>

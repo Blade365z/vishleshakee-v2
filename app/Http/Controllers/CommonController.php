@@ -58,6 +58,9 @@ class CommonController extends Controller
                     }
                 }
             }
+        }else if ($range_type == "day") {
+            //if to_date == current_date, query for current hour, and all the past hours of current day
+            //all days for from_date to to_date
         }
 
         $final_result["range_type"] = $range_type;

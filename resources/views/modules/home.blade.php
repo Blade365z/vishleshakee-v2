@@ -270,5 +270,12 @@ var incoming = {!! json_encode($query) !!}
 <script type="module" src="public/bootpag/bootpag-min.js"></script>
 <script type="module" src="public/tempJS/home/Home.js"></script>
 
+<script src="public/leaflet/leaflet.js"></script>
+<script src="public/leaflet/TileLayer.Grayscale.js"></script>
+<link rel="stylesheet" href="public/leaflet/markerCluster/MarkerCluster.css">
+<link rel="stylesheet" href="public/leaflet/markerCluster/MarkerCluster.Default.css">
+<script src="public/leaflet/markerCluster/leaflet.markercluster-src.js"></script>
+<link rel="stylesheet" href="public/leaflet/leaflet.css">
+<script src="public/leaflet/subgroup/leaflet.featuregroup.subgroup.js"></script>
 
 @endsection

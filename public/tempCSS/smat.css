@@ -452,6 +452,10 @@ select{
 .tweet-details{
     font-szie:13px;
 }
+.UAProfilePicture:hover{
+     opacity: 0.5;
+    cursor: pointer !important;
+}
 @media (max-width: 767.98px) {
     .dFlexBut{
         display: block;
@@ -480,6 +484,7 @@ select{
         margin-left:5px;
         margin-right:5px;
     }
+   
     #analysis-panel-switches {
         display: none !important;
     }

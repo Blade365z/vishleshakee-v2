@@ -13,3 +13,8 @@ export const getSuggestionsForUA = (userIDArray) => {
     });
 return userSuggestionRes;
 }
+
+
+export const getUserDetails= (id) => {
+    
+}

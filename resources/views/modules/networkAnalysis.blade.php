@@ -8,7 +8,6 @@
 
         <div id="naInputPanel">
             <div class="form-group   my-0  mr-2  border smat-rounded d-flex px-2 py-1  bg-white">
-
                 <input type="text" class="form-control" name="query" id="queryNA" placeholder="Query" style="border:0px;" autocomplete="OFF" required>
             </div>
 
@@ -286,7 +285,9 @@
 
                         </div>
                         <div class="pull-right ml-auto">
-                            <Button class="btn smat-btn smat-rounded"><span>Use Netowork</span></Button>
+                            <Button class="btn smat-btn smat-rounded"><span>Use Network</span></Button> <br/> <br/>
+                            <Button class="btn smat-btn smat-rounded"><span>Expand Network</span></Button> <br/> <br/>
+                            <Button class="btn smat-btn smat-rounded"><span>Export Network</span></Button> <br/> <br/>
                         </div>
                     </div>
 
@@ -306,7 +307,6 @@
         </div>
     </div>
 </div>
-
 
 
 <script type="module" src="public/tempJS/networkAnalysis/NetworkAnalysis.js"></script>

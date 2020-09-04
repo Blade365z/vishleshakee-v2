@@ -6,7 +6,7 @@
 //Imports
 import { generateFreqDistChart, generateSentimentChart, generateBarChart } from './chartHelper.js';
 import { formulateUserSearch } from '../utilitiesJS/userSearch.js'
-import { getSuggestionsForUA } from './helper.js'
+import { getSuggestionsForUA ,getUserDetails} from './helper.js'
 
 
 //Global Declaration
@@ -45,13 +45,13 @@ $(document).ready(function () {
     });
 
 
-    $('#suggHandles').on('click',function(){
+    $('.suggHandles').on('click',function(){
         let capturedToken = $(this).attr('value');
-        InitateUserSearch(capturedToken);
+        initateUserSearch(capturedToken);
     })
 
 
-    $('#uaTweetsDiv').css('height', tweetDivHeight - 72 + 'px');
+    $('#uaTweetsDiv').css('height', tweetDivHeight - 10 + 'px');
     $('#frqTabUA').on('click', function () {
         generateFreqDistChart(null, 'freqContentUA');
         freqSummaryGenerator(null, null);
@@ -93,10 +93,28 @@ const generateSuggestions = (userIDArray, div, type = null) => {
         counter++;
         if (counter === 12)
             index = 2
-        $('#' + div + '-' + index).append('<div class="suggHandles" title="'+element[1]+'"  value="'+element[0]+'"> <img src="' + element[3] + '" class="profilePicSmall" /> </div>');
+        $('#' + div + '-' + index).append('<div class="suggHandles" title="'+element[1]+'"  value="'+element[0]+'"> <img src="' + element[3] + '" class="profilePicSmall UAProfilePicture" /> </div>');
     });
 
 }
+
+
+
+
+const initateUserSearch = (id) => {
+    SearchID = id
+    let userDetals = getUserDetails(SearchID);
+    
+}
+
+
+
+
+
+
+
+
+
 
 export const generateTweets = (div) => {
     $('#uaTweetsNav').html('<span class="text-dark mr-4" > Tweets posted by the user</span> <div class="btn-group"><button type="button" class="btn btn-white smat-rounded dropdown-toggle text-normal" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Filter Tweets</button><div class="dropdown-menu dropdown-menu-right"><li class="dropdown-item clickable filter-pos-tweets"><i class="fa fa-circle text-pos " aria-hidden="true"></i> Positive Tweets</li><li class="dropdown-item clickable filter-neg-tweets"><i class="fa fa-circle text-neg " aria-hidden="true"></i> Negative Tweets</li><li class="dropdown-item clickable filter-neu-tweets"> <i class="fa fa-circle text-neu" aria-hidden="true"></i> Neutral Tweets</li><li class="dropdown-item clickable filter-normal-tweets"> <i class="fa fa-circle text-normal" aria-hidden="true"></i> Normal Tweets</li><li class="dropdown-item clickable filter-com-tweets"> <i class="fa fa-circle text-com" aria-hidden="true"></i> Communal Tweets</li><li class="dropdown-item clickable filter-sec-tweets"> <i class="fa fa-circle text-sec" aria-hidden="true"></i> Security Tweets</li><li class="dropdown-item clickable filter-seccom-tweets"> <i class="fa fa-circle text-seccom" aria-hidden="true"></i> Communal and Security Tweets</li></div></div>');

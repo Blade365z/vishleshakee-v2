@@ -14,6 +14,7 @@ MODE LIST:
 import { getFreqDistData, getTopCooccurData, getMe, getSentiDistData, getTopData, getTweetIDsFromController } from './helper.js';
 import { generateFrequencyChart, generateSentimentChart, generateBarChart } from './chartHelper.js';
 import { TweetsGenerator } from '../utilitiesJS/TweetGenerator.js';
+import { getCompleteMap } from '../utilitiesJS/getMap.js';
 
 //Global variables 
 var MODE = '000';
@@ -140,12 +141,7 @@ $(document).ready(function () {
   });
 
 
-  $('.hashtags').on('click', function () {
-    let queryTemp = $(this).text();
-    queryTemp = queryTemp.replace("#", "%23");
-    window.location.href = "home?query=" + queryTemp;
 
-  });
 
   $('body').on('click', 'div .filter-tweets', function () {
     let capturedClass = $(this).attr('value');
@@ -263,8 +259,8 @@ const generatePublicHashtags = (data, filterArgument = null) => {
       }
     }
     let category =  (value[1]=='normal') ? 'Normal' : ((value[1]=='sec') ? 'Security' : ((value[1]=='com') ?  'Communal' : 'Communal & Security' ));
-    
-    $('#public-trending').append('<div class="mb-1 publicHashtag-' + value[1] + '"><p class="hashtags"><a class="text-dark" href="'+key+'" target="_blank"  >' + key + '</a></p><p class=" m-0 smat-dash-title  text-dark "> <span>' + value[0] + '</span><span class="mx-1">Tweets</span><span class="mx-1"   title ="'+category+'" ><i class="fa fa-circle ' + categoryColor[value[1]] + ' " aria-hidden="true"></i> </span></p></div>');
+    let urlArg = key.includes('#') ? key.replace('#','%23') : ''+key;
+    $('#public-trending').append('<div class="mb-1 publicHashtag-' + value[1] + '"><p class="hashtags"><a class="text-dark" href="?query='+urlArg+'" target="_blank"  >' + key + '</a></p><p class=" m-0 smat-dash-title  text-dark "> <span>' + value[0] + '</span><span class="mx-1">Tweets</span><span class="mx-1"   title ="'+category+'" ><i class="fa fa-circle ' + categoryColor[value[1]] + ' " aria-hidden="true"></i> </span></p></div>');
   }
 
 
@@ -274,4 +270,5 @@ const generatePublicHashtags = (data, filterArgument = null) => {
 
 const generatePublicLocations = () => {
   //TODO::Rajdeep
+  getCompleteMap('result-div');
 }

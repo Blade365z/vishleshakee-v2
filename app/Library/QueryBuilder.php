@@ -54,7 +54,32 @@ class QueryBuilder{
                     }
                 }
             }else if($range_type == 'day'){
-                // for day
+                if($feature_option == 'freq'){
+                    // for day
+                    $current_date = gmdate("Y-m-d");
+                    if ($todate == $current_date) {
+                        $current_datetime_obj = new DateTime();
+                        $current_datetime = $current_datetime_obj->format('Y-m-d H:i:s');
+                        $r = 10 - ((int) ($current_datetime_obj->format('s')) % 10);
+                        $t = '+' . strval($r) . ' seconds';
+                        $start_time = date('H:i:s', strtotime($t, strtotime($current_datetime)));
+                        $prepared_statement_10sec = "SELECT created_date, created_time, count from token_count1 WHERE created_date='" . $todate . "' AND class=" . $query_class . " AND created_time = ? AND token_name='" . $query . "'";
+                        $input_args_10sec = $this->get_10_sec_list_of_day($start_time);
+                   
+                        $prepared_statement_hour = "SELECT created_date, created_time, count from token_count_hour_wise WHERE created_date='" . $todate . "' AND class=" . $query_class . " AND created_time = ? AND token_name='" . $query . "'";
+                        $input_args_hour = $this->get_hours_list_of_day();
+                    }
+                    // echo json_encode($input_args_hour);
+                    $prepared_statement_day = "SELECT created_date, count from token_count1_day_wise WHERE created_date= ? AND class=" . $query_class . " AND token_name='" . $query . "'";
+                    $input_args_day = $this->get_day_list($fromdate, $todate);
+                }
+
+                $final_res[0] = $prepared_statement_10sec;
+                $final_res[1] = $input_args_10sec;
+                $final_res[2] = $prepared_statement_hour;
+                $final_res[3] = $input_args_hour;
+                $final_res[4] = $prepared_statement_day;
+                $final_res[5] = $input_args_day;
             }
         }
         
