@@ -91,8 +91,13 @@ Route::group(['prefix' => 'na'], function () {
     Route::get('generateNetwork','networkAnalysisController@generateNetwork');
     Route::get('graph_view_data_formator','networkAnalysisController@graph_view_data_formator_for_rendering_in_visjs');
     Route::get('readcsv','networkAnalysisController@read_csv_file');
+    Route::get('readcsv','networkAnalysisController@read_csv_file');
+    Route::get('centrality_data_formator', 'networkAnalysisController@centrality_data_formator_for_rendering_in_visjs');
+    Route::get('mysessionid','networkAnalysisController@mysessionid');
+    Route::get('centrality', 'networkAnalysisController@centrality');
 
-
+    Route::get('link_prediction_data_formator','networkAnalysisController@link_prediction_data_formator_new');
+Route::get('link_prediction','networkAnalysisController@linkPrediction');
     
     //For network evolution
     Route::get('nettest', 'networkAnalysisEvolution@tester');
@@ -105,7 +110,8 @@ Route::group(['prefix' => 'UA'], function () {
     Route::get('/getpagingstate','UserAnalysisController@get_page_state_token');
     Route::get('/getSuggestedUsers','UserAnalysisController@getSuggestedUsers');
     Route::get('/getUserDetails','UserAnalysisController@getUserDetails');
-    Route::get('/getFrequencyDataForUser','UserAnalysisController@getFrequencyDataForUser');
+    Route::post('/getUserDetailsTemp','UserAnalysisController@getUserDetails');
+    Route::post('/getFrequencyDataForUser','UserAnalysisController@getFrequencyDataForUser');
  
 });
 
@@ -113,4 +119,4 @@ Route::group(['prefix' => 'UA'], function () {
 //Define API routes requiring middleware here for Map
 Route::group(['prefix' => 'LM'], function () {
     Route::get('mapTweet', 'LocationMap@locationTweet');
-    });
+});

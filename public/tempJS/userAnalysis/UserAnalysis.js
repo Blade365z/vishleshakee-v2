@@ -19,17 +19,6 @@ var suggestionPopularIDs = ['$18839785', '$1447949844', '$1346439824', '$4054270
 var suggestionPopularNewsHandleIDs = ['$19897138', '$16343974', '$39240673', '$240649814', '$42606652', '$321271735', '$372754427', '$6509832', '$6433472', '$36327407', '$37034483', '$20751449', '$112404600', '$438156528', '$739053070932287488', '$267158021', '$128555221', '$742143', '$759251', '$701725963', '$55186601', '$28785486'];
 var SearchID, fromDate, toDate;   //Global Variable to keep Track of current search
 
-
-
-
-
-
-
-
-
-
-
-
 //Logic Implementation 
 $(document).ready(function () {
     fromDate = getCurrentDate();
@@ -46,13 +35,26 @@ $(document).ready(function () {
     $('#fromDateUA').val(fromDate);
     $('#toDateUA').val(toDate);
 
-    
+
+    $('#uaDateForm').on('submit',function(e){
+                e.preventDefault();
+                fromDate = $('#fromDateUA').val();
+                toDate = $('#toDateUA').val();
+                initateUserSearch(SearchID);
+    });
+
     $('#uaSearchForm').on('submit', function (e) {
         e.preventDefault();
         let tokenCapturedForSearch = $('#queryUASearch').val();
         tokenCapturedForSearch = tokenCapturedForSearch.trim();
         formulateUserSearch(tokenCapturedForSearch, 'userContainerList');
     });
+
+    $('body').on('click','.authorName',function(){
+        let capturedID = $(this).attr('value');
+        $('.modal').modal('hide');
+        initateUserSearch(capturedID);
+    })
 
 
     $('.suggHandles').on('click', function () {
@@ -79,9 +81,11 @@ $(document).ready(function () {
     $('#showUAsugg').on('click', function () {
         if (suggShowFLag == 0) {
             $('#suggDiv').css('display', 'flex');
+            $('#suggestionCurrentStatus').text('Hide');
             suggShowFLag = 1;
         } else {
             $('#suggDiv').css('display', 'none');
+            $('#suggestionCurrentStatus').text('Show');
             suggShowFLag = 0;
         }
 
@@ -110,12 +114,12 @@ const generateSuggestions = (userIDArray, div, type = null) => {
 
 const initateUserSearch = (id) => {
     SearchID = id
-    let userDetals = getUserDetails(SearchID);
-    makePageReady(userDetals);
-    let rangeType  = getRangeType(fromDate,toDate);
-    frequencyDistributionUA(SearchID,'days',fromDate,toDate,null,'freqContentUA',false);
+    getUserDetails(SearchID).then(data => makePageReady(data));
+  let rangeType  = getRangeType(fromDate,toDate);
+    frequencyDistributionUA(SearchID,rangeType,fromDate,toDate,null,'freqContentUA',false);
 }
 const makePageReady = (userDetails) => {
+    $('#UAAnalysisDiv').css('display','block');
     $("#currentUAProfilePic").attr("src", userDetails.profile_image_url_https.includes('_normal') ? userDetails.profile_image_url_https.replace('_normal', '') : userDetails.profile_image_url_https);
     $('#currentUAUserName').text(userDetails.author);
     $('#showingResultsFor').text(userDetails.author);
@@ -154,14 +158,15 @@ export const frequencyDistributionUA = (query=null,rangeType,fromDate=null,toDat
     // generateFreqDistChart(null, chartDivID);
     // freqSummaryGenerator(null, summaryDivID);
     if(rangeType=='days'){
-        freqData = getFreqDistDataForUA(query,fromDate,toDate,null,rangeType);
-        generateFreqDistBarChart(query,freqData,rangeType,chartDivID);
+
+        getFreqDistDataForUA(query,fromDate,toDate,null,rangeType).then(data =>{generateFreqDistBarChart(query,data,rangeType,chartDivID);});
+    
     }else if(rangeType == 'hour'){
-        freqData = getFreqDistDataForUA(query,fromDate,toDate,null,rangeType);
-        generateFreqDistBarChart(query,freqData,rangeType,chartDivID);
+        getFreqDistDataForUA(query,fromDate,toDate,null,rangeType).then(data =>{generateFreqDistBarChart(query,data,rangeType,chartDivID);});
+      
     }else{
-        freqData = getFreqDistDataForUA(query,fromDate,toDate,null,rangeType);
-        generateFrequencyLineChart(query,freqData,rangeType,chartDivID);
+        getFreqDistDataForUA(query,fromDate,toDate,null,rangeType).then(data =>{generateFrequencyLineChart(query,data,rangeType,chartDivID);});
+
     }
     // freqSummaryGenerator();
 }

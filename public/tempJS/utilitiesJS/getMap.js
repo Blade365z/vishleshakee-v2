@@ -1,4 +1,4 @@
-export const getCompleteMap = (id,query,interval) => {
+export const getCompleteMap = (id,query,interval,type,fromDT=null,toDT=null) => {
     var markersList = document.getElementById('markersList');
     L.MarkerCluster.include({
         spiderfy: function () {
@@ -55,21 +55,51 @@ export const getCompleteMap = (id,query,interval) => {
     });
 
     var tweet_details;
+    if(type = 'public'){
+        $.ajax({
+            type: "GET",
+            url: 'LM/mapTweet',
+            data:{interval,query},
+            async: false,
+            success: function (response) {
+                    tweet_details = response;
+                    
+            }
+        });
+    }
+    else if(type = 'user'){
+        $.ajax({
+            type: "GET",
+            url: 'LM/mapTweetUser',
+            data:{interval,query},
+            async: false,
+            success: function (response) {
+                    tweet_details = response;
+                    
+            }
+        });
+    }
 
-    $.ajax({
-        type: "GET",
-        url: 'LM/mapTweet',
-        data:{interval,query},
-        async: false,
-        success: function (response) {
-                tweet_details = response;
-                
-        }
-    });
+    else if(type = 'historical'){
+        $.ajax({
+            type: "GET",
+            url: 'LM/mapTweetHistorical',
+            data:{interval,query,fromDT,toDT},
+            async: false,
+            success: function (response) {
+                    tweet_details = response;
+                    
+            }
+        });
+    }
+
     console.log(JSON.parse(tweet_details));
     var op = JSON.parse(tweet_details);
+    console.log(op.length);
+    var location_tweet_count = 0;
     for (var i = 0; i < op.length; i++) {
         if (op[i].Latitude != null) {
+            location_tweet_count = location_tweet_count + 1;
             var senti = op[i].sentiment.value;
             if (senti == "0") {
                 L.marker([parseFloat(op[i].Latitude), parseFloat(op[i].Longitude)], {
@@ -87,6 +117,23 @@ export const getCompleteMap = (id,query,interval) => {
             group1.addTo(History_Map);
         }
     }
-    
+    console.log(location_tweet_count);
+
+    var legend = L.control({position: 'bottomright'});
+
+    legend.onAdd = function (History_Map) {
+        var div = L.DomUtil.create("div", "legend_info shadow");
+        
+        div.innerHTML += '<i style="background: white"></i><span>Total Tweets       :'+op.length+'</span><br>';
+        div.innerHTML += '<i style="background: white"></i><span>Tweet with Location:'+location_tweet_count+'</span><br>';
+        
+        
+
+        return div;
+    };
+
+    legend.addTo(History_Map);
+
+    $('.legend_info').css({'background':'white','border-radius': '5%','padding': '5px'});
     
 }

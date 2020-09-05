@@ -24,15 +24,24 @@ class CommonController extends Controller
         $qb_obj = new QB;
         $ut_obj = new Ut;
         $final_result = array();
-        $stm_list = $qb_obj->get_statement($to_datetime, $from_datetime, $token, $range_type, 'freq');
         $temp_arr = array();
         $total = 0;
         $total_com = 0;
         $total_sec = 0;
         $total_com_sec = 0;
         $total_non_com_sec = 0;
-        if ($range_type == "10sec") {
-            $result_async_from_db = $db_object->executeAsync_query($stm_list[1], $stm_list[0]);
+        if (($range_type == "10sec") or ($range_type == "hour")) {
+            if($range_type == "10sec"){
+                $stm_list = $qb_obj->get_statement($to_datetime, $from_datetime, $token, $range_type, 'freq');
+                $result_async_from_db = $db_object->executeAsync_query($stm_list[1], $stm_list[0]);
+            }else if($range_type == "hour"){
+                $stm_list = $qb_obj->get_statement($to_datetime, $from_datetime, $token, $range_type, 'freq');
+                $result_async_from_db = $db_object->executeAsync_query($stm_list[1], $stm_list[0]);
+                echo json_encode($stm_list);
+
+                // if date is current date, thn get the data for current hour form 10_sec table
+                // ...........................
+            }
             foreach ($result_async_from_db as $rows) {
                 $com = 0;
                 $sec = 0;

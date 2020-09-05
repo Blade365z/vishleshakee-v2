@@ -273,7 +273,7 @@ const generatePublicHashtags = (data, filterArgument = null) => {
 const generatePublicLocations = () => {
   //TODO::Rajdeep
   $('#result-div').html('<div id="result-div-map" style="height:400px;"></div>');
-  getCompleteMap('result-div-map',query,interval);
+  getCompleteMap('result-div-map',query,interval,'public');
   
   
 }

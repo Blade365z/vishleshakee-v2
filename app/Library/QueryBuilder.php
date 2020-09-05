@@ -19,67 +19,52 @@ class QueryBuilder{
                 if($from_datetime and $to_datetime and $token){
                     if($async){
                         if($feature_option == 'freq'){
-                            $query_class = $this->get_query_class($token);
-                            $prepared_statement_10sec = "SELECT created_date, created_time, category_class_list, count_list from token_count WHERE created_date = ? AND class=" . $query_class . " AND created_time = ? AND token_name='" . $token . "'";
-                            if($range_type == '10sec')
-                                $input_args_10sec = $ut_obj->get_10sec_list($to_datetime, $from_datetime);
-                            else
-                                echo 'hour';
+                            $query_class = $this->get_query_class($token);                            
+                            if($range_type == '10sec'){
+                                $prepared_statement = "SELECT created_date, created_time, category_class_list, count_list from token_count WHERE created_date = ? AND class=" . $query_class . " AND created_time = ? AND token_name='" . $token . "'";
+                                $input_args = $ut_obj->get_10sec_list_for_cassandra($to_datetime, $from_datetime);
+                            }
+                            else if($range_type == 'hour'){
+                                $prepared_statement = "SELECT created_date, created_time, category_class_list, count_list from token_count_hour_wise WHERE created_date = ? AND class=" . $query_class . " AND created_time = ? AND token_name='" . $token . "'";
+                                $input_args = $ut_obj->get_hour_list_for_cassandra($to_datetime, $from_datetime);
+                            }                                    
                         }else if($feature_option == 'sent'){
                             $query_class = $this->get_query_class($token);
-                            $prepared_statement_10sec = "SELECT created_date, created_time, category_class_list, count_list from token_count WHERE created_date = ? AND class=" . $query_class . " AND created_time = ? AND token_name='" . $token . "'";
+                            $prepared_statement = "SELECT created_date, created_time, category_class_list, count_list from token_count WHERE created_date = ? AND class=" . $query_class . " AND created_time = ? AND token_name='" . $token . "'";
                             if($range_type == '10sec')
-                                $input_args_10sec = $ut_obj->get_10sec_list($to_datetime, $from_datetime);
-                            else
-                                echo 'hour';
+                                $input_args = $ut_obj->get_10sec_list_for_cassandra($to_datetime, $from_datetime);
+                            else{
+
+                            }                                
                         }else if($feature_option == 'co_occur'){
                             $query_class = $this->get_query_class($token, 'co_occur', $co_occur_option);
-                            $prepared_statement_10sec = "SELECT created_date, created_time, token_name2, count_list from token_co_occur WHERE created_date = ? AND class=" . $query_class . " AND created_time = ? AND token_name1='" . $token . "'";
+                            $prepared_statement = "SELECT created_date, created_time, token_name2, count_list from token_co_occur WHERE created_date = ? AND class=" . $query_class . " AND created_time = ? AND token_name1='" . $token . "'";
                             if($range_type == '10sec')
-                                $input_args_10sec = $ut_obj->get_10sec_list($to_datetime, $from_datetime);
+                                $input_args = $ut_obj->get_10sec_list_for_cassandra($to_datetime, $from_datetime);
                             else
                                 echo 'hour';
                         }else if($feature_option == 'tweet'){
                             $query_class = $this->get_query_class($token);
-                            $prepared_statement_10sec = "SELECT category_class_list, tweetidlist from token_count WHERE created_date = ? AND class=" . $query_class . " AND created_time = ? AND token_name='" . $token . "'";
+                            $prepared_statement = "SELECT category_class_list, tweetidlist from token_count WHERE created_date = ? AND class=" . $query_class . " AND created_time = ? AND token_name='" . $token . "'";
                             if($range_type == '10sec')
-                                $input_args_10sec = $ut_obj->get_10sec_list($to_datetime, $from_datetime);
+                                $input_args = $ut_obj->get_10sec_list_for_cassandra($to_datetime, $from_datetime);
                             else
                                 echo 'hour';
                         }
-                        $final_res[0] = $prepared_statement_10sec;
-                        $final_res[1] = $input_args_10sec;
+                        $final_res[0] = $prepared_statement;
+                        $final_res[1] = $input_args;
                     }else{
                         //not assync
                     }
                 }
             }else if($range_type == 'day'){
                 if($feature_option == 'freq'){
-                    // for day
-                    $current_date = gmdate("Y-m-d");
-                    if ($todate == $current_date) {
-                        $current_datetime_obj = new DateTime();
-                        $current_datetime = $current_datetime_obj->format('Y-m-d H:i:s');
-                        $r = 10 - ((int) ($current_datetime_obj->format('s')) % 10);
-                        $t = '+' . strval($r) . ' seconds';
-                        $start_time = date('H:i:s', strtotime($t, strtotime($current_datetime)));
-                        $prepared_statement_10sec = "SELECT created_date, created_time, count from token_count1 WHERE created_date='" . $todate . "' AND class=" . $query_class . " AND created_time = ? AND token_name='" . $query . "'";
-                        $input_args_10sec = $this->get_10_sec_list_of_day($start_time);
-                   
-                        $prepared_statement_hour = "SELECT created_date, created_time, count from token_count_hour_wise WHERE created_date='" . $todate . "' AND class=" . $query_class . " AND created_time = ? AND token_name='" . $query . "'";
-                        $input_args_hour = $this->get_hours_list_of_day();
-                    }
-                    // echo json_encode($input_args_hour);
-                    $prepared_statement_day = "SELECT created_date, count from token_count1_day_wise WHERE created_date= ? AND class=" . $query_class . " AND token_name='" . $query . "'";
-                    $input_args_day = $this->get_day_list($fromdate, $todate);
+                    $prepared_statement = "SELECT created_date, count from token_count1_day_wise WHERE created_date= ? AND class=" . $query_class . " AND token_name='" . $query . "'";
+                    $input_args = $this->get_day_list($fromdate, $todate);
                 }
 
-                $final_res[0] = $prepared_statement_10sec;
-                $final_res[1] = $input_args_10sec;
-                $final_res[2] = $prepared_statement_hour;
-                $final_res[3] = $input_args_hour;
-                $final_res[4] = $prepared_statement_day;
-                $final_res[5] = $input_args_day;
+                $final_res[0] = $prepared_statement;
+                $final_res[1] = $input_args;
             }
         }
         
@@ -88,11 +73,13 @@ class QueryBuilder{
         if($feature_option_split[0] == 'top'){
             $query_class = $this->get_query_class($feature_option_split[1], $feature_option_split[0]);
             if(($range_type == '10sec') or ($range_type == 'hour')){
-                $prepared_statement_10sec = "SELECT category_class_list, count_list, token_name from token_count WHERE created_date = ? AND class=" . $query_class . " AND created_time = ?";
+                $prepared_statement = "SELECT category_class_list, count_list, token_name from token_count WHERE created_date = ? AND class=" . $query_class . " AND created_time = ?";
                 if($range_type == '10sec'){
-                    $input_args_10sec = $ut_obj->get_10sec_list($to_datetime, $from_datetime);
-                    $final_res[0] = $prepared_statement_10sec;
-                    $final_res[1] = $input_args_10sec;
+                    $input_args = $ut_obj->get_10sec_list_for_cassandra($to_datetime, $from_datetime);
+                    $final_res[0] = $prepared_statement;
+                    $final_res[1] = $input_args;
+                    // echo json_encode($final_res);
+
                 }
                 else
                     echo 'hour';

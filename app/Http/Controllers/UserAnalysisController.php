@@ -62,33 +62,33 @@ class UserAnalysisController extends Controller
         echo $common_object->get_user_info($userIDsArr, true);
     }
 
-    public function getUserDetails()
+    public function getUserDetails(Request $request)
     {
-        if (isset($_GET['userID'])) {
-            $userID = $_GET['userID'];
+        if ($request->input('userID')) {
+            $userID = $request->input('userID');
         } else {
             return response()->json(['error' => 'No Data Captured'], 404);
         }
         $common_object = new CC;
         return $common_object->get_user_info($userID, false);
     }
-    public function getFrequencyDataForUser()
+    public function getFrequencyDataForUser(Request $request)
     {
-        if (isset($_GET['time'])) {
+        if ($request->input('time')) {
             $time = $_GET['time'];
-        } else if (isset($_GET['fromDate'])) {
-            $fromDate = $_GET['fromDate'];
-            $toDate = $_GET['toDate'];
+        } else if ($request->input('fromDate')) {
+            $fromDate = $request->input('fromDate');
+            $toDate = $request->input('toDate');
         } else {
             return response()->json(['error' => 'No Data Captured'], 404);
         }
-        if (isset($_GET['query'])) {
-            $query = $_GET['query'];
+        if ($request->input('query')) {
+            $query = $request->input('query');
         } else {
             return response()->json(['error' => 'No Argument Set'], 404);
         }
-        if (isset($_GET['rangeType'])) {
-            $rangeType = $_GET['rangeType'];
+        if ($request->input('rangeType')) {
+            $rangeType = $request->input('rangeType');
         } else {
             return response()->json(['error' => 'Please add range type as argument'], 404);
         }

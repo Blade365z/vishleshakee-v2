@@ -12,26 +12,13 @@ use App\Http\Controllers\Home as Hm;
 class LocationMap extends Controller
 {
 
-    public function locationTweet(){
-        
-        $db_object = new DBmodelAsync;        
-        $query = $_GET['query'];
-        $interval = $_GET['interval'];
-        $tweet_object = new Hm;
-        $result = $tweet_object->getTweetIDData($interval,$query);
-        
+    // This will provide tweet information
+    // given tweet id.
+    // param: tweet_id list
+    // output: tweet information
 
-        $tweetid_list_array = array();
-        foreach ($result as $rows) {
-            
-            foreach ($rows['data']['data'] as $tid) {
-                array_push($tweetid_list_array, $tid);
-            }
-            
-        }
-        
-        $tweetid_list_array = array_unique($tweetid_list_array);
-
+    public function tweet_info($tweetid_list_array)
+    {
         $input_args = array();
         foreach ($tweetid_list_array as $value) {
             array_push($input_args, array($value));
@@ -47,7 +34,41 @@ class LocationMap extends Controller
                 array_push($final_result, $temp_arr);
             }
         }
-        echo json_encode($final_result);
+        return json_encode($final_result);
 
     }
+
+
+    // This function is used for
+    // public page to plot on the map
+    // param: query as hashtag, intervals
+    //        as time
+    // output: echo the results in json format
+    
+    public function locationTweet(){
+        
+        $db_object = new DBmodelAsync;        
+        $query = $_GET['query'];
+        $interval = $_GET['interval'];
+        $tweet_object = new Hm;
+        $result = $tweet_object->getTweetIDData($interval,$query);
+        
+        $tweetid_list_array = array();
+        foreach ($result as $rows) {
+            
+            foreach ($rows['data']['data'] as $tid) {
+                array_push($tweetid_list_array, $tid);
+            }
+            
+        }
+        
+        $tweetid_list_array = array_unique($tweetid_list_array);
+
+        echo $this->tweet_info($tweetid_list_array);
+        
+
+        
+
+    }
+
 }

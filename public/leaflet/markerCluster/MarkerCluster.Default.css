@@ -58,3 +58,109 @@
 .marker-cluster span {
 	line-height: 30px;
 	}
+
+
+
+
+	/* CSS FOR tweet information */
+
+
+
+
+	
+	/* CSS FOR tweet information ends */
+
+
+	.leaflet-popup-content {
+		width: auto;
+		height: auto;
+		max-width: 300px;
+		max-height: 300px;
+		min-width: 220px;
+		min-height: 50px;
+		overflow-y: hidden;
+		overflow-x: hidden;
+	}
+
+	.leaflet-popup-content:hover {
+		overflow-y: auto;
+	}
+
+	#content {
+		width: auto;
+		height: 400px;
+		font-size: 10px;
+		overflow-y: auto;
+	}
+
+	.toolTipClass {
+		height: 30px;
+		/* opacity: 0.6; */
+		background-color: rgba(255, 255, 255, 0.9) !important;
+		border-radius: 25px !important;
+	}
+
+
+	.marker-cluster-small {
+		background-color: rgba(181, 226, 140, 0.6);
+	}
+
+	.marker-cluster-small div {
+		background-color: rgba(110, 204, 57, 0.6);
+	}
+
+	.marker-cluster-medium {
+		background-color: rgba(241, 211, 87, 0.6);
+	}
+
+	.marker-cluster-medium div {
+		background-color: rgba(240, 194, 12, 0.6);
+	}
+
+	.marker-cluster-large {
+		background-color: rgba(253, 156, 115, 0.6);
+	}
+
+	.marker-cluster-large div {
+		background-color: rgba(241, 128, 23, 0.6);
+	}
+
+	.marker-cluster {
+		background-clip: padding-box;
+		border-radius: 20px;
+	}
+	
+	.icon {
+		width: 50px;
+		height: 50px;
+
+		background: rgba(0, 0, 0, 0.2);
+
+		border-radius: 100%;
+
+		display: table-cell;
+		vertical-align: middle;
+		text-align: center;
+
+	}
+
+
+	.icon-wrapper {
+		width: 36px;
+		height: 36px;
+		display: inline-block;
+
+		position: absolute;
+		top: 50%;
+		left: 50%;
+		transform: translate(-50%, -50%);
+
+
+		line-height: 30px;
+		background: #00acee;
+		border: 1px solid #00acee;
+		border-radius: 20px;
+
+
+	}
+

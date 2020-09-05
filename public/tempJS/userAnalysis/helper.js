@@ -1,3 +1,13 @@
+
+//API HEADERS for the http api requests
+var HeadersForApi = {
+    "Content-Type": "application/json",
+    "Accept": "application/json",
+    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+};
+
+
+
 export const getSuggestionsForUA = (userIDArray) => {
     let userSuggestionRes;
     $.ajax({
@@ -13,40 +23,31 @@ export const getSuggestionsForUA = (userIDArray) => {
     });
     return userSuggestionRes;
 }
-export const getUserDetails = (id) => {
-    let userDetailsJSON;
-    $.ajax({
-        type: "GET",
-        url: 'UA/getUserDetails',
-        contentType: "application/json",
-        data: { userID: id },
-        dataType: "json",
-        async: false,
-        success: function (response) {
-            userDetailsJSON = response;
-        }
+export const getUserDetails = async (id) => {
+    let response = await fetch('UA/getUserDetailsTemp', {
+        method: 'post',
+        headers: HeadersForApi,
+        body: JSON.stringify({
+            userID: id
+        })
     });
-    return userDetailsJSON;
+    let data = await response.json()
+    return data;
 }
 
-export const getFreqDistDataForUA = (query,fromDate,toDate,toTime=null,rangeType) => {
-    let freqDataUA;
+export const getFreqDistDataForUA = async (query, fromDate, toDate, toTime = null, rangeType) => {
     let dataArg;
-    if(toTime){
-        dataArg = {query,toTime,rangeType};
-    }else{
-        dataArg = { query,fromDate,toDate,rangeType};
+    if (toTime) {
+        dataArg =JSON.stringify({ query, toTime, rangeType });
+    } else {
+        dataArg =JSON.stringify({  query, fromDate, toDate, rangeType });
     }
-    $.ajax({
-        type: "GET",
-        url: 'UA/getFrequencyDataForUser',
-        contentType: "application/json",
-        data: dataArg,
-        dataType: "json",
-        async: false,
-        success: function (response) {
-            freqDataUA = response;
-        }
+    let response = await fetch('UA/getFrequencyDataForUser', {
+        method: 'post',
+        headers: HeadersForApi,
+        body:dataArg
     });
-    return freqDataUA;
+    let data = await response.json()
+    return data;
+
 }

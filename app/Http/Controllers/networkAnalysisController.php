@@ -157,4 +157,145 @@ class networkAnalysisController extends Controller
         return json_encode($final_arr);
     }
 
+    public function centrality_data_formator_for_rendering_in_visjs(Request $request)
+    {
+        $network_arr = json_decode($this->read_csv_file($request));
+        $network_centrality_arr = json_decode($this->read_csv_file($request, null, "centralities"));
+        $final_result = array("nodes" => array(), "edges" => array());
+        $unique_node_temp_arr = array();
+        $final_node_arr = array();
+        $edges_temp_arr = array();
+        
+    //    $GraphData_obj = new GraphData;
+
+        // unique edges generation
+        foreach ($network_centrality_arr as $one_list) {
+             if(substr($one_list[0],0,1) == "$"){
+                         //   $output = $GraphData_obj->id_user_mapping($one_list[0]);
+                         //   foreach($output as $op){
+                         //   $user_name = $op["author_screen_name"];
+                          //  $profile_image_link = $op["profile_image_url_https"];
+                           // }
+                          //  array_push($final_node_arr, array("id" => $one_list[0], "label" =>  $user_name, "shape" => 'circularImage', "image" => $profile_image_link, "size" => (220 * $one_list[1]), "borderwidth" => 7, "border" => "#EA9999" ));
+                }else if(substr($one_list[0],0,1) == "#"){
+                             array_push($final_node_arr, array("id" => $one_list[0], "label" => $one_list[0], "shape" => 'circularImage', "image" => 'public/icons/hashtag.svg' , "size" => (220 * $one_list[1]), "borderwidth" => 7, "border" => "#EA9999" ));
+                }else if(substr($one_list[0],0,1) == "@"){
+                             array_push($final_node_arr, array("id" => $one_list[0], "label" => $one_list[0], "shape" => 'circularImage', "image" => 'public/icons/roshanmention.jpg' , "size" => (220 * $one_list[1]), "borderwidth" => 7, "border" => "#EA9999" ));
+                }else if(substr($one_list[0],0,1) == "*"){
+                             array_push($final_node_arr, array("id" => $one_list[0], "label" => $one_list[0], "shape" => 'circularImage', "image" => 'public/icons/keyword.svg' , "size" => (220 * $one_list[1]), "borderwidth" => 7, "border" => "#EA9999" ));
+                }
+            
+            //array_push($final_node_arr, array("id" => $one_list[0], "label" => $one_list[0], "size" => (220 * $one_list[1])));
+        }
+        // unique edges generation
+        $network_arr = array_slice($network_arr, 1, sizeof($network_arr));
+        foreach ($network_arr as $hash_list) {
+            $flag = true;
+            foreach ($edges_temp_arr as $one) {
+                if (($one["from"] == $hash_list[0] && $one["to"] == $hash_list[1]) || ($one["to"] == $hash_list[0] && $one["from"] == $hash_list[1])) {
+                    $flag = false;
+                    break;
+                }
+            }
+            if ($flag == true) {
+                array_push($edges_temp_arr, array("from" => $hash_list[0], "to" => $hash_list[1], "label" => $hash_list[2]));
+            }
+        }
+        $final_result["nodes"] = $final_node_arr;
+        $final_result["edges"] = $edges_temp_arr;
+        return json_encode($final_result);
+    }
+
+
+
+    public function centrality(Request $request)
+    {
+        $input = $_GET['input'];
+       // $dir_name = strval($this->get_session_uid($request));
+       // $read_path = "storage/$dir_name/$input.csv";
+        $dir_name = "netdir";
+        $read_path = "storage/netdir/$input.csv";
+        $algo_option = $_GET['algo_option'];
+        switch ($algo_option) {
+            case 'degcen':
+                $algo_choosen_option = '71';
+                break;
+            case 'pgcen':
+                $algo_choosen_option = '74';
+                break;
+            case 'btwncen':
+                $algo_choosen_option = '72';
+                break;
+            case 'evcen':
+                $algo_choosen_option = '73';
+                break;
+            default:
+                # code...
+                break;
+        }
+        $command = escapeshellcmd('/usr/bin/python python_files/generation.py ' . $algo_choosen_option . ' ' . $read_path . ' ' . $input . ' ' . $dir_name);
+        $output = shell_exec($command);
+        echo json_encode($output);
+    }
+
+    public function get_session_uid($request)
+    {
+        return $request->session()->get('uid');
+    }
+
+    public function mysessionid(Request $request){
+        $dir_name = strval($this->get_session_uid($request));
+        echo $dir_name;
+    }
+
+    public function link_prediction_data_formator_new(Request $request)
+    {
+        $link = json_decode($this->read_csv_file($request, null, "linkprediction"));
+        $final_result = array("nodes" => array(), "edges" => array());
+        $final_node_arr = array();
+        $edges_temp_arr = array();
+        $unique_nodes = array();
+
+        foreach ($link as $connection) {
+            for ($i = 0; $i < sizeof($connection) - 1; $i++) {
+                if (!(in_array($connection[$i], $unique_nodes))) {
+                    array_push($unique_nodes, $connection[$i]);
+                    array_push($final_node_arr, array("id" => $connection[$i]));
+                }
+            }
+        }
+        return json_encode($final_node_arr);
+    }
+
+    public function linkPrediction(Request $request)
+    {
+        $input = $_GET['input'];
+        // $input = "#nrc";
+        $dir_name = strval($this->get_session_uid($request));
+        $algo_option = $_GET['algo_option'];
+        echo $algo_option;
+        switch ($algo_option) {
+            case 'adamicadar':
+                $algo_choosen_option = '999';
+                break;
+            case 'jaccardcoeff':
+                $algo_choosen_option = '786';
+                break;
+            default:
+                # code...
+                break;
+        }
+        $src = $_GET['src'];
+        $k_value = $_GET['k_value'];
+
+        $read_path = "storage/$dir_name/$input.csv";
+        // $command = escapeshellcmd('/usr/bin/python /var/www/html/front-end/python_files/generation.py 51 ' . $read_path . ' ' . $input . ' ' . $dir_name . ' ' . $src . ' ' . $dst);
+
+        $command = escapeshellcmd('/usr/bin/python python_files/generation.py ' . $algo_choosen_option . ' ' . $read_path . ' ' . $input . ' ' . $dir_name . ' ' . $src . ' ' . $k_value);
+        // echo $command;
+        $output = shell_exec($command);
+        echo $output;
+    }
+
+
 }

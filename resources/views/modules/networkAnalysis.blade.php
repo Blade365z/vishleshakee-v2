@@ -2,10 +2,27 @@
 @section('content')
 
 <style type="text/css">
-    .networkDiv {
-      width: 600px;
+    .networkDivid {
+      width: 900px;
       height: 400px;
       border: 1px solid lightgray;
+    }
+
+    table {
+    font-family: arial, sans-serif;
+    border-collapse: collapse;
+    width: 100%;
+    }
+
+    td, th {
+    border: 1px solid #dddddd;
+    text-align: center;
+    padding: 5px;
+    width: 100%;
+    }
+
+    tr:nth-child(even) {
+    background-color: #dddddd;
     }
   </style>
 
@@ -13,8 +30,7 @@
     Network Analysis
 </div>
 
-<div id="test">
-</div>
+
 <div class="mb-3">
     <form id="naInputInputs">
 
@@ -95,30 +111,27 @@
             <div class="card shadow">
                 <div class="card-body">
                     <div>
-                        <h4 class="m-0  font-weight-bold text-dark "> #coronavirus </h4>
-                        <p class="m-0 text-dark "> From: <span class="font-weight-bold"> 2020-11-12</span> &nbsp To: <span class="font-weight-bold"> 2020-12-12</span> </p>
+                        <h4 class="m-0  font-weight-bold text-dark subject"> #coronavirus </h4>
+                        <p class="m-0 text-dark "> From: <span class="font-weight-bold from_date"> 2020-11-12</span> &nbsp To: <span class="font-weight-bold to_date"> 2020-12-12</span> </p>
                         <p class="m-0  text-dark"> </p>
 
 
                     </div>
                     <div class="bg-smat mt-1">
-                        <h1 class="m-0 text-dark "> 50</h1>
+                        <h1 class="m-0 text-dark nos_of_nodes"> 50</h1>
                         <p class="smat-normal-text" style="margin-top:-10px;margin-bottom:0px;"> Total number of Nodes </p>
-                        <h1 class="m-0 text-dark "> 450</h1>
+                        <h1 class="m-0 text-dark nos_of_edges"> 450</h1>
                         <p class="smat-normal-text" style="margin-top:-10px;margin-bottom:0px;"> Total number of Edges </p>
 
                     </div>
                 </div>
             </div>
             <div class="card shadow mt-4">
-                <div class="card-body" id='naSummary'>
-                <div>
-                        <h4 class="m-0  font-weight-bold text-dark ">  </h4>
-                            //TODO::Summary comes here
-
-
-                    </div>
-
+            <h4 class="mt-2  text-center font-weight-bold text-dark"> Analysis Summary </h4>
+                <div class="card-body scroll" id='naSummary' style="overflow-x:hidden;overflow-y:scroll"> 
+                <div class="analysis_summary_div" >
+                            
+                </div>
                 </div>
             </div>
         </div>
@@ -146,18 +159,19 @@
 
                                 </ul>
                                 <div class="tab-content " id="pills-tabContent">
-                                    <div class="tab-pane fade show active " id="centralityContent" role="tabpanel" aria-labelledby="centralityContent">
+                                    <div class="tab-pane fade show active " id="centrality_algo_choice" role="tabpanel" aria-labelledby="centralityContent">
                                         <div>
                                             <div class="text-dark mx-2">
                                                 Select Centrality Algorithm Choice
                                             </div>
-                                            <label class="radio-inline mx-2 "><input type="radio" name="optradio" checked>&nbsp Degree Centrality
+                                            <label class="radio-inline mx-2 "><input type="radio" name="centralityInlineRadioOptions" value="degcen" checked>&nbsp Degree Centrality &nbsp &nbsp &nbsp 
                                             </label>
-                                            <label class="radio-inline mx-2  "><input type="radio" name="optradio">&nbsp Page Rank Centrality
+                                            <label class="radio-inline mx-2  "><input type="radio" name="centralityInlineRadioOptions" value="pgcen">&nbsp Page Rank Centrality
                                             </label>
-                                            <label class="radio-inline mx-2  "><input type="radio" name="optradio">&nbsp Betweeness Centrality</label>
-                                            <label class="radio-inline mx-2 "><input type="radio" name="optradio">&nbsp Eigen Value Centrality
+                                            <label class="radio-inline mx-2  "><input type="radio" name="centralityInlineRadioOptions" value="btwncen">&nbsp Betweeness Centrality</label>
+                                            <label class="radio-inline mx-2 "><input type="radio" name="centralityInlineRadioOptions" value="evcen">&nbsp EV Centrality
                                             </label>
+                                            <button type="submit" id="centrality_exec" class="btn btn-danger smat-rounded " style="margin-top:10px;">Execute</button>
                                         </div>
                                     </div>
                                     <div class="tab-pane fade  p-1 " id="communityContent" role="tabpanel" aria-labelledby="communityContent">
@@ -254,9 +268,9 @@
                                             <div class="text-dark mx-2">
                                                 Select Link Prediction Algorithm
                                             </div>
-                                            <label class="radio-inline mx-2 "><input type="radio" name="optradio" checked>&nbsp Adamic Adar
+                                            <label class="radio-inline mx-2 "><input type="radio" name="linkpredictionRadioOptions" value="adamicadar" checked>&nbsp Adamic Adar
                                             </label>
-                                            <label class="radio-inline mx-2  "><input type="radio" name="optradio">&nbsp Jaccard Coefficient
+                                            <label class="radio-inline mx-2  "><input type="radio" name="linkpredictionRadioOptions" value="jaccardcoeff">&nbsp Jaccard Coefficient
                                             </label>
 
                                         </div>
@@ -267,27 +281,26 @@
                                                 <div class="form-group pull-left mx-1">
 
                                                     <div class="border smat-rounded">
-                                                        <input type="text" class="form-control  naInputs smat-rounded " id="sourceSp" placeholder="Enter source" style="border:0px;">
+                                                        <input type="text" class="form-control  naInputs smat-rounded " id="link_source_node" placeholder="Enter source" style="border:0px;">
                                                     </div>
                                                 </div>
                                                 <div class="form-group  mx-1">
 
                                                     <div class="border smat-rounded">
-                                                        <input type="text" class="form-control  naInputs smat-rounded " id="destSp" placeholder="No. of links to be predicted" style="border:0px;">
+                                                        <input type="text" class="form-control  naInputs smat-rounded " id="nos_links_to_be_predicted" placeholder="No. of links to be predicted" style="border:0px;">
                                                     </div>
                                                 </div>
 
                                                 <div class="form-group mx-1">
-                                                    <button type="submit" class="btn btn-danger smat-rounded ">Execute</button>
+                                                    <button type="submit" class="btn btn-danger smat-rounded" id="link_prediction_exec">Execute</button>
                                                 </div>
                                             </div>
-
 
 
                                         </div>
                                     </div>
                                 </div>
-                                <div class="networkDiv">
+                                <div class="networkDiv" id="networkDivid">
                                     //TODO:: Viz. Network Comes here
                                 </div>
                             </div>

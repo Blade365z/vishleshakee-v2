@@ -27,11 +27,11 @@ class Utilities{
     }
     
     /**
-    * Get 10sec list 
+    * Get 10sec list to query to cassandra
     *
     * @return array of array [[CASS_DATE('2020-08-10'), 10:00:00'], ['2020-08-10', '10:00:10'], ['2020-08-10', '10:00:20'], ['2020-08-10', '10:00:30']]
     */
-    public function get_10sec_list($to_datetime, $from_datetime){
+    public function get_10sec_list_for_cassandra($to_datetime, $from_datetime){
         $tenSec_array = array();
         $diff_value_in_sec = $this->get_difference_between_two_datetime($to_datetime, $from_datetime, $option='sec');
         for ($i = 0; $i <= ($diff_value_in_sec/10); $i++) {
@@ -45,6 +45,24 @@ class Utilities{
         }
         return array_reverse($tenSec_array);
     }
+
+
+    /**
+    * Get hour list to query to cassandra
+    *
+    * @return array of array [[CASS_DATE('2020-08-10'), 01:00:00'], ['2020-08-10', '02:00:00'], ['2020-08-10', '03:00:00']]
+    */
+    public function get_hour_list_for_cassandra($to_datetime, $from_datetime){
+        $hour_array = array();
+        $hours_array_tmp = array("01:00:00", "02:00:00", "03:00:00", "04:00:00", "05:00:00", "06:00:00", "07:00:00", "08:00:00", "09:00:00", "10:00:00", "11:00:00", "12:00:00", "13:00:00", "14:00:00", "15:00:00", "16:00:00", "17:00:00", "18:00:00", "19:00:00", "20:00:00", "21:00:00", "22:00:00", "23:00:00");
+        $to_date_time_list = $this->separate_date_time($to_datetime); // ['2020-09-06', '00:00:00']
+        $cass_date_obj = $this->convert_php_date_obj_to_cass_date_obj(strtotime($to_date_time_list[0]. ' 18:30:00'));
+        for ($i = 0; $i < 23; $i++) {
+            array_push($hour_array,  array($cass_date_obj, $hours_array_tmp[$i]));
+        }
+        return $hour_array;
+    }
+
     
     /**
     * Convert Cassandra dateTime obj to str date or str dateTime

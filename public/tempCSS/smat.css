@@ -31,7 +31,7 @@
 .interval-buttons-public{
     font-size:13px;
 }
-.author_searched:hover{
+.authorName:hover{
 color:var(--color-active) !important;
 cursor: pointer;
 }

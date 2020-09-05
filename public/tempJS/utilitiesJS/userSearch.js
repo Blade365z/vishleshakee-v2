@@ -73,12 +73,9 @@ const checkPagingStateTokenUserSearch = (div) => {
 }
 const print_users_list = (data, div) => {
     try {
-        console.log('PRINTING USERS...')
-        console.log(data);
-        console.log(div);
-        data.forEach(element => {
+    data.forEach(element => {
             let verified = element.verified == 'True' ? '<span><img class="verifiedIcon" src="public/icons/smat-verified.png"/></span>' : '';
-            $('#' + div).append('<div class="row m-2"><span><img class="profilePicSmall" src="' + element['profile_image_url_https'] + '"  /> </span><span class="ml-1"><a class="author_searched pt-1 m-0 font-weight-bold"  title="' + element['author'] + '" title1="' + element['author_id'] + '" title2="' + element['author_screen_name'] + '" title3="' + element['profile_image_url_https'] + '"   >' + element['author'] + '</a> '+verified+'<p class="smat-dash-title pull-text-top m-0 ">@' + element['author_screen_name'] + '</p></span></div>')
+            $('#' + div).append('<div class="row m-2"><span><img class="profilePicSmall" src="' + element['profile_image_url_https'] + '"  /> </span><span class="ml-1"><a class="authorName pt-1 m-0 font-weight-bold"   value="$' + element['author_id'] + '"  >' + element['author'] + '</a> '+verified+'<p class="smat-dash-title pull-text-top m-0 ">@' + element['author_screen_name'] + '</p></span></div>')
 
         });
     } catch {

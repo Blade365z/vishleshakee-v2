@@ -16,7 +16,7 @@
 
             <div class="d-flex">
                 <button class="btn smat-btn  smat-rounded  mx-1 mb-3" id="submit-btn" type="submit"> <span>Search User</span> </button>
-                <button class="btn text-normal smat-rounded  mx-1 mb-3 " onclick="return false;" id="showUAsugg"> Show Suggestions </button>
+                <button class="btn text-normal smat-rounded  mx-1 mb-3 " onclick="return false;" id="showUAsugg"> <span id="suggestionCurrentStatus">Hide</span> Suggestions </button>
             </div>
             <!-- <button class="btn  text-normal smat-rounded  mx-1" id="showTableBtn" onclick="return false"> <span> Show Search History </span> </button> -->
         </div>
@@ -57,16 +57,15 @@
     </div>
 
 </div>
+
+
+<div id="UAAnalysisDiv" style="display:none">
 <div class="mt-3">
     <p class="smat-box-title-large m-0">Showing results for <span class="smat-value font-weight-bold text-normal" id="showingResultsFor"> </span> </p>
-
-    <div>
-
-    </div>
 </div>
 <div class="row mt-3">
     <div class="col-md-5">
-        <div id="date-divUA"> 
+        <div id="date-divUA">
     <form id="uaDateForm">
         <div class="d-flex mb-3">
             <div class="form-group   my-0  mr-2  border smat-rounded d-flex px-2 py-1  bg-white">
@@ -90,7 +89,7 @@
                         <img  class="profilePicLarge" id="currentUAProfilePic" />
                     </div>
                     <div class="mt-2">
-                        <div class="text-center"> 
+                        <div class="text-center">
                         <span class="userNameLarge mx-2 mb-1 text-dark"   id="currentUAUserName"> </span><span id="currentUAVerified"> </span>
 </div>
                         <p class="userHandleLarge mx-2 mb-0 text-dark" id="currentUAUserHandle"></p>
@@ -122,8 +121,8 @@
                                 <td class="p-0 text-dark "id="userDetailsBIO" ></td>
 
                             </tr>
-                    
-                
+
+
                             <tr>
                                 <th class="py-0 px-3 text-dark" scope="row">URL:</th>
                                 <td class="p-0 text-dark " id="userDetailsURL"> </td>
@@ -187,13 +186,13 @@
 
             </div>
             <div class="tab-content" id="pills-tabContent">
-                
+
                 <div class="tab-pane fade show active haTab" id="freqContentUA" role="tabpanel" aria-labelledby="freqContentUA"> </div>
                 <div class="tab-pane fade haTab " id="sentiContentUA" role="tabpanel" aria-labelledby="sentiContentUA">Sentiment </div>
                 <div class="tab-pane fade haTab" id="mentionsContentUA" role="tabpanel" aria-labelledby="mentionsContentUA">Mentions Tab</div>
-          
+
                 <div class="tab-pane fade haTab " id="hashtagsContentTab" role="tabpanel" aria-labelledby="hashtagsContentTab">hashtagsContentTab</div>
-             
+
                 <div class="tab-pane fade haTab " id="locationContentUA" role="tabpanel" aria-labelledby="locationContentUA">locationContentUA </div>
 
             </div>
@@ -204,6 +203,7 @@
 
 
 
+</div>
 </div>
 <script type="module" src="public/amcharts4/core.js"></script>
 <script type="module" src="public/amcharts4/charts.js"></script>
