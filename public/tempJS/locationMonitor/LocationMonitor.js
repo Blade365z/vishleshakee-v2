@@ -1,5 +1,35 @@
 import {wordCloudLM} from './chartHelper.js';
+import {getLocationMonitorMap} from './helper.js';
+
+
 $(document).ready(function(){
+    
+    
+    
+    
+    
+    getLocationMonitorMap('lmMap');
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
     $('.nav-item ').removeClass('smat-nav-active');
     $('#nav-LM').addClass('smat-nav-active');
     wordCloudLM('trendingLM');

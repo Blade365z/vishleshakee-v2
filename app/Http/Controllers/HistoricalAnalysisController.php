@@ -46,6 +46,26 @@ class HistoricalAnalysisController extends Controller
         return $common_object->get_co_occur_data($to_datetime, $from_datetime, $token, $range_type, $co_occur_option, $file_path, true);
     }
 
+    public function data_formatter_for_co_occur_ha(){
+        $common_object = new CC;
+        $file_path = null;
+        $limit = null;
+        $token = null;
+        $option = $_GET['option'];
+        if (isset($_GET['limit']))
+            $limit = $_GET['limit'];
+        if (isset($_GET['query'])) {
+            $token = $_GET['query'];
+            $file_path = "common/" . $token . "_" . $option . ".csv";
+        } else if (isset($_GET['unique_id'])) {
+            // get directory name after user_login
+            $filename = $_GET['unique_id'];
+            $file_path = "directory_name/$filename.csv";
+        }
+
+        return $common_object->data_formatter_for_co_occur($token, $option, $limit, $unique_id=null, $file_path=null);
+    }
+
     public function get_top_data_ha()
     {
         $common_object = new CC;

@@ -1,6 +1,6 @@
 
-import {getTweetIDsFromController} from './helper.js'
-import {TweetsGenerator} from '../utilitiesJS/TweetGenerator.js'
+import { getTweetIDsFromController, getFreqDistData, getSentiDistData, getTopCooccurData } from './helper.js'
+import { TweetsGenerator } from '../utilitiesJS/TweetGenerator.js'
 
 
 
@@ -39,23 +39,11 @@ export const generateFrequencyChart = (data, query, div) => {
   freqSummary(chart.data);
   try {
     finalTime = data['data'][data['data'].length - 1][0];
-  }
-  catch (err) {
-    console.log('Final Time couldnot be initialized', err);
-  }
-  const updateFreqChart = function () {
-    $.ajax({
-      type: "GET",
-      url: 'smat/updateFreqDist',
-      contentType: "application/json",
-      dataType: "json",
-      data: { finalTime, query },
-      async: false,
-      success: function (response) {
-
+    const updateFreqChart = function () {
+      getFreqDistData(null, query, true, finalTime).then(response => {
         finalTime = response[0]['finalTime'];
         response = response[0]['data'];
-       
+
         if (response['data'].length > 0) {
           chart.addData({
             "date": new Date(response['data'][0][0]),
@@ -66,17 +54,16 @@ export const generateFrequencyChart = (data, query, div) => {
             "value5": response['data'][0][4]
 
           }, 1);
-
-          chart.invalidateRawData();
-          freqSummary(chart.data);
         }
+        freqSummary(chart.data);
+      })
+    }
 
-      }
-    });
+    frequencyChartInt = setInterval(updateFreqChart, 10000);
   }
-
-
-  frequencyChartInt = setInterval(updateFreqChart, 10000);
+  catch (err) {
+    console.log('Final Time couldnot be initialized', err);
+  }
 
 
   // Create axes
@@ -109,14 +96,16 @@ export const generateFrequencyChart = (data, query, div) => {
     }));
     let month = datetime_obj['date'].getMonth() + 1;
     month = month < 10 ? '0' + month : '' + month;
-    let capturedDate = (datetime_obj['date'].getFullYear() + '-' + month + '-' + datetime_obj['date'].getDate()) +' '+ time;
+    let capturedDate = (datetime_obj['date'].getFullYear() + '-' + month + '-' + datetime_obj['date'].getDate()) + ' ' + time;
 
-   
-    let freqOnClickTweetData  = getTweetIDsFromController(null,query,capturedDate,capturedDate);
-    let tweetIDs = freqOnClickTweetData[0]['data']['data'];
-    TweetsGenerator(tweetIDs, 4, 'tweets-modal-div');
-    $('#tweetsModal').modal('show');
-    
+
+    getTweetIDsFromController(null, query, capturedDate, capturedDate).then(response => {
+      let tweetIDs = response[0]['data']['data'];
+      TweetsGenerator(tweetIDs, 4, 'tweets-modal-div');
+      $('#tweetsModal').modal('show');
+    });
+
+
   });
   //chart.scrollbarY = new am4core.Scrollbar();
   chart.scrollbarX = new am4core.Scrollbar();
@@ -156,23 +145,10 @@ export const generateSentimentChart = (data, query, div) => {
   ];
   try {
     finalTime = data['data'][data['data'].length - 1][0];
-  }
-  catch (err) {
-    console.log('Final Time couldnot be initialized', err);
-  }
-
-  const updateSentiChart = () => {
-    $.ajax({
-      type: "GET",
-      url: 'smat/updateSentiDist',
-      contentType: "application/json",
-      dataType: "json",
-      data: { finalTime, query },
-      async: false,
-      success: function (response) {
+    const updateSentiChart = () => {
+      getSentiDistData(null, query, true, finalTime).then(response => {
         finalTime = response[0]['finalTime'];
         response = response[0]['data'];
-       
         if (response['data'].length > 0) {
           chart.addData({
             "date": new Date(response['data'][0][0]),
@@ -183,12 +159,13 @@ export const generateSentimentChart = (data, query, div) => {
           chart.invalidateRawData();
           sentiSummaryTotalFinder(chart.data);
         }
-
-      }
-    });
+      })
+    }
+    sentimentChartInterval = setInterval(updateSentiChart, 10000);
   }
-
-  sentimentChartInterval = setInterval(updateSentiChart, 10000);
+  catch (err) {
+    console.log('Final Time couldnot be initialized', err);
+  }
 
 
 
@@ -267,7 +244,6 @@ export const generateBarChart = (data = null, query, div, type) => {
   chart.data = generateChartData(dataCaptured, type);
   function generateChartData(data, type) {
     var chartData = [];
-    if (type == 'mention') {
       data.forEach(element => {
         chartData.push({
           "token": element['handle'],
@@ -275,25 +251,7 @@ export const generateBarChart = (data = null, query, div, type) => {
 
         });
       });
-    }
-    else if (type == 'user') {
-      data.forEach(element => {
-        chartData.push({
-          "token": element['handle'],
-          "count": element['count'],
-
-        });
-
-        // chartData.push({
-        //     "token": element['author_screen_name'],
-        //     "count": element['count'],
-        //     "id": element['id'],
-        //     "pic": element['profile_picture'],
-        //     "handle": element['author']
-        // });
-      });
-    }
-
+    
     return chartData;
   }
 
@@ -345,49 +303,23 @@ export const generateBarChart = (data = null, query, div, type) => {
   series.tooltipText = " {categoryY}: {valueX.value}" + "(Click to Know More)";
   series.columns.template.width = am4core.percent(50);
   let finalTime = data[0]['finalTime'];
+  console.log(finalTime);
   const updateBarChart = () => {
-    console.log(type);
-
-    $.ajax({
-      type: "GET",
-      url: 'smat/updateBarPlotRealTime',
-      contentType: "application/json",
-      dataType: "json",
-      data: { finalTime, query, option: type },
-      async: false,
-      success: function (response) {
-        finalTime = response[0]['finalTime'];
-        response = response[0]['data'];
-        console.log(finalTime);
-        let dataTemp = response;
-        if (dataTemp) {
-          let lenofTempData = Object.keys(dataTemp).length - 1;
-          if (lenofTempData > 1) {
-            for (let i = 0; i <= lenofTempData; i++) {
-              let flag = false;
-              for (let j = 0; j <= chart.data.length - 1; j++) {
-                if (dataTemp[i]['handle'] == chart.data[j]['token']) {
-                  chart.data[j]['count'] += dataTemp[i]["count"];
-                  chart.invalidateRawData();
-                  flag = false;
-                  break;
-                } else {
-                  flag = true;
-                }
-              }
-              if (flag == true) {
-                chart.addData({
-                  "token": dataTemp[i]['handle'],
-                  "count": dataTemp[i]['count']
-                });
-              }
-            }
-          } else {
-
+ 
+    // getTopCooccurData async (interval = null, query, option, isRealTime = false, fromTime = null)
+    getTopCooccurData(null, query, type, true, finalTime).then(response => {
+      finalTime = response[0]['finalTime'];
+      response = response[0]['data'];
+    
+      let dataTemp = response;
+      if (dataTemp) {
+        let lenofTempData = Object.keys(dataTemp).length - 1;
+        if (lenofTempData > 1) {
+          for (let i = 0; i <= lenofTempData; i++) {
             let flag = false;
             for (let j = 0; j <= chart.data.length - 1; j++) {
-              if (dataTemp['handle'] == chart.data[j]['token']) {
-                chart.data[j]['count'] += dataTemp["count"];
+              if (dataTemp[i]['handle'] == chart.data[j]['token']) {
+                chart.data[j]['count'] += dataTemp[i]["count"];
                 chart.invalidateRawData();
                 flag = false;
                 break;
@@ -397,21 +329,35 @@ export const generateBarChart = (data = null, query, div, type) => {
             }
             if (flag == true) {
               chart.addData({
-                "token": dataTemp['handle'],
-                "count": dataTemp['count']
+                "token": dataTemp[i]['handle'],
+                "count": dataTemp[i]['count']
               });
-
             }
+          }
+        } else {
+
+          let flag = false;
+          for (let j = 0; j <= chart.data.length - 1; j++) {
+            if (dataTemp['handle'] == chart.data[j]['token']) {
+              chart.data[j]['count'] += dataTemp["count"];
+              chart.invalidateRawData();
+              flag = false;
+              break;
+            } else {
+              flag = true;
+            }
+          }
+          if (flag == true) {
+            chart.addData({
+              "token": dataTemp['handle'],
+              "count": dataTemp['count']
+            });
 
           }
-
-
         }
-
-
       }
-    });
-  }
+    })
+}
   barChartInterval = setInterval(updateBarChart, 10000)
 
 

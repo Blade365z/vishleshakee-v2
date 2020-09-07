@@ -271,9 +271,9 @@ class networkAnalysisController extends Controller
     {
         $input = $_GET['input'];
         // $input = "#nrc";
-        $dir_name = strval($this->get_session_uid($request));
-        $algo_option = $_GET['algo_option'];
-        echo $algo_option;
+       // $dir_name = strval($this->get_session_uid($request));
+       $dir_name = "netdir"; 
+       $algo_option = $_GET['algo_option'];
         switch ($algo_option) {
             case 'adamicadar':
                 $algo_choosen_option = '999';
@@ -294,8 +294,174 @@ class networkAnalysisController extends Controller
         $command = escapeshellcmd('/usr/bin/python python_files/generation.py ' . $algo_choosen_option . ' ' . $read_path . ' ' . $input . ' ' . $dir_name . ' ' . $src . ' ' . $k_value);
         // echo $command;
         $output = shell_exec($command);
+        //echo $output;
+    }
+
+        // This function is currently being used in shortestpath routes are changed in the routes
+        public function shortest_path_data_formator_new(Request $request)
+        {
+            $link = json_decode($this->read_csv_file($request, null, "shortestpath"));
+            $final_result = array();
+            $final_node_arr = array();
+            $edges_temp_arr = array();
+            $unique_nodes = array();
+            $paths = array();
+    
+            foreach ($link as $connection) {
+                array_push($paths, $connection);
+                foreach ($connection as $data) {
+                    array_push($unique_nodes, $data);
+                }
+            }
+    
+            $final_result["result"] = $unique_nodes;
+            $final_result["paths"] = $paths;
+    
+            return json_encode($final_result);
+        }
+   
+
+    public function shortestpath(Request $request)
+    {
+        $input = $_GET['input'];
+        $dir_name = "netdir";
+       // $dir_name = strval($this->get_session_uid($request));
+        $algo_option = $_GET['algo_option'];
+        switch ($algo_option) {
+            case 'ShortestPath':
+                $algo_choosen_option = '41';
+                $k = null;
+                break;
+            case 'KPossibleShortestPath':
+                // $algo_choosen_option = '111';
+                $algo_choosen_option = '115';
+                break;
+            case 'AllPossibleShortestPath':
+                $algo_choosen_option = '404';
+                break;
+            default:
+                # code...
+                break;
+        }
+        $src = $_GET['src'];
+        $dst = $_GET['dst'];
+        
+        // $max_gen_node = $_GET["max_gen_node"];
+        $depth="null";
+        $k = "null";
+
+        $read_path = "storage/$dir_name/$input.csv";
+        $command = escapeshellcmd('/usr/bin/python python_files/generation.py ' . $algo_choosen_option . ' ' . $read_path . ' ' . $input . ' ' . $dir_name . ' ' . $src . ' ' . $dst . ' ' . $depth . ' ' . $k);
+        // $command = escapeshellcmd('/usr/bin/python /var/www/html/front-end/python_files/generation.py 41 ' . $read_path . ' ' . $input . ' ' . $dir_name . ' ' . $src . ' ' . $dst);
+        $output = shell_exec($command);
         echo $output;
     }
+
+    public function community_detection(Request $request)
+    {
+        // $input = "#modi";
+        $input = $_GET['input'];
+        $k = $_GET['k'];
+        $iterations = $_GET['iterations'];
+        $algo_option = $_GET['algo_option'];
+       // $dir_name = strval($this->get_session_uid($request));
+        $dir_name = "netdir";
+        $read_path = "storage/$dir_name/$input.csv";
+        $handle = fopen($read_path, "r");
+
+        $fline = fgetcsv($handle, ",");
+        $fline = fgetcsv($handle, 100, ",");
+        $input_network_query = $fline[0];
+        echo gettype($input_network_query);
+
+        switch ($algo_option) {
+            case 'lpa':
+                $algo_choosen_option = '501';
+                // $k = 0;
+                break;
+            case 'Grivan Newman':
+                // algo_choosen_option was 502 reset it after initial version
+                $algo_choosen_option = '501';
+                $k = 0;
+                break;
+            case 'AsyncFluidic':
+                $algo_choosen_option = '33';
+                break;
+            default:
+                # code...
+                break;
+        }
+        echo $algo_choosen_option;
+
+        $command = escapeshellcmd('/usr/bin/python python_files/generation.py ' . $algo_choosen_option . ' ' . $read_path . ' ' . $input . ' ' . $dir_name . ' ' . $k . ' ' . $iterations . ' ' . $input_network_query);
+
+        echo $command;
+        $output = shell_exec($command);
+        echo $output;
+    }
+    
+
+    public function community_data_formator_for_rendering_in_visjs(Request $request)
+    {
+        $network_arr = json_decode($this->read_csv_file($request));
+        $network_community_arr = json_decode($this->read_json_file($request));
+        $final_result = array("nodes" => array(), "edges" => array());
+        $unique_node_temp_arr = array();
+        $final_node_arr = array();
+        $edges_temp_arr = array();
+        $community_members = array();
+        $community_index = -1;
+        
+         $GraphData_obj = new GraphData;
+
+        $grp_no = 0;
+        //unique node generation 
+        foreach ($network_community_arr as $one_community) {
+
+            $community_index = $community_index + 1;
+            $community_members[$community_index] = array();
+
+            foreach ($one_community as $one_hash) {
+                if (!(array_key_exists($one_hash, $unique_node_temp_arr))) {
+                    $unique_node_temp_arr[$one_hash] = 1;
+                    
+                    if(substr($one_hash,0,1) == "$"){
+                        $output = $GraphData_obj->id_user_mapping($one_hash);
+                            foreach($output as $op){
+                            $user_name = $op["author_screen_name"];
+                            $profile_image_link = $op["profile_image_url_https"];
+                        }
+                        array_push($final_node_arr, array("id" => $one_hash, "label" => $user_name, "group" => $grp_no));
+                    }else{
+                    array_push($final_node_arr, array("id" => $one_hash, "label" => $one_hash, "group" => $grp_no));
+                    }
+                    array_push($community_members[$grp_no], $one_hash);
+                }
+            }
+            $grp_no += 1;
+        }
+
+        // unique edges generation
+        $network_arr = array_slice($network_arr, 1, sizeof($network_arr));
+        foreach ($network_arr as $hash_list) {
+            $flag = true;
+            foreach ($edges_temp_arr as $one) {
+                if (($one["from"] == $hash_list[0] && $one["to"] == $hash_list[1]) || ($one["to"] == $hash_list[0] && $one["from"] == $hash_list[1])) {
+                    $flag = false;
+                    break;
+                }
+            }
+            if ($flag == true) {
+                array_push($edges_temp_arr, array("from" => $hash_list[0], "to" => $hash_list[1], "label" => $hash_list[2]));
+            }
+        }
+        $final_result["nodes"] = $final_node_arr;
+        $final_result["edges"] = $edges_temp_arr;
+        $final_result["groups"] = $community_members;
+        return json_encode($final_result);
+    }
+    
+
 
 
 }

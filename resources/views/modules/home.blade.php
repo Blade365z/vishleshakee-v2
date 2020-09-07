@@ -1,5 +1,9 @@
 @extends('parent.app')
 @section('content')
+<link rel="stylesheet" href="public/leaflet/markerCluster/MarkerCluster.css">
+<link rel="stylesheet" href="public/leaflet/leaflet.css">
+
+
 
 <div class="row ">
     <div class="col-sm-9 ">
@@ -267,15 +271,11 @@ var incoming = {!! json_encode($query) !!}
 <script type="module" src="public/amcharts4/core.js"></script>
 <script type="module" src="public/amcharts4/charts.js"></script>
 <script type="module" src="public/amcharts4/themes/animated.js"></script>
-<script type="module" src="public/bootpag/bootpag-min.js"></script>
 <script type="module" src="public/tempJS/home/Home.js"></script>
 
 <script src="public/leaflet/leaflet.js"></script>
 <script src="public/leaflet/TileLayer.Grayscale.js"></script>
-<link rel="stylesheet" href="public/leaflet/markerCluster/MarkerCluster.css">
-<link rel="stylesheet" href="public/leaflet/markerCluster/MarkerCluster.Default.css">
 <script src="public/leaflet/markerCluster/leaflet.markercluster-src.js"></script>
-<link rel="stylesheet" href="public/leaflet/leaflet.css">
 <script src="public/leaflet/subgroup/leaflet.featuregroup.subgroup.js"></script>
 
 @endsection

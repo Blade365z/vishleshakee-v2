@@ -49,6 +49,9 @@ Route::get('/trendAnalysis', function () {
     return view('modules.trendAnalysis');
 })->middleware('auth');
 
+
+
+
 //Few Auth Routes
 Auth::routes();
 Route::get('/logout', 'Auth\LoginController@logout')->name('logout');
@@ -56,15 +59,13 @@ Route::get('/logout', 'Auth\LoginController@logout')->name('logout');
 //Define API routes requiring middleware here.
 Route::group(['prefix' => 'smat'], function () {
     Route::get('ua', 'Home@home');
-    Route::get('topCooccurDataPublic', 'Home@getTopCoocurDataPublic');
+    Route::post('topCooccurDataPublic', 'Home@getTopCoocurDataPublic');
     Route::get('getme', 'Home@me');
-    Route::get('/freqDist', 'Home@getFrequencyDistributionData');
-    Route::get('/updateFreqDist', 'Home@updateFreqDistGraphRealtime');
-    Route::get('/sentiDist', 'Home@getSentimentDistributionData');
-    Route::get('/updateSentiDist', 'Home@updateSentiDistGraphRealtime');
-    Route::get('/updateBarPlotRealTime', 'Home@updateTopCoocureDataRealtime');
-    Route::get('/getTopTrendingData', 'Home@getTopTrendingData');
-    Route::get('/getTweetIDs', 'Home@getTweetIDData');
+    Route::post('/freqDist', 'Home@getFrequencyDistributionData');
+    Route::post('/sentiDist', 'Home@getSentimentDistributionData');
+    Route::post('/readCooccurData', 'Home@readCooccurDataPublic');
+    Route::post('/getTopTrendingData', 'Home@getTopTrendingData');
+    Route::post('/getTweetIDs', 'Home@getTweetIDData');
     Route::get('/getTweetsRaw', 'Home@getRawTweets');
 
 });
@@ -79,7 +80,7 @@ Route::group(['prefix' => 'HA'], function () {
     Route::get('freqDistDataHA', 'HistoricalAnalysisController@get_frequency_distribution_data_ha');
     Route::get('sentDistDataHA', 'HistoricalAnalysisController@get_sentiment_distribution_data_ha');
     Route::get('coOccurDataHA', 'HistoricalAnalysisController@get_co_occur_data_ha');
-    Route::get('coOccurDataFormatterHA', 'CommonController@data_formatter_for_co_occur');
+    Route::get('coOccurDataFormatterHA', 'HistoricalAnalysisController@data_formatter_for_co_occur_ha');
     Route::get('topDataHA', 'HistoricalAnalysisController@get_top_data_ha');
     Route::get('tweetsHA', 'HistoricalAnalysisController@get_tweets_ha');
     Route::get('getTweetsInfoHA', 'HistoricalAnalysisController@get_tweets_info_ha');
@@ -97,8 +98,14 @@ Route::group(['prefix' => 'na'], function () {
     Route::get('centrality', 'networkAnalysisController@centrality');
 
     Route::get('link_prediction_data_formator','networkAnalysisController@link_prediction_data_formator_new');
-Route::get('link_prediction','networkAnalysisController@linkPrediction');
-    
+    Route::get('link_prediction','networkAnalysisController@linkPrediction');
+    Route::get('shortest_path_data_formator','networkAnalysisController@shortest_path_data_formator_new');
+    Route::get('shortestpath','networkAnalysisController@shortestpath');
+    Route::get('communitydetection','networkAnalysisController@community_detection');
+    Route::get('community_data_formator', 'networkAnalysisController@community_data_formator_for_rendering_in_visjs');
+
+    Route::get('union','networkAnalysisController@union');
+    Route::get('union_data_formator','networkAnalysisController@union_data_formator');
     //For network evolution
     Route::get('nettest', 'networkAnalysisEvolution@tester');
     Route::get('jobsubmit', 'networkAnalysisEvolution@jobSubmission');
@@ -106,13 +113,14 @@ Route::get('link_prediction','networkAnalysisController@linkPrediction');
 
 //Define API routes requiring middleware here for User Analysis
 Route::group(['prefix' => 'UA'], function () {
-    Route::get('/userlist', 'UserAnalysisController@first_list');
+    Route::post('/userlist', 'UserAnalysisController@first_list');
     Route::get('/getpagingstate','UserAnalysisController@get_page_state_token');
     Route::get('/getSuggestedUsers','UserAnalysisController@getSuggestedUsers');
     Route::get('/getUserDetails','UserAnalysisController@getUserDetails');
     Route::post('/getUserDetailsTemp','UserAnalysisController@getUserDetails');
     Route::post('/getFrequencyDataForUser','UserAnalysisController@getFrequencyDataForUser');
- 
+    Route::post('/getTweetIDs','UserAnalysisController@getTweetIDUA');
+    
 });
 
 

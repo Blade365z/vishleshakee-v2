@@ -1,5 +1,23 @@
-//Utility script for logic related to Dates developed at OSINT , IIT-G.
-//Written by : Mala Das , Amitabh Baruah
+
+/*
+The Script contains the modules for logic related to Dates  of the Social Media Analysis tool 
+developed at OSINT LAB , IIT-G
+
+-----------------------------
+IMPORTANT NOTE
+-----------------------------
+1.Use camelCase notations:)
+2.PLEASE NOTE that the range types are :: 1. days , 2.hour , 3.10sec
+3.Avoid using synchronous requests as XML-http-requests has been deprecated already.
+
+-------------
+Exception 
+-------------
+1.We are considering Local Time instead of UTC.  
+
+
+Script written by : Mala Das(maladas601@gmail.com), Amitabh Boruah(amitabhyo@gmail.com)
+*/
 
 
 export const getCurrentDate = (format = 'Y-m-d', utc = false) => {

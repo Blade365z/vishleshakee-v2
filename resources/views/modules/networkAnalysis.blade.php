@@ -3,7 +3,7 @@
 
 <style type="text/css">
     .networkDivid {
-      width: 900px;
+        width:100% !important;
       height: 400px;
       border: 1px solid lightgray;
     }
@@ -51,7 +51,6 @@
                 <input type="number" class="form-control" name=" nodes" id="nodesNA" placeholder="Number of Nodes" style="border:0px;" autocomplete="OFF" required>
             </div>
             <div class="form-group  my-0  mr-2 border smat-rounded d-flex px-2 py-1  bg-white">
-
                 <select class="form-control" name="NAType" id="typeNA">
                     <option>Hashtag-Hashtag </option>
                     <option>Hashtag-Mentions </option>
@@ -72,13 +71,10 @@
             </div>
             <!-- <button class="btn  text-normal smat-rounded  mx-1" id="showTableBtn" onclick="return false"> <span> Show Search History </span> </button> -->
         </div>
-
     </form>
 </div>
 <div class="my-2">
     <div class="row" id="naCards">
-
-
     </div>
 </div>
 <div class="mt-2" id="naPanel">
@@ -138,17 +134,17 @@
         <div class="col-sm-9">
             <div class="card shadow">
                 <div class="card-body">
-                    <div class="d-flex">
+                    <div class="">
                         <div class="tab-content " id="pills-tabContent">
 
                             <div class="tab-pane fade show active " id="netContentNA" role="tabpanel" aria-labelledby="netContentNA">
 
                                 <ul class="nav nav-pills mb-3" id="pills-tab" role="tablist">
                                     <li class="nav-item naTabs-2">
-                                        <a class="nav-link active smat-rounded " id="centralityTab" data-toggle="pill" href="#centralityContent" role="tab" aria-controls="centralityContent" aria-selected="true">Centrality</a>
+                                        <a class="nav-link active smat-rounded " id="centralityTab" data-toggle="pill" href="#centrality_algo_choice" role="tab" aria-controls="centrality_algo_choice" aria-selected="true">Centrality</a>
                                     </li>
                                     <li class="nav-item naTabs-2 ">
-                                        <a class="nav-link smat-rounded " id="communityTab" data-toggle="pill" href="#communityContent" role="tab" aria-controls="communityContent" aria-selected="false">Community Detection</a>
+                                        <a class="nav-link smat-rounded " id="commTab" data-toggle="pill" href="#communityContent" role="tab" aria-controls="communityContent" aria-selected="false">Community Detection</a>
                                     </li>
                                     <li class="nav-item naTabs-2">
                                         <a class="nav-link smat-rounded " id="spTab" data-toggle="pill" href="#spContent" role="tab" aria-controls="spContent" aria-selected="false">Shortest Path</a>
@@ -174,25 +170,23 @@
                                             <button type="submit" id="centrality_exec" class="btn btn-danger smat-rounded " style="margin-top:10px;">Execute</button>
                                         </div>
                                     </div>
-                                    <div class="tab-pane fade  p-1 " id="communityContent" role="tabpanel" aria-labelledby="communityContent">
+
+                                    <div class="tab-pane fade  p-1 "  id="communityContent" role="tabpanel" aria-labelledby="communityContent">
                                         <div>
                                             <div class="text-dark mx-2">
                                                 Select Community Algorithm Choice
                                             </div>
-                                            <ul class="nav nav-pills mb-3" id="pills-tab" role="tablist">
-                                                <li class="nav-item naTabs-2 mx-2">
-                                                    <a class="nav-link active smat-rounded " id="asyncFluidTab" data-toggle="pill" href="#asyncFluidContent" role="tab" aria-controls="asyncFluidContent" aria-selected="true">Async Fluidic
-                                                    </a>
-                                                </li>
-                                                <li class="nav-item naTabs-2 mx-2 ">
-                                                    <a class="nav-link  smat-rounded " id="labelPropTab" data-toggle="pill" href="#emptyContent" role="tab" aria-controls="emptyContent" aria-selected="true">Label Propagation
-                                                    </a>
-                                                </li>
-                                                <li class="nav-item naTabs-2 mx-2">
-                                                    <a class="nav-link  smat-rounded " id="grivanNewmanTab" data-toggle="pill" href="#emptyContent" role="tab" aria-controls="emptyContent" aria-selected="true">Grivan Newman
-                                                    </a>
-                                                </li>
 
+                                            <ul class="nav nav-pills mb-3" id="pills-tab communityoption"  role="tablist">
+                                                <li class="nav-item naTabs-2 mx-2">
+                                                    <a class="nav-link active smat-rounded " value="asyncFluidTab" data-toggle="pill" href="#asyncFluidContent" role="tab" aria-controls="asyncFluidContent" aria-selected="true">Async Fluidic</a>
+                                                </li>
+                                                <li class="nav-item naTabs-2 mx-2" >
+                                                    <a class="nav-link  smat-rounded " id="lpa" value="labelPropTab"  data-toggle="pill" href="#emptyContent" role="tab" aria-controls="emptyContent" aria-selected="true">Label Propagation</a>
+                                                </li>
+                                                <li class="nav-item naTabs-2 mx-2">
+                                                    <a class="nav-link fade show smat-rounded " value="grivanNewmanTab" data-toggle="pill" href="#emptyContent" role="tab" aria-controls="emptyContent" aria-selected="true">Grivan Newman</a>
+                                                </li>
                                                 <ul>
 
                                         </div>
@@ -200,25 +194,27 @@
                                         <div class="tab-content " id="pills-tabContent">
                                             <div class="tab-pane fade show active " id="asyncFluidContent" role="tabpanel" aria-labelledby="asyncFluidContent">
 
-                                                <form class="form-inline">
                                                     <div class="form-group   my-0  mr-2  border smat-rounded d-flex px-2   bg-white">
 
                                                         <input type="number" class="form-control smat-rounded  naInputs " id="noOfCommunities" placeholder="No. of Communities" style="border:0px;">
                                                     </div>
 
-                                                    <button type="submit" class="btn btn-danger mt-1    mb-2 smat-rounded">Execute</button>
-                                                </form>
                                             </div>
                                             <div class="tab-pane fade show active " id="emptyContent" role="tabpanel" aria-labelledby="emptyContent">
 
 
                                             </div>
                                         </div>
+
+                                        
+                                        <div class="form-group mx-1">
+                                                <button type="submit" class="btn btn-danger mt-1    mb-2 smat-rounded" id="comm_exec" >Execute</button>
+                                        </div>
+
                                     </div>
+
                                     <div class="tab-pane fade  p-1 " id="spContent" role="tabpanel" aria-labelledby="spContent">
                                         <div class="d-flex">
-
-
                                             <div class="form-group pull-left mx-1">
                                                 <label for="sourceSp">Source</label>
                                                 <div class="border smat-rounded">
@@ -233,21 +229,20 @@
                                             </div>
                                             <div class="form-group mx-1">
                                                 <label for="sourceSp">Select Algorithm</label>
-                                                <select class="form-control border smat-rounded " name="NAEngine" id="networkEngineNA">
-                                                    <option>
+                                                <select class="form-control border smat-rounded " name="NAEngine" id="spoption">
+                                                    <option value="ShortestPath">
                                                         Shortest Path
-
                                                     </option>
-                                                    <option>
+                                                    <option value="">
 
                                                         K Possible Shortest Path/Depth
 
                                                     </option>
-                                                    <option>All Possible Shortest Path</option>
+                                                    <option value="AllPossibleShortestPath">All Possible Shortest Path</option>
                                                 </select>
                                             </div>
                                             <div class="form-group mx-1">
-                                                <button type="submit" class="btn btn-danger smat-rounded " style="margin-top:30px;">Execute</button>
+                                                <button type="submit" id="sp_exec" class="btn btn-danger smat-rounded " style="margin-top:30px;">Execute</button>
                                             </div>
                                         </div>
 
@@ -272,31 +267,23 @@
                                             </label>
                                             <label class="radio-inline mx-2  "><input type="radio" name="linkpredictionRadioOptions" value="jaccardcoeff">&nbsp Jaccard Coefficient
                                             </label>
-
                                         </div>
                                         <div>
                                             <div class="d-flex">
-
-
                                                 <div class="form-group pull-left mx-1">
-
                                                     <div class="border smat-rounded">
                                                         <input type="text" class="form-control  naInputs smat-rounded " id="link_source_node" placeholder="Enter source" style="border:0px;">
                                                     </div>
                                                 </div>
                                                 <div class="form-group  mx-1">
-
                                                     <div class="border smat-rounded">
                                                         <input type="text" class="form-control  naInputs smat-rounded " id="nos_links_to_be_predicted" placeholder="No. of links to be predicted" style="border:0px;">
                                                     </div>
                                                 </div>
-
                                                 <div class="form-group mx-1">
                                                     <button type="submit" class="btn btn-danger smat-rounded" id="link_prediction_exec">Execute</button>
                                                 </div>
                                             </div>
-
-
                                         </div>
                                     </div>
                                 </div>
@@ -309,11 +296,7 @@
                             <div class="tab-pane fade " id="diffContentNA" role="tabpanel" aria-labelledby="diffContentNA">Active Users Tab</div>
 
                         </div>
-                        <div class="pull-right ml-auto">
-                            <Button class="btn smat-btn smat-rounded"><span>Use Network</span></Button> <br/> <br/>
-                            <Button class="btn smat-btn smat-rounded"><span>Expand Network</span></Button> <br/> <br/>
-                            <Button class="btn smat-btn smat-rounded"><span>Export Network</span></Button> <br/> <br/>
-                        </div>
+                      
                     </div>
 
 
@@ -323,7 +306,11 @@
 
 
 
-
+                    <div class=" ml-auto d-flex">
+                            <Button class="btn smat-btn smat-rounded mx-2"><span>Use Network</span></Button> <br/> <br/>
+                            <Button class="btn smat-btn smat-rounded mx-2"><span>Expand Network</span></Button> <br/> <br/>
+                            <Button class="btn smat-btn smat-rounded mx-2"><span>Export Network</span></Button> <br/> <br/>
+                        </div>
 
 
 

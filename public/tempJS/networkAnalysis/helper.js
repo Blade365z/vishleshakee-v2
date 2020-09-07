@@ -1,6 +1,7 @@
 //API CALLS
 
 // Render Graph  for view
+var network_global;
 export const render_graph = (input,id_value) => {
         
         $.ajax({
@@ -24,38 +25,34 @@ export const render_graph = (input,id_value) => {
 }
 
 export const linkprediction = (url,data) => {
+    console.log("LOGS");
+    console.log(data);
     $.ajax({
-        url: 'na/link_prediction',
+        url: url,
         type: 'GET',
-        // dataType: 'JSON',
         data: data
     })
-    .done(function(res) {
-        console.log(res);
-        msg = "SUCCESS: Links Predicted";
-
-        render_linkprediction_graph(input, src_id);
-        console.log("Success at php side");
+    .done(function(res) {    
+        render_linkprediction_graph(data["input"], data["src"]);
     })
     .fail(function(res) {
-        console.log(res);
         console.log("error");
     })
 }
 
-export const render_linkprediction_graph = () => {
+export const render_linkprediction_graph = (input,src) => {
+    var source = src;
     $.ajax({
         url: 'na/link_prediction_data_formator',
         type: 'GET',
         dataType: 'JSON',
         data: {
             input: input,
-            src: src_id,
+            src: source,
         }
     })
-    .done(function(res) {
-        console.log(res);
-        update_view_graph_for_link_prediction(res);
+    .done(function(res,source) {
+        update_view_graph_for_link_prediction(res,src);
     })
     .fail(function(res) {
         console.log(res);
@@ -63,29 +60,26 @@ export const render_linkprediction_graph = () => {
     })
 }
 
-export const update_view_graph_for_link_prediction = () => {
+export const update_view_graph_for_link_prediction = (res,src) => {
     var query_index_label;
-    for (i = 0; i < res.length; i++) {
+    for (var i = 0; i < res.length; i++) {
         console.log(res[i].id);
-        if (res[i].id == src_id) {
+        if (res[i].id == src) {
             query_index_label = i;
             network_global.body.data.nodes._data[res[i].id].color = "brown";
             network_global.body.data.nodes._data[res[i].id].size = 40;
         } else {
-            console.log("Getting in");
-            console.log(res[i]);
-            console.log(i);
             network_global.body.data.nodes._data[res[i].id].color = "#ffa500";
             network_global.body.data.nodes._data[res[i].id].size = 40;
         }
     }
 
-    new_array = [];
+    var new_array = [];
     $.each(network_global.body.data.nodes._data, function(index, value) {
         new_array.push(value);
     });
 
-    new_array_e = [];
+    var new_array_e = [];
     $.each(network_global.body.data.edges._data, function(index, value) {
         new_array_e.push(value);
     });
@@ -96,15 +90,18 @@ export const update_view_graph_for_link_prediction = () => {
     console.log("PRINTING EDGE");
     console.log(network_global);
 
-    ed = [];
-    edges = [];
+    var ed = [];
+    var edges = [];
 
-    for (i = 0; i < res.length; i++) {
+    console.log(src,query_index_label);
+    console.log(src);
+    console.log(query_index_label);
+    for (var i = 0; i < res.length; i++) {
         if (res[i].id != res[query_index_label].id) {
             ed.push({
                 from: res[query_index_label].id,
                 to: res[i].id,
-                label: res[i].id,
+               // label: res[i].id,
                 width: 10,
                 dashes: true,
                 color: "black"
@@ -164,6 +161,238 @@ export const render_centrality_graph = (input,id_value) =>{
     })
 }
 
+export const community_detection = (url,data) =>{
+    $.ajax({
+        url: url,
+        type: 'GET',
+        // dataType: 'JSON',
+        data: data
+    })
+    .done(function(res) {
+        render_community_graph1(res);
+    })
+    .fail(function() {
+        console.log("error");
+    })
+} 
+
+export const render_community_graph1 = (input) => {
+    $.ajax({
+        url: 'na/community_data_formator',
+        type: 'GET',
+        dataType: 'JSON',
+        data: {
+            input: input
+        }
+    })
+    .done(function(res) {
+        operation_performed = true;
+        render_graph_community(res, "networkDivid");
+    })
+    .fail(function(res) {
+        console.log(res);
+        console.log("error");
+    })
+}
+
+export const render_graph_community = (res,id_value) =>{
+    var nodes_arr = res["nodes"];
+    var edges_arr = res["edges"];
+    var groups_arr = res["groups"];
+
+
+    var newele = $();
+
+    var nodes = new vis.DataSet();
+    var edges = new vis.DataSet();
+
+    // create a network
+    var container = document.getElementById(id_value);
+    var data = {
+        nodes: nodes,
+        edges: edges
+    };
+
+    network = new vis.Network(container, data, community_options);
+
+    network_global_community = network;
+
+    // Community node selection activated 
+
+    network.on('selectNode', function(properties) {
+
+        node_to_be_expanded = properties.nodes;
+
+        var len1 = properties.nodes.length;
+        if (len1 >= 2) {
+            $("#src_id").val(properties.nodes[len1 - 2]);
+            $("#dst_id").val(properties.nodes[len1 - 1]);
+        } else {
+            $("#src_id").val(properties.nodes[len1 - 1]);
+            $("#src_lp_id").val(properties.nodes[len1 - 1]);
+        }
+    });
+
+    console.log("00000");
+
+    network.focus(1, {
+        scale: 1
+    });
+
+    // number of nodes
+    console.log(nodes_arr.length);
+    console.log("Generating Nodes Now");
+    console.log(nodes_arr);
+
+    // to add node dynamically
+    $.each(nodes_arr, function(index, value) {        
+        nodes.add({
+           "id": value.id,
+           "label": value.label,
+           "group": value.group,
+           "size": 25,
+           "font": { size: 25 }
+        });
+    });
+    
+    console.log("Printing the nodes array of COMMUNITY");
+    console.log(nodes);
+
+    // to add edges dynamically
+    setTimeout(function() {
+        console.log("Generating Edges Now");
+        $.each(edges_arr, function(index, value) {
+            setTimeout(function() {
+                edges.add({
+                    "from": value.from,
+                    "to": value.to,
+                    "label": value.label
+                });
+                console.log("Making an edge");
+            }, 10);
+        });
+    }, 10000);
+    
+var scaleOption = {scale:0.3};
+network.moveTo(scaleOption);
+
+}
+
+export const shortestpaths = (url,data) =>{
+console.log("Laila");
+console.log(data);
+    $.ajax({
+        url: url,
+        type: 'GET',
+        // dataType: 'JSON',
+        data: data
+    })
+    .done(function(res) {
+        console.log(res);
+        render_shortestpath_graph(data["input"], data["src"], data["dst"]);
+   })
+    .fail(function(res) {
+        console.log(res);
+        console.log("error");       
+    })
+}
+
+export const render_shortestpath_graph = (input, src_id, dst_id) => {
+// Render Shortest Path Graph 
+    $.ajax({
+            url: 'na/shortest_path_data_formator',
+            type: 'GET',
+            dataType: 'JSON',
+            data: {
+                input: input,
+                src: src_id,
+                dst: dst_id
+            }
+        })
+        .done(function(res) {
+            console.log("I am printing from update_view_graph");
+            console.log(res);
+            update_sp_graph(res);
+        })
+        .fail(function(res) {
+            console.log(res);
+            console.log("error");
+        })
+    }
+
+    export const update_sp_graph = (res) =>  {
+
+        console.log(network_global.body.data.nodes._data)
+
+
+        // Bug exists in shortest path NEED to BE CHECKED 
+
+        for (var i = 1; i <= res["result"].length - 2; i++) {
+            if ((res["result"][i] != res["result"][0]) && (res["result"][i] != res["result"][res["result"].length - 1])) {
+                network_global.body.data.nodes._data[res["result"][i]].color = "#ffa500";
+                network_global.body.data.nodes._data[res["result"][i]].size = 100;
+            } else {
+                network_global.body.data.nodes._data[res["result"][i]].color = "#307CE9";
+                network_global.body.data.nodes._data[res["result"][i]].size = 25;
+            }
+        }
+
+        $.each(network_global.body.data.nodes._data, function(index, value) {
+            if (!res["result"].includes(value.id)) {
+                value.color = "#307CE9";
+                value.size = 25;
+            }
+        });
+
+        network_global.body.data.nodes._data[res["result"][res["result"].length - 1]].color = "brown";
+        network_global.body.data.nodes._data[res["result"][res["result"].length - 1]].size = 100;
+
+        network_global.body.data.nodes._data[res["result"][0]].color = "brown";
+        network_global.body.data.nodes._data[res["result"][0]].size = 100;
+
+        var new_array = [];
+        $.each(network_global.body.data.nodes._data, function(index, value) {
+            new_array.push(value);
+        });
+
+        var new_array_e = [];
+        $.each(network_global.body.data.edges._data, function(index, value) {
+            new_array_e.push(value);
+        });
+
+        // Set all edges witdhs to a normal
+        for (var i = 0; i < new_array_e.length; i++) {
+            var identity = new_array_e[i].id;
+            for (var j = 0; j < res["result"].length; j++) {
+                network_global.body.data.edges._data[identity].width = 0.5;
+            }
+        }
+
+        // Update the width of path 
+        for (var i = 0; i < new_array_e.length; i++) {
+            var identity = new_array_e[i].id;
+            for (j = 0; j < res["result"].length; j++) {
+                if (((new_array_e[i].from == res["result"][j]) && (new_array_e[i].to == res["result"][j + 1])) || ((new_array_e[i].from == res["result"][j + 1]) && (new_array_e[i].to == res["result"][j]))) {
+                    network_global.body.data.edges._data[identity].width = 35;
+                }
+            }
+
+        }
+
+        var new_array_e1 = [];
+        $.each(network_global.body.data.edges._data, function(index, value) {
+            new_array_e1.push(value);
+        });
+
+        network_global.body.data.nodes.update(new_array);
+        network_global.body.data.edges.update(new_array_e1);
+
+    var scaleOption = {scale:0.3};
+    network_global.moveTo(scaleOption);
+
+    }
+
+
 export const draw_graph = (res,id_value) => {
     console.log(id_value);
     var nodes_arr = res["nodes"];
@@ -197,7 +426,7 @@ export const draw_graph = (res,id_value) => {
 
     var global_options= {};
 
-    var network_global = new vis.Network(container, data, global_options);
+     network_global = new vis.Network(container, data, global_options);
 
     console.log(network_global);
 
@@ -242,8 +471,10 @@ export const draw_graph = (res,id_value) => {
         }, 10);
         console.log("Making an edge");
     });
-
+    
 }
+
+
 
 // Option format for global edges
 var global_options = {

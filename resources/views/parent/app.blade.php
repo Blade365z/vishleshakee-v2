@@ -26,6 +26,6 @@
 
 
 </html>
-
+<script type="module" src="public/bootpag/bootpag-min.js"></script>
 <script src="public/datepicker/datepicker-min.js"></script>
 <script src="public/datepicker/datepicker-en.js"></script>

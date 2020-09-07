@@ -1,5 +1,9 @@
 @extends('parent.app')
 @section('content')
+<link rel="stylesheet" href="public/leaflet/markerCluster/MarkerCluster.css">
+<link rel="stylesheet" href="public/leaflet/leaflet.css">
+<link rel="stylesheet" href="public/leaflet/leaflet_modal.css">
+
 <div class="smat-mainHeading ">
     Location Monitor
 </div>
@@ -56,9 +60,17 @@
                 </div>
 
             </div>
-            <div class="p-1 bg-secondary" id="lmMap">
+            <div class="p-1 " id="lmMap">
 
             </div>
+            
+            <div class="modal">
+                <div class="modal-content">
+                  <span class="close-button">&times;</span>
+                  <ul id="markersList"></ul>
+                </div>
+            </div>
+
         </div>
     </div>
 
@@ -82,4 +94,9 @@
 <script type="module" src="public/amcharts4/plugins/wordCloud.js"></script>
 <script type="module" src="public/amcharts4/themes/animated.js"></script>
 <script type="module" src="public/tempJS/locationMonitor/LocationMonitor.js"></script>
+
+<script src="public/leaflet/leaflet.js"></script>
+<script src="public/leaflet/TileLayer.Grayscale.js"></script>
+<script src="public/leaflet/markerCluster/leaflet.markercluster-src.js"></script>
+<script src="public/leaflet/subgroup/leaflet.featuregroup.subgroup.js"></script>
 @endsection

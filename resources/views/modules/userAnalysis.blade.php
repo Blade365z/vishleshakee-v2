@@ -1,211 +1,242 @@
 @extends('parent.app')
 @section('content')
-<div class="smat-mainHeading ">
-    User Analysis
-</div>
-<div class="mb-3">
-    <form id="uaSearchForm">
-
-        <div id="naInputPanel">
-            <div class="form-group  text-normal  border smat-rounded d-flex  mr-2 px-2 py-1  bg-white" id="uaSearchInput">
-                <i class="fa fa-search px-1 pt-2" aria-hidden="true" style="margin-top:5px"></i>
-                <input type="text" class="form-control" name="query" id="queryUASearch" placeholder="Query" style="border:0px;" autocomplete="OFF" required>
-            </div>
-
-
-
-            <div class="d-flex">
-                <button class="btn smat-btn  smat-rounded  mx-1 mb-3" id="submit-btn" type="submit"> <span>Search User</span> </button>
-                <button class="btn text-normal smat-rounded  mx-1 mb-3 " onclick="return false;" id="showUAsugg"> <span id="suggestionCurrentStatus">Hide</span> Suggestions </button>
-            </div>
-            <!-- <button class="btn  text-normal smat-rounded  mx-1" id="showTableBtn" onclick="return false"> <span> Show Search History </span> </button> -->
-        </div>
-
-    </form>
-</div>
-
-<div class="row" id="suggDiv" >
-    <div class="col-md-6">
-        <div class="card shadow mb-2">
-            <div class="card-body">
-                <div class="text-center">
-                    <h6 class="text-dark "> Popular Users </h6>
-                </div>
-                <div class="d-flex justify-content-center" id="suggUsers-1">
-
-                </div>
-                <div class="d-flex  justify-content-center mt-2" id="suggUsers-2">
-
-                </div>
-            </div>
-        </div>
+    <div class="smat-mainHeading ">
+        User Analysis
     </div>
-    <div class="col-md-6">
-        <div class="card shadow mb-2">
-            <div class="card-body">
-                <div class="text-center">
-                    <h6 class="text-dark "> Popular News Handles </h6>
-                </div>
-                <div class="d-flex justify-content-center " id="suggNews-1">
+    <div class="mb-3">
+        <form id="uaSearchForm">
 
+            <div id="naInputPanel">
+                <div class="form-group  text-normal  border smat-rounded d-flex  mr-2 px-2 py-1  bg-white"
+                    id="uaSearchInput">
+                    <i class="fa fa-search px-1 pt-2" aria-hidden="true" style="margin-top:5px"></i>
+                    <input type="text" class="form-control" name="query" id="queryUASearch" placeholder="Query"
+                        style="border:0px;" autocomplete="OFF" required>
                 </div>
-                <div class="d-flex justify-content-center mt-2 " id="suggNews-2">
 
+
+
+                <div class="d-flex">
+                    <button class="btn smat-btn  smat-rounded  mx-1 mb-3" id="submit-btn" type="submit"> <span>Search
+                            User</span> </button>
+                    <button class="btn text-normal smat-rounded  mx-1 mb-3 " onclick="return false;" id="showUAsugg"> <span
+                            id="suggestionCurrentStatus">Hide</span> Suggestions </button>
                 </div>
+                <!-- <button class="btn  text-normal smat-rounded  mx-1" id="showTableBtn" onclick="return false"> <span> Show Search History </span> </button> -->
             </div>
-        </div>
+
+        </form>
     </div>
 
-</div>
-
-
-<div id="UAAnalysisDiv" style="display:none">
-<div class="mt-3">
-    <p class="smat-box-title-large m-0">Showing results for <span class="smat-value font-weight-bold text-normal" id="showingResultsFor"> </span> </p>
-</div>
-<div class="row mt-3">
-    <div class="col-md-5">
-        <div id="date-divUA">
-    <form id="uaDateForm">
-        <div class="d-flex mb-3">
-            <div class="form-group   my-0  mr-2  border smat-rounded d-flex px-2 py-1  bg-white">
-                <i class="far fa-calendar-alt mx-2 text-normal " style="margin-top:11px;"></i>
-                <input type="text" class="form-control datepicker-here " name="fromDate" id="fromDateUA" placeholder="From Date" onkeydown="return false;" style="border:0px;" autocomplete="OFF" data-language='en' required>
-            </div>
-            <div class="form-group  my-0  mr-2 border smat-rounded d-flex px-2 py-1  bg-white">
-                <i class="far fa-calendar-alt mx-2 text-normal" style="margin-top:11px;"></i>
-                <input type="text" class="form-control datepicker-here " name="toDate" id="toDateUA" placeholder="To Date" onkeydown="return false;" style="border:0px;" autocomplete="OFF" data-language='en' required>
-            </div>
-
-            <button class="btn  btn-primary  " id="submit-btn" type="submit" style="border-radius:50%;margin-top:5px;"> <span>Go </span> </button>
-
-        </div>
-    </form>
-</div>
-        <div class="card shadow" id="userInfoDiv">
-            <div class="card-body">
-                <div class="dFlexBut">
+    <div class="row" id="suggDiv">
+        <div class="col-md-6">
+            <div class="card shadow mb-2">
+                <div class="card-body">
                     <div class="text-center">
-                        <img  class="profilePicLarge" id="currentUAProfilePic" />
+                        <h6 class="text-dark "> Popular Users </h6>
                     </div>
-                    <div class="mt-2">
-                        <div class="text-center">
-                        <span class="userNameLarge mx-2 mb-1 text-dark"   id="currentUAUserName"> </span><span id="currentUAVerified"> </span>
-</div>
-                        <p class="userHandleLarge mx-2 mb-0 text-dark" id="currentUAUserHandle"></p>
+                    <div class="d-flex justify-content-center" id="suggUsers-1">
+
+                    </div>
+                    <div class="d-flex  justify-content-center mt-2" id="suggUsers-2">
+
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="card shadow mb-2">
+                <div class="card-body">
+                    <div class="text-center">
+                        <h6 class="text-dark "> Popular News Handles </h6>
+                    </div>
+                    <div class="d-flex justify-content-center " id="suggNews-1">
+
+                    </div>
+                    <div class="d-flex justify-content-center mt-2 " id="suggNews-2">
+
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+
+    <div id="UAAnalysisDiv" style="display:none">
+        <div class="mt-3">
+            <p class="smat-box-title-large m-0">Showing results for <span class="smat-value font-weight-bold text-normal"
+                    id="showingResultsFor"> </span> </p>
+        </div>
+        <div class="row mt-3">
+            <div class="col-md-5">
+                <div id="date-divUA">
+                    <form id="uaDateForm">
+                        <div class="d-flex mb-3">
+                            <div class="form-group   my-0  mr-2  border smat-rounded d-flex px-2 py-1  bg-white">
+                                <i class="far fa-calendar-alt mx-2 text-normal " style="margin-top:11px;"></i>
+                                <input type="text" class="form-control datepicker-here " name="fromDate" id="fromDateUA"
+                                    placeholder="From Date" onkeydown="return false;" style="border:0px;" autocomplete="OFF"
+                                    data-language='en' required>
+                            </div>
+                            <div class="form-group  my-0  mr-2 border smat-rounded d-flex px-2 py-1  bg-white">
+                                <i class="far fa-calendar-alt mx-2 text-normal" style="margin-top:11px;"></i>
+                                <input type="text" class="form-control datepicker-here " name="toDate" id="toDateUA"
+                                    placeholder="To Date" onkeydown="return false;" style="border:0px;" autocomplete="OFF"
+                                    data-language='en' required>
+                            </div>
+
+                            <button class="btn  btn-primary  " id="submit-btn" type="submit"
+                                style="border-radius:50%;margin-top:5px;"> <span>Go </span> </button>
+
+                        </div>
+                    </form>
+                </div>
+                <div class="card shadow" id="userInfoDiv">
+                    <div class="card-body">
+                        <div class="dFlexBut">
+                            <div class="text-center">
+                                <img class="profilePicLarge" id="currentUAProfilePic" />
+                            </div>
+                            <div class="mt-2">
+                                <div class="text-center">
+                                    <span class="userNameLarge mx-2 mb-1 text-dark" id="currentUAUserName"> </span><span
+                                        id="currentUAVerified"> </span>
+                                </div>
+                                <p class="userHandleLarge mx-2 mb-0 text-dark" id="currentUAUserHandle"></p>
+                            </div>
+
+
+                        </div>
+                        <div class="mt-3 table-responsive-xl" id="uaTable">
+                            <table class="table table-borderless" id="uaUserInfo">
+
+                                <tbody>
+                                    <tr>
+                                        <th class="py-0 px-3 text-dark" scope="row">User ID:</th>
+                                        <td class="p-0 text-dark " id="userDetailsID"></td>
+
+                                    </tr>
+                                    <tr>
+                                        <th class="py-0 px-3 text-dark " scope="row">Joined_On:</th>
+                                        <td class="p-0 text-dark " id="userDetailsJOINEDON"> </td>
+
+                                    </tr>
+                                    <tr>
+                                        <th class="py-0 px-3 text-dark" scope="row">Location:</th>
+                                        <td class="p-0 text-dark " id="userDetailsLOCATION"></td>
+
+                                    </tr>
+                                    <tr>
+                                        <th class="py-0 px-3 text-dark" scope="row">Bio:</th>
+                                        <td class="p-0 text-dark " id="userDetailsBIO"></td>
+
+                                    </tr>
+
+
+                                    <tr>
+                                        <th class="py-0 px-3 text-dark" scope="row">URL:</th>
+                                        <td class="p-0 text-dark " id="userDetailsURL"> </td>
+
+                                    </tr>
+                                </tbody>
+                            </table>
+
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-7">
+                <div class="card shadow" id="userTweetDiv">
+                    <div class="card-body">
+                        <div class="d-flex " id="uaTweetsNavs">
+                         
+                            <span class="pull-text-top"><select id="uaTweetsDiv-dropDown" class=" smat-normal-text form-control form-control-lg" required> </select></span>
+                            <div class="btn-group pull-text-top ml-auto"><button type="button" class="btn btn-white smat-rounded dropdown-toggle text-normal" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Filter Tweets</button><div class="dropdown-menu dropdown-menu-right"><li class="dropdown-item clickable filter-pos-tweets"><i class="fa fa-circle text-pos " aria-hidden="true"></i> Positive Tweets</li><li class="dropdown-item clickable filter-neg-tweets"><i class="fa fa-circle text-neg " aria-hidden="true"></i> Negative Tweets</li><li class="dropdown-item clickable filter-neu-tweets"> <i class="fa fa-circle text-neu" aria-hidden="true"></i> Neutral Tweets</li><li class="dropdown-item clickable filter-normal-tweets"> <i class="fa fa-circle text-normal" aria-hidden="true"></i> Normal Tweets</li><li class="dropdown-item clickable filter-com-tweets"> <i class="fa fa-circle text-com" aria-hidden="true"></i> Communal Tweets</li><li class="dropdown-item clickable filter-sec-tweets"> <i class="fa fa-circle text-sec" aria-hidden="true"></i> Security Tweets</li><li class="dropdown-item clickable filter-seccom-tweets"> <i class="fa fa-circle text-seccom" aria-hidden="true"></i> Communal and Security Tweets</li></div></div>
+
+
+                        </div>
+                        <div class="px-3" id="uaTweetsDiv">
+
+
+                        </div>
+                            
+
+
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+        <div class="my-4" id="analysisPanelUA">
+
+
+
+
+
+            <div class="card shadow">
+                <div class="card-body">
+
+                    <div>
+
+                        <ul class="nav nav-pills mb-3" id="pills-tab" role="tablist">
+                            <li class="nav-item">
+                                <a class="nav-link active smat-rounded" id="frqTabUA" data-toggle="pill"
+                                    href="#freqContentUA" role="tab" aria-controls="freqContentUA"
+                                    aria-selected="true">Frequency</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link smat-rounded " id="sentiTabUA" data-toggle="pill" href="#sentiContentUA"
+                                    role="tab" aria-controls="pills-profile" aria-selected="false">Sentiment</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link smat-rounded " id="mentionsTabUA" data-toggle="pill"
+                                    href="#mentionsContentUA" role="tab" aria-controls="pills-contact"
+                                    aria-selected="false">Top Mention</a>
+                            </li>
+
+                            <li class="nav-item">
+                                <a class="nav-link smat-rounded " id="hashtagsTabUA" data-toggle="pill"
+                                    href="#hashtagsContentTab" role="tab" aria-controls="pills-contact"
+                                    aria-selected="false">Top Hashtags</a>
+                            </li>
+
+                            <li class="nav-item">
+                                <a class="nav-link smat-rounded" id="locationTabUA" data-toggle="pill"
+                                    href="#locationContentUA" role="tab" aria-controls="pills-contact"
+                                    aria-selected="false">Locations</a>
+                            </li>
+                        </ul>
+
+                    </div>
+                    <div class="tab-content" id="pills-tabContent">
+
+                        <div class="tab-pane fade show active haTab" id="freqContentUA" role="tabpanel"
+                            aria-labelledby="freqContentUA"> </div>
+                        <div class="tab-pane fade haTab " id="sentiContentUA" role="tabpanel"
+                            aria-labelledby="sentiContentUA">Sentiment </div>
+                        <div class="tab-pane fade haTab" id="mentionsContentUA" role="tabpanel"
+                            aria-labelledby="mentionsContentUA">Mentions Tab</div>
+
+                        <div class="tab-pane fade haTab " id="hashtagsContentTab" role="tabpanel"
+                            aria-labelledby="hashtagsContentTab">hashtagsContentTab</div>
+
+                        <div class="tab-pane fade haTab " id="locationContentUA" role="tabpanel"
+                            aria-labelledby="locationContentUA">locationContentUA </div>
+
                     </div>
 
 
                 </div>
-                <div class="mt-3 table-responsive-xl" id="uaTable">
-                    <table class="table table-borderless"  id="uaUserInfo">
-
-                        <tbody>
-                            <tr>
-                                <th class="py-0 px-3 text-dark" scope="row">User ID:</th>
-                                <td class="p-0 text-dark " id="userDetailsID"></td>
-
-                            </tr>
-                            <tr>
-                                <th class="py-0 px-3 text-dark " scope="row">Joined_On:</th>
-                                <td class="p-0 text-dark " id="userDetailsJOINEDON"> </td>
-
-                            </tr>
-                            <tr>
-                                <th class="py-0 px-3 text-dark" scope="row">Location:</th>
-                                <td class="p-0 text-dark " id="userDetailsLOCATION"></td>
-
-                            </tr>
-                            <tr>
-                                <th class="py-0 px-3 text-dark" scope="row">Bio:</th>
-                                <td class="p-0 text-dark "id="userDetailsBIO" ></td>
-
-                            </tr>
-
-
-                            <tr>
-                                <th class="py-0 px-3 text-dark" scope="row">URL:</th>
-                                <td class="p-0 text-dark " id="userDetailsURL"> </td>
-
-                            </tr>
-                        </tbody>
-                    </table>
-
-                </div>
-
             </div>
-        </div>
-    </div>
-    <div class="col-md-7">
-        <div class="card shadow" id="userTweetDiv">
-            <div class="card-body">
-                <div id="uaTweetsNav">
 
-
-                </div>
-                <div id="uaTweetsDiv">
-
-
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-
-
-<div class="my-4" id="analysisPanelUA">
-
-
-
-
-
-    <div class="card shadow">
-        <div class="card-body">
-
-            <div>
-
-                <ul class="nav nav-pills mb-3" id="pills-tab" role="tablist">
-                    <li class="nav-item">
-                        <a class="nav-link active smat-rounded" id="frqTabUA" data-toggle="pill" href="#freqContentUA" role="tab" aria-controls="freqContentUA" aria-selected="true">Frequency</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link smat-rounded " id="sentiTabUA" data-toggle="pill" href="#sentiContentUA" role="tab" aria-controls="pills-profile" aria-selected="false">Sentiment</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link smat-rounded " id="mentionsTabUA" data-toggle="pill" href="#mentionsContentUA" role="tab" aria-controls="pills-contact" aria-selected="false">Top Mention</a>
-                    </li>
-
-                    <li class="nav-item">
-                        <a class="nav-link smat-rounded " id="hashtagsTabUA" data-toggle="pill" href="#hashtagsContentTab" role="tab" aria-controls="pills-contact" aria-selected="false">Top Hashtags</a>
-                    </li>
-
-                    <li class="nav-item">
-                        <a class="nav-link smat-rounded" id="locationTabUA" data-toggle="pill" href="#locationContentUA" role="tab" aria-controls="pills-contact" aria-selected="false">Locations</a>
-                    </li>
-                </ul>
-
-            </div>
-            <div class="tab-content" id="pills-tabContent">
-
-                <div class="tab-pane fade show active haTab" id="freqContentUA" role="tabpanel" aria-labelledby="freqContentUA"> </div>
-                <div class="tab-pane fade haTab " id="sentiContentUA" role="tabpanel" aria-labelledby="sentiContentUA">Sentiment </div>
-                <div class="tab-pane fade haTab" id="mentionsContentUA" role="tabpanel" aria-labelledby="mentionsContentUA">Mentions Tab</div>
-
-                <div class="tab-pane fade haTab " id="hashtagsContentTab" role="tabpanel" aria-labelledby="hashtagsContentTab">hashtagsContentTab</div>
-
-                <div class="tab-pane fade haTab " id="locationContentUA" role="tabpanel" aria-labelledby="locationContentUA">locationContentUA </div>
-
-            </div>
 
 
         </div>
     </div>
-
-
-
-</div>
-</div>
-<script type="module" src="public/amcharts4/core.js"></script>
-<script type="module" src="public/amcharts4/charts.js"></script>
-<script type="module" src="public/tempJS/userAnalysis/UserAnalysis.js"></script>
+    <script type="module" src="public/amcharts4/core.js"></script>
+    <script type="module" src="public/amcharts4/charts.js"></script>
+    <script type="module" src="public/tempJS/userAnalysis/UserAnalysis.js"></script>
 @endsection

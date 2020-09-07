@@ -1,10 +1,19 @@
-//Utility script to render charts in Modules namely Histrorical Analysis (Authunticated) , User Analysis (Authenticated) of 
-//Social Mediia Analysis Tool Vishleshakee developed at OSINT Lab ,IIT-G
-//Written by :: Mala Das , Amitabh Boruah.
+/*
+The Script contains the modules to render charts in Modules namely Histrorical Analysis (Authunticated) , User Analysis (Authenticated) of  of the Social Media Analysis tool 
+developed at OSINT LAB , IIT-G
 
-//Use camelCase please notations:)
+-----------------------------
+IMPORTANT NOTE
+-----------------------------
+1.Use camelCase notations:)
+2.PLEASE NOTE that the range types are :: 1. days , 2.hour , 3.10sec
+3.Avoid using synchronous requests as XML-http-requests has been deprecated already.
 
-//PLEASE NOTE that the range types are :: 1. days , 2.hour , 3.10sec
+
+Script written by : Mala Das(maladas601@gmail.com), Amitabh Boruah(amitabhyo@gmail.com)
+*/
+
+
 
 
 // Imports from external source
@@ -115,17 +124,12 @@ export const generateFrequencyLineChart = (query, data = null, rangeType, div) =
             value1: freq[1]
         });
     }
-
-
+    
     var title = chart.titles.create();
     title.fontSize = 12;
     title.marginBottom = 10;
     var hour_for_title = String(parseInt(getDateInFormat(dataTemp[0]['date'],  'HH')) + 1);
     title.text =  " Per 10sec Distribution For " + getDateInFormat(dataTemp[0]['date'],  'Y-m-d') + ' ' + hour_for_title + ':00:00' + '  (Zoom to Know More)';
-
-
-
-
 
     chart.data = dataTemp;
     var dateAxis = chart.xAxes.push(new am4charts.DateAxis());

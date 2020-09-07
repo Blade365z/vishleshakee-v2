@@ -108,7 +108,7 @@ export const generateSentimentChart = (data = null, div) => {
         value1: 1,
         value2: 5,
         value3: 3
-      },
+      }, 
       {
         category: "05:20:20",
         value1: 2,

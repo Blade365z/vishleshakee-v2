@@ -1,3 +1,19 @@
+/*
+The Script conatains the modules to render the Rww tweets on the Social Media Analysis tool 
+developed at OSINT LAB , IIT-G
+
+-----------------------------
+IMPORTANT NOTE
+-----------------------------
+1.Use camelCase notations:)
+2.PLEASE NOTE that the range types are :: 1. days , 2.hour , 3.10sec
+3.Avoid using synchronous requests as XML-http-requests has been deprecated already.
+
+Script written by : Mala Das(maladas601@gmail.com), Amitabh Boruah(amitabhyo@gmail.com)
+*/
+
+
+
 var  TweetIDS ;
 export const  TweetsGenerator = (data_list, max_per_page, chart_draw_div_id) => {
     //per page max (max_per_page)
@@ -93,7 +109,7 @@ export const  TweetsGenerator = (data_list, max_per_page, chart_draw_div_id) => 
       }
   
       
-      $('#' + div).append('<div class="border p-2 "><div class="d-flex"><div class="profilePictureDiv p-1 text-center mr-2"><img src="'+tweet.author_profile_image+'" style="height:33px;border-radius:50%" /></div><div> <p class="pt-1 m-0 font-weight-bold">'+tweet.author+' </p><p class="smat-dash-title pull-text-top m-0 "> @'+tweet.author_screen_name+' </p></div> <div class="px-1 pt-1" >  <i class="fa fa-circle   mx-2 text-'+tweet.category+'" aria-hidden="true" title="'+category+'"></i> </div></div><div style="width:80%;"><p class="smat-tweet-body-text mb-1">'+tweet.tweet_text+'</p></div><div id="" class="row d-flex justify-content-center tweet_media_body_' +tweet['tid'] +'" ></div><div class="d-flex"><p class="m-0 tweet-details"> <span>  '+tweet.datetime+'  &nbsp </span> <span>'+location+'</span> &nbsp  <span class="text-normal clickable"> Track Tweet</span>  <span class=" font-weight-bold mx-2" > '+sentiment+'</span>    </p> </div></div>');
+      $('#' + div).append('<div class="border  p-2 "><div class="d-flex"><div class="profilePictureDiv p-1 text-center mr-2"><img src="'+tweet.author_profile_image+'" style="height:33px;border-radius:50%" /></div><div> <p class="pt-1 m-0 font-weight-bold">'+tweet.author+' </p><p class="smat-dash-title pull-text-top m-0 "> @'+tweet.author_screen_name+' </p></div> <div class="px-1 pt-1" >  <i class="fa fa-circle   mx-2 text-'+tweet.category+'" aria-hidden="true" title="'+category+'"></i> </div></div><div style="width:80%;"><p class="smat-tweet-body-text mb-1">'+tweet.tweet_text+'</p></div><div id="" class="row d-flex justify-content-center tweet_media_body_' +tweet['tid'] +'" ></div><div class="d-flex"><p class="m-0 tweet-details"> <span>  '+tweet.datetime+'  &nbsp </span> <span>'+location+'</span> &nbsp  <span class="text-normal clickable"> Track Tweet</span>  <span class=" font-weight-bold mx-2" > '+sentiment+'</span>    </p> </div></div>');
   
   
   

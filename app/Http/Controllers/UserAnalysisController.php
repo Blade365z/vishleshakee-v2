@@ -12,10 +12,10 @@ class UserAnalysisController extends Controller
     public function first_list(Request $request)
     {
 
-        $user_name = $_GET['token'];
+        $user_name = $request->input('token');
         $user_name = strtolower($user_name);
-        $verified = $_GET['verified'];
-        $clearFlag = $_GET['clearFlag'];
+        $verified = $request->input('verified');
+        $clearFlag = $request->input('clearFlag');
         if ($clearFlag == 1) {
             $request->session()->forget('page_state_token');
         }
@@ -103,6 +103,36 @@ class UserAnalysisController extends Controller
             $arrTemp = ["range_type" => "10sec", "chart_type" => "freq_dist", "data" => [["2020-09-04 05:06:30", "1"], ["2020-09-04 05:09:30", "1"], ["2020-09-04 05:17:20", "1"], ["2020-09-04 05:17:30", "1"], ["2020-09-04 05:27:10", "1"], ["2020-09-04 05:28:00", "1"], ["2020-09-04 05:37:00", "1"], ["2020-09-04 05:40:20", "1"], ["2020-09-04 05:43:00", "1"], ["2020-09-04 05:45:20", "1"], ["2020-09-04 05:48:10", "1"], ["2020-09-04 05:49:40", "1"], ["2020-09-04 05:50:20", "1"], ["2020-09-04 05:52:50", "1"], ["2020-09-04 05:53:40", "1"], ["2020-09-04 05:58:00", "1"]]];
             return $arrTemp;
         }
+    }
+
+    public function getTweetIDUA(Request $request)
+    {
+        
+        if ($request->input('to') && $request->input('from') && $request->input('query')) {
+            $rangeType = $request->input('rangeType');
+            $query = $request->input('query');
+            $from = $request->input('from');
+            $to = $request->input('to');
+            if ($request->input('isDateTimeAlready')==0) {
+                $fromTime=date('Y-m-d H:i:s', strtotime($from) + 0);
+                $toTime=date('Y-m-d H:i:s', strtotime($to) + 0);
+            } else {
+                $fromTime = $from;
+                $toTime = $to;
+            }
+            if ($request->input('filter')!='all') {
+                $filter = $request->input('filter');
+            } else {
+                $filter = null;
+            }
+            $arrTemp = ["range_type" => $rangeType,"fromTime"=>$fromTime,"toTime"=>$toTime,"query"=>$query,"filter"=>$filter];
+            $commonObj = new CommonController;
+            $data = $commonObj->get_tweets($toTime, $fromTime, $query, $rangeType, $filter);
+            return $data;
+        } else {
+            return response()->json(['error' => 'Please check yout arguments'], 404);
+        }
+       
     }
 
 }

@@ -3,6 +3,8 @@ namespace App\Library;
 use Cassandra;
 use DateTime;
 use DateTimeZone;
+use DateInterval;
+use DatePeriod;
 // date_default_timezone_set('UTC');  //enable to get datetime as UTC
 date_default_timezone_set('Asia/Kolkata');  //enable to get datetime as local
 class Utilities{
@@ -30,6 +32,8 @@ class Utilities{
     * Get 10sec list to query to cassandra
     *
     * @return array of array [[CASS_DATE('2020-08-10'), 10:00:00'], ['2020-08-10', '10:00:10'], ['2020-08-10', '10:00:20'], ['2020-08-10', '10:00:30']]
+
+    *Description: Reason for concatnating '18:30:00' with date '2020-09-06' -> 2020-09-06 18:30:00, because cassandra only knows datetime in UTC. So, if we opearate with local datetime(settig local timezone), then it behaves in different way[like if we queried on date 2020-09-04 00:00:00(as local), Cassandra/Date class assume I am queried on 2020-09-03 05:30:00(as local datetime), converts it to 2020-09-03 00:00:00(as it knows only UTC).], So, we can observe that when we queried on 2020-09-04 00:00:00(as local), it converts to 2020-09-03 05:30:00(as local), [so -18:30:00] and it queried to database with 2020-09-03 00:00:00(as UTC), but we want data for 2020-09-04 00:00:00. So, if want to query on  2020-09-04 00:00:00 into database, then if we queried on 2020-09-04 18:30:00(as local), then  Cassandra/Date class it assumes we queried on 2020-09-04 05:30:00(as local), so it converts it to  2020-09-04 00:00:00(as UTC, because cassandra operated only on UTC).
     */
     public function get_10sec_list_for_cassandra($to_datetime, $from_datetime){
         $tenSec_array = array();
@@ -50,18 +54,77 @@ class Utilities{
     /**
     * Get hour list to query to cassandra
     *
-    * @return array of array [[CASS_DATE('2020-08-10'), 01:00:00'], ['2020-08-10', '02:00:00'], ['2020-08-10', '03:00:00']]
+    * @return array of array [[CASS_DATE('2020-08-10'), 01:00:00'], [CASS_DATE('2020-08-10'), '02:00:00'], [CASS_DATE('2020-08-10'), '03:00:00']]
     */
     public function get_hour_list_for_cassandra($to_datetime, $from_datetime){
         $hour_array = array();
         $hours_array_tmp = array("01:00:00", "02:00:00", "03:00:00", "04:00:00", "05:00:00", "06:00:00", "07:00:00", "08:00:00", "09:00:00", "10:00:00", "11:00:00", "12:00:00", "13:00:00", "14:00:00", "15:00:00", "16:00:00", "17:00:00", "18:00:00", "19:00:00", "20:00:00", "21:00:00", "22:00:00", "23:00:00");
         $to_date_time_list = $this->separate_date_time($to_datetime); // ['2020-09-06', '00:00:00']
+        // $cass_date_obj = $this->convert_php_date_obj_to_cass_date_obj(strtotime($to_date_time_list[0])); //convert php date_obj to cass_date_obj
+
         $cass_date_obj = $this->convert_php_date_obj_to_cass_date_obj(strtotime($to_date_time_list[0]. ' 18:30:00'));
         for ($i = 0; $i < 23; $i++) {
             array_push($hour_array,  array($cass_date_obj, $hours_array_tmp[$i]));
         }
+
+        // for hour 24:00:00 --> it should be next day 00:00:00
+        
         return $hour_array;
     }
+
+
+
+    /**
+    * Get day list to query to cassandra
+    *
+    * @return array of array [[CASS_DATE('2020-08-10')], [CASS_DATE('2020-08-11')], [CASS_DATE('2020-08-12')]]
+    */
+    public function get_day_list_for_cassandra($to_datetime, $from_datetime){
+        // echo $to_datetime, $from_datetime;
+        $day_list = array();
+        $to_date_time_list = $this->separate_date_time($to_datetime); // ['2020-09-06', '00:00:00']
+        $from_date_time_list = $this->separate_date_time($from_datetime); // ['2020-09-01', '00:00:00']
+        $day_list = $this->getDatesFromRange($to_date_time_list[0], $from_date_time_list[0], 'Y-m-d', 'cas_date_obj_array_of_array');
+
+        return $day_list;
+    }
+
+
+
+    /**
+    * Get array of dates between two dates
+    *
+    * @return array or cas_date_obj_array_of_array(array of array)
+    * array(normal)['2020-09-06', '2020-09-07', '2020-09-08'] or cas_date_obj_array_of_array(array of array)[[CASS_DATE('2020-08-10')], [CASS_DATE('2020-08-11')], [CASS_DATE('2020-08-12')]]
+    */
+    public function getDatesFromRange($to_date, $from_date, $format = 'Y-m-d', $return_type = 'array')
+    {
+        $final_array = array();
+        $interval = new DateInterval('P1D'); // Variable that store the date interval of period 1 day        
+
+        $realEnd = new DateTime($to_date);
+        $realEnd->add($interval);
+
+        $period = new DatePeriod(new DateTime($from_date), $interval, $realEnd);
+
+        // Use loop to store date into array 
+        if ($return_type == 'cas_date_obj_array_of_array') {
+            foreach ($period as $date) {
+                $tmp_array = array();
+                $tmp_array[] = $this->convert_php_date_obj_to_cass_date_obj(strtotime(($date->format('Y-m-d')). ' 18:30:00')); //convert php date obj to cassandra date obj
+                array_push($final_array, $tmp_array);
+            }
+        } else {
+            foreach ($period as $date) {
+                $final_array[] = $date->format($format);
+            }
+        }
+
+        // Return the array elements 
+        return $final_array;
+    }
+
+
 
     
     /**
@@ -143,10 +206,6 @@ class Utilities{
     */
     public function convert_php_date_obj_to_cass_date_obj($timestamp_obj)
     {
-        // echo $timestamp_obj;
-        // echo "----";
-        // echo (new Cassandra\Date($timestamp_obj));
-        // echo "****";
         return new Cassandra\Date($timestamp_obj);
     }
     

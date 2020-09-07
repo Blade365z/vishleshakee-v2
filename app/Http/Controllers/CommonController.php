@@ -30,46 +30,48 @@ class CommonController extends Controller
         $total_sec = 0;
         $total_com_sec = 0;
         $total_non_com_sec = 0;
-        if (($range_type == "10sec") or ($range_type == "hour")) {
-            if($range_type == "10sec"){
-                $stm_list = $qb_obj->get_statement($to_datetime, $from_datetime, $token, $range_type, 'freq');
-                $result_async_from_db = $db_object->executeAsync_query($stm_list[1], $stm_list[0]);
-            }else if($range_type == "hour"){
-                $stm_list = $qb_obj->get_statement($to_datetime, $from_datetime, $token, $range_type, 'freq');
-                $result_async_from_db = $db_object->executeAsync_query($stm_list[1], $stm_list[0]);
-                echo json_encode($stm_list);
+        if($range_type == "10sec"){
+            $stm_list = $qb_obj->get_statement($to_datetime, $from_datetime, $token, $range_type, 'freq');
+            $result_async_from_db = $db_object->executeAsync_query($stm_list[1], $stm_list[0]);
+        }else if($range_type == "hour"){
+            $stm_list = $qb_obj->get_statement($to_datetime, $from_datetime, $token, $range_type, 'freq');
+            $result_async_from_db = $db_object->executeAsync_query($stm_list[1], $stm_list[0]);
 
-                // if date is current date, thn get the data for current hour form 10_sec table
-                // ...........................
-            }
-            foreach ($result_async_from_db as $rows) {
-                $com = 0;
-                $sec = 0;
-                $com_sec = 0;
-                $non_com_sec = 0;
-                foreach ($rows as $row) {
-                    $t = $row['created_date'];
+            // if date is current date, thn get the data for current time(2020-09-06 21:48:10) form 10_sec table
+            // ...........................remain
+        }else if ($range_type == "day") {
+            $stm_list = $qb_obj->get_statement($to_datetime, $from_datetime, $token, $range_type, 'freq');
+            $result_async_from_db = $db_object->executeAsync_query($stm_list[1], $stm_list[0]);
+
+            //if to_date == current_date, query for current hour, and all the past hours of current day.....remain
+        }
+        foreach ($result_async_from_db as $rows) {
+            $com = 0;
+            $sec = 0;
+            $com_sec = 0;
+            $non_com_sec = 0;
+            foreach ($rows as $row) {
+                $t = $row['created_date'];
+                if($range_type == "day")
+                    $datetime1 = $ut_obj->get_date_time_from_cass_date_obj($t, "Y-m-d");
+                else
                     $datetime1 = $ut_obj->get_date_time_from_cass_date_obj($t, "Y-m-d") . ' ' . $row['created_time'];
-                    $count_list = $row['count_list']->values();
-                    $ar_sum = array_sum($count_list);
-                    if ($category_info_details or $category_info_total) {
-                        $com += $count_list[3] + $count_list[4] + $count_list[5];
-                        $sec += $count_list[6] + $count_list[7] + $count_list[8];
-                        $com_sec += $count_list[9] + $count_list[10] + $count_list[11];
-                        $non_com_sec += $count_list[0] + $count_list[1] + $count_list[2];
-                        array_push($temp_arr, array($datetime1, $ar_sum, $com, $sec, $com_sec, $non_com_sec));
-                        $total_com += $com;
-                        $total_sec += $sec;
-                        $total_com_sec += $com_sec;
-                        $total_non_com_sec += $non_com_sec;
-                    } else {
-                        array_push($temp_arr, array($datetime1, $ar_sum));
-                    }
+                $count_list = $row['count_list']->values();
+                $ar_sum = array_sum($count_list);
+                if ($category_info_details or $category_info_total) {
+                    $com += $count_list[3] + $count_list[4] + $count_list[5];
+                    $sec += $count_list[6] + $count_list[7] + $count_list[8];
+                    $com_sec += $count_list[9] + $count_list[10] + $count_list[11];
+                    $non_com_sec += $count_list[0] + $count_list[1] + $count_list[2];
+                    array_push($temp_arr, array($datetime1, $ar_sum, $com, $sec, $com_sec, $non_com_sec));
+                    $total_com += $com;
+                    $total_sec += $sec;
+                    $total_com_sec += $com_sec;
+                    $total_non_com_sec += $non_com_sec;
+                } else {
+                    array_push($temp_arr, array($datetime1, $ar_sum));
                 }
             }
-        }else if ($range_type == "day") {
-            //if to_date == current_date, query for current hour, and all the past hours of current day
-            //all days for from_date to to_date
         }
 
         $final_result["range_type"] = $range_type;
@@ -101,48 +103,61 @@ class CommonController extends Controller
         $qb_obj = new QB;
         $ut_obj = new Ut;
         $final_result = array();
-        $stm_list = $qb_obj->get_statement($to_datetime, $from_datetime, $token, $range_type, 'sent');
         $temp_arr = array();
         if ($range_type == "10sec") {
+            $stm_list = $qb_obj->get_statement($to_datetime, $from_datetime, $token, $range_type, 'sent');
             $result_async_from_db = $db_object->executeAsync_query($stm_list[1], $stm_list[0]);
-            foreach ($result_async_from_db as $rows) {
-                $datetime1 = null;
-                $pos = 0;
-                $neg = 0;
-                $neu = 0;
-                foreach ($rows as $row) {
-                    $t = $row['created_date'];
+        }else if($range_type == "hour"){
+            $stm_list = $qb_obj->get_statement($to_datetime, $from_datetime, $token, $range_type, 'sent');
+            $result_async_from_db = $db_object->executeAsync_query($stm_list[1], $stm_list[0]);
+
+            // if date is current date, thn get the data for current time(2020-09-06 21:48:10) form 10_sec table
+            // ...........................remain
+        }else if($range_type == "day"){
+            $stm_list = $qb_obj->get_statement($to_datetime, $from_datetime, $token, $range_type, 'sent');
+            $result_async_from_db = $db_object->executeAsync_query($stm_list[1], $stm_list[0]);
+
+            //if to_date == current_date, query for current hour, and all the past hours of current day.....remain
+        }
+        foreach ($result_async_from_db as $rows) {
+            $datetime1 = null;
+            $pos = 0;
+            $neg = 0;
+            $neu = 0;
+            foreach ($rows as $row) {
+                $t = $row['created_date'];
+                if($range_type == "day")
+                    $datetime1 = $ut_obj->get_date_time_from_cass_date_obj($t, "Y-m-d");
+                else
                     $datetime1 = $ut_obj->get_date_time_from_cass_date_obj($t, "Y-m-d") . ' ' . $row['created_time'];
-                    $count_list = $row['count_list']->values();
-                    // echo json_encode($count_list);
-                    // echo "-------";
-                    /*
-                    pos index -> 0, 3, 6, 9
+                $count_list = $row['count_list']->values();
+                /*  pos index -> 0, 3, 6, 9
                     neg index -> 1, 4, 7, 10
                     neu index -> 2, 5, 8, 11
 
                     pos -> 0*3+0=0, 1*3+0=3, 2*3+0=6, 3*3+0=9
                     neg -> 0*3+1=1, 1*3+1=4, 2*3+1=7, 3*3+1=10
-                    neu -> 0*3+2=2, 1*3+2=5, 2*3+2=8, 3*3+2=11
-                     */
-                    for ($i = 0; $i < $this->total_main_category; $i++) {
-                        $pos += $count_list[($i * 3) + 0];
-                        $neg += $count_list[($i * 3) + 1];
-                        $neu += $count_list[($i * 3) + 2];
-                    }
+                    neu -> 0*3+2=2, 1*3+2=5, 2*3+2=8, 3*3+2=11 */
+                for ($i = 0; $i < $this->total_main_category; $i++) {
+                    $pos += $count_list[($i * 3) + 0];
+                    $neg += $count_list[($i * 3) + 1];
+                    $neu += $count_list[($i * 3) + 2];
                 }
-                if ($datetime1) {
-                    array_push($temp_arr, array($datetime1, $pos, $neg, $neu));
-                }
-
+            }
+            if ($datetime1) {
+                array_push($temp_arr, array($datetime1, $pos, $neg, $neu));
             }
         }
+        
 
         $final_result["range_type"] = $range_type;
         $final_result["chart_type"] = "sent_dist";
         $final_result["data"] = $temp_arr;
         return ($final_result);
     }
+
+
+
 
     /**
      * Get co-occur data given a token
@@ -156,23 +171,34 @@ class CommonController extends Controller
         $qb_obj = new QB;
         $ut_obj = new Ut;
         $final_result = array();
-        $stm_list = $qb_obj->get_statement($to_datetime, $from_datetime, $token, $range_type, 'co_occur', $co_occur_option);
-
         $temp_arr = array();
         $total = 0;
         if ($range_type == "10sec") {
+            $stm_list = $qb_obj->get_statement($to_datetime, $from_datetime, $token, $range_type, 'co_occur', $co_occur_option);
             $result_async_from_db = $db_object->executeAsync_query($stm_list[1], $stm_list[0]);
-            foreach ($result_async_from_db as $rows) {
-                foreach ($rows as $row) {
-                    $tn2 = $row['token_name2'];
-                    $ar_sum = array_sum($row['count_list']->values());
-                    if (array_key_exists($tn2, $temp_arr)) {
-                        $temp_arr[$tn2] += $ar_sum;
-                    } else {
-                        $temp_arr[$tn2] = $ar_sum;
-                    }
-                    $total += $ar_sum;
+        }else if($range_type == "hour"){
+            $stm_list = $qb_obj->get_statement($to_datetime, $from_datetime, $token, $range_type, 'co_occur', $co_occur_option);
+            $result_async_from_db = $db_object->executeAsync_query($stm_list[1], $stm_list[0]);
+
+            // if date is current date, thn get the data for current time(2020-09-06 21:48:10) form 10_sec table
+            // ...........................remain
+        }else if($range_type == "day"){
+            $stm_list = $qb_obj->get_statement($to_datetime, $from_datetime, $token, $range_type, 'co_occur', $co_occur_option);
+            $result_async_from_db = $db_object->executeAsync_query($stm_list[1], $stm_list[0]);
+
+            //if to_date == current_date, query for current hour, and all the past hours of current day.....remain
+        }
+     
+        foreach ($result_async_from_db as $rows) {
+            foreach ($rows as $row) {
+                $tn2 = $row['token_name2'];
+                $ar_sum = array_sum($row['count_list']->values());
+                if (array_key_exists($tn2, $temp_arr)) {
+                    $temp_arr[$tn2] += $ar_sum;
+                } else {
+                    $temp_arr[$tn2] = $ar_sum;
                 }
+                $total += $ar_sum;
             }
         }
         arsort($temp_arr);
@@ -194,10 +220,9 @@ class CommonController extends Controller
                         array_push($final_result, array("hashtag" => $key, "count" => intval($value)));
                     } else if ($co_occur_option == 'user') {
                         array_push($final_result, array("handle" => $key, "count" => intval($value)));
-                        // $uid = ltrim($line[0], 1);
-                        // $uid_info_arr = json_decode($this->get_user_details_by_user_id($uid)); //converted string json to array;
-                        // // echo $uid_info_arr[0];
-                        // array_push($final_result, array("id"=>$uid, "count"=>intval($line[1]), "author"=> $uid_info_arr[0], "author_screen_name" =>  $uid_info_arr[1], "profile_picture" => $uid_info_arr[2]));
+                        /* Conversion of $uid to user_name and user_screen_name
+                        ..............................................................remain
+                        */
                     }
                 }
                 return ($final_result);
@@ -209,6 +234,8 @@ class CommonController extends Controller
             }
         }
     }
+
+
 
     /**
      * Get data for top #tag, @mention, user
@@ -312,26 +339,18 @@ class CommonController extends Controller
         $stm_list_hour = null;
         $stm_list_10sec = null;
         $stm_list_day = null;
-        $stm_list_10sec = $qb_obj->get_statement($to_datetime, $from_datetime, $token, '10sec', 'tweet');
+        // $stm_list_10sec = $qb_obj->get_statement($to_datetime, $from_datetime, $token, '10sec', 'tweet');
+        $stm_list_10sec = $qb_obj->get_statement($to_datetime, $from_datetime, $token, $range_type, 'tweet');
         $tweet_id_list = array();
         $i = 0;
-        if ($range_type == "10sec") {
-            $result_async_from_db = $db_object->executeAsync_query($stm_list_10sec[1], $stm_list_10sec[0]);
-            foreach ($result_async_from_db as $rows) {
-                foreach ($rows as $row) {        
-                    $tweet_list = $row['tweetidlist']->values();   
-                    $i = 0;
-                    foreach ($tweet_list as $t) {   
-                        if($filter_type){   
-                            if(in_array($i, $index_arr)){
-                                $tweet_l = $t->values();
-                                foreach ($tweet_l as $t1) {
-                                    if ($t1 != "0") {
-                                        array_push($tweet_id_list, $t1);
-                                    }
-                                }
-                            }
-                        }else{
+        $result_async_from_db = $db_object->executeAsync_query($stm_list_10sec[1], $stm_list_10sec[0]);
+        foreach ($result_async_from_db as $rows) {
+            foreach ($rows as $row) {        
+                $tweet_list = $row['tweetidlist']->values();   
+                $i = 0;
+                foreach ($tweet_list as $t) {   
+                    if($filter_type){   
+                        if(in_array($i, $index_arr)){
                             $tweet_l = $t->values();
                             foreach ($tweet_l as $t1) {
                                 if ($t1 != "0") {
@@ -339,8 +358,15 @@ class CommonController extends Controller
                                 }
                             }
                         }
-                        $i++;
+                    }else{
+                        $tweet_l = $t->values();
+                        foreach ($tweet_l as $t1) {
+                            if ($t1 != "0") {
+                                array_push($tweet_id_list, $t1);
+                            }
+                        }
                     }
+                    $i++;
                 }
             }
         }
@@ -432,21 +458,28 @@ class CommonController extends Controller
      *
      * @return json
      */
-    public function data_formatter_for_co_occur(Request $request)
+    public function data_formatter_for_co_occur($token=null, $option=null, $limit=null, $unique_id=null, $file_path=null)
     {
         $ut_obj = new Ut;
         $final_res = array();
-        $file_path = null;
-        $limit = null;
-        $option = $_GET['option'];
-        if (isset($_GET['limit']))
-            $limit = $_GET['limit'];
-        if (isset($_GET['query'])) {
-            $token = $_GET['query'];
+        // $file_path = null;
+        // $limit = null;
+        // $option = $_GET['option'];
+        // if (isset($_GET['limit']))
+        //     $limit = $_GET['limit'];
+        // if (isset($_GET['query'])) {
+        //     $token = $_GET['query'];
+        //     $file_path = "common/" . $token . "_" . $option . ".csv";
+        // } else if (isset($_GET['unique_id'])) {
+        //     // get directory name after user_login
+        //     $filename = $_GET['unique_id'];
+        //     $file_path = "directory_name/$filename.csv";
+        // }
+        if($token){
             $file_path = "common/" . $token . "_" . $option . ".csv";
-        } else if (isset($_GET['unique_id'])) {
+        }else if ($unique_id) {
             // get directory name after user_login
-            $filename = $_GET['unique_id'];
+            $filename = $unique_id;
             $file_path = "directory_name/$filename.csv";
         }
         if($limit)
@@ -471,7 +504,7 @@ class CommonController extends Controller
                 array_push($final_res, array("id"=>$line[1], "count"=>intval($line[2]), "author"=> $uid_info_arr->{'author'}, "handle" =>  $uid_info_arr->{'author_screen_name'}));
             }
         }
-        return json_encode($final_res);
+        return ($final_res);
     }
 
 

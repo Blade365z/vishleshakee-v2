@@ -1,150 +1,149 @@
-//Helper functions for User Analysis (Authenticated) of 
-//Social Mediia Analysis Tool Vishleshakee developed at OSINT Lab ,IIT-G
-//Written by :: Mala Das , Amitabh Boruah.
+/*
+The Script contains all the http API targets for Home page for the Social Media Analysis tool 
+developed at OSINT LAB , IIT-G
+
+-----------------------------
+IMPORTANT NOTE
+-----------------------------
+1.Use camelCase notations:)
+2.Avoid using synchronous requests as XML-http-requests has been deprecated already.
+
+Script written by : Mala Das (maladas601@gmail.com), Amitabh Boruah(amitabhyo@gmail.com)
+*/
 
 
-//Use camelCase please notations:)
-
-//PLEASE NOTE that the range types are :: 1. days , 2.hour , 3.10sec
 
 
-//Logic Starts here 
-export const getFreqDistData = (interval, query) => {
-    var freqData;
-    $.ajax({
-        type: "GET",
-        url: 'smat/freqDist',
-        contentType: "application/json",
-        data:{interval,query},
-        dataType: "json",
-        async: false,
-        success: function (response) {
-          
-            freqData = response;
+//API HEADERS for the http api requests
+var HeadersForApi = {
+    "Content-Type": "application/json",
+    "Accept": "application/json",
+    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+};
+
+
+export const getFreqDistData = async (interval = null, query, isRealTime = false, fromTime = null) => {
+    let dataArgs;
+    if (isRealTime == false) {
+        dataArgs = JSON.stringify({ interval, query });
+    } else {
+        dataArgs = JSON.stringify({ fromTime, query });
+    }
+    let response = await fetch('smat/freqDist', {
+        method: 'post',
+        headers: HeadersForApi,
+        body: dataArgs
+    })
+    let data = await response.json();
+    return data
+}
+
+
+export const getSentiDistData = async (interval = null, query, isRealTime = false, fromTime = null) => {
+    let dataArgs;
+    if (isRealTime == false) {
+        dataArgs = JSON.stringify({ interval, query });
+    } else {
+        dataArgs = JSON.stringify({ fromTime, query });
+    }
+
+    let response = await fetch('smat/sentiDist', {
+        method: 'post',
+        headers: HeadersForApi,
+        body: dataArgs
+    })
+    let data = await response.json();
+    return data
+}
+
+
+export const getTopCooccurData = async (interval = null, query, option, isRealTime = false, fromTime = null) => {
+    let dataArrayTemp = [];
+    let noOfNodes = 0;
+    let finalTime = '', dataArgs, dataArgsForRead;
+    if (isRealTime == false) {
+        dataArgs = JSON.stringify({ interval, query, option });
+        dataArgsForRead = JSON.stringify({ query, option, limit: 50 });
+    } else {
+        dataArgs = JSON.stringify({ fromTime, query, option });
+    }
     
+    let response = await fetch('smat/topCooccurDataPublic', {
+        method: 'post',
+        headers: HeadersForApi,
+        body: dataArgs
+    })
+    let data = await response.json();
+    if (isRealTime == false) {
+      
+        finalTime = data[0]['finalTime'];
+        data = data[0]['data'];
+        if (data.status == "success") {
+            noOfNodes = data['nodes'];
+            let readResponse = await fetch('smat/readCooccurData', {
+                method: 'post',
+                headers: HeadersForApi,
+                body: dataArgsForRead
+            })
+            let readData = await readResponse.json();
+            dataArrayTemp.push({ 'data': readData, 'nodes': noOfNodes, 'finalTime': finalTime });
+            return dataArrayTemp;
         }
-    }); 
-    return freqData;
-}
-
-
-export const getSentiDistData = (interval, query) => {
-    var sentiData;
-    $.ajax({
-        type: "GET",
-        url: 'smat/sentiDist',
-        contentType: "application/json",
-        data:{interval,query},
-        dataType: "json",
-        async: false,
-        success: function (response) {
-                sentiData = response;
-        }
-    });
-return sentiData;
-}
-
-
-export const getTopCooccurData = (interval, query ,type) => {
-    let dataTopTemp;
-    let dataArrayTemp = [];  
-    let noOfNodes=0;
-    let finalTime = '';
-    $.ajax({
-        type: "GET",
-        url: 'smat/topCooccurDataPublic',
-        contentType: "application/json",
-        dataType: "json",
-        data: {interval,query,option:type} ,
-        async: false,
-        success: function (response) {
-            finalTime = response[0]['finalTime'];
-            response = response[0]['data'];
-                 
-                    if(response.status=="success"){
-                            noOfNodes = response['nodes'];
-                       $.ajax({
-                         type: "GET",
-                        url: 'HA/coOccurDataFormatterHA',
-                        contentType: "application/json",
-                         dataType: "json",
-                         data: {query,option:type,limit:50},
-                         async: false,
-                         success: function (response) {
-                                    dataTopTemp = response;
-                                }
-                     });
-        }
-        }
-    });
-    dataArrayTemp.push({'data':dataTopTemp,'nodes':noOfNodes,'finalTime':finalTime});
-    return dataArrayTemp;
-}
-
-
-export const getMe = () => {
-    $.ajax({
-        type: "GET",
-        url: 'smat/getme',
-        contentType: "application/json",
-        dataType: "json",
-        success: function (response) {
-             if(response.error){
-                    if(localStorage.getItem('smat.me')){
-                    localStorage.removeItem('smat.me');
-                }
-             }
-             else{
-                if(!localStorage.getItem('smat.me')){
-                    localStorage.setItem('smat.me', JSON.stringify(response));
-                
-                 }
-             }
-        }
-    });
-
-}
-
-export const getTopData = (interval) => {
-    let topDataTemp;
-     $.ajax({
-        type: "GET",
-        url: 'smat/getTopTrendingData',
-        contentType: "application/json",
-        data: {interval},
-        dataType: "json",
-        async:false,
-        success: function (response) {
-                topDataTemp=response['data'];     
-            }
-    });
-return topDataTemp;
-}
-
-
-
-export const getTweetIDsFromController = (interval=null, query , fromTime=null,toTime=null,filter=null) => {
-    var tweetData;
-    let Args;
-    if(interval==null && fromTime!=null){
-        Args = {fromTime,toTime,query}
-    }else{
-        Args = {interval,query}
+    } else {
+      return data;
     }
-    if(filter!==null){
-        Args = {fromTime,toTime,query,filter}
-    }
-    $.ajax({
-        type: "GET",
-        url: 'smat/getTweetIDs',
-        contentType: "application/json",
-        data:Args,
-        dataType: "json",
-        async: false,
-        success: function (response) {
-            tweetData = response;
-        }
-    });
-return tweetData;
+}
 
+
+export const getMe = async () => {
+    let response = await fetch('smat/getme', {
+        method: 'get'
+    });
+    let data = await response.json()
+    if (data.error) {
+        if (localStorage.getItem('smat.me')) {
+            localStorage.removeItem('smat.me');
+        }
+    }
+    else {
+        if (!localStorage.getItem('smat.me')) {
+            localStorage.setItem('smat.me', JSON.stringify(data));
+
+        }
+    }
+
+
+}
+
+export const getTopData = async (interval) => {
+    let response = await fetch('smat/getTopTrendingData', {
+        method: 'post',
+        headers: HeadersForApi,
+        body: JSON.stringify({
+            interval
+        })
+    });
+    let data = await response.json()
+    return data;
+}
+
+
+
+export const getTweetIDsFromController = async (interval = null, query, fromTime = null, toTime = null, filter = null) => {
+    let dataArgs;
+    if (interval == null && fromTime != null) {
+        dataArgs = JSON.stringify({ fromTime, toTime, query });
+    } else {
+        dataArgs = JSON.stringify({ interval, query });
+    }
+    if (filter !== null) {
+        dataArgs = JSON.stringify({ fromTime, toTime, query, filter });
+    }
+    let response = await fetch('smat/getTweetIDs', {
+        method: 'post',
+        headers: HeadersForApi,
+        body: dataArgs
+    })
+    let data = await response.json();
+    return data;
 }
