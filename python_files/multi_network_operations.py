@@ -334,11 +334,8 @@ class MultiNet():
 		G1 = nx.Graph()
 		new_edges = G.edges() - NewGraph.edges() 
 		G1.add_edges_from(new_edges)
-		print len(new_edges)
 
 		communities = community.label_propagation_communities(G1)
-		print communities
-		print "Hello"
 		return communities
 
 	def grivan(self, *args):
@@ -475,7 +472,7 @@ class MultiNet():
 
 	# Bounded k for the path length
 	def ksp2(self,*args):
-
+		print "I am in";
 		G = self.generate_graph(args[0])
 		source=args[1]
 		target=args[2]
@@ -484,6 +481,7 @@ class MultiNet():
 		# k need to be hardcoded to 5000
 		k = 6000
 
+		# all nodes of depth has no meaning here
 		all_nodes_of_depth = int(args[3]) + 1;
 		# min_number_of_edges = int(args[5])
 
@@ -491,8 +489,14 @@ class MultiNet():
 
 		new_list = []
 
+		min = 2000;
 		for i in answer:
-			if(len(i) == all_nodes_of_depth):
+			if(len(i) < min):
+				min = len(i);
+
+
+		for i in answer:
+			if(len(i) == min):
 				new_list.append(i)
 
 		for i in new_list:

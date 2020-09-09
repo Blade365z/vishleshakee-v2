@@ -74,65 +74,101 @@ class UserAnalysisController extends Controller
     }
     public function getFrequencyDataForUser(Request $request)
     {
-        if ($request->input('time')) {
-            $time = $_GET['time'];
-        } else if ($request->input('fromDate')) {
-            $fromDate = $request->input('fromDate');
-            $toDate = $request->input('toDate');
-        } else {
-            return response()->json(['error' => 'No Data Captured'], 404);
-        }
-        if ($request->input('query')) {
-            $query = $request->input('query');
-        } else {
-            return response()->json(['error' => 'No Argument Set'], 404);
-        }
-        if ($request->input('rangeType')) {
+        if ($request->input('to') && $request->input('from') && $request->input('query') && $request->input('rangeType')) {
             $rangeType = $request->input('rangeType');
-        } else {
-            return response()->json(['error' => 'Please add range type as argument'], 404);
-        }
+            $query = $request->input('query');
+            $from = $request->input('from');
+            $to = $request->input('to');
+            $rangeType=$request->input('rangeType');
+            if ($request->input('isDateTimeAlready') == 0) {    
+                $fromTime = date('Y-m-d H:i:s', strtotime($from) + 0);
+                $toTime = date('Y-m-d H:i:s', strtotime($to) + 0);
+            } else {
+                $fromTime = $from;
+                $toTime = $to;
+            }
 
-        if ($rangeType == 'days') {
-            $arrTemp = ["range_type" => "days", "chart_type" => "freq_dist", "data" => [["2020-08-30 00:00:00", "236"], ["2020-08-31 00:00:00", "347"], ["2020-09-02 00:00:00", "347"], ["2020-09-03 00:00:00", "315"], ["2020-09-04 00:00:00", 146]]];
-            return $arrTemp;
-        } else if ($rangeType == 'hour') {
-            $arrTemp = ["range_type" => "hour", "chart_type" => "freq_dist", "data" => [["2020-09-04 01:00:00", "1"], ["2020-09-04 02:00:00", "1"], ["2020-09-04 03:00:00", "12"], ["2020-09-04 04:00:00", "14"], ["2020-09-04 05:00:00", "21"], ["2020-09-04 06:00:00", "16"], ["2020-09-04 07:00:00", "18"], ["2020-09-04 08:00:00", "26"], ["2020-09-04 09:00:00", "26"], ["2020-09-04 10:00:00", "11"]]];
-            return $arrTemp;
+            //A little extra processing for 10seconds plot.
+            if($rangeType=='10sec'){
+                $fromTime = date('Y-m-d H:i:s', strtotime($fromTime) -3600);
+                $toTime = date('Y-m-d H:i:s', strtotime($toTime) + 0);
+            }
+
+            $commonObj = new CommonController;
+            $data = $commonObj->get_frequency_distribution_data($toTime, $fromTime, $query, $rangeType , true, true);
+            return $data;
+
+            
         } else {
-            $arrTemp = ["range_type" => "10sec", "chart_type" => "freq_dist", "data" => [["2020-09-04 05:06:30", "1"], ["2020-09-04 05:09:30", "1"], ["2020-09-04 05:17:20", "1"], ["2020-09-04 05:17:30", "1"], ["2020-09-04 05:27:10", "1"], ["2020-09-04 05:28:00", "1"], ["2020-09-04 05:37:00", "1"], ["2020-09-04 05:40:20", "1"], ["2020-09-04 05:43:00", "1"], ["2020-09-04 05:45:20", "1"], ["2020-09-04 05:48:10", "1"], ["2020-09-04 05:49:40", "1"], ["2020-09-04 05:50:20", "1"], ["2020-09-04 05:52:50", "1"], ["2020-09-04 05:53:40", "1"], ["2020-09-04 05:58:00", "1"]]];
-            return $arrTemp;
+            return response()->json(['error' => 'Please check yout arguments'], 404);
         }
     }
 
     public function getTweetIDUA(Request $request)
     {
-        
+
         if ($request->input('to') && $request->input('from') && $request->input('query')) {
             $rangeType = $request->input('rangeType');
             $query = $request->input('query');
             $from = $request->input('from');
             $to = $request->input('to');
-            if ($request->input('isDateTimeAlready')==0) {
-                $fromTime=date('Y-m-d H:i:s', strtotime($from) + 0);
-                $toTime=date('Y-m-d H:i:s', strtotime($to) + 0);
+            if ($request->input('isDateTimeAlready') == 0) {
+                $fromTime = date('Y-m-d H:i:s', strtotime($from) + 0);
+                $toTime = date('Y-m-d H:i:s', strtotime($to) + 0);
             } else {
                 $fromTime = $from;
                 $toTime = $to;
             }
-            if ($request->input('filter')!='all') {
+            if ($request->input('filter') != 'all') {
                 $filter = $request->input('filter');
             } else {
                 $filter = null;
             }
-            $arrTemp = ["range_type" => $rangeType,"fromTime"=>$fromTime,"toTime"=>$toTime,"query"=>$query,"filter"=>$filter];
+              //A little extra processing for 10seconds plot.
+              if($rangeType=='10sec'){
+                $fromTime = date('Y-m-d H:i:s', strtotime($fromTime) -3600);
+                $toTime = date('Y-m-d H:i:s', strtotime($toTime) + 0);
+            }
+            $arrTemp = ["range_type" => $rangeType, "fromTime" => $fromTime, "toTime" => $toTime, "query" => $query, "filter" => $filter];
             $commonObj = new CommonController;
             $data = $commonObj->get_tweets($toTime, $fromTime, $query, $rangeType, $filter);
             return $data;
         } else {
             return response()->json(['error' => 'Please check yout arguments'], 404);
         }
-       
+
+    }
+
+    public function getSentimentDataForUser(Request $request)
+    {
+        if ($request->input('to') && $request->input('from') && $request->input('query') && $request->input('rangeType')) {
+            $rangeType = $request->input('rangeType');
+            $query = $request->input('query');
+            $from = $request->input('from');
+            $to = $request->input('to');
+            $rangeType=$request->input('rangeType');
+            if ($request->input('isDateTimeAlready') == 0) {    
+                $fromTime = date('Y-m-d H:i:s', strtotime($from) + 0);
+                $toTime = date('Y-m-d H:i:s', strtotime($to) + 0);
+            } else {
+                $fromTime = $from;
+                $toTime = $to;
+            }
+
+            //A little extra processing for 10seconds plot.
+            if($rangeType=='10sec'){
+                $fromTime = date('Y-m-d H:i:s', strtotime($fromTime) -3600);
+                $toTime = date('Y-m-d H:i:s', strtotime($toTime) + 0);
+            }
+
+            $commonObj = new CommonController;
+            $data = $commonObj->get_sentiment_distribution_data($toTime, $fromTime, $query, $rangeType);
+            return $data;
+
+            
+        } else {
+            return response()->json(['error' => 'Please check yout arguments'], 404);
+        }
     }
 
 }

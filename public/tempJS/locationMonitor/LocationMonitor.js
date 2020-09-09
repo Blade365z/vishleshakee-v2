@@ -30,6 +30,7 @@ $(document).ready(function(){
     
     
     
+    
     $('.nav-item ').removeClass('smat-nav-active');
     $('#nav-LM').addClass('smat-nav-active');
     wordCloudLM('trendingLM');

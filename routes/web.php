@@ -106,6 +106,14 @@ Route::group(['prefix' => 'na'], function () {
 
     Route::get('union','networkAnalysisController@union');
     Route::get('union_data_formator','networkAnalysisController@union_data_formator');
+    Route::get('intersection','networkAnalysisController@intersection');
+    Route::get('difference','networkAnalysisController@difference');
+    Route::get('formator_inter_diff','networkAnalysisController@difference_data_formator');
+
+    Route::post('writedelete','networkAnalysisController@write_delete');
+
+
+
     //For network evolution
     Route::get('nettest', 'networkAnalysisEvolution@tester');
     Route::get('jobsubmit', 'networkAnalysisEvolution@jobSubmission');
@@ -120,7 +128,7 @@ Route::group(['prefix' => 'UA'], function () {
     Route::post('/getUserDetailsTemp','UserAnalysisController@getUserDetails');
     Route::post('/getFrequencyDataForUser','UserAnalysisController@getFrequencyDataForUser');
     Route::post('/getTweetIDs','UserAnalysisController@getTweetIDUA');
-    
+    Route::post('/getSentimentDataForUser','UserAnalysisController@getSentimentDataForUser');
 });
 
 

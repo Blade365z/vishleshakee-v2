@@ -1,6 +1,6 @@
 export const getLocationMonitorMap = (id) => {
 
-var markersList = document.getElementById('markersList');
+    var markersList = document.getElementById('markersList');
     L.MarkerCluster.include({
         spiderfy: function () {
             var childMarkers = this.getAllChildMarkers();
@@ -25,7 +25,13 @@ var markersList = document.getElementById('markersList');
         attribution
     });
     var glow = new L.LayerGroup();
+
+
     var LM_Map = L.map(id, {
+        fullscreenControl: true,
+        fullscreenControlOptions: {
+          position: 'topleft'
+        },
         center: [21.1458, 79.0882],
         zoom: 5,
         layers: [tiles, glow]
@@ -46,14 +52,38 @@ var markersList = document.getElementById('markersList');
             collapsed: false
         });
     markerCluster.addTo(LM_Map);
-    // var modal = document.querySelector(".modal_main_map");
-    // var closeButton = document.querySelector(".close-button");
-    // closeButton.addEventListener("click", closeModal);
-    // window.addEventListener("click", windowOnClick);
+  
     var tweetIcon = L.icon({
         iconUrl: 'public/icons/twitter.png',
         iconSize: [35, 35] // size of the icon
     });
+
+
+    var modal = document.querySelector(".modal_lm");
+    var closeButton = document.querySelector(".close-button");
+
+
+
+    closeButton.addEventListener("click", closeModal);
+
+    function closeModal() {
+        // Use the unspiderfy method so that internal state is updated.
+        markerCluster.unspiderfy();
+    }
+    
+    function windowOnClick(event) {
+        if (event.target === modal) {
+            closeModal();
+        }
+    }
+
+    L.marker([28.7041,77.1025],{ icon: tweetIcon}).bindPopup('<div class="border-bottom"><b>आलोक</b> : @alok1088 <img style="border-radius: 50%; width:10px;height:10px;" src="public/icons/red.png"> <br>#IndiaForKangana अगले चुनाव मे मैडम का एक टिकट तो बनता है कौन सी पार्टी टिकट देगी🤔🤔🤔</div>').addTo(group1);
+    L.marker([28.7041,77.1025],{ icon: tweetIcon}).bindPopup('<div class="border-bottom"><b>आलोक</b> : @alok1088 <img style="border-radius: 50%; width:10px;height:10px;" src="public/icons/yellow.png"> <br>#IndiaForKangana अगले चुनाव मे मैडम का एक टिकट तो बनता है कौन सी पार्टी टिकट देगी🤔🤔🤔</div>').addTo(group1);
+    L.marker([28.7041,77.1025],{ icon: tweetIcon}).bindPopup('<div class="border-bottom"><b>आलोक</b> : @alok1088 <img style="border-radius: 50%; width:10px;height:10px;" src="public/icons/green.png"> <br>#IndiaForKangana अगले चुनाव मे मैडम का एक टिकट तो बनता है कौन सी पार्टी टिकट देगी🤔🤔🤔</div>').addTo(group1);
+    L.marker([28.7041,77.1025],{ icon: tweetIcon}).bindPopup('<div class="border-bottom"><b>आलोक</b> : @alok1088 <img style="border-radius: 50%; width:10px;height:10px;" src="public/icons/red.png"> <br>#IndiaForKangana अगले चुनाव मे मैडम का एक टिकट तो बनता है कौन सी पार्टी टिकट देगी🤔🤔🤔</div>').addTo(group1);
+    L.marker([26.1445, 91.7362],{ icon: tweetIcon}).bindPopup('<div class="border-bottom"><b>आलोक</b> : @alok1088 <img style="border-radius: 50%; width:10px;height:10px;" src="public/icons/green.png"> <br>#IndiaForKangana अगले चुनाव मे मैडम का एक टिकट तो बनता है कौन सी पार्टी टिकट देगी🤔🤔🤔</div>').addTo(group1);
+
+    group1.addTo(LM_Map);
 
     
 }

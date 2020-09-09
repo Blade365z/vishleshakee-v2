@@ -2,9 +2,5 @@ src,dst,count
 #a,#b,2
 #c,#d,2
 #a,#c,12
-#e,#f,1
-#f,#a,1
-#e,#a,1
-#wwwe,#a,22
-#wew,#sed,12
-#sdf,#wwe,123
+#b,#c,1
+#d,#a,12

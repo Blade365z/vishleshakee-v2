@@ -68,7 +68,12 @@ export const generateFrequencyChart = (data, query, div) => {
 
   // Create axes
   var dateAxis = chart.xAxes.push(new am4charts.DateAxis());
-
+  dateAxis.title.text = "DateTime";
+  dateAxis.tooltipDateFormat = "HH:mm:ss, d MMMM";
+  dateAxis.baseInterval = {
+    "timeUnit": "second",
+    "count": 10
+  }
 
   var valueAxis = chart.yAxes.push(new am4charts.ValueAxis());
 
@@ -174,7 +179,12 @@ export const generateSentimentChart = (data, query, div) => {
 
   // Create axes
   var dateAxis = chart.xAxes.push(new am4charts.DateAxis());
-
+  dateAxis.title.text = "DateTime";
+		dateAxis.tooltipDateFormat = "HH:mm:ss, d MMMM";
+		dateAxis.baseInterval = {
+			"timeUnit": "second",
+			"count": 10
+		}
   var valueAxis = chart.yAxes.push(new am4charts.ValueAxis());
   valueAxis.min = 0;
   valueAxis.max = 100;
@@ -244,14 +254,14 @@ export const generateBarChart = (data = null, query, div, type) => {
   chart.data = generateChartData(dataCaptured, type);
   function generateChartData(data, type) {
     var chartData = [];
-      data.forEach(element => {
-        chartData.push({
-          "token": element['handle'],
-          "count": element['count'],
+    data.forEach(element => {
+      chartData.push({
+        "token": element['handle'],
+        "count": element['count'],
 
-        });
       });
-    
+    });
+
     return chartData;
   }
 
@@ -305,12 +315,12 @@ export const generateBarChart = (data = null, query, div, type) => {
   let finalTime = data[0]['finalTime'];
   console.log(finalTime);
   const updateBarChart = () => {
- 
+
     // getTopCooccurData async (interval = null, query, option, isRealTime = false, fromTime = null)
     getTopCooccurData(null, query, type, true, finalTime).then(response => {
       finalTime = response[0]['finalTime'];
       response = response[0]['data'];
-    
+
       let dataTemp = response;
       if (dataTemp) {
         let lenofTempData = Object.keys(dataTemp).length - 1;
@@ -357,7 +367,7 @@ export const generateBarChart = (data = null, query, div, type) => {
         }
       }
     })
-}
+  }
   barChartInterval = setInterval(updateBarChart, 10000)
 
 

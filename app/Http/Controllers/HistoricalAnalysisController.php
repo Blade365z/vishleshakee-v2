@@ -37,7 +37,9 @@ class HistoricalAnalysisController extends Controller
         $token = $_GET['query'];
         $from_datetime = $_GET['from_datetime'];
         $to_datetime = $_GET['to_datetime'];
-        $range_type = $_GET['range_type'];
+        $range_type = null;
+        if (isset($_GET['range_type']))
+            $range_type = $_GET['range_type'];
         $co_occur_option = $_GET['co_occur_option'];
         // $unique_id = $_GET['unique_id'];
         // get directory name after user_login ....

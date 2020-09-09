@@ -455,8 +455,17 @@ select{
     cursor: pointer !important;
 }
 .uaTab{
-    min-height: 330px;
-    max-height: 330px;
+    min-height: 420px;
+    max-height: 420px;
+}
+
+.freqDistTweets , .sentiDistTweets{
+        height:360px;
+        overflow-y: auto;
+        overflow-x:hidden;
+}
+.freqDistSummary , .sentiDistSummary{
+    height:60px;
 }
 @media (max-width: 767.98px) {
     .dFlexBut{
@@ -669,7 +678,7 @@ select{
    
     .uaTab{
         min-height: 330px;
-        max-height: 330px;
+       
     }
 }
 

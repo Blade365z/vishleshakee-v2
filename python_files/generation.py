@@ -136,7 +136,6 @@ if(option == 222):
 #community detection with label propagation using async_fluidic 
 if(option == 33):
 	input1 = sys.argv[2]
-	print input1
 	try:
 		if(len(sys.argv) < 5):
 			k = 10
@@ -150,8 +149,6 @@ if(option == 33):
 		print "Provide a file for finding the community"
 		sys.exit()
 	our_communities = sorted(map(sorted,community))
-	print our_communities
-	print len(our_communities)
 
 	query=sys.argv[3]
 	dir_name = sys.argv[4]+"/"
@@ -164,7 +161,6 @@ if(option == 33):
 		os.mkdir(path)
 
 	filename=path+query+"communities"+".json"
-	print filename
 
 
 	final_dict = {}
@@ -666,6 +662,7 @@ if(option == 115):
 	query=sys.argv[3]
 	dir_name =sys.argv[4]+"/"
 
+
 	os.chdir("storage");
 	path = os.getcwd()+"/"+dir_name;
 	
@@ -690,7 +687,6 @@ if(option == 115):
 
 
 if(option == 404):
-	print "Hello India"
 
 	print sys.argv[2]
 	print sys.argv[3]
@@ -698,20 +694,22 @@ if(option == 404):
 	print sys.argv[5]
 	print sys.argv[6]
 	print sys.argv[7]
-
+	
 	all_shortest_path = mo_obj.ksp2(sys.argv[2],sys.argv[5],sys.argv[6],sys.argv[7])
+	print list(all_shortest_path)
 	
 	if(all_shortest_path == -1):
 		print "Looked for nodes are not present"
 		sys.exit()
 	print "Printing all shortest_path"
-	# print list(all_shortest_path)
 
 	print "Not a vaild input, Check your inputs"
 
 	query=sys.argv[3]
 	dir_name =sys.argv[4]+"/"
 
+	print "OS.getcwd";
+	print os.getcwd();
 	os.chdir("storage");
 	path = os.getcwd()+"/"+dir_name;
 	

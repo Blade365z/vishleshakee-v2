@@ -1,4 +1,4 @@
-.modal {
+.modal_lm {
     z-index: 1000;
     /* Make sure your modal renders above the Leaflet map. */
     position: fixed;
@@ -20,7 +20,7 @@
     transform: translate(-50%, -50%);
     background-color: white;
     padding: 1rem 1.5rem;
-    width: 24rem;
+    width: 40rem;
     border-radius: 0.5rem;
   }
   

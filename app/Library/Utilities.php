@@ -62,13 +62,15 @@ class Utilities{
         $to_date_time_list = $this->separate_date_time($to_datetime); // ['2020-09-06', '00:00:00']
         // $cass_date_obj = $this->convert_php_date_obj_to_cass_date_obj(strtotime($to_date_time_list[0])); //convert php date_obj to cass_date_obj
 
-        $cass_date_obj = $this->convert_php_date_obj_to_cass_date_obj(strtotime($to_date_time_list[0]. ' 18:30:00'));
+        $cass_date_obj = $this->convert_php_date_obj_to_cass_date_obj(strtotime($to_date_time_list[0]. ' 18:30:00'));        
         for ($i = 0; $i < 23; $i++) {
             array_push($hour_array,  array($cass_date_obj, $hours_array_tmp[$i]));
         }
-
-        // for hour 24:00:00 --> it should be next day 00:00:00
-        
+        // for hour 2020-09-09 24:00:00 --> 2020-09-10 00:00:00(it should be next day at 00:00:00)
+        $nxt_day = $this->get_previous_next_day($to_date_time_list[0], 'next');
+        $nxt_date_obj = $this->convert_php_date_obj_to_cass_date_obj(strtotime($nxt_day. ' 18:30:00'));  
+        array_push($hour_array,  array($nxt_date_obj, '00:00:00'));
+                
         return $hour_array;
     }
 
@@ -140,6 +142,8 @@ class Utilities{
             return $cass_date_obj->toDateTime()->format('Y-m-d');
     }
     
+
+    
     /**
     * Get current dateTime or date based on delay(in sec)
     *
@@ -175,7 +179,7 @@ class Utilities{
     /**
     * Get diff between two datetime
     *
-    * @return integer(sec, no. of days, min, hour)
+    * @return integer(sec, no. of days)
     */
     public function get_difference_between_two_datetime($to_datetime, $from_datetime, $option){
         if($option == 'sec'){
@@ -185,7 +189,10 @@ class Utilities{
             return $differenceInSeconds;
         }
         else if($option == 'day'){
-            
+            $from_datetime_obj = new DateTime($from_datetime);
+            $to_datetime_obj = new DateTime($to_datetime);
+            $interval = $from_datetime_obj->diff($to_datetime_obj);
+            return $interval->format('%a'); //no. of days
         }
     }
     
@@ -287,5 +294,50 @@ class Utilities{
         else{
             echo "file path is missing";
         }
+    }
+
+
+    // public function get_range_type($to_datetime, $from_datetime, $differenceFormat = '%a'){
+    //     $from_datetime_obj = new DateTime($from_datetime);
+    //     $to_datetime_obj = new DateTime($to_datetime);
+    //     $interval = $from_datetime_obj->diff($to_datetime_obj);
+    //     echo $interval->format('%R%a days');
+    //     return $range_type;
+    // }
+
+
+
+    public function get_previous_next_day($date, $option){
+        if($option == 'prev'){
+            return date('Y-m-d', strtotime('-1 day', strtotime($date)));
+        }else if ($option == 'next'){
+            return date('Y-m-d', strtotime('1 day', strtotime($date)));
+        }
+    }
+
+
+
+    public function get_next_date_hour($datetime_str){
+        $res = null;
+        $date = ($this->separate_date_time($datetime_str))[0];
+        $time = ($this->separate_date_time($datetime_str))[1];
+        $t = explode(':', $time)[0] + 1;
+        if(floor($t/10) == 0)  //for 1-9 = 0(1-9) and others (10-24) = as it is
+            $t = '0'.$t;        
+        if($t == 24){
+            $res = ($this->get_previous_next_day($date, 'next')). ' 00:00:00'; 
+        }else{
+            $time_tmp = $t . ':00:00' ; // current time-->20:06:20  convert to 21:00:00
+            $res = $date.' '.$time_tmp;
+        }
+        return $res;
+    }
+
+
+    public function convert_utc_datetime_to_local_datetime($datetime_str){
+        // $s = '2020-09-10 12:23:20';
+        $date = new DateTime($datetime_str);
+        $date->add(new DateInterval('PT5H30M'));
+        return $date->format('Y-m-d H:i:s');
     }
 }

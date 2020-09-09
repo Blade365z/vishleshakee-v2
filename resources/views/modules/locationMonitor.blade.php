@@ -1,8 +1,10 @@
 @extends('parent.app')
 @section('content')
 <link rel="stylesheet" href="public/leaflet/markerCluster/MarkerCluster.css">
+<link rel="stylesheet" href="public/leaflet/markerCluster/MarkerCluster.Default.css">
 <link rel="stylesheet" href="public/leaflet/leaflet.css">
 <link rel="stylesheet" href="public/leaflet/leaflet_modal.css">
+
 
 <div class="smat-mainHeading ">
     Location Monitor
@@ -64,7 +66,7 @@
 
             </div>
             
-            <div class="modal">
+            <div class="modal_lm">
                 <div class="modal-content">
                   <span class="close-button">&times;</span>
                   <ul id="markersList"></ul>
@@ -99,4 +101,12 @@
 <script src="public/leaflet/TileLayer.Grayscale.js"></script>
 <script src="public/leaflet/markerCluster/leaflet.markercluster-src.js"></script>
 <script src="public/leaflet/subgroup/leaflet.featuregroup.subgroup.js"></script>
+
+
+<link rel="stylesheet" href="public/leaflet/fullscreen/Control.FullScreen.css" />
+<script src="public/leaflet/fullscreen/Control.FullScreen.js"></script>
+
+
+
+
 @endsection

@@ -153,10 +153,6 @@ class Home extends Controller
 
     public function getTopTrendingData(Request $request)
     {
-        //aGOTe -->$_GET['interval']
-        //now ---> $request->input('interval')
-
-        ///GET,POST,PUT,DELETE
 
         if ($request->input('interval')) {
             $interval = $request->input('interval');

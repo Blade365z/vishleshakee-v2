@@ -12,8 +12,7 @@ class QueryBuilder{
     */
     public function get_statement($to_datetime, $from_datetime, $token=null, $range_type=null, $feature_option=null, $co_occur_option=null, $async=true, $limit = null, $id_list=null){
         $ut_obj = new Ut;
-        $final_res = null;
-        
+        $final_res = null;        
         if(($feature_option == 'freq') or ($feature_option == 'sent') or ($feature_option == 'co_occur') or ($feature_option == 'tweet')){
             if(($range_type == '10sec') or ($range_type == 'hour') or ($range_type == 'day')){
                 if($async){

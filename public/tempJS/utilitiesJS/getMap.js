@@ -67,7 +67,6 @@ export const getCompleteMap = (id,query,interval,type,fromDT=null,toDT=null) => 
             }
         });
     }
-    console.log(tweet_details);
     else if(type = 'user'){
         $.ajax({
             type: "GET",

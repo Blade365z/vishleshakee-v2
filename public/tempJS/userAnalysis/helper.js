@@ -51,7 +51,7 @@ export const getUserDetails = async (id) => {
         body: JSON.stringify({
             userID: id
         })
-    });
+    }); 
     let data = await response.json()
     return data;
 }
@@ -62,23 +62,42 @@ export const getUserDetails = async (id) => {
 Input----> IF(Day,Hour):query,fromDate,toDate,rangeType ELSE : Time 
 Output----> Freq. Data(json)
 */
-export const getFreqDistDataForUA = async (query, fromDate, toDate, toTime = null, rangeType) => {
+export const getFreqDistDataForUA = async (query, from, to, toTime = null, rangeType,isDateTimeAlready=0) => {
     let dataArg;
     if (toTime) {
-        dataArg =JSON.stringify({ query, toTime, rangeType });
+        dataArg =JSON.stringify({ query, toTime, rangeType,isDateTimeAlready });
     } else {
-        dataArg =JSON.stringify({  query, fromDate, toDate, rangeType });
+        dataArg =JSON.stringify({  query, from, to, rangeType,isDateTimeAlready});
     }
-    let response = await fetch('UA/getFrequencyDataForUser', {
+    
+   let response = await fetch('UA/getFrequencyDataForUser', {
         method: 'post',
         headers: HeadersForApi,
         body:dataArg
     });
     let data = await response.json()
+  
     return data;
 
 }
+export const getSentiDistDataForUA = async (query, from, to, toTime = null, rangeType,isDateTimeAlready=0) => {
+    let dataArg;
+    if (toTime) {
+        dataArg =JSON.stringify({ query, toTime, rangeType,isDateTimeAlready });
+    } else {
+        dataArg =JSON.stringify({  query, from, to, rangeType,isDateTimeAlready});
+    }
+    console.log(dataArg);
+    let response = await fetch('UA/getSentimentDataForUser', {
+        method: 'post',
+        headers: HeadersForApi,
+        body:dataArg
+    });
+    let data = await response.json()
+    console.log(data);
+    return data;
 
+}
 
 
 export const getTweetIDsForUA = async (query, from = null, to = null, rangeType,filter = null ,isDateTimeAlready=0)=> {

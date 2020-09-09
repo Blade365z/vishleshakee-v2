@@ -58,7 +58,7 @@ export const getRangeType = (from_date, to_date, to_time = null) => {
             range_type = "hour";
     }
     else if (diff >= 1) {
-        range_type = "days";
+        range_type = "day";
     }
     return range_type;
 }

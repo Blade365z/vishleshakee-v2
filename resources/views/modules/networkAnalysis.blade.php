@@ -24,6 +24,22 @@
     tr:nth-child(even) {
     background-color: #dddddd;
     }
+
+    .vis-button{
+        margin-bottom:25px;
+    }
+    
+    .vis-zoomExtends{
+    }
+    
+    .vis-zoomIn{
+        top:50px;
+    }
+    
+    .vis-zoomOut{
+       top:50px;
+    }
+
   </style>
 
 <div class="smat-mainHeading ">
@@ -55,6 +71,15 @@
                     <option>Hashtag-Hashtag </option>
                     <option>Hashtag-Mentions </option>
                     <option>Mention-Mentions </option>
+                </select>
+            </div>
+            <div class="form-group  my-0  mr-2 border smat-rounded d-flex px-2 py-1  bg-white">
+                <select class="form-control" name="net_category" id="net_category">
+                    <option>All</option>
+                    <option>Sensitive</option>
+                    <option>Communal</option>
+                    <option>Security</option>
+                    <option>Normal</option>
                 </select>
             </div>
             <div class="form-group  my-0  mr-2 border smat-rounded d-flex px-2 py-1  bg-white">
@@ -96,6 +121,9 @@
             </li>
             <li class="nav-item naTabs ">
                 <a class="nav-link smat-rounded " id="diffTabNA" data-toggle="pill" href="#diffContentNA" role="tab" aria-controls="diffContentNA" aria-selected="false">Difference</a>
+            </li>
+            <li class="nav-item naTabs ">
+                <a class="nav-link smat-rounded " id="expansionTabNA" data-toggle="pill" href="#expansionContentNA" role="tab" aria-controls="expansionContentNA" aria-selected="false">Network Expansion</a>
             </li>
 
         </ul>
@@ -179,13 +207,13 @@
 
                                             <ul class="nav nav-pills mb-3" id="pills-tab communityoption"  role="tablist">
                                                 <li class="nav-item naTabs-2 mx-2">
-                                                    <a class="nav-link active smat-rounded " value="asyncFluidTab" data-toggle="pill" href="#asyncFluidContent" role="tab" aria-controls="asyncFluidContent" aria-selected="true">Async Fluidic</a>
+                                                    <a class="nav-link active smat-rounded " id="async" value="asyncFluidTab" data-toggle="pill" href="#asyncFluidContent" role="tab" aria-controls="asyncFluidContent" aria-selected="true">Async Fluidic</a>
                                                 </li>
                                                 <li class="nav-item naTabs-2 mx-2" >
                                                     <a class="nav-link  smat-rounded " id="lpa" value="labelPropTab"  data-toggle="pill" href="#emptyContent" role="tab" aria-controls="emptyContent" aria-selected="true">Label Propagation</a>
                                                 </li>
                                                 <li class="nav-item naTabs-2 mx-2">
-                                                    <a class="nav-link fade show smat-rounded " value="grivanNewmanTab" data-toggle="pill" href="#emptyContent" role="tab" aria-controls="emptyContent" aria-selected="true">Grivan Newman</a>
+                                                    <a class="nav-link fade show smat-rounded " id="grivan" value="grivanNewmanTab" data-toggle="pill" href="#emptyContent" role="tab" aria-controls="emptyContent" aria-selected="true">Grivan Newman</a>
                                                 </li>
                                                 <ul>
 
@@ -291,9 +319,32 @@
                                     //TODO:: Viz. Network Comes here
                                 </div>
                             </div>
-                            <div class="tab-pane fade text-center p-1    " id="unionContentNA" role="tabpanel" aria-labelledby="unionContentNA ">Union Content NA </div>
-                            <div class="tab-pane fade  " id="interSecContentNA" role="tabpanel" aria-labelledby="interSecContentNA">interSecContentNA Tab</div>
-                            <div class="tab-pane fade " id="diffContentNA" role="tabpanel" aria-labelledby="diffContentNA">Active Users Tab</div>
+                            <div class="tab-pane fade text-center p-1" id="unionContentNA" role="tabpanel" aria-labelledby="unionContentNA ">
+                                <div class="form-group mx-1">
+                                    <button type="submit" class="btn btn-danger smat-rounded" id="union_exec">Execute</button>
+                                </div>
+                                <div id="union_displayer" style="height: 90%"> </div> 
+                            </div>
+                            <div class="tab-pane fade text-center " id="interSecContentNA" role="tabpanel" aria-labelledby="interSecContentNA">interSecContentNA Tab
+                                <div class="form-group mx-1">
+                                    <button type="submit" class="btn btn-danger smat-rounded" id="intersection_exec">Execute</button>
+                                </div>
+                                <div id="intersection_displayer" style="height: 90%"> </div> 
+                            </div>
+                            <div class="tab-pane fade text-center" id="diffContentNA" role="tabpanel" aria-labelledby="diffContentNA">Active Users Tab
+                                <div class="form-group mx-1">
+                                    <input type="text" class="form-control smat-rounded  naInputs " id="difference_sequence" placeholder="Card sequence comma separated" style="border:0px;">
+                                    <button type="submit" class="btn btn-danger smat-rounded" id="difference_exec">Execute</button>
+                                </div>
+                                <div id="difference_displayer" style="height: 90%"> </div> 
+                            </div>
+
+                            <div class="tab-pane fade text-center" id="expansionContentNA" role="tabpanel" aria-labelledby="expansionContentNA">Active Users Tab
+                                <div class="form-group mx-1">
+                                    <button type="submit" class="btn btn-danger smat-rounded" id="expansion_exec">Execute</button>
+                                </div>
+                                <div id="difference_displayer" style="height: 90%"> </div> 
+                            </div>
 
                         </div>
                       
@@ -303,11 +354,8 @@
 
 
 
-
-
-
                     <div class=" ml-auto d-flex">
-                            <Button class="btn smat-btn smat-rounded mx-2"><span>Use Network</span></Button> <br/> <br/>
+                            <Button class="btn smat-btn smat-rounded mx-2" id="usenetwork"><span>Use Network</span></Button> <br/> <br/>
                             <Button class="btn smat-btn smat-rounded mx-2"><span>Expand Network</span></Button> <br/> <br/>
                             <Button class="btn smat-btn smat-rounded mx-2"><span>Export Network</span></Button> <br/> <br/>
                         </div>
@@ -315,6 +363,26 @@
 
 
                 </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- -->
+<!-- Modal for delete permission -->
+<div class="modal" id="delete_permission" role="dialog">
+    <div class="modal-dialog">
+        <!-- Modal content-->
+        <div class="modal-content">
+            <div class="modal-header">
+                <p style="align-content: center;"></p>
+            </div>
+            <div class="modal-body">
+                    <p>You have opted for a node deletion. Click, on yes to proceed.</p>
+              </div>
+            <div class="modal-footer">
+                <button type="button" id="permission_revoked" class="btn btn-danger" data-dismiss="modal">No</button>
+                <button type="button" id="permission_granted" data-dismiss="modal" class="btn btn-success">Yes</button>
             </div>
         </div>
     </div>

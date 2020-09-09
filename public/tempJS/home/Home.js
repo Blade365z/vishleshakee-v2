@@ -49,6 +49,7 @@ $(document).ready(function () {
   
   //Since all the logics implemented will be executed asynchronously, Therefore the function get
   getTopData(interval).then(response => {
+
     TopTrendingData = response.data
     generatePublicHashtags(TopTrendingData, 'all');
     query = incoming ? query = incoming : Object.keys(TopTrendingData)[0];

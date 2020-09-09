@@ -1,0 +1,28 @@
+{
+    "0": [
+        "#a1", 
+        "#a2", 
+        "#a3", 
+        "#a4"
+    ], 
+    "1": [
+        "#bengal", 
+        "#pakistan"
+    ], 
+    "2": [
+        "#china", 
+        "#india"
+    ], 
+    "3": [
+        "#couvid", 
+        "#sars"
+    ], 
+    "4": [
+        "#ghosal", 
+        "#shreya"
+    ], 
+    "5": [
+        "#itanagar", 
+        "#manipur"
+    ]
+}

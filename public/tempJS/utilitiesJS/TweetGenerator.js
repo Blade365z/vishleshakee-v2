@@ -15,14 +15,40 @@ Script written by : Mala Das(maladas601@gmail.com), Amitabh Boruah(amitabhyo@gma
 
 
 var  TweetIDS ;
-export const  TweetsGenerator = (data_list, max_per_page, chart_draw_div_id) => {
+export const  TweetsGenerator = (data_list, max_per_page, chart_draw_div_id ,fromDate,toDate,filterOptions=false,rangeType=null) => {
     //per page max (max_per_page)
     TweetIDS = data_list;
     var tweetDiv = chart_draw_div_id + '_tweets';
     var tweet_div_page_selection =  chart_draw_div_id + 'page-selection';
-      
+  
+     if(filterOptions){
+       filterOptions ='<div class="btn-group pull-text-top ml-auto"><button type="button"\
+               class="btn btn-white smat-rounded dropdown-toggle text-normal" data-toggle="dropdown"\
+               aria-haspopup="true" aria-expanded="false">Filter Tweets</button>\
+           <div class="dropdown-menu dropdown-menu-right">\
+               <li class="dropdown-item clickable filter-pos-tweets filterTweets" value="pos|'+fromDate+'|'+toDate+'|'+chart_draw_div_id+'|'+rangeType+'"   id="'+chart_draw_div_id+rangeType+'"><i class="fa fa-circle text-pos "\
+                       aria-hidden="true" ></i> Positive Tweets</li>\
+               <li class="dropdown-item clickable filter-neg-tweets filterTweets " value="neg|'+fromDate+'|'+toDate+'|'+chart_draw_div_id+'|'+rangeType+'"   id="'+chart_draw_div_id+rangeType+'" ><i class="fa fa-circle text-neg "\
+                       aria-hidden="true"></i> Negative Tweets</li>\
+               <li class="dropdown-item clickable filter-neu-tweets filterTweets "  value="neu|'+fromDate+'|'+toDate+'|'+chart_draw_div_id+'|'+rangeType+'"  id="'+chart_draw_div_id+rangeType+'"> <i class="fa fa-circle text-neu"\
+                       aria-hidden="true"></i> Neutral Tweets</li>\
+               <li class="dropdown-item clickable filter-normal-tweets filterTweets " value="normal|'+fromDate+'|'+toDate+'|'+chart_draw_div_id+'|'+rangeType+'"   id="'+chart_draw_div_id+rangeType+'"> <i\
+                       class="fa fa-circle text-normal" aria-hidden="true"></i> Normal Tweets</li>\
+               <li class="dropdown-item clickable filter-com-tweets filterTweets " value="com|'+fromDate+'|'+toDate+'|'+chart_draw_div_id+'|'+rangeType+'"  id="'+chart_draw_div_id+rangeType+' " > <i class="fa fa-circle text-com"\
+                       aria-hidden="true"></i> Communal Tweets</li>\
+               <li class="dropdown-item clickable filter-sec-tweets filterTweets " value="sec|'+fromDate+'|'+toDate+'|'+chart_draw_div_id+'|'+rangeType+'"   id="'+chart_draw_div_id+rangeType+'"> <i class="fa fa-circle text-sec"\
+                       aria-hidden="true"></i> Security Tweets</li>\
+               <li class="dropdown-item clickable filter-seccom-tweets filterTweets"  value="com_sec|'+fromDate+'|'+toDate+'|'+chart_draw_div_id+'|'+rangeType+'"   id="'+chart_draw_div_id+rangeType+'"> <i\
+                       class="fa fa-circle text-seccom" aria-hidden="true"></i> Communal and Security\
+                   Tweets</li>\
+           </div>\
+       </div>\
+  ';
+     } else{
+       filterOptions='';
+     }
     
-       $('#'+chart_draw_div_id).html('<div id="'+tweetDiv+'"> </div><div> <div class="float-center " id="'+tweet_div_page_selection+'"></div>  </div>')  
+       $('#'+chart_draw_div_id).html('<div class="mx-1 mt-3 d-flex">Tweets from: '+fromDate+' to '+toDate+' &nbsp '+filterOptions+'   </div><div id="'+tweetDiv+'"> </div><div> <div class="float-center " id="'+tweet_div_page_selection+'"></div>  </div>')  
     
     
       $(tweet_div_page_selection).empty();
@@ -83,7 +109,7 @@ export const  TweetsGenerator = (data_list, max_per_page, chart_draw_div_id) => 
         })
         .done(function (res) {
             callback(res);
-            console.log(res);
+           
         })
         .fail(function () {
             console.log("fd error");
@@ -93,7 +119,7 @@ export const  TweetsGenerator = (data_list, max_per_page, chart_draw_div_id) => 
    const generate_tweets_div = (tweetData,div) => {
     $('#' + div).html("");
     tweetData.forEach(tweet => {
-      console.log(tweet);
+
       let sentiment = '' , category = '' , media='',location='';
       category =  (tweet.category=='normal') ? 'Normal' : ((tweet.category=='sec') ? 'Security' : ((tweet.category=='com') ?  'Communal' : 'Communal & Security' ));
       if(tweet.sentiment===0){
