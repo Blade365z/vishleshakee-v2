@@ -434,7 +434,7 @@ class CommonController extends Controller
      *
      * @return json
      */
-    public function get_co_occur_data($to_datetime = null, $from_datetime = null, $token = null, $range_type = null, $co_occur_option = null, $file_path = null, $need_to_store = false, $data_formatter = false)
+    public function get_co_occur_data($to_datetime = null, $from_datetime = null, $token = null, $range_type = null, $co_occur_option = null, $file_path = null, $need_to_store = false, $data_formatter = false,$userID=null)
     {
         $db_object = new DBmodelAsync;
         $db_object_not_async = new DBmodel;
@@ -519,7 +519,7 @@ class CommonController extends Controller
 
         if ($need_to_store) {
             if ($file_path) {
-
+                $ut_obj->write_to_file('csv', $file_path, $temp_arr, $token,$userID);
             } else {
                 $file_path = "common/" . $token . "_" . $co_occur_option . ".csv";
             }
@@ -823,8 +823,8 @@ class CommonController extends Controller
                     }
                 }
                 $datetime_str = $ut_obj->get_date_time_from_cass_date_obj($row["datetime"], 'Y-m-d H:i:s');
-                $d = $ut_obj->convert_utc_datetime_to_local_datetime($datetime_str);
-                $temp_arr = array("t_location" => $row["t_location"], "datetime" => $d, "tid" => $row["tid"], "author" => $row["author"], "author_id" => $row["author_id"], "author_profile_image" => $row["author_profile_image"], "author_screen_name" => $row["author_screen_name"], "sentiment" => $row["sentiment"]->value(), "quoted_source_id" => $row["quoted_source_id"], "tweet_text" => $row["tweet_text"], "retweet_source_id" => $row["retweet_source_id"], "media_list" => $media_list_temp, "type" => $row["type"], "category" => $category);
+                $datetime_str = $ut_obj->convert_utc_datetime_to_local_datetime($datetime_str);
+                $temp_arr = array("t_location" => $row["t_location"], "datetime" => $datetime_str, "tid" => $row["tid"], "author" => $row["author"], "author_id" => $row["author_id"], "author_profile_image" => $row["author_profile_image"], "author_screen_name" => $row["author_screen_name"], "sentiment" => $row["sentiment"]->value(), "quoted_source_id" => $row["quoted_source_id"], "tweet_text" => $row["tweet_text"], "retweet_source_id" => $row["retweet_source_id"], "media_list" => $media_list_temp, "type" => $row["type"], "category" => $category);
                 array_push($final_result, $temp_arr);
             }
         }
@@ -868,30 +868,17 @@ class CommonController extends Controller
      * dataformattor(for chart) for co-occur
      *
      * @return json
-     */
-    public function data_formatter_for_co_occur($token=null, $option=null, $limit=null, $unique_id=null, $file_path=null)
+     */ 
+    public function data_formatter_for_co_occur($token=null, $option=null, $limit=null, $unique_id=null, $file_path=null,$userID=null)
     {
         $ut_obj = new Ut;
         $final_res = array();
-        // $file_path = null;
-        // $limit = null;
-        // $option = $_GET['option'];
-        // if (isset($_GET['limit']))
-        //     $limit = $_GET['limit'];
-        // if (isset($_GET['query'])) {
-        //     $token = $_GET['query'];
-        //     $file_path = "common/" . $token . "_" . $option . ".csv";
-        // } else if (isset($_GET['unique_id'])) {
-        //     // get directory name after user_login
-        //     $filename = $_GET['unique_id'];
-        //     $file_path = "directory_name/$filename.csv";
-        // }
         if($token){
             $file_path = "common/" . $token . "_" . $option . ".csv";
         }else if ($unique_id) {
             // get directory name after user_login
             $filename = $unique_id;
-            $file_path = "directory_name/$filename.csv";
+            $file_path = "$userID/$filename.csv";
         }
         if($limit)
             $res = $ut_obj->read_file('csv', $file_path, $limit);

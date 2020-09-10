@@ -386,6 +386,38 @@ export const render_shortestpath_graph = (input, src_id, dst_id) => {
 
     }
 
+export const expansion = (node,hops) => {
+    $.ajax({
+        // url: 'network_analysis/expansion',
+        url: 'network_analysis/expansion_on_demand',
+        type: 'POST',
+        // dataType: 'JSON',
+        dataType: 'JSON',
+        data: {
+            input: JSON.stringify(global_edges),
+            uniqueid: unique_id,
+            clicked_node: node_to_be_expanded[0],
+            input: query,
+            fromdate: fd,
+            todate: td,
+            network_choice: global_network_type_selected,
+            hop_limit: hop_limit,
+            hop_count: hop_count,
+            limit: limit_value,
+            select_framework_val: select_framework_val
+
+        },
+        beforeSend: function() {
+        },
+        success: function(data) {
+
+       }
+    })
+    .fail(function(res) {
+        console.log(res);
+        console.log("error");
+    })
+}
 
 export const draw_graph = (res,id_value) => {
     console.log(id_value);
@@ -421,6 +453,7 @@ export const draw_graph = (res,id_value) => {
     network_global = new vis.Network(container, data, global_options);
 
     console.log(network_global);
+    
 
     network_global.focus(1, {
         scale: 1
@@ -600,11 +633,11 @@ export const render_graph_union = (res) => {
         edges: edges
     };
 
-    var network = new vis.Network(container, data, global_options);
+    network_global = new vis.Network(container, data, global_options);
     // network_global_union = network;
 
 
-    network.focus(1, {
+    network_global.focus(1, {
         scale: 1
     });
 
@@ -638,12 +671,12 @@ export const render_graph_union = (res) => {
     console.log(network.body.data.nodes);
 
     var scaleOption = {scale:0.2};
-    network.moveTo(scaleOption);
+    network_global.moveTo(scaleOption);
     
     //Adding control buttons
     
     network.addEventListener("load", () => {
-        network.redraw();
+        network_global.redraw();
     });
 }
 
@@ -708,6 +741,38 @@ export const render_intersection_diff_graph = (input,option) => {
     })
 }
 
+export const getEdges = () => {
+    var edgesArray = []
+    $.each(network_global.body.data.edges._data, function(key, val) {
+        edgesArray.push(val);
+    });
+    console.log(edgesArray);
+    return edgesArray;
+}
+
+export const exportnetwork = () => {
+        global_edges = getEdges();
+        let csvContent = "data:text/csv;charset=utf-8,";
+        var csv_file = 'from,to,count\n';
+        var universalBOM = "\uFEFF";
+        if (!global_edges) {
+            return;
+        }
+    
+        global_edges.forEach(function(rowArray) {
+            var fruits = [];
+            fruits.push(rowArray.from);
+            fruits.push(rowArray.to);
+            fruits.push(rowArray.label);
+            let row = fruits.join(",");
+            csv_file += row + "\r\n";
+        });
+    
+        var encodedUri = 'data:text/csv;charset=utf-8,' + encodeURIComponent(universalBOM + csv_file);
+        window.open(encodedUri);
+        console.log(csv_file);
+    }
+
 export const writedelete = (unique_id) => {
     $.ajax({
         url: 'na/writedelete',
@@ -768,9 +833,9 @@ export const render_intersection_difference = (res,id_value,option) => {
         };
     
         var binary_ops_option_format = {};
-        var network = new vis.Network(container, data, binary_ops_option_format);
+        var network_global = new vis.Network(container, data, binary_ops_option_format);
         
-        network.focus(1, {
+        network_global.focus(1, {
             scale: 1
         });
     
@@ -812,7 +877,7 @@ export const render_intersection_difference = (res,id_value,option) => {
         // clear user_defined_sequence
         
         var scaleOption = {scale:0.2};
-        network.moveTo(scaleOption);
+        network_global.moveTo(scaleOption);
     
     }
 

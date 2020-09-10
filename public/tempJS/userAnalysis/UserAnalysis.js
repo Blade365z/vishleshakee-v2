@@ -8,10 +8,11 @@
 //Imports
 import { generateFreqDistChart, generateSentimentChart, generateBarChart } from './chartHelper.js';
 import { formulateUserSearch } from '../utilitiesJS/userSearch.js';
-import { getSuggestionsForUA, getUserDetails, getFreqDistDataForUA, getTweetIDsForUA, getSentiDistDataForUA } from './helper.js';
-import { getCurrentDate, getRangeType, getDateRange } from '../utilitiesJS/smatDate.js';
+import { getSuggestionsForUA, getUserDetails, getFreqDistDataForUA, getTweetIDsForUA, getSentiDistDataForUA ,getCooccurDataForUA} from './helper.js';
+import { getCurrentDate, getRangeType, dateProcessor } from '../utilitiesJS/smatDate.js';
 import { TweetsGenerator } from '../utilitiesJS/TweetGenerator.js';
-import { generateFreqDistBarChart, generateFrequencyLineChart, generateSentiDistBarChart, generateSentiDistLineChart } from '../utilitiesJS/smatChartBuilder.js';
+import {generateUniqueID} from '../utilitiesJS/uniqueIDGenerator.js';
+import { generateFreqDistBarChart, generateFrequencyLineChart, generateSentiDistBarChart, generateSentiDistLineChart ,generateBarChartForCooccur  } from '../utilitiesJS/smatChartBuilder.js';
 
 
 //Global Declaration
@@ -19,18 +20,25 @@ var suggestionPopularIDs = ['$18839785', '$1447949844', '$1346439824', '$4054270
 
 var suggestionPopularNewsHandleIDs = ['$19897138', '$16343974', '$39240673', '$240649814', '$42606652', '$321271735', '$372754427', '$6509832', '$6433472', '$36327407', '$37034483', '$20751449', '$112404600', '$438156528', '$739053070932287488', '$267158021', '$128555221', '$742143', '$759251', '$701725963', '$55186601', '$28785486'];
 var SearchID, fromDate, toDate;   //Global Variable to keep Track of current search
-
+var mentionUniqueID,hashtagsUniqueID,userID;
 //Logic Implementation 
 $(document).ready(function () {
-    fromDate = getCurrentDate();
-    toDate = getCurrentDate();
+    toDate = getCurrentDate()
+    fromDate = dateProcessor(toDate, '-', 3);
+    if(localStorage.getItem('smat.me')){
+        let userInfoTemp = JSON.parse(localStorage.getItem('smat.me'));
+        userID =  userInfoTemp['id']; 
+    }else{
+        alert('Not Logged In');
+        window.location.href='login';
+    }
 
     $('.nav-item ').removeClass('smat-nav-active');
     $('#nav-UA').addClass('smat-nav-active');
     generateSuggestions(suggestionPopularIDs, 'suggUsers', 'users')
     generateSuggestions(suggestionPopularNewsHandleIDs, 'suggNews', 'news')
     // generateSuggestions(null, 'suggNews')
-    initateUserSearch('$6509832');
+    initateUserSearch('$16343974');
 
     $('#fromDateUA').val(fromDate);
     $('#toDateUA').val(toDate);
@@ -63,7 +71,7 @@ $(document).ready(function () {
         initateUserSearch(capturedToken);
     })
     let tweetDivHeight = $('#userInfoDiv').height();
-    $('#uaTweetsDiv').css('height', tweetDivHeight - 10 + 'px');
+    $('#uaTweetsDiv').css('max-height', tweetDivHeight - 10 + 'px');
     $('#frqTabUA').on('click', function () {
         let rangeType = getRangeType(fromDate, toDate);
         frequencyDistributionUA(SearchID, rangeType, fromDate, toDate, null, 'freqContentUA', false);
@@ -75,11 +83,8 @@ $(document).ready(function () {
         // generateSentimentSummary(null, 'summaryContent-1', 'hour');
     });
 
-    $('#mentionsTabUA').on('click', function () {
-        generateBarChart(null, 'mentionsContentUA');
-        generateBarChartSummary(null, 'summaryContent-1', 'hour');
-    });
-    let suggShowFLag = 1;
+
+    let suggShowFLag = 0;
     $('#showUAsugg').on('click', function () {
         if (suggShowFLag == 0) {
             $('#suggDiv').css('display', 'flex');
@@ -138,6 +143,8 @@ const generateSuggestions = (userIDArray, div, type = null) => {
 
 const initateUserSearch = (id) => {
     SearchID = id
+    mentionUniqueID =generateUniqueID();
+    hashtagsUniqueID = generateUniqueID();
     getUserDetails(SearchID).then(data => makePageReady(data));
     let rangeType = getRangeType(fromDate, toDate);
     $('.haTab').removeClass('active show');
@@ -145,6 +152,10 @@ const initateUserSearch = (id) => {
     $('.uaNav').removeClass('active');
     $('#frqTabUA').addClass('active');
     frequencyDistributionUA(SearchID, rangeType, fromDate, toDate, null, 'freqContentUA', false);
+    //forHashtagsGraph
+    plotDistributionGraphUA(SearchID,fromDate,toDate,'hashtag',hashtagsUniqueID,userID,'hashtagsContentTab');
+    //forMentionsGraph
+    plotDistributionGraphUA(SearchID,fromDate,toDate,'mention',mentionUniqueID,userID,'mentionsContentUA');
 }
 const makePageReady = (userDetails) => {
     $('#UAAnalysisDiv').css('display', 'block');
@@ -161,7 +172,7 @@ const makePageReady = (userDetails) => {
     $('#userDetailsURL').html(userDetails.url == null ? 'URL not available' : '<a href=' + userDetails.url + ' target="_blank">' + userDetails.url + '</a>');
 
     let tweetDivHeight = $('#ua-leftDiv').height();
-    $('#uaTweetsDiv').css('height', tweetDivHeight - 22 + 'px');
+    $('.uaTabTopRight').css('height', tweetDivHeight - 78 + 'px');
 }
 
 
@@ -232,7 +243,9 @@ export const sentimentDistributionUA = (query = null, rangeType, fromDate = null
     if (rangeType == 'day') {
         getSentiDistDataForUA(query, fromDate, toDate, null, rangeType, 0).then(data => {
             generateSentiDistBarChart(data, query, rangeType, chartDivID);
+            generateSentimentSummary(data, summaryDivID, rangeType);
         })
+
         getTweetIDsForUA(query, fromDate, toDate, rangeType, null).then(response => {
             TweetsGenerator(response.data, 6, chartTweetDivID, fromDate, toDate, true, rangeType);
         });
@@ -240,6 +253,7 @@ export const sentimentDistributionUA = (query = null, rangeType, fromDate = null
     } else if (rangeType == 'hour') {
         getSentiDistDataForUA(query, fromDate, toDate, null, rangeType, 0).then(data => {
             generateSentiDistBarChart(data, query, rangeType, chartDivID);
+            generateSentimentSummary(data, summaryDivID, rangeType);
         })
         getTweetIDsForUA(query, fromDate, toDate, rangeType, null).then(response => {
             TweetsGenerator(response.data, 6, chartTweetDivID, fromDate, toDate, true, rangeType);
@@ -249,102 +263,117 @@ export const sentimentDistributionUA = (query = null, rangeType, fromDate = null
 
         getSentiDistDataForUA(query, fromDate, toDate, null, rangeType, 1).then(data => {
             generateSentiDistLineChart(query, data, rangeType, chartDivID);
-            })
-            // getTweetIDsForUA(query, fromDate, toDate, rangeType, null, 1).then(response => {
-            //     let fromDateTemp = fromDate.split(/[ ,]+/).filter(Boolean);
-            //     TweetsGenerator(response.data, 6, chartTweetDivID, fromDate, fromDate, true, rangeType);
-            // });
-        }
+            generateSentimentSummary(data, summaryDivID, rangeType);
+        })
+        getTweetIDsForUA(query, fromDate, toDate, rangeType, null, 1).then(response => {
+            let fromDateTemp = fromDate.split(/[ ,]+/).filter(Boolean);
+            TweetsGenerator(response.data, 6, chartTweetDivID, fromDate, fromDate, true, rangeType);
+        });
+    }
 
 
 
 }
 
+const plotDistributionGraphUA = (query,fromDate,toDate,option,uniqueID,userID,div) => {
+          //Loader...
+
+    $('#' + div).html('<div class="text-center pt-5 " ><i class="fa fa-circle-o-notch donutSpinner" aria-hidden="true"></i></div>');
+ 
+    let chartDivID = option+'-chart';
+    $('#'+div).html('<div id="'+chartDivID+'"></div>');
+    getCooccurDataForUA(query,fromDate,toDate,option,uniqueID,userID).then(response =>{
+           generateBarChartForCooccur(query,response,chartDivID,option)
+    });  
+}
 
 
 
-    const freqSummaryGenerator = (data = null, div, rangeType) => {
-        data = data['data'];
-        $('#' + div).html('<div class="d-flex"> <span class="mx-2"><p class="m-0 smat-box-title-large font-weight-bold text-dark" id="freqTotalPublic-' + rangeType + '">0</p><p class="pull-text-top smat-dash-title m-0 ">Tweets Arrived</p></span></div><div class="d-flex "><span class="mx-2"><p class="m-0 smat-box-title-large font-weight-bold text-normal" id="publicNormalTotal-' + rangeType + '">0</p><p class="pull-text-top smat-dash-title m-0 ">Normal</p></span><span class="mx-2"><p class="m-0 smat-box-title-large font-weight-bold text-sec" id="publicSecTotal-' + rangeType + '">0</p><p class="pull-text-top smat-dash-title m-0">Security</p></span><span class="mx-2"><p class="m-0 smat-box-title-large font-weight-bold text-com" id="publicComTotal-' + rangeType + '">0</p><p class="pull-text-top smat-dash-title m-0">Communal</p></span><span class="mx-2"><p class="m-0 smat-box-title-large font-weight-bold text-com_sec" id="publiccom_secTotal-' + rangeType + '">0</p><p class="pull-text-top smat-dash-title m-0">Sec.& Com.</p></span></div>');
 
-        let freqTotal = 0, totalNormal = 0, totalSec = 0, totalCom = 0, totalcom_sec = 0;
-        data.forEach(element => {
-            freqTotal += element[1];
-            totalNormal += element[5];
-            totalSec += element[3];
-            totalCom += element[2];
-            totalcom_sec += element[4];
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+//Summary Scripts
+const freqSummaryGenerator = (data = null, div, rangeType) => {
+    data = data['data'];
+    $('#' + div).html('<div class="d-flex"> <span class="mx-2"><p class="m-0 smat-box-title-large font-weight-bold text-dark" id="freqTotalPublic-' + rangeType + '">0</p><p class="pull-text-top smat-dash-title m-0 ">Tweets Arrived</p></span></div><div class="d-flex "><span class="mx-2"><p class="m-0 smat-box-title-large font-weight-bold text-normal" id="publicNormalTotal-' + rangeType + '">0</p><p class="pull-text-top smat-dash-title m-0 ">Normal</p></span><span class="mx-2"><p class="m-0 smat-box-title-large font-weight-bold text-sec" id="publicSecTotal-' + rangeType + '">0</p><p class="pull-text-top smat-dash-title m-0">Security</p></span><span class="mx-2"><p class="m-0 smat-box-title-large font-weight-bold text-com" id="publicComTotal-' + rangeType + '">0</p><p class="pull-text-top smat-dash-title m-0">Communal</p></span><span class="mx-2"><p class="m-0 smat-box-title-large font-weight-bold text-com_sec" id="publiccom_secTotal-' + rangeType + '">0</p><p class="pull-text-top smat-dash-title m-0">Sec.& Com.</p></span></div>');
+
+    let freqTotal = 0, totalNormal = 0, totalSec = 0, totalCom = 0, totalcom_sec = 0;
+    data.forEach(element => {
+        freqTotal += element[1];
+        totalNormal += element[5];
+        totalSec += element[3];
+        totalCom += element[2];
+        totalcom_sec += element[4];
+
+    });
+
+    $('#freqTotalPublic-' + rangeType).text(freqTotal);
+    $('#publicNormalTotal-' + rangeType).text(totalNormal);
+    $('#publicSecTotal-' + rangeType).text(totalSec);
+    $('#publicComTotal-' + rangeType).text(totalCom);
+    $('#publiccom_secTotal-' + rangeType).text(totalcom_sec);
+
+
+
+}
+const generateSentimentSummary = (data = null, div, range) => {
+    let arrTemp = [];
+    let posSumTemp = 0, negSumTemp = 0, neuSumTemp = 0;
+    if (data['data'].length > 0) {
+        data['data'].forEach(element => {
+            posSumTemp += parseInt(element[1]);
+            negSumTemp += parseInt(element[2]);
+            neuSumTemp += parseInt(element[3]);
         });
-
-        $('#freqTotalPublic-' + rangeType).text(freqTotal);
-        $('#publicNormalTotal-' + rangeType).text(totalNormal);
-        $('#publicSecTotal-' + rangeType).text(totalSec);
-        $('#publicComTotal-' + rangeType).text(totalCom);
-        $('#publiccom_secTotal-' + rangeType).text(totalcom_sec);
-
-
-
     }
+    $('#' + div).html('<div class="sentiSummaryDiv" id="sentiSummary' + range + '" ><div class="removeMarginMediaQuery"  > <div  id="sentiSummaryBar-' + range + '" ></div> </div><div> <div class="d-flex "><div><p class=" smat-box-title-large m-0 font-weight-bold text-dark ">'+posSumTemp+'</p><p class="pull-text-top m-0 smat-dash-title ">Positive</p></div><div class="mx-2"><p class=" smat-box-title-large m-0 font-weight-bold text-dark ">'+neuSumTemp+'</p><p class="pull-text-top m-0 smat-dash-title ">Neutral</p></div><div class="mx-2"><p class=" smat-box-title-large m-0 font-weight-bold text-dark ">'+negSumTemp+'</p><p class="pull-text-top m-0 smat-dash-title ">Negative</p></div></div></div></div>');
+   
+    arrTemp=[posSumTemp,negSumTemp,neuSumTemp];
+    generateSentimentSummaryBar(arrTemp, "sentiSummaryBar-" + range, 'hour')
+}
+const generateSentimentSummaryBar = (sentiTotalArray, div, range_type) => {
 
-    const generateSentimentSummary = (data = null, div, range) => {
-        $('#' + div).html('<div class="sentiSummaryDiv" id="sentiSummary' + range + '" ><div class="removeMarginMediaQuery"  > <div  id="sentiSummaryBar-' + range + '" ></div> </div><div> <div class="d-flex "><div><p class=" smat-box-title-large m-0 font-weight-bold text-dark ">23312</p><p class="pull-text-top m-0 smat-dash-title ">Positive</p></div><div class="mx-2"><p class=" smat-box-title-large m-0 font-weight-bold text-dark ">4430</p><p class="pull-text-top m-0 smat-dash-title ">Negative</p></div><div class="mx-2"><p class=" smat-box-title-large m-0 font-weight-bold text-dark ">4430</p><p class="pull-text-top m-0 smat-dash-title ">Neutral</p></div></div></div></div>');
-        let dummyData = [2330, 1223, 999];
-        generateSentimentSummaryBar(dummyData, "sentiSummaryBar-" + range, 'hour')
-    }
+    let total_pos = sentiTotalArray[0];
+    let total_neg = sentiTotalArray[1];
+    let total_neu = sentiTotalArray[2];
 
+    $('#' + div).html('<div class="row  p-1"> <span style="display: inline-block;"><div class=" sentiment_bar_summary border sentiment_bar_pos" id="' + div + '_bar_' + range_type + '_pos" data-toggle="popover"  data-content="' + total_pos + ' Positive Tweets posted"></div> </span> <span style=" display: inline-block;"><div class="  sentiment_bar_summary border sentiment_bar_neu "  id="' + div + '_bar_' + range_type + '_neu" data-toggle="popover" data-content="' + total_neu + ' Neutral Tweets posted"></div>  </span> <span style=" display: inline-block;"><div class=" sentiment_value_neg sentiment_bar_summary border sentiment_bar_neg"  id="' + div + '_bar_' + range_type + '_neg"data-toggle="popover"  data-content="' + total_neg + ' Negative Tweets posted"></div></span></div ><div class="row"><span>  <a class="senti_summary_bar_text"  id="' + div + '_value_' + range_type + '_pos" >23%</a>  </span><span> <a  class="senti_summary_bar_text"  id="' + div + '_value_' + range_type + '_neu" >48%</a>   </span> <span><a class="senti_summary_bar_text"  id="' + div + '_value_' + range_type + '_neg" >29%</a></span>');
 
-    const generateSentimentSummaryBar = (sentiTotalArray, div, range_type) => {
-
-        let total_pos = sentiTotalArray[0];
-        let total_neg = sentiTotalArray[1];
-        let total_neu = sentiTotalArray[2];
-
-        $('#' + div).html('<div class="row  p-1"> <span style="display: inline-block;"><div class=" sentiment_bar_summary border sentiment_bar_pos" id="' + div + '_bar_' + range_type + '_pos" data-toggle="popover"  data-content="' + total_pos + ' Positive Tweets posted"></div> </span> <span style=" display: inline-block;"><div class="  sentiment_bar_summary border sentiment_bar_neu "  id="' + div + '_bar_' + range_type + '_neu" data-toggle="popover" data-content="' + total_neu + ' Neutral Tweets posted"></div>  </span> <span style=" display: inline-block;"><div class=" sentiment_value_neg sentiment_bar_summary border sentiment_bar_neg"  id="' + div + '_bar_' + range_type + '_neg"data-toggle="popover"  data-content="' + total_neg + ' Negative Tweets posted"></div></span></div ><div class="row"><span>  <a class="senti_summary_bar_text"  id="' + div + '_value_' + range_type + '_pos" >23%</a>  </span><span> <a  class="senti_summary_bar_text"  id="' + div + '_value_' + range_type + '_neu" >48%</a>   </span> <span><a class="senti_summary_bar_text"  id="' + div + '_value_' + range_type + '_neg" >29%</a></span>');
-
-        var total = total_pos + total_neg + total_neu;
+    var total = total_pos + total_neg + total_neu;
 
 
-        var pos = Math.round((total_pos / total) * 100);
-        var neg = Math.round((total_neg / total) * 100);
-        var neu = Math.round((total_neu / total) * 100);
+    var pos = Math.round((total_pos / total) * 100);
+    var neg = Math.round((total_neg / total) * 100);
+    var neu = Math.round((total_neu / total) * 100);
 
 
-        $('#' + div + '_bar_' + range_type + '_pos').css('width', pos + 'px');
-        $('#' + div + '_bar_' + range_type + '_neg').css('width', neg + 'px');
-        $('#' + div + '_bar_' + range_type + '_neu').css('width', neu + 'px');
+    $('#' + div + '_bar_' + range_type + '_pos').css('width', pos + 'px');
+    $('#' + div + '_bar_' + range_type + '_neg').css('width', neg + 'px');
+    $('#' + div + '_bar_' + range_type + '_neu').css('width', neu + 'px');
 
-        $('#' + div + '_value_' + range_type + '_pos').css('margin-left', (pos / 4) + 'px');
-        $('#' + div + '_value_' + range_type + '_neg').css('margin-left', (neg / 4) + 5 + 'px');
-        $('#' + div + '_value_' + range_type + '_neu').css('margin-left', (neu / 4) + 5 + 'px');
-
-
-        $('#' + div + '_value_' + range_type + '_pos').text(pos + '%');
-        $('#' + div + '_value_' + range_type + '_neg').text(neg + '%');
-        $('#' + div + '_value_' + range_type + '_neu').text(neu + '%');
+    $('#' + div + '_value_' + range_type + '_pos').css('margin-left', (pos / 4) + 'px');
+    $('#' + div + '_value_' + range_type + '_neg').css('margin-left', (neg / 4) + 5 + 'px');
+    $('#' + div + '_value_' + range_type + '_neu').css('margin-left', (neu / 4) + 5 + 'px');
 
 
-    }
+    $('#' + div + '_value_' + range_type + '_pos').text(pos + '%');
+    $('#' + div + '_value_' + range_type + '_neg').text(neg + '%');
+    $('#' + div + '_value_' + range_type + '_neu').text(neu + '%');
 
 
-    const generateBarChartSummary = (data = null, div, range) => {
-        $('#' + div).html('<div class="d-flex"><div> </div><div class="removeMarginMediaQuery" ><button class="btn smat-btn smat-rounded"><span>Analyze Network</span></button></div><div><p class=" smat-box-title-large m-0 font-weight-bold text-dark ">43430</p><p class="pull-text-top m-0 smat-dash-title ">Total Entities</p> </div></div>');
-
-    }
+}
 
 
-// const tweetsUA = (fromDate, toDate, query, div) => {
-//     var rangeType = getRangeType(fromDate, toDate)
-//     $('#' + div + '-dropDown').empty()
-//     console.log('#' + div + '-dropDown')
-//     var allDateList = getDateRange(fromDate, toDate)
-//     $.each(allDateList, function (index, value) {
-//         $('#' + div + '-dropDown').append(
-//             '<option value="' + value + '">' + value + '</option>'
-//         )
-//     })
-
-//     getTweetIDsForUA(query, fromDate, toDate, rangeType, null).then(response => {
-//         TweetsGenerator(response.data, 6, 'uaTweetsDiv');
-//     });
-// }

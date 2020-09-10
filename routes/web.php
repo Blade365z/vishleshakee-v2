@@ -111,7 +111,9 @@ Route::group(['prefix' => 'na'], function () {
     Route::get('formator_inter_diff','networkAnalysisController@difference_data_formator');
 
     Route::post('writedelete','networkAnalysisController@write_delete');
+    Route::get('isfileexist','networkAnalysisController@isfileexist');
 
+    
 
 
     //For network evolution
@@ -129,6 +131,7 @@ Route::group(['prefix' => 'UA'], function () {
     Route::post('/getFrequencyDataForUser','UserAnalysisController@getFrequencyDataForUser');
     Route::post('/getTweetIDs','UserAnalysisController@getTweetIDUA');
     Route::post('/getSentimentDataForUser','UserAnalysisController@getSentimentDataForUser');
+    Route::post('/getCooccurDataForUser','UserAnalysisController@getCooccurDataForUser');
 });
 
 

@@ -12,7 +12,7 @@ IMPORTANT NOTE
 Script written by : Mala Das (maladas601@gmail.com), Amitabh Boruah(amitabhyo@gmail.com)
 */
 
- 
+
 
 //API HEADERS for the http api requests
 var HeadersForApi = {
@@ -51,7 +51,7 @@ export const getUserDetails = async (id) => {
         body: JSON.stringify({
             userID: id
         })
-    }); 
+    });
     let data = await response.json()
     return data;
 }
@@ -62,50 +62,47 @@ export const getUserDetails = async (id) => {
 Input----> IF(Day,Hour):query,fromDate,toDate,rangeType ELSE : Time 
 Output----> Freq. Data(json)
 */
-export const getFreqDistDataForUA = async (query, from, to, toTime = null, rangeType,isDateTimeAlready=0) => {
+export const getFreqDistDataForUA = async (query, from, to, toTime = null, rangeType, isDateTimeAlready = 0) => {
     let dataArg;
     if (toTime) {
-        dataArg =JSON.stringify({ query, toTime, rangeType,isDateTimeAlready });
+        dataArg = JSON.stringify({ query, toTime, rangeType, isDateTimeAlready });
     } else {
-        dataArg =JSON.stringify({  query, from, to, rangeType,isDateTimeAlready});
+        dataArg = JSON.stringify({ query, from, to, rangeType, isDateTimeAlready });
     }
-    
-   let response = await fetch('UA/getFrequencyDataForUser', {
+
+    let response = await fetch('UA/getFrequencyDataForUser', {
         method: 'post',
         headers: HeadersForApi,
-        body:dataArg
+        body: dataArg
     });
     let data = await response.json()
-  
+
     return data;
 
 }
-export const getSentiDistDataForUA = async (query, from, to, toTime = null, rangeType,isDateTimeAlready=0) => {
+export const getSentiDistDataForUA = async (query, from, to, toTime = null, rangeType, isDateTimeAlready = 0) => {
     let dataArg;
     if (toTime) {
-        dataArg =JSON.stringify({ query, toTime, rangeType,isDateTimeAlready });
+        dataArg = JSON.stringify({ query, toTime, rangeType, isDateTimeAlready });
     } else {
-        dataArg =JSON.stringify({  query, from, to, rangeType,isDateTimeAlready});
+        dataArg = JSON.stringify({ query, from, to, rangeType, isDateTimeAlready });
     }
-    console.log(dataArg);
     let response = await fetch('UA/getSentimentDataForUser', {
         method: 'post',
         headers: HeadersForApi,
-        body:dataArg
+        body: dataArg
     });
     let data = await response.json()
-    console.log(data);
+
     return data;
 
 }
-
-
-export const getTweetIDsForUA = async (query, from = null, to = null, rangeType,filter = null ,isDateTimeAlready=0)=> {
+export const getTweetIDsForUA = async (query, from = null, to = null, rangeType, filter = null, isDateTimeAlready = 0) => {
     let dataArgs;
-    if (from!= null && to!= null && isDateTimeAlready==0) {
-        dataArgs = JSON.stringify({ from, to, query,rangeType,filter,isDateTimeAlready});
-    } else if(isDateTimeAlready==1){
-        dataArgs = JSON.stringify({ from, to, query,rangeType,filter,isDateTimeAlready});
+    if (from != null && to != null && isDateTimeAlready == 0) {
+        dataArgs = JSON.stringify({ from, to, query, rangeType, filter, isDateTimeAlready });
+    } else if (isDateTimeAlready == 1) {
+        dataArgs = JSON.stringify({ from, to, query, rangeType, filter, isDateTimeAlready });
     }
     let response = await fetch('UA/getTweetIDs', {
         method: 'post',
@@ -114,4 +111,29 @@ export const getTweetIDsForUA = async (query, from = null, to = null, rangeType,
     })
     let data = await response.json();
     return data;
+}
+export const getCooccurDataForUA = async (query, from, to, option, uniqueID, userID) => {
+    query = "#ReadyForSport";
+    let dataArgs = JSON.stringify({
+        query, from, to, option, uniqueID, userID,mode:'write'
+    });
+    let dataArgsForRead=JSON.stringify({
+        option, uniqueID, userID,limit:50,mode:'read'
+    });
+
+    let response = await fetch('UA/getCooccurDataForUser', {
+        method: 'post',
+        headers: HeadersForApi,
+        body: dataArgs
+    })
+    let data = await response.json();
+    if (data.status == "success") {
+        let readResponse = await fetch('UA/getCooccurDataForUser', {
+            method: 'post',
+            headers: HeadersForApi,
+            body: dataArgsForRead
+        })
+        let readData = await readResponse.json();
+        return readData;
+    }
 }

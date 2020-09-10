@@ -41,16 +41,16 @@ export const generateFreqDistBarChart = (query, data = null, rangeType, div) => 
     chart.data = dataTemp;
 
 
-    var title = chart.titles.create();
-    title.fontSize = 12;
-    title.marginBottom = 10;
 
     // Create axes
     var dateAxis = chart.xAxes.push(new am4charts.DateAxis());
     dateAxis.renderer.minGridDistance = 50;
     dateAxis.title.fontSize = 10;
 
-    if (rangeType == 'days')
+    var title = chart.titles.create();
+    title.fontSize = 12;
+    title.marginBottom = 10;
+    if (rangeType == 'day')
         title.text = "Per day distribution" + '  (Click on the bars for more)';
     else if (rangeType == 'hour')
         title.text = "Per hour distribution for " + data['data'][0][0] + ' (Click on the bars for more)';
@@ -62,7 +62,7 @@ export const generateFreqDistBarChart = (query, data = null, rangeType, div) => 
             "timeUnit": "hour",
             "count": 1
         }
-    } else if (rangeType == 'days') {
+    } else if (rangeType == 'day') {
         dateAxis.title.text = "Date";
         dateAxis.tooltipDateFormat = "d MMMM yyyy";
     }
@@ -199,9 +199,9 @@ export const generateSentiDistBarChart = (data, query, rangeType, div) => {
 
     chart.legend = new am4charts.Legend();
     chart.colors.list = [
-        am4core.color("#8DB601"), //pos
-        am4core.color("#E82615"), //neg
-        am4core.color("#F3C300") //neu
+        am4core.color("#33CCCC"), //pos
+        am4core.color("#FC5F4F"), //neg
+        am4core.color("#FFC060") //neu
     ];
     chart.responsive.enabled = true;
 
@@ -209,6 +209,14 @@ export const generateSentiDistBarChart = (data, query, rangeType, div) => {
     var dateAxis = chart.xAxes.push(new am4charts.DateAxis());
     dateAxis.renderer.minGridDistance = 50;
     // dateAxis.renderer.grid.template.location = 0;
+    var title = chart.titles.create();
+    title.fontSize = 12;
+    title.marginBottom = 10;
+    if (rangeType == 'day')
+        title.text = "Per day distribution" + '  (Click on the bars for more)';
+    else if (rangeType == 'hour')
+        title.text = "Per hour distribution for " + data['data'][0][0] + ' (Click on the bars for more)';
+
     if (rangeType == 'hour') {
         dateAxis.title.text = "DateTime";
         dateAxis.tooltipDateFormat = "HH:mm:ss, d MMMM";
@@ -216,7 +224,7 @@ export const generateSentiDistBarChart = (data, query, rangeType, div) => {
             "timeUnit": "hour",
             "count": 1
         }
-    } else if (rangeType == 'days') {
+    } else if (rangeType == 'day') {
         dateAxis.title.text = "Date";
         dateAxis.tooltipDateFormat = "d MMMM yyyy";
     }
@@ -260,7 +268,7 @@ export const generateSentiDistBarChart = (data, query, rangeType, div) => {
             }
         });
 
-        if ((rangeType == 'hour') || (rangeType == 'days')) {
+        if ((rangeType == 'hour') || (rangeType == 'day')) {
             series1.columns.template.events.on("hit", function (ev) {
                 if (rangeType == 'hour') {
                     let datetime_obj = ev.target.dataItem.component.tooltipDataItem.dataContext;
@@ -269,7 +277,11 @@ export const generateSentiDistBarChart = (data, query, rangeType, div) => {
                     let dateTimeTemp = date + ' ' + startTime;
                     sentimentDistributionUA(query, '10sec', dateTimeTemp, dateTimeTemp, null, div, true);
                 } else if (rangeType == 'day') {
-                    console.log(rangeType);
+                    let datetime_obj = ev.target.dataItem.component.tooltipDataItem.dataContext;
+                    var date = getDateInFormat(datetime_obj['date'], 'Y-m-d');
+                    var startTime = getDateInFormat(datetime_obj['date'], 'HH:MM:SS');
+                   
+                    sentimentDistributionUA(query, 'hour', date, date, null, div, true);
                 }
             });
         }
@@ -293,9 +305,9 @@ export const generateSentiDistLineChart = (query, data = null, rangeType, div) =
         var chart = am4core.create(div, am4charts.XYChart);
         // Increase contrast by taking evey second color
         chart.colors.list = [
-            am4core.color("#8DB601"), //pos
-            am4core.color("#E82615"), //neg
-            am4core.color("#F3C300") //neu
+            am4core.color("#33CCCC"), //pos
+            am4core.color("#FC5F4F"), //neg
+            am4core.color("#FFC060") //neu
         ];
 
         // Add dataclearInterval(interval_for_freq_dis_trend_analysis);
@@ -402,5 +414,83 @@ export const generateSentiDistLineChart = (query, data = null, rangeType, div) =
         chart.cursor = new am4charts.XYCursor();
         chart.scrollbarX = new am4core.Scrollbar();
     });
-}
+};
 
+
+export const generateBarChartForCooccur = (query, data = null, div,option) => {
+    var chart = am4core.create(div, am4charts.XYChart);
+  
+    chart.data = generateChartData(data, option);
+    function generateChartData(data, option) {
+      var chartData = [];
+      data.forEach(element => {
+        if(option==='hashtag'){
+        chartData.push({
+          "token": element['hashtag'],
+          "count": element['count'],
+  
+        });
+    }else if(option ==='mention'){
+        chartData.push({
+            "token": element['handle'],
+            "count": element['count'],
+    
+          });
+    }
+      });
+  
+      return chartData;
+    }
+  
+  
+  
+  
+  
+    //create category axis for names
+    var categoryAxis = chart.yAxes.push(new am4charts.CategoryAxis());
+    categoryAxis.id = "category_Axis";
+  
+    categoryAxis.dataFields.category = "token";
+  
+    categoryAxis.renderer.inversed = true;
+    categoryAxis.renderer.grid.template.location = 0;
+    categoryAxis.renderer.minGridDistance = 10;
+  
+    //create value axis for count and expenses
+    var valueAxis = chart.xAxes.push(new am4charts.ValueAxis());
+    valueAxis.renderer.opposite = true;
+  
+  
+    //create columns
+    var series = chart.series.push(new am4charts.ColumnSeries());
+    series.dataFields.categoryY = "token";
+    series.dataFields.valueX = "count";
+    categoryAxis.renderer.cellStartLocation = 0.2;
+    categoryAxis.renderer.cellEndLocation = 1.1;
+  
+    var cellSize = 30;
+    chart.events.on("datavalidated", function (ev) {
+  
+      // Get objects of interest
+      var chart = ev.target;
+      var categoryAxis = chart.yAxes.getIndex(0);
+  
+      // Calculate how we need to adjust chart height
+      var adjustHeight = chart.data.length * cellSize - categoryAxis.pixelHeight;
+  
+      // get current chart height
+      var targetHeight = chart.pixelHeight + adjustHeight;
+  
+      // Set it on chart's container
+      chart.svgContainer.htmlElement.style.height = targetHeight + "px";
+    });
+    series.columns.template.fillOpacity = 10;
+    series.columns.template.fill = am4core.color("#4280B7");
+    series.columns.template.strokeOpacity = 10;
+    series.tooltipText = " {categoryY}: {valueX.value}" + "(Click to Know More)";
+    series.columns.template.width = am4core.percent(50);
+  
+    categoryAxis.sortBySeries = series;
+    chart.cursor = new am4charts.XYCursor();
+  
+}

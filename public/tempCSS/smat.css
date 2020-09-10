@@ -467,6 +467,9 @@ select{
 .freqDistSummary , .sentiDistSummary{
     height:60px;
 }
+.uaTabTopRight{
+    overflow-y: auto;
+}
 @media (max-width: 767.98px) {
     .dFlexBut{
         display: block;
@@ -579,7 +582,7 @@ select{
         margin-top: 1%;
     }
     .pull-text-top {
-        margin-top: -10px !important;
+        margin-top: -5px !important;
     }
     .haTab {
      

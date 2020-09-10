@@ -180,7 +180,6 @@
                                     <li class="nav-item naTabs-2 ">
                                         <a class="nav-link smat-rounded " id="lpTabNA" data-toggle="pill" href="#lpContent" role="tab" aria-controls="lpContent" aria-selected="false">Link Prediction</a>
                                     </li>
-
                                 </ul>
                                 <div class="tab-content " id="pills-tabContent">
                                     <div class="tab-pane fade show active " id="centrality_algo_choice" role="tabpanel" aria-labelledby="centralityContent">
@@ -198,6 +197,9 @@
                                             <button type="submit" id="centrality_exec" class="btn btn-danger smat-rounded " style="margin-top:10px;">Execute</button>
                                         </div>
                                     </div>
+
+
+
 
                                     <div class="tab-pane fade  p-1 "  id="communityContent" role="tabpanel" aria-labelledby="communityContent">
                                         <div>
@@ -341,9 +343,11 @@
 
                             <div class="tab-pane fade text-center" id="expansionContentNA" role="tabpanel" aria-labelledby="expansionContentNA">Active Users Tab
                                 <div class="form-group mx-1">
+                                    <input type="text" class="form-control smat-rounded  naInputs " id="node_to_be_expanded" placeholder="Card sequence comma separated" style="border:0px;">
+                                    <input type="text" class="form-control smat-rounded  naInputs " id="hops" placeholder="Card sequence comma separated" style="border:0px;">
                                     <button type="submit" class="btn btn-danger smat-rounded" id="expansion_exec">Execute</button>
                                 </div>
-                                <div id="difference_displayer" style="height: 90%"> </div> 
+                                <div id="expansion_displayer" style="height: 400px"> </div> 
                             </div>
 
                         </div>
@@ -357,7 +361,7 @@
                     <div class=" ml-auto d-flex">
                             <Button class="btn smat-btn smat-rounded mx-2" id="usenetwork"><span>Use Network</span></Button> <br/> <br/>
                             <Button class="btn smat-btn smat-rounded mx-2"><span>Expand Network</span></Button> <br/> <br/>
-                            <Button class="btn smat-btn smat-rounded mx-2"><span>Export Network</span></Button> <br/> <br/>
+                            <Button class="btn smat-btn smat-rounded mx-2" id="export"><span>Export Network</span></Button> <br/> <br/>
                         </div>
 
 

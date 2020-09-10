@@ -126,6 +126,12 @@ class networkAnalysisController extends Controller
         return json_encode($final_result);
     }
 
+    public function isfileexist(Request $request,$filename){
+        $dir_name = "netdir";
+        $filename = $_GET['input'];
+        file_exists("storage/$dir_name/$filename.csv");
+    }
+    
     public function read_csv_file(Request $request, $filename = null, $option = null)
     {
         //$dir_name = strval($this->get_session_uid($request));

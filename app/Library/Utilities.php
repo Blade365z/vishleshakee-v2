@@ -237,10 +237,14 @@ class Utilities{
     *
     * @return 0 or 1
     */
-    public function write_to_file($file_type='csv', $file_path=null, $data=null, $token=null){
+    public function write_to_file($file_type='csv', $file_path=null, $data=null, $token=null ,$userID=null){
         if($file_path){
             $file_path = "storage/$file_path"; //"storage/$dir_name/$filename.csv"
             if($file_type='csv'){
+                //checking
+                if (!file_exists("storage/$userID")) {
+                    mkdir("storage/$userID");
+                }
                 // $data should be in key value pair
                 $file = fopen($file_path, "w");
                 $parts = (array_chunk($data, 1000, true));

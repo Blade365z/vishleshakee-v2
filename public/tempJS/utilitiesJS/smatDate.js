@@ -24,7 +24,18 @@ export const getCurrentDate = (format = 'Y-m-d', utc = false) => {
     var currentDate11;
     var d = new Date();
     currentDate11 = getDateInFormat(d, 'Y-m-d', utc);
+  
     return currentDate11;
+}
+
+export const  dateProcessor = (date=null,operator,offset) => {
+    var dateObj = new Date(date);
+    if(operator==='+')
+    dateObj.setDate(dateObj.getDate()+offset);
+    else if(operator==='-')
+    dateObj.setDate(dateObj.getDate()-offset);
+     date = getDateInFormat(dateObj, 'Y-m-d');
+    return date;
 }
 
 export const getDateRange = (startDate, stopDate) => {
