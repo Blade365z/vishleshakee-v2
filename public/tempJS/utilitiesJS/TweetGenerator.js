@@ -26,6 +26,7 @@ export const  TweetsGenerator = (data_list, max_per_page, chart_draw_div_id ,fro
                class="btn btn-white smat-rounded dropdown-toggle text-normal" data-toggle="dropdown"\
                aria-haspopup="true" aria-expanded="false">Filter Tweets</button>\
            <div class="dropdown-menu dropdown-menu-right">\
+           <li class="dropdown-item clickable filter-pos-tweets filterTweets" value="all|'+fromDate+'|'+toDate+'|'+chart_draw_div_id+'|'+rangeType+'"   id="'+chart_draw_div_id+rangeType+'">Show All Tweets</li>\
                <li class="dropdown-item clickable filter-pos-tweets filterTweets" value="pos|'+fromDate+'|'+toDate+'|'+chart_draw_div_id+'|'+rangeType+'"   id="'+chart_draw_div_id+rangeType+'"><i class="fa fa-circle text-pos "\
                        aria-hidden="true" ></i> Positive Tweets</li>\
                <li class="dropdown-item clickable filter-neg-tweets filterTweets " value="neg|'+fromDate+'|'+toDate+'|'+chart_draw_div_id+'|'+rangeType+'"   id="'+chart_draw_div_id+rangeType+'" ><i class="fa fa-circle text-neg "\

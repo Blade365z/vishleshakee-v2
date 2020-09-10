@@ -85,8 +85,8 @@
             <div class="form-group  my-0  mr-2 border smat-rounded d-flex px-2 py-1  bg-white">
                 <i class="fas fa-cog ml-2 text-normal" style="margin-top:11px;"></i>
                 <select class="form-control" name="NAEngine" id="networkEngineNA">
-                    <option>Network X </option>
-                    <option>Spark</option>
+                    <option value="networkx">Network X </option>
+                    <option value="spark">Spark</option>
                 </select>
             </div>
             <div class="d-flex">
@@ -354,18 +354,11 @@
                       
                     </div>
 
-
-
-
-
                     <div class=" ml-auto d-flex">
                             <Button class="btn smat-btn smat-rounded mx-2" id="usenetwork"><span>Use Network</span></Button> <br/> <br/>
                             <Button class="btn smat-btn smat-rounded mx-2"><span>Expand Network</span></Button> <br/> <br/>
                             <Button class="btn smat-btn smat-rounded mx-2" id="export"><span>Export Network</span></Button> <br/> <br/>
                         </div>
-
-
-
                 </div>
             </div>
         </div>
@@ -387,6 +380,36 @@
             <div class="modal-footer">
                 <button type="button" id="permission_revoked" class="btn btn-danger" data-dismiss="modal">No</button>
                 <button type="button" id="permission_granted" data-dismiss="modal" class="btn btn-success">Yes</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div class=" modal" id="myModal_file_upload" role="dialog">
+    <div class="modal-dialog">
+        <!-- Modal content-->
+        <div class="modal-content">
+            <div class="modal-header">
+            </div>
+            <div class="modal-body">
+                <p style="color:brown">Select a CSV file to be Uploaded. CSV file should be in the format as mentioned in the module manual:-</p>
+                <div class="row float-right">
+                    <h5 class="title" style="margin: 5px;">File Upload</h5>
+                    <div class="col">
+                        <div class="alert" id="message" style="display:none"> </div>
+                        <form method="post" id="upload_form" enctype="multipart/form-data">
+                            {{csrf_field()}}
+                            <div class="form-group">
+                                <input type="file" name="select_file" id="select_file" />
+                                <input type="submit" name="upload" id="upload" class="btn btn-primary" value="Upload"> * .csv Only
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
             </div>
         </div>
     </div>

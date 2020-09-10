@@ -112,6 +112,7 @@ Route::group(['prefix' => 'na'], function () {
 
     Route::post('writedelete','networkAnalysisController@write_delete');
     Route::get('isfileexist','networkAnalysisController@isfileexist');
+    Route::post('fileupload','networkAnalysisController@fileupload');
 
     
 
@@ -139,3 +140,6 @@ Route::group(['prefix' => 'UA'], function () {
 Route::group(['prefix' => 'LM'], function () {
     Route::get('mapTweet', 'LocationMap@locationTweet');
 });
+
+//Resource Route for feedback controller
+Route::resource('feedback', 'FeedbackController');

@@ -132,6 +132,37 @@ class networkAnalysisController extends Controller
         file_exists("storage/$dir_name/$filename.csv");
     }
     
+    public function fileupload(Request $request)
+    {
+        $x = $_POST["name"];
+       // $dir_name = strval($this->get_session_uid($request));
+        $dir_name = "netdir";
+
+        $validation = Validator::make($request->all(), [
+            'select_file' => 'required|max:1520480'
+        ]);
+        if ($validation->passes()) {
+            $image = $request->file('select_file');
+            $new_name = $x . '.' . $image->getClientOriginalExtension();
+            // $path = "/var/www/html/front-end/storage/$dir_name";
+            $path = "storage/$dir_name";
+
+            $image->move($path, $new_name);
+            // $image->move(public_path('storage'), $new_name);
+            return response()->json([
+                'message' => 'Edgelist Uploaded Successfully',
+                'class_name' => 'alert-success'
+            ]);
+        } else {
+            return response()->json([
+                'message' => $validation->errors()->all(),
+                'uploaded_image' => '',
+                'class_name' => 'alert-danger'
+            ]);
+        }
+    }
+
+
     public function read_csv_file(Request $request, $filename = null, $option = null)
     {
         //$dir_name = strval($this->get_session_uid($request));

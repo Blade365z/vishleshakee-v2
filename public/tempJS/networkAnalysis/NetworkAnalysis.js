@@ -68,7 +68,38 @@ $("#commTab").on('click',function(){
 });
 
 
+$("#importNA").on('click',function(){
+    $("#myModal_file_upload").modal('show');
+});
 
+$('#upload_form').on('submit', function(event) {
+    event.preventDefault();
+    var unique_id = "a1";
+    var n = new FormData(this);
+
+    n.append("name", unique_id);
+    $.ajax({
+            url: 'na/fileupload',
+            method: "POST",
+            data: n,
+            dataType: 'JSON',
+            contentType: false,
+            cache: false,
+            processData: false,
+            beforeSend: function() {
+
+            },
+            success: function(data) {
+
+            }
+        })
+        .fail(function(res) {
+            console.log("error");
+            console.log(res);
+        })
+        
+    $('#myModal_file_upload').modal('toggle');           
+});
 
 
 const generateCards = (id, query, fromDateTemp, toDateTemp, noOfNodesTemp, naTypeTemp, naEngine, div) => {
@@ -105,8 +136,8 @@ const  showing_results_for = (cardData) => {
 
 }
 
-$("#centrality_exec").on('click', function(NAType="networkx",algo_option=$('#centrality_algo_choice').val()){
-NAType = "networkx";
+$("#centrality_exec").on('click', function(NAType=$("#NAEngine").val(),algo_option=$('#centrality_algo_choice').val()){
+NAType = $("#NAEngine").val();
 algo_option =$("input[name='centralityInlineRadioOptions']:checked").val();
 var select_graph = selected_graph_ids();
 console.log(selected_graph_ids());
