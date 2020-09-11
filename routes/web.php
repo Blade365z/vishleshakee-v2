@@ -95,7 +95,8 @@ Route::group(['prefix' => 'na'], function () {
     Route::get('readcsv','networkAnalysisController@read_csv_file');
     Route::get('centrality_data_formator', 'networkAnalysisController@centrality_data_formator_for_rendering_in_visjs');
     Route::get('mysessionid','networkAnalysisController@mysessionid');
-    Route::get('centrality', 'networkAnalysisController@centrality');
+    // Route::get('centrality', 'networkAnalysisController@centrality');
+    Route::post('centrality', 'networkAnalysisController@centrality');
 
     Route::get('link_prediction_data_formator','networkAnalysisController@link_prediction_data_formator_new');
     Route::get('link_prediction','networkAnalysisController@linkPrediction');
@@ -113,6 +114,9 @@ Route::group(['prefix' => 'na'], function () {
     Route::post('writedelete','networkAnalysisController@write_delete');
     Route::get('isfileexist','networkAnalysisController@isfileexist');
     Route::post('fileupload','networkAnalysisController@fileupload');
+
+    Route::get('fileUploadRequest','networkAnalysisController@fileUploadRequest');
+    Route::get('requestToSparkandStoreResult','networkAnalysisController@requestToSpark');
 
     
 
@@ -138,8 +142,9 @@ Route::group(['prefix' => 'UA'], function () {
 
 //Define API routes requiring middleware here for Map
 Route::group(['prefix' => 'LM'], function () {
-    Route::get('mapTweet', 'LocationMap@locationTweet');
+    Route::get('/getTime','LocationMap@get_current_date_time');
 });
 
 //Resource Route for feedback controller
-Route::resource('feedback', 'FeedbackController');
+Route::post('/feedback', 'FeebackController@insertFeedback');
+Route::post('/getFeedback','FeebackController@checkIfFeedbackExist');

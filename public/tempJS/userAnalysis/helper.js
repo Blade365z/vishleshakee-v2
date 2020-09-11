@@ -14,6 +14,9 @@ Script written by : Mala Das (maladas601@gmail.com), Amitabh Boruah(amitabhyo@gm
 
 
 
+
+
+
 //API HEADERS for the http api requests
 var HeadersForApi = {
     "Content-Type": "application/json",
@@ -37,6 +40,7 @@ export const getSuggestionsForUA = (userIDArray) => {
         }
     });
     return userSuggestionRes;
+
 }
 
 //FETCH API Request for getting user details 
@@ -113,7 +117,8 @@ export const getTweetIDsForUA = async (query, from = null, to = null, rangeType,
     return data;
 }
 export const getCooccurDataForUA = async (query, from, to, option, uniqueID, userID) => {
-    query = "#ReadyForSport";
+    //TODO::REMOVE THE HARDCODE!!
+    query = "#Warntag2020";
     let dataArgs = JSON.stringify({
         query, from, to, option, uniqueID, userID,mode:'write'
     });

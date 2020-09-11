@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\DBModel\DBmodel;
 use App\DBModel\DBmodelAsync;
 use App\Http\Controllers\Home as Hm;
+use App\Library\Utilities as Ut;
 
 
 
@@ -36,6 +37,13 @@ class LocationMap extends Controller
         }
         return json_encode($final_result);
 
+    }
+
+    public function get_current_date_time(){
+        $datetime_object = new Hm;
+        $current_datetime_to_datetime = $datetime_object->CurrentDateTimeGeneratorPublic(900);
+        
+        return $current_datetime_to_datetime;
     }
 
 

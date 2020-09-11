@@ -247,12 +247,14 @@ class networkAnalysisController extends Controller
 
     public function centrality(Request $request)
     {
-        $input = $_GET['input'];
+        $input = $request->input('input');
+        // $input = $_GET['input'];
        // $dir_name = strval($this->get_session_uid($request));
        // $read_path = "storage/$dir_name/$input.csv";
         $dir_name = "netdir";
         $read_path = "storage/netdir/$input.csv";
-        $algo_option = $_GET['algo_option'];
+        $algo_option = $request->input('algo_option');
+
         switch ($algo_option) {
             case 'degcen':
                 $algo_choosen_option = '71';
@@ -927,5 +929,247 @@ class networkAnalysisController extends Controller
         fclose($file);
     }
 
+    public function requestToSpark(Request $request)
+    {
+        $query_list = $_GET['query_list'];
+        $rname = $_GET['rname'];
+        $result = $this->curlData($query_list, $rname);
+        $result = json_decode($result, true);
+
+        //echo json_encode($result);
+        //echo json_encode(array('query_time' => $rname, 'status' => $result['state'], 'id' => $result['id']));
+        $id = $result['id'];
+
+        while (1) {
+            $re = $this->getStatusFromSpark($id);
+               // echo $re['status'];
+            if ($re['status'] == 'success')
+                    break;
+            sleep(10);
+            }
+
+        $filename_arr = array_slice($query_list, 1, sizeof($query_list));
+        $filename_to_write = $this->get_filename($query_list[0], $filename_arr);
+
+        $re1 = $this->getOuputFromSparkAndStoreAsJSON($request, $id, $filename_to_write, $query_list[0]);
+
+        return json_encode($re1);
+    }
+
+    private function get_filename($algo, $filename_arr)
+    {
+        if ($algo == 'PageRank')
+            $filename = $filename_arr[0] . 'centralities.csv';
+        else if ($algo == 'degcen')
+            //DegreeCentrality
+            $filename = $filename_arr[0] . 'centralities.csv';
+        else if($algo == 'intersection'){
+            $filename = $filename_arr[0];
+            for($i = 1; $i<sizeof($filename_arr); $i++){                
+                $filename = $filename.'_'.$filename_arr[$i];
+            }
+            $filename = $filename. '_intersection.csv';
+        }
+        else if($algo == 'union'){
+            $filename = $filename_arr[0];
+            for($i = 1; $i<sizeof($filename_arr); $i++){
+                $filename = $filename.'_'.$filename_arr[$i];
+            }
+            $filename = $filename. '_union.csv';
+        }
+        else if($algo == 'difference'){
+            $filename = $filename_arr[0];
+            for($i = 1; $i<sizeof($filename_arr); $i++){
+                $filename = $filename.'_'.$filename_arr[$i];
+            }
+            $filename = $filename. '_difference.csv';
+        }else if($algo == 'lpa'){
+            $filename = $filename_arr[0] . 'communities.json';
+        }else if($algo == 'ShortestPath'){
+            $filename = $filename_arr[0] . 'shortestpath.csv';
+        }
+
+        return $filename;
+    }
+
+
+    public  function  curlData($query_list, $rname)
+    {
+        $curl = curl_init();
+        $data['conf'] = array('spark.jars.packages' => 'anguenot:pyspark-cassandra:2.4.0', 'spark.cassandra.connection.host' => '10.0.0.11', 'spark.cores.max' => 16);
+        $data['file'] = 'local:/home/admin/bbk/sigma/spark/batch/file_reader_net_ops.py';
+        $data['args'] = $query_list;
+        $data['name'] = strval($rname) . 'a786';
+        $data['executorCores'] = 8;
+        $data['numExecutors'] = 2;
+        $data['executorMemory'] = '25G';
+        $data['driverMemory'] = '1G';
+        $data = json_encode($data);
+        // echo $data;
+        curl_setopt($curl, CURLOPT_HTTPHEADER, array(
+            'Content-Type: application/json',
+            'Connection: Keep-Alive'
+        ));
+        curl_setopt($curl, CURLOPT_URL, '172.16.117.202:8998/batches');
+        curl_setopt($curl, CURLOPT_POSTFIELDS, $data);
+        curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($curl, CURLOPT_TIMEOUT, 0);
+        $curl_result = curl_exec($curl);
+        return $curl_result;
+    }
+
+
+    public function fileUploadRequest(Request $request)
+    {
+        // $file = "storage/5e0c9c863e4af/01416885.csv";
+        $filename_arr =  $_GET['filename_arr'];
+        //$dir_name = strval($this->get_session_uid($request));
+        $dir_name = "netdir";
+        $curl = curl_init();
+        curl_setopt($curl, CURLOPT_URL, "172.16.117.202/upload.php");
+        curl_setopt($curl, CURLOPT_POST, 1);
+        curl_setopt($curl, CURLOPT_HTTPHEADER, array(
+            'Connection: Keep-Alive'
+        ));
+
+        $temp_data = array();
+        for($i = 0; $i<sizeof($filename_arr); $i++){
+            $file =  "storage/$dir_name/$filename_arr[$i].csv";
+            $cfile = new CurlFile($file,  'text/csv', $filename_arr[$i].".csv"); //curl file itself return the realpath with prefix of @
+            $temp_data['file['.$i.']'] = $cfile ;
+        }
+        // echo json_encode($temp_data);
+       
+        $data = $temp_data;
+        curl_setopt($curl, CURLOPT_POSTFIELDS, $data);
+        curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
+        $curl_response = curl_exec($curl);
+        curl_close($curl);
+        return json_encode($curl_response);
+    }
+
+
+    // Added by Roshan
+    public function getStatusFromSpark($id)
+    {
+        //curl -X GET -H "Content-Type: application/json" 172.16.117.202:8998/batches/{80}
+        // $id =  $_GET['id'];
+        $curl_result = curl_init();
+        curl_setopt($curl_result, CURLOPT_HTTPHEADER, array(
+            'Content-Type: application/json'
+        ));
+        $url = '172.16.117.202:8998/batches/' . $id;
+        curl_setopt($curl_result, CURLOPT_URL, $url);
+        curl_setopt($curl_result, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($curl_result, CURLOPT_TIMEOUT, 0);
+        $curl_result = curl_exec($curl_result);
+        // echo $curl_result;
+        $result = json_decode($curl_result, true);
+        // return json_encode(array('status' => $result['state'], 'id' => $result['id']));
+        return array('status' => $result['state'], 'id' => $result['id']);
+    }
+
+
+    public function getOuputFromSparkAndStoreAsJSON(Request $request, $id, $filename, $algo_option)
+    {
+        //curl -X GET -H "Content-Type: application/json" 172.16.117.202:8998/batches/{80}
+        // $id =  $_GET['id'];
+        // $filename = $_GET['filename'];
+        $curl_result = curl_init();
+        curl_setopt($curl_result, CURLOPT_HTTPHEADER, array(
+            'Content-Type: application/json'
+        ));
+        $url = '172.16.117.202:8998/batches/' . $id;
+        curl_setopt($curl_result, CURLOPT_URL, $url);
+        curl_setopt($curl_result, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($curl_result, CURLOPT_TIMEOUT, 0);
+        $curl_result = curl_exec($curl_result);
+        $result = json_decode($curl_result, true);
+        // return $curl_result['state'];
+
+        $result = $result["log"][8]; //string type             
+        $result =  str_replace(array("'", "&quot;"), "\"", htmlspecialchars($result));  //convert "'" to "\""
+
+        $result = json_decode($result, true); //array type 
+        // var_dump($result);
+
+
+
+        // echo $result;
+        $this->storeAsCSV($request, $filename, $result, $algo_option);
+
+        return array('status' => 'done', 'id' => $id);
+    }
+
+
+
+    public function storeAsJson(Request $request, $filename, $result_arr)
+    {
+       // $dir_name = strval($this->get_session_uid($request));
+        $dir_name = "netdir";
+        // Check whether the directory is already created
+        if (!file_exists("storage/$dir_name")) {
+            mkdir("storage/$dir_name");
+        }
+
+        $fp = fopen("storage/$dir_name/$filename", "w");
+
+        
+        $result = array();
+        foreach ($result_arr as $key => $value) {
+            $result[$value['label']] = $value['hashtag_list'];
+        }
+
+        // echo json_encode($result);
+        fwrite($fp, json_encode($result, JSON_PRETTY_PRINT));
+        fclose($fp);
+    }
+
+
+
+    public function storeAsCSV(Request $request, $filename, $result_arr, $algo_option)
+    {
+       // $dir_name = strval($this->get_session_uid($request));
+        $dir_name = "netdir";
+        // Check whether the directory is already created
+        if (!file_exists("storage/$dir_name")) {
+            mkdir("storage/$dir_name");
+        }
+
+        $fp = fopen("storage/$dir_name/$filename", "w");
+
+        if(($algo_option == 'PageRank') or ($algo_option == 'degcen') ){
+            foreach ($result_arr as $key => $value) {
+                $line = array($value['id'], $value['pagerank']);
+                fputcsv($fp, $line);
+            }
+        }
+        else if(($algo_option == 'difference') or ($algo_option == 'intersection') ){
+            error_reporting(0);
+            $rt = array();
+            foreach ($result_arr as $key => $value) {
+                // $line = array($value['src']);
+                array_push($rt, $value['src']);           
+            }
+            fputcsv($fp, $rt);
+        }
+        else if($algo_option == 'union'){
+            error_reporting(0);
+            foreach ($result_arr as $key => $value) {
+                $line = array($value['src'], $value['dst'], $value["count"]);
+                fputcsv($fp, $line);
+            }
+        }else if($algo_option == 'lpa'){
+            $this->storeAsJson($request, $filename, $result_arr);
+        }else if($algo_option == 'ShortestPath'){
+            $rt = array();
+            foreach ($result_arr as $key => $value) {
+                array_push($rt, $value['0']);           
+            }
+            fputcsv($fp, $rt);
+        }
+
+        fclose($fp);
+    }
 
 }

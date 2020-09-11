@@ -1,3 +1,20 @@
+export const get_current_time = () =>{
+    var from_to_datetime;
+    $.ajax({
+        type: "GET",
+        url: 'LM/getTime',
+        async: false,
+        success: function (response) {
+            from_to_datetime = response;
+            
+
+                
+        }
+    });
+    return from_to_datetime;
+}
+
+
 export const getLocationMonitorMap = (id) => {
 
     var markersList = document.getElementById('markersList');

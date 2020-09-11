@@ -15,7 +15,7 @@ import { getFreqDistData, getTopCooccurData, getMe, getSentiDistData, getTopData
 import { generateFrequencyChart, generateSentimentChart, generateBarChart } from './chartHelper.js';
 import { TweetsGenerator } from '../utilitiesJS/TweetGenerator.js';
 import { getCompleteMap } from '../utilitiesJS/getMap.js';
-
+import { smatFeedbackMain} from '../utilitiesJS/smatFeedback.js'
 
 
 //Global variables 
@@ -40,7 +40,7 @@ var TopTrendingData;
 
 window.onresize = function (event) {
   let mainPublicCardHeight = $('#main-public-dash').height();
-  $('#public-trending').css('height', mainPublicCardHeight - 93);
+  $('#public-trending').css('height', mainPublicCardHeight - 50);
 
 };
 
@@ -61,7 +61,7 @@ $(document).ready(function () {
 
 
   let mainPublicCardHeight = $('#main-public-dash').height();
-  $('#public-trending').css('height', mainPublicCardHeight - 60);
+  $('#public-trending').css('height', mainPublicCardHeight - 50);
 
 
 
@@ -184,7 +184,7 @@ $(document).ready(function () {
   //update public hahstag every 1 min 
 
   let updatePublicHashtagOneMinInt = setInterval(updatePublicTrendingHashtagsEveryOneMiute, 10000);
-
+  smatFeedbackMain();
 
 });
 

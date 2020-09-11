@@ -1,5 +1,10 @@
 //API CALLS
-
+//API HEADERS for the http api requests
+var HeadersForApi = {
+    "Content-Type": "application/json",
+    "Accept": "application/json",
+    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+};
 // Render Graph  for view
 var network_global;
 var global_edges;
@@ -127,25 +132,29 @@ export const update_view_graph_for_link_prediction = (res,src) => {
     network_global.body.data.edges.update(ed);
 }
 
-export const centrality = (url,data) =>{
-    console.log("Printing input and algo_option");
-    console.log(url);
-    console.log(data);
-    $.ajax({
-        url: url,
-        type: 'GET',
-        dataType: 'JSON',
-        data: data
-    })
-    .done(function(res) {        
-        console.log(res);
-        render_centrality_graph(data["input"], "networkDivid");
-    })
-    .fail(function(res) {
-        console.log(res);
-        console.log("error");
-    })
+export const centrality = async (url,data,NAType) =>{
+    console.log("Printer");
+    console.log(JSON.stringify(data));
+    let response = await fetch(url,{
+        method : 'post',
+        headers: HeadersForApi,
+        body : JSON.stringify(data),
+    });
+
+    let output = await response.json();
+    return output;
 }
+
+export const renderingCentrality = async (url,data,NAType) => {
+    let response = await fetch(url,{
+        method : 'post',
+        headers : HeadersForApi,
+        body: JSON.stringify(data)
+    })
+    let output = await response.json();
+    return output;
+}
+
 
 export const render_centrality_graph = (input,id_value) =>{
     $.ajax({
@@ -172,7 +181,7 @@ export const render_centrality_graph = (input,id_value) =>{
     })
 }
 
-export const community_detection = (url,data) =>{
+export const community_detection = (url,data,NAType) =>{
     console.log(url,data);
     $.ajax({
         url: url,
@@ -181,7 +190,11 @@ export const community_detection = (url,data) =>{
         data: data
     })
     .done(function(res) {
-        render_community_graph1(data["input"]);
+        if(NAType == "networkx"){
+            render_community_graph1(data["input"]);
+        }else if(NAType == "spark"){
+            render_community_graph1(data["query_list"][1]);
+        }
     })
     .fail(function(res) {
         console.log(res);
@@ -264,7 +277,7 @@ network_global.moveTo(scaleOption);
 
 }
 
-export const shortestpaths = (url,data) =>{
+export const shortestpaths = (url,data,NAType) =>{
 console.log("Laila");
 console.log(data);
     $.ajax({
@@ -274,8 +287,11 @@ console.log(data);
         data: data
     })
     .done(function(res) {
-        console.log(res);
-        render_shortestpath_graph(data["input"], data["src"], data["dst"]);
+        if(NAType == "networkx" ){
+            render_shortestpath_graph(data["input"], data["src"], data["dst"]);
+        }else if(NAType == "spark" ){
+            render_shortestpath_graph(data["query_list"][1], data["query_list"][2], data["query_list"][3]);
+        }
    })
     .fail(function(res) {
         console.log(res);
@@ -546,7 +562,7 @@ export const selected_graph_ids = () => {
     return ids_arr;
 }
 
-export const union = (url,data) => {
+export const union = (url,data,NAType) => {
     console.log(data);
     console.log("Printing in the union");
     $.ajax({
@@ -556,8 +572,16 @@ export const union = (url,data) => {
         data: data
     })
     .done(function(res) {
+        if(NAType == "networkx"){
+            render_union_graph(data["input"]);
+        }else if(NAType == "spark"){
+            var arr1 = data["query_list"];
+            var arr12 = arr1.reverse();
+            arr12.pop();
+            var finalArray = arr12.reverse();
+            render_union_graph(finalArray);
+        }
         console.log(res);
-        render_union_graph(data["input"]);
         console.log("Success at php side");
     })
     .fail(function(res) {
@@ -680,7 +704,7 @@ export const render_graph_union = (res) => {
     });
 }
 
-export const intersection = (url,data) => {
+export const intersection = (url,data,NAType) => {
     console.log(data);
     console.log("Printing in the union");
     $.ajax({
@@ -690,8 +714,17 @@ export const intersection = (url,data) => {
         data: data
     })
     .done(function(res) {
+        if(NAType == "networkx"){
+            render_intersection_diff_graph(data["input"],"intersection");
+        }else if(NAType == "spark"){
+            var arr1 = data["query_list"];
+            var arr12 = arr1.reverse();
+            arr12.pop();
+            var finalArray = arr12.reverse();
+            render_intersection_diff_graph(finalArray,"intersection");
+        }
+
         console.log(res);
-        render_intersection_diff_graph(data["input"],"intersection");
         console.log("Success at php side");
     })
     .fail(function(res) {
@@ -700,7 +733,7 @@ export const intersection = (url,data) => {
     })
 }
 
-export const difference = (url,data) => {
+export const difference = (url,data,NAType) => {
     $.ajax({
         url: url,
         type: 'GET',
@@ -708,6 +741,15 @@ export const difference = (url,data) => {
         data: data
     })
     .done(function(res) {
+        if(NAType == "networkx"){
+            render_intersection_diff_graph(data["input"], "difference");
+        }else if(NAType == "spark"){
+            var arr1 = data["query_list"];
+            var arr12 = arr1.reverse();
+            arr12.pop();
+            var finalArray = arr12.reverse();
+            render_intersection_diff_graph(finalArray, "difference");
+        }
         console.log(res);
         render_intersection_diff_graph(data["input"], "difference");
         console.log("Success at php side");
@@ -795,7 +837,63 @@ export const writedelete = (unique_id) => {
     })
 
 }
- 
+
+export const sparkUpload = (filename_arr) =>{
+        console.log(filename_arr);
+        $.ajax({
+                url: 'na/fileUploadRequest',
+                type: 'GET',
+                dataType: 'JSON',
+                data: {
+                    filename_arr: filename_arr
+                },
+                async: false
+            })
+            .done(function(res) {
+                console.log(res);
+            })
+}
+
+export const checkStatus = (id,unique_name_timestamp) =>{
+        $.ajax({
+                url: 'na/getStatusFromSpark',
+                type: 'GET',
+                data: {
+                    id: id
+                },
+                dataType: 'json'
+            })
+            .done(function(res) {
+                console.log(res);
+                // when the status is not "success" or "dead" , check status until it would become "success", when it success write the json file
+                if ((res['status'] != 'success') && (res['status'] != 'dead')) {
+                    setTimeout(function() {
+                        checkStatus(res['id'], unique_name_timestamp);
+                    }, 30000);
+                } else if (res['status'] == 'success') {
+                    console.log(unique_name_timestamp);
+                    console.log("Status found to be success");
+                    getOuputFromSparkAndStoreAsJSON(res['id'], unique_name_timestamp);
+                }
+            });
+}
+
+export const getOuputFromSparkAndStoreAsJSON = (id,unique_name_timestamp) =>{
+    $.ajax({
+        url: 'na/getOuputFromSparkAndStoreAsJSON',
+        type: 'GET',
+        data: {
+            id: id,
+            filename: unique_name_timestamp
+        },
+        dataType: 'json'
+    })
+    .done(function(res) {
+        console.log(res);
+    });
+}
+
+
 export const render_intersection_difference = (res,id_value,option) => {
    
         var nodes_arr = res["nodes"];

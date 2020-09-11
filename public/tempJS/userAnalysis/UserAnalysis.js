@@ -10,9 +10,13 @@ import { generateFreqDistChart, generateSentimentChart, generateBarChart } from 
 import { formulateUserSearch } from '../utilitiesJS/userSearch.js';
 import { getSuggestionsForUA, getUserDetails, getFreqDistDataForUA, getTweetIDsForUA, getSentiDistDataForUA ,getCooccurDataForUA} from './helper.js';
 import { getCurrentDate, getRangeType, dateProcessor } from '../utilitiesJS/smatDate.js';
-import { TweetsGenerator } from '../utilitiesJS/TweetGenerator.js';
+import { TweetsGenerator} from '../utilitiesJS/TweetGenerator.js';
 import {generateUniqueID} from '../utilitiesJS/uniqueIDGenerator.js';
 import { generateFreqDistBarChart, generateFrequencyLineChart, generateSentiDistBarChart, generateSentiDistLineChart ,generateBarChartForCooccur  } from '../utilitiesJS/smatChartBuilder.js';
+import { smatFeedbackMain} from '../utilitiesJS/smatFeedback.js'
+
+
+
 
 
 //Global Declaration
@@ -98,7 +102,10 @@ $(document).ready(function () {
 
     });
 
-
+$('body').on('click','div .closeGraph',function(){
+    let graphCaptured = $(this).attr('value');
+    $('.'+graphCaptured).remove();
+})
     $('body').on('click', 'div .filterTweets', function () {
         let args = $(this).attr('value');
         args = args.split(/[|]/).filter(Boolean);
@@ -115,8 +122,7 @@ $(document).ready(function () {
     })
 
 
-
-
+    smatFeedbackMain();
 
 
 });
@@ -190,7 +196,7 @@ export const frequencyDistributionUA = (query = null, rangeType, fromDate = null
     let chartTweetDivID = div + rangeType + '-tweets';
     // class="' + rangeType + '-charts"
     if (appendArg) {
-        $('#' + freqParentDiv).append('<div class="' + rangeType + '-charts"><div class="row"><div class="col-sm-8"><div class="uaTab freqDistChart border" id="' + chartDivID + '" ></div></div><div class="col-sm-4"><div class="freqDistTweets border" id="' + chartTweetDivID + '"></div><div class="freqDistSummary border d-flex pt-2"  id="' + summaryDivID + '" ></div></div></div></div>');
+        $('#' + freqParentDiv).append('<div class=" mt-2 ' + rangeType + '-charts"><div class="d-flex"> <div class="mr-auto closeGraph"    value="' + rangeType + '-charts" title="close" >  <i class="fas fa-times"></i> </div> </div> <div class="row"><div class="col-sm-8"><div class="uaTab freqDistChart border" id="' + chartDivID + '" ></div></div><div class="col-sm-4"><div class="freqDistTweets border" id="' + chartTweetDivID + '"></div><div class="freqDistSummary border d-flex pt-2"  id="' + summaryDivID + '" ></div></div></div></div>');
     } else {
         $('#' + div).html('<div><div class="row"><div class="col-sm-8"><div class="uaTab freqDistChart border" id="' + chartDivID + '" ></div></div><div class="col-sm-4"><div class="freqDistTweets border" id="' + chartTweetDivID + '"></div><div class="freqDistSummary border d-flex pt-2"  id="' + summaryDivID + '" ></div></div></div></div>');
     }
@@ -234,7 +240,7 @@ export const sentimentDistributionUA = (query = null, rangeType, fromDate = null
     let summaryDivID = div + '-' + rangeType + '-summary';
     let chartTweetDivID = div + rangeType + '-tweets';
     if (appendArg) {
-        $('#' + sentiParentDiv).append('<div class="' + rangeType + '-charts"><div class="row"><div class="col-sm-8"><div class="uaTab sentiDistChart border" id="' + chartDivID + '" ></div></div><div class="col-sm-4"><div class="sentiDistTweets border" id="' + chartTweetDivID + '"></div><div class="sentiDistSummary border d-flex pt-2"  id="' + summaryDivID + '" ></div></div></div></div>');
+        $('#' + sentiParentDiv).append('<div class=" mt-2 ' + rangeType + '-charts"><div class="d-flex"> <div class="mr-auto closeGraph"    value="' + rangeType + '-charts" title="close" >  <i class="fas fa-times"></i> </div> </div> <div class="row"><div class="col-sm-8"><div class="uaTab sentiDistChart border" id="' + chartDivID + '" ></div></div><div class="col-sm-4"><div class="sentiDistTweets border" id="' + chartTweetDivID + '"></div><div class="sentiDistSummary border d-flex pt-2"  id="' + summaryDivID + '" ></div></div></div></div>');
     } else {
         $('#' + div).html('<div><div class="row"><div class="col-sm-8"><div class="uaTab sentiDistChart border" id="' + chartDivID + '" ></div></div><div class="col-sm-4"><div class="sentiDistTweets border" id="' + chartTweetDivID + '"></div><div class="sentiDistSummary border d-flex pt-2"  id="' + summaryDivID + '" ></div></div></div></div>');
     }

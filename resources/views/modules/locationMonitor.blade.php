@@ -15,7 +15,7 @@
         <div id="naInputPanel">
             <div class="form-group  text-normal  border smat-rounded d-flex  mr-2 px-2 py-1  bg-white" id="uaSearchInput">
                 <i class="fa fa-search px-1 pt-2" aria-hidden="true" style="margin-top:5px"></i>
-                <input type="text" class="form-control" name="query" id="queryLM" placeholder="Search a location" style="border:0px;" autocomplete="OFF" required>
+                <input type="text" class="form-control" value="india" name="query" id="queryLM" placeholder="Search a location" style="border:0px;" autocomplete="OFF" required>
             </div>
 
             <div class="form-group   border smat-rounded d-flex px-2 py-1  bg-white">
@@ -105,6 +105,7 @@
 
 <link rel="stylesheet" href="public/leaflet/fullscreen/Control.FullScreen.css" />
 <script src="public/leaflet/fullscreen/Control.FullScreen.js"></script>
+
 
 
 

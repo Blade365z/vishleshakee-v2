@@ -419,7 +419,7 @@ export const generateSentiDistLineChart = (query, data = null, rangeType, div) =
 
 export const generateBarChartForCooccur = (query, data = null, div,option) => {
     var chart = am4core.create(div, am4charts.XYChart);
-  
+
     chart.padding(0, 0, 0, 0);
     chart.data = generateChartData(data, option);
     function generateChartData(data, option) {

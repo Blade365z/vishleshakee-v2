@@ -124,7 +124,6 @@ export const getTopData = async (interval) => {
         })
     });
     let data = await response.json()
-    console.log('ERROR',data);
     return data;
 }
 
