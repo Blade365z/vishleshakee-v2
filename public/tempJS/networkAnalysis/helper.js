@@ -30,52 +30,29 @@ export const render_graph = (input,id_value) => {
         })
 }
 
-export const linkprediction = (url,data) => {
-    console.log("LOGS");
-    console.log(data);
-    $.ajax({
-        url: url,
-        type: 'GET',
-        data: data
-    })
-    .done(function(res) {    
-        render_linkprediction_graph(data["input"], data["src"]);
-    })
-    .fail(function(res) {
-        console.log("error");
-    })
+export const linkprediction = async (url,data,NAType) =>{
+    let response = await fetch(url,{
+        method : 'post',
+        headers: HeadersForApi,
+        body : JSON.stringify(data),
+    });
+    let output = await response.json();
+    return output;
 }
 
-export const render_linkprediction_graph = (input,src) => {
-    var source = src;
-    $.ajax({
-        url: 'na/link_prediction_data_formator',
-        type: 'GET',
-        dataType: 'JSON',
-        data: {
-            input: input,
-            src: source,
-        }
-    })
-    .done(function(res) {
-
-        $('.analysis_summary_div').empty();
-        $('.analysis_summary_div').append('<table> <tr><th>Node</th><th>Score</th></tr>');
-
-        for(var i=0; i<res.length;i++){
-            if(src == res[i].id){
-                continue;
-            }
-            $('.analysis_summary_div').append('<tr><td>'+src+'</td><td>'+res[i].id+'</td></tr>');
-        }
-        $('.analysis_summary_div').append('</table>');
-
-        update_view_graph_for_link_prediction(res,src);
-    })
-    .fail(function(res) {
-        console.log(res);
-        console.log("error");
-    })
+export const render_linkprediction_graph = async (input,src) => {
+    let source = src;
+    let data = {
+        input: input,
+        src: source
+    };
+    let response = await fetch('na/link_prediction_data_formator',{
+        method : 'post',
+        headers: HeadersForApi,
+        body : JSON.stringify(data),
+    });
+    let output = await response.json();
+    return output;
 }
 
 export const update_view_graph_for_link_prediction = (res,src) => {
@@ -145,79 +122,43 @@ export const centrality = async (url,data,NAType) =>{
     return output;
 }
 
-export const renderingCentrality = async (url,data,NAType) => {
-    let response = await fetch(url,{
+export const render_centrality_graph = async (input,id_value) =>{
+    let data = {input : input};
+    let response = await fetch('na/centrality_data_formator',{
         method : 'post',
         headers : HeadersForApi,
-        body: JSON.stringify(data)
-    })
+        body : JSON.stringify(data),
+    });
+
+    let res = await response.json();
+    return res;
+}
+
+export const community_detection = async (url,data,NAType) =>{
+    console.log(JSON.stringify(data));
+    let response = await fetch(url,{
+        method : 'post',
+        headers: HeadersForApi,
+        body : JSON.stringify(data),
+    });
+
     let output = await response.json();
     return output;
 }
 
+export const render_community_graph1 = async (input) => {
+    let data = {
+        input : input
+    };
 
-export const render_centrality_graph = (input,id_value) =>{
-    $.ajax({
-        url: 'na/centrality_data_formator',
-        type: 'GET',
-        dataType: 'JSON',
-        data: {
-            input: input
-        }
-    })
-    .done(function(res) {
-        console.log(res);
-        $('.analysis_summary_div').empty();
-        $('.analysis_summary_div').append('<table> <tr><th>Node</th><th>Score</th></tr>');
-        for(var i=0; i<res["nodes"].length;i++){
-            $('.analysis_summary_div').append('<tr><td>'+res["nodes"][i]["label"]+'</td><td>'+res["nodes"][i]["size"]+'</td></tr>');
-        }
-        $('.analysis_summary_div').append('</table>');
-        draw_graph(res,id_value);
-    })
-    .fail(function(res) {
-        console.log(res);
-        console.log("error");
-    })
-}
+    let response = await fetch('na/community_data_formator',{
+        method : 'post',
+        headers : HeadersForApi,
+        body : JSON.stringify(data),
+    });
 
-export const community_detection = (url,data,NAType) =>{
-    console.log(url,data);
-    $.ajax({
-        url: url,
-        type: 'GET',
-       // dataType: 'JSON',
-        data: data
-    })
-    .done(function(res) {
-        if(NAType == "networkx"){
-            render_community_graph1(data["input"]);
-        }else if(NAType == "spark"){
-            render_community_graph1(data["query_list"][1]);
-        }
-    })
-    .fail(function(res) {
-        console.log(res);
-        console.log("error");
-    })
-} 
-
-export const render_community_graph1 = (input) => {
-    $.ajax({
-        url: 'na/community_data_formator',
-        type: 'GET',
-        dataType: 'JSON',
-        data: {
-            input: input
-        }
-    })
-    .done(function(res) {
-        render_graph_community(res, "networkDivid");
-    })
-    .fail(function(res) {
-        console.log(res);
-        console.log("error");
-    })
+    let output = await response.json();
+    return output;
 }
 
 export const render_graph_community = (res,id_value) =>{
@@ -277,26 +218,15 @@ network_global.moveTo(scaleOption);
 
 }
 
-export const shortestpaths = (url,data,NAType) =>{
-console.log("Laila");
-console.log(data);
-    $.ajax({
-        url: url,
-        type: 'GET',
-        // dataType: 'JSON',
-        data: data
-    })
-    .done(function(res) {
-        if(NAType == "networkx" ){
-            render_shortestpath_graph(data["input"], data["src"], data["dst"]);
-        }else if(NAType == "spark" ){
-            render_shortestpath_graph(data["query_list"][1], data["query_list"][2], data["query_list"][3]);
-        }
-   })
-    .fail(function(res) {
-        console.log(res);
-        console.log("error");       
-    })
+export const shortestpaths = async (url,data,NAType) =>{
+    let response = await fetch(url,{
+        method : 'post',
+        headers: HeadersForApi,
+        body : JSON.stringify(data),
+    });
+
+    let output = await response.json();
+    return output;
 }
 
 export const render_shortestpath_graph = (input, src_id, dst_id) => {
@@ -526,7 +456,6 @@ export const draw_graph = (res,id_value) => {
 
     var scaleOption = {scale:0.3};
     network_global.moveTo(scaleOption);
-    
 }
 
 export const delete_node = (properties, data) => {
@@ -562,53 +491,31 @@ export const selected_graph_ids = () => {
     return ids_arr;
 }
 
-export const union = (url,data,NAType) => {
-    console.log(data);
-    console.log("Printing in the union");
-    $.ajax({
-        url: url,
-        type: 'GET',
-        dataType: 'JSON',
-        data: data
-    })
-    .done(function(res) {
-        if(NAType == "networkx"){
-            render_union_graph(data["input"]);
-        }else if(NAType == "spark"){
-            var arr1 = data["query_list"];
-            var arr12 = arr1.reverse();
-            arr12.pop();
-            var finalArray = arr12.reverse();
-            render_union_graph(finalArray);
-        }
-        console.log(res);
-        console.log("Success at php side");
-    })
-    .fail(function(res) {
-        console.log(res);
-        console.log("error");
-    })
+export const union = async (url,data,NAType) => {
+    let response = await fetch(url,{
+        method : 'post',
+        headers : HeadersForApi,
+        body : JSON.stringify(data),
+    });
+
+    let output = await response.json();
+    return output;
 }
 
-export const render_union_graph = (input) => {
-    $.ajax({
-        url: 'na/union_data_formator',
-        type: 'GET',
-        dataType: 'JSON',
-        data: {
-            input: input,
-            option: "union",
-            inputnetid: input
-        }
-    })
-    .done(function(res) {
-        console.log(res);
-        render_graph_union(res);
-    })
-    .fail(function(res) {
-        console.log(res);
-        console.log("error");
-    })
+export const render_union_graph = async (input) => {
+    let data = {
+        input: input,
+        option: "union",
+        inputnetid: input
+    }
+    let response = await fetch('na/union_data_formator',{
+        method : 'post',
+        headers : HeadersForApi,
+        body: JSON.stringify(data),
+    });
+
+    let output = await response.json();
+    return output;
 }
 
 export const render_graph_union = (res) => {
@@ -691,9 +598,7 @@ export const render_graph_union = (res) => {
         console.log("Making an edge");
     });
 
-    console.log("Check and Mate");
-    console.log(network.body.data.nodes);
-
+    
     var scaleOption = {scale:0.2};
     network_global.moveTo(scaleOption);
     
@@ -704,83 +609,43 @@ export const render_graph_union = (res) => {
     });
 }
 
-export const intersection = (url,data,NAType) => {
-    console.log(data);
-    console.log("Printing in the union");
-    $.ajax({
-        url: url,
-        type: 'GET',
-        dataType: 'JSON',
-        data: data
-    })
-    .done(function(res) {
-        if(NAType == "networkx"){
-            render_intersection_diff_graph(data["input"],"intersection");
-        }else if(NAType == "spark"){
-            var arr1 = data["query_list"];
-            var arr12 = arr1.reverse();
-            arr12.pop();
-            var finalArray = arr12.reverse();
-            render_intersection_diff_graph(finalArray,"intersection");
-        }
 
-        console.log(res);
-        console.log("Success at php side");
-    })
-    .fail(function(res) {
-        console.log(res);
-        console.log("error");
-    })
+
+
+export const intersection = async (url,data,NAType) => {
+    let response = await fetch(url,{
+        method : 'post',
+        headers : HeadersForApi,
+        body : JSON.stringify(data),
+    });
+    let output = await response.json();
+    return output;
 }
 
-export const difference = (url,data,NAType) => {
-    $.ajax({
-        url: url,
-        type: 'GET',
-        dataType: 'JSON',
-        data: data
-    })
-    .done(function(res) {
-        if(NAType == "networkx"){
-            render_intersection_diff_graph(data["input"], "difference");
-        }else if(NAType == "spark"){
-            var arr1 = data["query_list"];
-            var arr12 = arr1.reverse();
-            arr12.pop();
-            var finalArray = arr12.reverse();
-            render_intersection_diff_graph(finalArray, "difference");
-        }
-        console.log(res);
-        render_intersection_diff_graph(data["input"], "difference");
-        console.log("Success at php side");
-    })
-    .fail(function(res) {
-        console.log(res);
-        console.log("error");
-    })
+export const difference = async (url,data,NAType) => {
+    let response = await fetch(url,{
+        method : 'post',
+        headers : HeadersForApi,
+        body : JSON.stringify(data),
+    });
+    let output = await response.json();
+    return output;
 }
 
-export const render_intersection_diff_graph = (input,option) => {
-    $.ajax({
-        url: 'na/formator_inter_diff',
-        type: 'GET',
-        dataType: 'JSON',
-        data: {
-            input: input,
-            option: option
-        }
-    })
-    .done(function(res) {
-        if(option == "intersection"){
-            render_intersection_difference(res,"intersection_displayer","intersection");
-        }else if(option == "difference"){
-            render_intersection_difference(res,"difference_displayer","difference");
-        }
-    })
-    .fail(function(res) {
-        console.log(res);
-        console.log("error");
-    })
+export const render_intersection_diff_graph = async (input,option) => {
+    let data = {
+        input : input,
+        option : option
+    }
+
+    let response = await fetch('na/formator_inter_diff',{
+        method : 'post',
+        headers : HeadersForApi,
+        body: JSON.stringify(data),
+    });
+
+    let output = await response.json();
+    return output;
 }
 
 export const getEdges = () => {

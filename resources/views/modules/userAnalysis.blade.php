@@ -20,7 +20,7 @@
                     <button class="btn smat-btn  smat-rounded  mx-1 mb-3" id="submit-btn" type="submit"> <span>Search
                             User</span> </button>
                     <button class="btn text-normal smat-rounded  mx-1 mb-3 " onclick="return false;" id="showUAsugg"> <span
-                            id="suggestionCurrentStatus">Show</span> Suggestions </button>
+                            id="suggestionCurrentStatus">Hide</span> Suggestions </button>
                 </div>
                 <!-- <button class="btn  text-normal smat-rounded  mx-1" id="showTableBtn" onclick="return false"> <span> Show Search History </span> </button> -->
             </div>
@@ -28,7 +28,7 @@
         </form>
     </div>
 
-    <div class="row" id="suggDiv" style="display:none;">
+    <div class="row" id="suggDiv" >
         <div class="col-md-6">
             <div class="card shadow mb-2">
                 <div class="card-body">

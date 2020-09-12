@@ -895,7 +895,6 @@ class CommonController extends Controller
             } else if ($option == 'hashtag') {
                 array_push($final_res, array("hashtag" => $line[1], "count" => intval($line[2])));
             } else if ($option == 'user') {
-                // array_push($final_res, array("handle" => $line[1], "count" => intval($line[2])));
                 $uid_info_arr = json_decode($this->get_user_info($line[1], false)); //converted string StdClass() object to StdClass() object;
                 // {"author_id":"955979293615587330","author":"Emmanuel Batman \ud83c\udde6\ud83c\uddf7\ud83d\udc0d","author_screen_name":"EmmanuelBatman_","profile_image_url_https":"https:\/\/pbs.twimg.com\/profile_images\/1299482928007831552\/alqHQyCP_normal.jpg"}
                 // echo $uid_info_arr->{'author'};
@@ -903,6 +902,33 @@ class CommonController extends Controller
             }
         }
         return ($final_res);
+    }
+
+
+
+    /**
+     * get top info(hashtag, mention, user) based on lat, lng search by location(country, state, city)
+     *
+     * @return json
+    */ 
+    public function get_top_data_lat_lng($to_datetime = null, $from_datetime = null, $top_option = null, $limit = 50, $token = null, $range_type=null)
+    {
+        $final_res = array();
+        $ut_obj = new Ut;
+        $qb_obj = new QB;
+        $db_object = new DBmodelAsync;
+        $dbmodel_object = new DBmodel;
+
+        if($range_type){           
+            $stm_list = $qb_obj->get_statement($to_datetime, $from_datetime, $token, $range_type, $top_option);
+            $result_async_from_db = $db_object->executeAsync_query($stm_list[1], $stm_list[0]);           
+        }
+
+        $hash_arr = array();
+
+        $final_result["chart_type"] = "top_lat_lng";
+        $final_result["data"] = array_slice($hash_arr, 0, $limit);
+        return ($final_result);
     }
 
 

@@ -22,7 +22,7 @@ export const TweetsGenerator = (data_list, max_per_page, chart_draw_div_id, from
   TweetIDS = data_list;
   var tweetDiv = chart_draw_div_id + '_tweets';
   var tweet_div_page_selection = chart_draw_div_id + 'page-selection';
-
+  
   if (filterOptions) {
     filterOptions = '<div class="btn-group pull-text-top ml-auto"><button type="button"\
                class="btn btn-white smat-rounded dropdown-toggle text-normal" data-toggle="dropdown"\
@@ -75,7 +75,7 @@ export const TweetsGenerator = (data_list, max_per_page, chart_draw_div_id, from
   $('#' + tweet_div_page_selection).bootpag({
     total: slot,
     page: 1,
-    maxVisible: 10
+    maxVisible: 6
   }).on('page', function (event, num) {
     $("#" + tweetDiv).scrollTop(0);
     /* *******************
@@ -159,7 +159,7 @@ export const generate_tweets_div = (tweetData, div, dropDownArg = true) => {
     }
 
 
-    $('#' + div).append('<div class="border  p-2 "><div class="d-flex"><div class="profilePictureDiv p-1 text-center mr-2"><img src="' + tweet.author_profile_image + '" style="height:33px;border-radius:50%" /></div><div> <p class="pt-1 m-0 font-weight-bold">' + tweet.author + ' </p><p class="smat-dash-title pull-text-top m-0 "> @' + tweet.author_screen_name + ' </p></div> <div class="px-1 pt-1 mx-2  " >  <i class="fa fa-circle   text-' + tweet.category + '" aria-hidden="true" title="' + category + '"></i> '+ category +'</div> ' + feedback + '</div>  <div style="width:80%;"><p class="smat-tweet-body-text mb-1">' + tweet.tweet_text + '</p></div><div id="" class="row d-flex justify-content-center tweet_media_body_' + tweet['tid'] + '" ></div><div class="d-flex"><p class="m-0 tweet-details"> <span>  ' + tweet.datetime + '  &nbsp </span> <span>' + location + '</span> &nbsp   <span class=" mx-2" >  <i class="fa fa-circle text-' + senticlass + '" aria-hidden="true" title="' + sentiment + '"></i>  ' + sentiment + '</span>              </p> </div></div>');
+    $('#' + div).append('<div class="border  p-2 "><div class="d-flex"><div class="profilePictureDiv p-1 text-center mr-2"><img src="' + tweet.author_profile_image + '" style="height:33px;border-radius:50%" /></div><div> <p class="pt-1 m-0 font-weight-bold">' + tweet.author + ' </p><p class="smat-dash-title pull-text-top m-0 "> @' + tweet.author_screen_name + ' </p></div> <div class="px-1 pt-1 mx-2  " >  <i class="fa fa-circle   text-' + tweet.category + '" aria-hidden="true" title="' + category + '"></i> </div> ' + feedback + '</div>  <div style="width:80%;"><p class="smat-tweet-body-text mb-1">' + tweet.tweet_text + '</p></div><div id="" class="row d-flex justify-content-center tweet_media_body_' + tweet['tid'] + '" ></div><div class="d-flex"><p class="m-0 tweet-details"> <span>  ' + tweet.datetime + '  &nbsp </span> <span>' + location + '</span> &nbsp   <span class=" mx-2" >  <i class="fa fa-circle text-' + senticlass + '" aria-hidden="true" title="' + sentiment + '"></i>  ' + sentiment + '</span>              </p> </div></div>');
 
 
 

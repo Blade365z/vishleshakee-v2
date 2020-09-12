@@ -2,7 +2,10 @@
 
 
 import {roshan} from './visualizer.js';
-import {render_graph,union,intersection,exportnetwork,selected_graph_ids,render_centrality_graph,renderingCentrality,sparkUpload,get_network,writedelete,difference,shortestpaths,community_detection,centrality,linkprediction} from './helper.js';
+import {render_graph,union,intersection,exportnetwork,selected_graph_ids,render_centrality_graph,
+       sparkUpload,get_network,writedelete,difference,shortestpaths,community_detection,centrality,linkprediction,
+       render_linkprediction_graph,render_shortestpath_graph,render_community_graph1,draw_graph,update_view_graph_for_link_prediction,
+       render_graph_community,render_union_graph,render_graph_union,render_intersection_diff_graph,render_intersection_difference} from './helper.js';
 
 let totalQueries;
 let searchRecords = [];
@@ -169,17 +172,32 @@ if (NAType == 'networkx') {
 }
 //centrality(url,data,NAType);
 centrality(url,data,NAType).then(response => {
-    renderingCentrality(url,data,NAType).then(response =>{
         if(NAType == "networkx"){
-            render_centrality_graph(data["input"], "networkDivid");
+            render_centrality_graph(data["input"], "networkDivid").then(response =>{
+                $('.analysis_summary_div').empty();
+                $('.analysis_summary_div').append('<table> <tr><th>Node</th><th>Score</th></tr>');
+                for(var i=0; i<response["nodes"].length;i++){
+                    $('.analysis_summary_div').append('<tr><td>'+response["nodes"][i]["label"]+'</td><td>'+response["nodes"][i]["size"]+'</td></tr>');
+                }
+                $('.analysis_summary_div').append('</table>');
+                draw_graph(response,"networkDivid");
+            });
         }else if(NAType == "spark"){
-            render_centrality_graph(data["query_list"][1], "networkDivid");
+            render_centrality_graph(data["query_list"][1], "networkDivid").then(response =>{
+                $('.analysis_summary_div').empty();
+                $('.analysis_summary_div').append('<table> <tr><th>Node</th><th>Score</th></tr>');
+                for(var i=0; i<response["nodes"].length;i++){
+                    $('.analysis_summary_div').append('<tr><td>'+response["nodes"][i]["label"]+'</td><td>'+response["nodes"][i]["size"]+'</td></tr>');
+                }
+                $('.analysis_summary_div').append('</table>');
+                draw_graph(response,"networkDivid");
+            });
         }
-    });
 });
 });
 
-$("#link_prediction_exec").on('click',function(NAType=$("#NAEngine").val(),algo_option=""){
+$("#link_prediction_exec").on('click',function(NAType=$("#networkEngineNA").val(),algo_option=""){
+    var NAType=$("#networkEngineNA").val();
     algo_option =$("input[name='linkpredictionRadioOptions']:checked").val();
     var select_graph = selected_graph_ids();
     console.log(selected_graph_ids());
@@ -199,19 +217,39 @@ $("#link_prediction_exec").on('click',function(NAType=$("#NAEngine").val(),algo_
             k_value:$("#nos_links_to_be_predicted").val(),
             algo_option: algo_option
         };
+        console.log(algo_option);
     } else if (NAType == 'spark') {
-        var query_list = [algo_option, input];
+        let src = $("#link_source_node").val();
+        var query_list = [algo_option, input, src ];
         var unique_name_timestamp = (new Date().getTime()).toString(); // create unique_name   
-        url = 'nas/requestToSparkandStoreResult';
+        url = 'na/requestToSparkandStoreResult';
         data = {
             query_list: query_list,
             rname: unique_name_timestamp
         };
-        upload(input_array);
+        sparkUpload(selected_graph_ids());
     } else {
-       // console.log(select_framework_val);
     }    
-    linkprediction(url,data);
+    linkprediction(url,data,NAType).then(response =>{
+        if(NAType == "networkx"){
+            render_linkprediction_graph(data["input"],data["src"]).then(response =>{       
+                $('.analysis_summary_div').empty();
+                $('.analysis_summary_div').append('<table> <tr><th>Node</th><th>Score</th></tr>');
+                 for(var i=0; i<response.length;i++){
+                    if(data["src"] == response[i].id){
+                        continue;
+                 }
+                 $('.analysis_summary_div').append('<tr><td>'+data["src"]+'</td><td>'+response[i].id+'</td></tr>');
+             }
+             $('.analysis_summary_div').append('</table>');
+             update_view_graph_for_link_prediction(response,data["src"]);
+            });
+        }else if(NAType == "spark"){
+            render_linkprediction_graph(data["query_list"][1],data["query_list"][2]).then(response =>{
+                alert();
+            })
+        }
+    })
 });
 
 $("#sp_exec").on('click',function(NAType="networkx",algo_option=""){
@@ -247,9 +285,14 @@ $("#sp_exec").on('click',function(NAType="networkx",algo_option=""){
         };
         sparkUpload(selected_graph_ids());
     } else {
-        console.log(select_framework_val);
     }
-    shortestpaths(url,data,NAType);
+    shortestpaths(url,data,NAType).then(response =>{
+        if(NAType == "networkx"){
+            render_shortestpath_graph(data["input"], data["src"], data["dst"]);
+        }else if(NAType == "spark"){
+            render_shortestpath_graph(data["query_list"][1], data["query_list"][2], data["query_list"][3]);
+        }
+    });
 });
 
 // Setting community detection algo option
@@ -308,7 +351,17 @@ $("#comm_exec").on('click',function(NAType=$("#NAEngine").val(),algo_option=""){
         sparkUpload(selected_graph_ids());
     } else {
     }
-    community_detection(url,data,NAType);
+    community_detection(url,data,NAType).then(response => {
+        if(NAType == "networkx"){
+            render_community_graph1(data["input"]).then(response =>{
+                render_graph_community(response,"networkDivid");
+            });
+        }else if(NAType == "spark"){
+            render_community_graph1(data["query_list"][1]).then(response =>{
+                render_graph_community(response,"networkDivid");
+            });
+        }
+    })
 });
 
 $("#union_exec").on('click',function(NAType="networkx"){
@@ -338,7 +391,21 @@ $("#union_exec").on('click',function(NAType="networkx"){
     } else {
         console.log("OO");
     }
-    union(url,data,NAType);
+    union(url,data,NAType).then(response =>{
+        if(NAType == "networkx"){
+            render_union_graph(data["input"]).then(response =>{
+                render_graph_union(response);
+            });
+        }else if(NAType == "spark"){
+            var arr1 = data["query_list"];
+            var arr12 = arr1.reverse();
+            arr12.pop();
+            var finalArray = arr12.reverse();
+            render_union_graph(finalArray).then(response =>{
+                render_graph_union(response);
+            });
+        }
+    });
 });
 
 
@@ -367,9 +434,22 @@ $("#intersection_exec").on('click',function(NAType="networkx"){
         };
         sparkUpload(selected_graph_ids());
     } else {
-        console.log("OO");
     }
-    intersection(url,data,NAType);
+    intersection(url,data,NAType).then(response => {
+        if(NAType == "networkx"){
+            render_intersection_diff_graph(data["input"],"intersection").then(response =>{
+                render_intersection_difference(response,"intersection_displayer","intersection");
+            });
+        }else if(NAType == "spark"){
+            var arr1 = data["query_list"];
+            var arr12 = arr1.reverse();
+            arr12.pop();
+            var finalArray = arr12.reverse();
+            render_intersection_diff_graph(finalArray,"intersection").then(response =>{
+            render_intersection_difference(response,"intersection_displayer","intersection");
+            });
+        }
+    });
 });
 
 $("#expansionTabNA").on('click',function(NAType="networkx"){
@@ -422,8 +502,24 @@ $("#difference_exec").on('click',function(NAType="networkx"){
     } else {
         console.log("OO");
     }
-    difference(url,data,NAType);
+    difference(url,data,NAType).then(response =>{
+        if(NAType == "networkx"){
+            render_intersection_diff_graph(data["input"],"difference").then(response =>{
+                render_intersection_difference(response,"difference_displayer","difference");
+            });
+        }else if(NAType == "spark"){
+            var arr1 = data["query_list"];
+            var arr12 = arr1.reverse();
+            arr12.pop();
+            var finalArray = arr12.reverse();
+            render_intersection_diff_graph(finalArray,"difference").then(response =>{
+            render_intersection_difference(response,"difference_displayer","difference");
+            });
+        }
+    });
 });
+
+
 
 
 $("#usenetwork").on('click',function(){

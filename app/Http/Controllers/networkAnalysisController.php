@@ -7,6 +7,8 @@ use App\Library\QueryBuilder as QB;
 use App\Library\Utilities as Ut;
 use App\DBModel\DBmodel;
 use App\DBModel\DBmodelAsync;
+use Illuminate\Support\Facades\Validator;
+
 
 use DateInterval;
 use DateTime;
@@ -18,7 +20,7 @@ class networkAnalysisController extends Controller
 {
  
     public function generateNetwork(){
-
+        
     }
 
     public function graph_view_data_formator_for_rendering_in_visjs(Request $request)
@@ -167,7 +169,8 @@ class networkAnalysisController extends Controller
     {
         //$dir_name = strval($this->get_session_uid($request));
         $dir_name = "netdir";
-        $input = $_GET['input'];
+        $input = $request->input('input');
+        // $input = $_GET['input'];
         if ($filename) {
             if ($option == 'union')
                 $input = $filename . $option;
@@ -308,11 +311,11 @@ class networkAnalysisController extends Controller
 
     public function linkPrediction(Request $request)
     {
-        $input = $_GET['input'];
+        $input = $request->input('input');
         // $input = "#nrc";
        // $dir_name = strval($this->get_session_uid($request));
        $dir_name = "netdir"; 
-       $algo_option = $_GET['algo_option'];
+       $algo_option =  $request->input('algo_option');
         switch ($algo_option) {
             case 'adamicadar':
                 $algo_choosen_option = '999';
@@ -324,8 +327,8 @@ class networkAnalysisController extends Controller
                 # code...
                 break;
         }
-        $src = $_GET['src'];
-        $k_value = $_GET['k_value'];
+        $src =  $request->input('src');
+        $k_value = $request->input('k_value');
 
         $read_path = "storage/$dir_name/$input.csv";
         // $command = escapeshellcmd('/usr/bin/python /var/www/html/front-end/python_files/generation.py 51 ' . $read_path . ' ' . $input . ' ' . $dir_name . ' ' . $src . ' ' . $dst);
@@ -333,7 +336,7 @@ class networkAnalysisController extends Controller
         $command = escapeshellcmd('/usr/bin/python python_files/generation.py ' . $algo_choosen_option . ' ' . $read_path . ' ' . $input . ' ' . $dir_name . ' ' . $src . ' ' . $k_value);
         // echo $command;
         $output = shell_exec($command);
-        echo $output;
+        echo json_encode("success");
     }
 
         // This function is currently being used in shortestpath routes are changed in the routes
@@ -362,10 +365,10 @@ class networkAnalysisController extends Controller
 
     public function shortestpath(Request $request)
     {
-        $input = $_GET['input'];
+        $input = $request->input('input');
         $dir_name = "netdir";
        // $dir_name = strval($this->get_session_uid($request));
-        $algo_option = $_GET['algo_option'];
+        $algo_option = $request->input('algo_option');
         switch ($algo_option) {
             case 'ShortestPath':
                 $algo_choosen_option = '41';
@@ -386,22 +389,21 @@ class networkAnalysisController extends Controller
                 # code...
                 break;
         }
-        $src = $_GET['src'];
-        $dst = $_GET['dst'];
-        echo $src;
+        $src = $request->input('src');
+        $dst = $request->input('dst');
+
         $read_path = "storage/$dir_name/$input.csv";
         $command = escapeshellcmd('/usr/bin/python python_files/generation.py ' . $algo_choosen_option . ' ' . $read_path . ' ' . $input . ' ' . $dir_name . ' ' . $src . ' ' . $dst . ' ' . $depth . ' ' . $k);
         $output = shell_exec($command);
-        echo $output;
+        return json_encode($output);
     }
 
     public function community_detection(Request $request)
     {
-        // $input = "#modi";
-        $input = $_GET['input'];
-        $k = $_GET['k'];
-        $iterations = $_GET['iterations'];
-        $algo_option = $_GET['algo_option'];
+        $input = $request->input('input');
+        $k =  $request->input('k'); 
+        $iterations = $request->input('iterations');
+        $algo_option = $request->input('algo_option');
 
        // $dir_name = strval($this->get_session_uid($request));
         $dir_name = "netdir";
@@ -433,7 +435,7 @@ class networkAnalysisController extends Controller
         $command = escapeshellcmd('/usr/bin/python python_files/generation.py ' . $algo_choosen_option . ' ' . $read_path . ' ' . $input . ' ' . $dir_name . ' ' . $k . ' ' . $iterations . ' ' . $input_network_query);
 
         $output = shell_exec($command);
-        echo $output;
+        echo json_encode($output);
     }
     
 
@@ -500,9 +502,11 @@ class networkAnalysisController extends Controller
 
     public function union_data_formator(Request $request)
     {
-        $option = $_GET['option'];
-        $input_arr = $_GET['input'];
-        $input_arr_net = $_GET['inputnetid'];
+
+        $option =  $request->input('option');
+        $input_arr = $request->input('input');
+        $input_arr_net = $request->input('inputnetid');
+
         $filename = '';
         $input_query_array = array();
         $major_array = array();
@@ -654,7 +658,9 @@ class networkAnalysisController extends Controller
 
     public function union(Request $request)
     {
-        $input_arr = $_GET['input'];
+        $input_arr = $request->input('input');
+
+        // $input_arr = $_GET['input'];
         $dir_name = "netdir";
        // $dir_name = strval($this->get_session_uid($request));
         // $cmnd_str = "/usr/bin/python /var/www/html/front-end/python_files/generation.py 0 " . $dir_name;
@@ -675,7 +681,7 @@ class networkAnalysisController extends Controller
 
     public function intersection(Request $request)
     {
-        $input_arr = $_GET['input'];
+        $input_arr = $request->input('input');
         //$dir_name = strval($this->get_session_uid($request));
         $dir_name = "netdir";
         // $cmnd_str = "/usr/bin/python /var/www/html/front-end/python_files/generation.py 333 1 storage/1/#modi.csv storage/1/#inc.csv";
@@ -696,8 +702,8 @@ class networkAnalysisController extends Controller
 
     public function difference_data_formator(Request $request)
     {
-        $option = $_GET['option'];
-        $input_arr = $_GET['input'];
+        $option = $request->input('option');
+        $input_arr = $request->input('input');
         $filename = '';
         $input_query_array = array();
         $major_array = array();
@@ -861,7 +867,8 @@ class networkAnalysisController extends Controller
     {
         $dir_name = "netdir";
         //$dir_name = strval($this->get_session_uid($request));
-        $input = $_GET['input'];
+        //$input = $_GET['input'];
+        $input =  $request->input('input');;
         $input = $input . "communities.json";
         $csvFile = file_get_contents("storage/$dir_name/$input");
         $json = json_decode($csvFile);
@@ -870,7 +877,7 @@ class networkAnalysisController extends Controller
 
     public function difference(Request $request)
     {
-        $input_arr = $_GET['input'];
+        $input_arr = $request->input('input');
         //$dir_name = strval($this->get_session_uid($request));
         $dir_name = "netdir";
         // $cmnd_str = "/usr/bin/python /var/www/html/front-end/python_files/generation.py 222 1 storage/1/#modi.csv storage/1/#inc.csv";
@@ -931,12 +938,11 @@ class networkAnalysisController extends Controller
 
     public function requestToSpark(Request $request)
     {
-        $query_list = $_GET['query_list'];
-        $rname = $_GET['rname'];
+        $query_list = $request->input('query_list');
+        $rname =      $request->input('rname');
         $result = $this->curlData($query_list, $rname);
         $result = json_decode($result, true);
 
-        //echo json_encode($result);
         //echo json_encode(array('query_time' => $rname, 'status' => $result['state'], 'id' => $result['id']));
         $id = $result['id'];
 

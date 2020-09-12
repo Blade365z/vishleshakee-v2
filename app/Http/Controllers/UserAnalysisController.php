@@ -145,7 +145,7 @@ class UserAnalysisController extends Controller
             $query = $request->input('query');
             $from = $request->input('from');
             $to = $request->input('to');
-            $rangeType = $request->input('rangeType');
+            $rangeType = $request->input('rangeType'); 
             if ($request->input('isDateTimeAlready') == 0) {
                 $fromTime = date('Y-m-d H:i:s', strtotime($from) + 0);
                 $toTime = date('Y-m-d H:i:s', strtotime($to) + 0);

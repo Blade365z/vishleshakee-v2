@@ -6,14 +6,14 @@
 
 
 //Imports
-import { generateFreqDistChart, generateSentimentChart, generateBarChart } from './chartHelper.js';
+
 import { formulateUserSearch } from '../utilitiesJS/userSearch.js';
-import { getSuggestionsForUA, getUserDetails, getFreqDistDataForUA, getTweetIDsForUA, getSentiDistDataForUA ,getCooccurDataForUA} from './helper.js';
+import { getSuggestionsForUA, getUserDetails, getFreqDistDataForUA, getTweetIDsForUA, getSentiDistDataForUA, getCooccurDataForUA } from './helper.js';
 import { getCurrentDate, getRangeType, dateProcessor } from '../utilitiesJS/smatDate.js';
-import { TweetsGenerator} from '../utilitiesJS/TweetGenerator.js';
-import {generateUniqueID} from '../utilitiesJS/uniqueIDGenerator.js';
-import { generateFreqDistBarChart, generateFrequencyLineChart, generateSentiDistBarChart, generateSentiDistLineChart ,generateBarChartForCooccur  } from '../utilitiesJS/smatChartBuilder.js';
-import { smatFeedbackMain} from '../utilitiesJS/smatFeedback.js'
+import { TweetsGenerator } from '../utilitiesJS/TweetGenerator.js';
+import { generateUniqueID } from '../utilitiesJS/uniqueIDGenerator.js';
+import { generateFreqDistBarChart, generateFrequencyLineChart, generateSentiDistBarChart, generateSentiDistLineChart, generateBarChartForCooccur } from './chartHelper.js';
+import { smatFeedbackMain } from '../utilitiesJS/smatFeedback.js'
 
 
 
@@ -24,17 +24,16 @@ var suggestionPopularIDs = ['$18839785', '$1447949844', '$1346439824', '$4054270
 
 var suggestionPopularNewsHandleIDs = ['$19897138', '$16343974', '$39240673', '$240649814', '$42606652', '$321271735', '$372754427', '$6509832', '$6433472', '$36327407', '$37034483', '$20751449', '$112404600', '$438156528', '$739053070932287488', '$267158021', '$128555221', '$742143', '$759251', '$701725963', '$55186601', '$28785486'];
 var SearchID, fromDate, toDate;   //Global Variable to keep Track of current search
-var mentionUniqueID,hashtagsUniqueID,userID;
+var mentionUniqueID, hashtagsUniqueID, userID;
 //Logic Implementation 
-$(document).ready(function () {
+jQuery(function(){
     toDate = getCurrentDate()
     fromDate = dateProcessor(toDate, '-', 3);
-    if(localStorage.getItem('smat.me')){
+    if (localStorage.getItem('smat.me')) {
         let userInfoTemp = JSON.parse(localStorage.getItem('smat.me'));
-        userID =  userInfoTemp['id']; 
-    }else{
-        alert('Not Logged In');
-        window.location.href='login';
+        userID = userInfoTemp['id'];
+    } else {
+        window.location.href = 'login';
     }
 
     $('.nav-item ').removeClass('smat-nav-active');
@@ -42,7 +41,7 @@ $(document).ready(function () {
     generateSuggestions(suggestionPopularIDs, 'suggUsers', 'users')
     generateSuggestions(suggestionPopularNewsHandleIDs, 'suggNews', 'news')
     // generateSuggestions(null, 'suggNews')
-    initateUserSearch('$16343974');
+ 
 
     $('#fromDateUA').val(fromDate);
     $('#toDateUA').val(toDate);
@@ -77,18 +76,18 @@ $(document).ready(function () {
     let tweetDivHeight = $('#userInfoDiv').height();
     $('#uaTweetsDiv').css('max-height', tweetDivHeight - 10 + 'px');
     $('#frqTabUA').on('click', function () {
-        let rangeType = getRangeType(fromDate, toDate);
-        frequencyDistributionUA(SearchID, rangeType, fromDate, toDate, null, 'freqContentUA', false);
+        // let rangeType = getRangeType(fromDate, toDate);
+        // frequencyDistributionUA(SearchID, rangeType, fromDate, toDate, null, 'freqContentUA', false);
 
     });
     $('#sentiTabUA').on('click', function () {
-        let rangeType = getRangeType(fromDate, toDate);
-        sentimentDistributionUA(SearchID, rangeType, fromDate, toDate, null, 'sentiContentUA', false);
+        // let rangeType = getRangeType(fromDate, toDate);
+     
         // generateSentimentSummary(null, 'summaryContent-1', 'hour');
     });
 
 
-    let suggShowFLag = 0;
+    let suggShowFLag = 1;
     $('#showUAsugg').on('click', function () {
         if (suggShowFLag == 0) {
             $('#suggDiv').css('display', 'flex');
@@ -102,10 +101,12 @@ $(document).ready(function () {
 
     });
 
-$('body').on('click','div .closeGraph',function(){
-    let graphCaptured = $(this).attr('value');
-    $('.'+graphCaptured).remove();
-})
+
+    
+    $('body').on('click', 'div .closeGraph', function () {
+        let graphCaptured = $(this).attr('value');
+        $('.' + graphCaptured).remove();
+    })
     $('body').on('click', 'div .filterTweets', function () {
         let args = $(this).attr('value');
         args = args.split(/[|]/).filter(Boolean);
@@ -121,7 +122,7 @@ $('body').on('click','div .closeGraph',function(){
         }
     })
 
-
+    //For Feedback Please execute this function
     smatFeedbackMain();
 
 
@@ -149,7 +150,7 @@ const generateSuggestions = (userIDArray, div, type = null) => {
 
 const initateUserSearch = (id) => {
     SearchID = id
-    mentionUniqueID =generateUniqueID();
+    mentionUniqueID = generateUniqueID();
     hashtagsUniqueID = generateUniqueID();
     getUserDetails(SearchID).then(data => makePageReady(data));
     let rangeType = getRangeType(fromDate, toDate);
@@ -158,10 +159,12 @@ const initateUserSearch = (id) => {
     $('.uaNav').removeClass('active');
     $('#frqTabUA').addClass('active');
     frequencyDistributionUA(SearchID, rangeType, fromDate, toDate, null, 'freqContentUA', false);
+
+    sentimentDistributionUA(SearchID, rangeType, fromDate, toDate, null, 'sentiContentUA', false);
     //forHashtagsGraph
-    plotDistributionGraphUA(SearchID,fromDate,toDate,'hashtag',hashtagsUniqueID,userID,'hashtagsContentTab');
+    plotDistributionGraphUA(SearchID, fromDate, toDate, 'hashtag', hashtagsUniqueID, userID, 'hashtagsContentTab');
     //forMentionsGraph
-    plotDistributionGraphUA(SearchID,fromDate,toDate,'mention',mentionUniqueID,userID,'mentionsContentUA');
+    plotDistributionGraphUA(SearchID, fromDate, toDate, 'mention', mentionUniqueID, userID, 'mentionsContentUA');
 }
 const makePageReady = (userDetails) => {
     $('#UAAnalysisDiv').css('display', 'block');
@@ -190,19 +193,26 @@ Please NOTE :
 */
 let freqParentDiv = 'freqContentUA';
 export const frequencyDistributionUA = (query = null, rangeType, fromDate = null, toDate = null, toTime = null, div, appendArg = false) => {
-    $('.' + rangeType + '-charts').remove();
+    let chartType='freq-chart';
+    let appendedChartParentID = rangeType+'-'+chartType;
+    $('.' +appendedChartParentID).remove();
+
     let chartDivID = div + '-' + rangeType + '-chart';
     let summaryDivID = div + '-' + rangeType + '-summary';
     let chartTweetDivID = div + rangeType + '-tweets';
     // class="' + rangeType + '-charts"
+    if (rangeType == 'hour') {
+        $('.hour-chart').remove();
+        $('.10sec-chart').remove();
+    }
     if (appendArg) {
-        $('#' + freqParentDiv).append('<div class=" mt-2 ' + rangeType + '-charts"><div class="d-flex"> <div class="mr-auto closeGraph"    value="' + rangeType + '-charts" title="close" >  <i class="fas fa-times"></i> </div> </div> <div class="row"><div class="col-sm-8"><div class="uaTab freqDistChart border" id="' + chartDivID + '" ></div></div><div class="col-sm-4"><div class="freqDistTweets border" id="' + chartTweetDivID + '"></div><div class="freqDistSummary border d-flex pt-2"  id="' + summaryDivID + '" ></div></div></div></div>');
+        $('#' + freqParentDiv).append('<div class=" mt-2   appendedChart ' + appendedChartParentID  + '"><div class="d-flex"> <div class="mr-auto closeGraph"    value="' + rangeType + '-charts" title="close" >  <i class="fas fa-times"></i> </div> </div> <div class="row"><div class="col-sm-8"><div class="uaTab freqDistChart border" id="' + chartDivID + '" ></div></div><div class="col-sm-4"><div class="freqDistTweets border" id="' + chartTweetDivID + '"></div><div class="freqDistSummary border d-flex pt-2"  id="' + summaryDivID + '" ></div></div></div></div>');
     } else {
         $('#' + div).html('<div><div class="row"><div class="col-sm-8"><div class="uaTab freqDistChart border" id="' + chartDivID + '" ></div></div><div class="col-sm-4"><div class="freqDistTweets border" id="' + chartTweetDivID + '"></div><div class="freqDistSummary border d-flex pt-2"  id="' + summaryDivID + '" ></div></div></div></div>');
     }
     //Loader...
     $('#' + chartDivID).html('<div class="text-center pt-5 " ><i class="fa fa-circle-o-notch donutSpinner" aria-hidden="true"></i></div>')
-
+    $('#' + chartTweetDivID).html('<div class="text-center pt-5 " ><i class="fa fa-circle-o-notch donutSpinner" aria-hidden="true"></i></div>');
     if (rangeType == 'day') {
         getFreqDistDataForUA(query, fromDate, toDate, null, rangeType, 0).then(data => {
             generateFreqDistBarChart(query, data, rangeType, chartDivID);
@@ -235,17 +245,24 @@ export const frequencyDistributionUA = (query = null, rangeType, fromDate = null
 }
 let sentiParentDiv = 'sentiContentUA';
 export const sentimentDistributionUA = (query = null, rangeType, fromDate = null, toDate = null, toTime = null, div, appendArg = false) => {
-    $('.' + rangeType + '-charts').remove();
+    let chartType='senti-chart';
+    let appendedChartParentID = rangeType+'-'+chartType;
+    $('.' +appendedChartParentID).remove();
     let chartDivID = div + '-' + rangeType + '-chart';
     let summaryDivID = div + '-' + rangeType + '-summary';
     let chartTweetDivID = div + rangeType + '-tweets';
+    if (rangeType == 'hour') {
+        $('.hour-chart').remove();
+        $('.10sec-chart').remove();
+    }
     if (appendArg) {
-        $('#' + sentiParentDiv).append('<div class=" mt-2 ' + rangeType + '-charts"><div class="d-flex"> <div class="mr-auto closeGraph"    value="' + rangeType + '-charts" title="close" >  <i class="fas fa-times"></i> </div> </div> <div class="row"><div class="col-sm-8"><div class="uaTab sentiDistChart border" id="' + chartDivID + '" ></div></div><div class="col-sm-4"><div class="sentiDistTweets border" id="' + chartTweetDivID + '"></div><div class="sentiDistSummary border d-flex pt-2"  id="' + summaryDivID + '" ></div></div></div></div>');
+        $('#' + sentiParentDiv).append('<div class=" mt-2 ' + appendedChartParentID + '"><div class="d-flex"> <div class="mr-auto closeGraph"    value="' + rangeType + '-charts" title="close" >  <i class="fas fa-times"></i> </div> </div> <div class="row"><div class="col-sm-8"><div class="uaTab sentiDistChart border" id="' + chartDivID + '" ></div></div><div class="col-sm-4"><div class="sentiDistTweets border" id="' + chartTweetDivID + '"></div><div class="sentiDistSummary border d-flex pt-2"  id="' + summaryDivID + '" ></div></div></div></div>');
     } else {
         $('#' + div).html('<div><div class="row"><div class="col-sm-8"><div class="uaTab sentiDistChart border" id="' + chartDivID + '" ></div></div><div class="col-sm-4"><div class="sentiDistTweets border" id="' + chartTweetDivID + '"></div><div class="sentiDistSummary border d-flex pt-2"  id="' + summaryDivID + '" ></div></div></div></div>');
     }
     //Loader...
     $('#' + chartDivID).html('<div class="text-center pt-5 " ><i class="fa fa-circle-o-notch donutSpinner" aria-hidden="true"></i></div>')
+    $('#' + chartTweetDivID).html('<div class="text-center pt-5 " ><i class="fa fa-circle-o-notch donutSpinner" aria-hidden="true"></i></div>');
     if (rangeType == 'day') {
         getSentiDistDataForUA(query, fromDate, toDate, null, rangeType, 0).then(data => {
             generateSentiDistBarChart(data, query, rangeType, chartDivID);
@@ -281,34 +298,17 @@ export const sentimentDistributionUA = (query = null, rangeType, fromDate = null
 
 }
 
-const plotDistributionGraphUA = (query,fromDate,toDate,option,uniqueID,userID,div) => {
-          //Loader...
+const plotDistributionGraphUA = (query, fromDate, toDate, option, uniqueID, userID, div) => {
+    //Loader...
 
     $('#' + div).html('<div class="text-center pt-5 " ><i class="fa fa-circle-o-notch donutSpinner" aria-hidden="true"></i></div>');
- 
-    let chartDivID = option+'-chart';
-    $('#'+div).html('<div id="'+chartDivID+'"></div>');
-    getCooccurDataForUA(query,fromDate,toDate,option,uniqueID,userID).then(response =>{
-           generateBarChartForCooccur(query,response,chartDivID,option)
-    });  
+
+    let chartDivID = option + '-chart';
+    $('#' + div).html('<div id="' + chartDivID + '"></div>');
+    getCooccurDataForUA(query, fromDate, toDate, option, uniqueID, userID).then(response => {
+        generateBarChartForCooccur(query, response, chartDivID, option)
+    });
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 //Summary Scripts
@@ -345,9 +345,9 @@ const generateSentimentSummary = (data = null, div, range) => {
             neuSumTemp += parseInt(element[3]);
         });
     }
-    $('#' + div).html('<div class="sentiSummaryDiv" id="sentiSummary' + range + '" ><div class="removeMarginMediaQuery"  > <div  id="sentiSummaryBar-' + range + '" ></div> </div><div> <div class="d-flex "><div><p class=" smat-box-title-large m-0 font-weight-bold text-dark ">'+posSumTemp+'</p><p class="pull-text-top m-0 smat-dash-title ">Positive</p></div><div class="mx-2"><p class=" smat-box-title-large m-0 font-weight-bold text-dark ">'+neuSumTemp+'</p><p class="pull-text-top m-0 smat-dash-title ">Neutral</p></div><div class="mx-2"><p class=" smat-box-title-large m-0 font-weight-bold text-dark ">'+negSumTemp+'</p><p class="pull-text-top m-0 smat-dash-title ">Negative</p></div></div></div></div>');
-   
-    arrTemp=[posSumTemp,negSumTemp,neuSumTemp];
+    $('#' + div).html('<div class="sentiSummaryDiv" id="sentiSummary' + range + '" ><div class="removeMarginMediaQuery"  > <div  id="sentiSummaryBar-' + range + '" ></div> </div><div> <div class="d-flex "><div><p class=" smat-box-title-large m-0 font-weight-bold text-dark ">' + posSumTemp + '</p><p class="pull-text-top m-0 smat-dash-title ">Positive</p></div><div class="mx-2"><p class=" smat-box-title-large m-0 font-weight-bold text-dark ">' + neuSumTemp + '</p><p class="pull-text-top m-0 smat-dash-title ">Neutral</p></div><div class="mx-2"><p class=" smat-box-title-large m-0 font-weight-bold text-dark ">' + negSumTemp + '</p><p class="pull-text-top m-0 smat-dash-title ">Negative</p></div></div></div></div>');
+
+    arrTemp = [posSumTemp, negSumTemp, neuSumTemp];
     generateSentimentSummaryBar(arrTemp, "sentiSummaryBar-" + range, 'hour')
 }
 const generateSentimentSummaryBar = (sentiTotalArray, div, range_type) => {

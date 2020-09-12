@@ -8,8 +8,8 @@
     <form id="haQueryInputs">
         <div id="queryinputDivParent">
             <div id="queryInputDiv">
-                <div class="form-group   border smat-rounded d-flex px-2 py-1  bg-white">
-                    <input type="text" class="form-control " id="queryToken" placeholder="Query" style="border:0px;" autocomplete="OFF" required>
+                <div class="form-group   border smat-rounded d-flex px-2 py-1  bg-white" id="haQueryInputBox">
+                    <input type="text" class="form-control typeahead " id="queryToken" placeholder="Query" style="border:0px;" autocomplete="OFF" required>
                 </div>
             </div>
 
@@ -72,9 +72,9 @@
 
 
 
-<div class="my-2" id="analysisPanelHA">
+<div class="my-2" id="analysisPanelHA" style="display:none;">
 <div>
-<p class="smat-box-title-large m-0">Showing Results for <span class="smat-value font-weight-bold text-dark"> #oodmorningIndia</span> </p>
+<p class="smat-box-title-large m-0">Showing Results for <span class="smat-value font-weight-bold text-normal" id="currentlySearchedQuery"> </span> </p>
 
 </div>
 
@@ -101,12 +101,9 @@
                         <li class="nav-item">
                             <a class="nav-link smat-rounded " id="hashtagsTabHA" data-toggle="pill" href="#hashtagsContentTab" role="tab" aria-controls="pills-contact" aria-selected="false">Top Hashtags</a>
                         </li>
-                        <li class="nav-item">
-                            <a class="nav-link smat-rounded" id="tweetsTabHA" data-toggle="pill" href="#tweetsContentHA" role="tab" aria-controls="pills-contact" aria-selected="false">Tweets</a>
-                        </li>
-                        <li class="nav-item">
+                        {{-- <li class="nav-item">
                             <a class="nav-link smat-rounded" id="sensitivityTabHA" data-toggle="pill" href="#sensitivityContentHA" role="tab" aria-controls="pills-contact" aria-selected="false">Sensitivity</a>
-                        </li>
+                        </li> --}}
                         <li class="nav-item">
                             <a class="nav-link smat-rounded" id="locationTabHA" data-toggle="pill" href="#locationContentHA" role="tab" aria-controls="pills-contact" aria-selected="false">Locations</a>
                         </li>
@@ -119,10 +116,10 @@
 
                         </div>
                         <div class="tab-pane fade show active haTab" id="freqContentHA" role="tabpanel" aria-labelledby="freqContentHA"> </div>
-                        <div class="tab-pane fade haTab " id="sentiContentHA" role="tabpanel" aria-labelledby="sentiContentHA">Sentiment </div>
-                        <div class="tab-pane fade haTab" id="mentionsContentHA" role="tabpanel" aria-labelledby="mentionsContentHA">Mentions Tab</div>
-                        <div class="tab-pane fade haTab" id="usersContentHA" role="tabpanel" aria-labelledby="usersContentHA">Active Users Tab</div>
-                        <div class="tab-pane fade haTab " id="hashtagsContentTab" role="tabpanel" aria-labelledby="hashtagsContentTab">hashtagsContentTab</div>
+                        <div class="tab-pane fade haTab " id="sentiContentHA" role="tabpanel" aria-labelledby="sentiContentHA"> </div>
+                        <div class="tab-pane fade haTab barGraphTab" id="mentionsContentHA" role="tabpanel" aria-labelledby="mentionsContentHA"></div>
+                        <div class="tab-pane fade haTab barGraphTab" id="usersContentHA" role="tabpanel" aria-labelledby="usersContentHA"></div>
+                        <div class="tab-pane fade haTab barGraphTab " id="hashtagsContentTab" role="tabpanel" aria-labelledby="hashtagsContentTab"></div>
                         <div class="tab-pane fade haTab " id="tweetsContentHA" role="tabpanel" aria-labelledby="tweetsContentHA">tweetsContentHA </div>
                         <div class="tab-pane fade haTab " id="sensitivityContentHA" role="tabpanel" aria-labelledby="sensitivityContentHA">sensitivityContentHA </div>
                         <div class="tab-pane fade haTab " id="locationContentHA" role="tabpanel" aria-labelledby="locationContentHA">locationContentHA </div>

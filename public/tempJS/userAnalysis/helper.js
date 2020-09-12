@@ -25,7 +25,6 @@ var HeadersForApi = {
 };
 
 
-//TODO::Change to FETCH !
 export const getSuggestionsForUA = (userIDArray) => {
     let userSuggestionRes;
     $.ajax({
@@ -118,7 +117,7 @@ export const getTweetIDsForUA = async (query, from = null, to = null, rangeType,
 }
 export const getCooccurDataForUA = async (query, from, to, option, uniqueID, userID) => {
     //TODO::REMOVE THE HARDCODE!!
-    query = "#Warntag2020";
+    query = "#WorldUnitedForSSRJustice";
     let dataArgs = JSON.stringify({
         query, from, to, option, uniqueID, userID,mode:'write'
     });
@@ -141,4 +140,4 @@ export const getCooccurDataForUA = async (query, from, to, option, uniqueID, use
         let readData = await readResponse.json();
         return readData;
     }
-}
+} 

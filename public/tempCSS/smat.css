@@ -360,7 +360,7 @@ color:white;
 
 .haTab {
     overflow-x: hidden;
-    overflow-y: hidden;
+
 }
 .closeGraph:hover{
     cursor: pointer;
@@ -461,9 +461,9 @@ select{
      opacity: 0.5;
     cursor: pointer !important;
 }
-.uaTab{
+.haTab,.uaTab{
     min-height: 420px;
-    max-height: 420px;
+
 }
 
 .freqDistTweets , .sentiDistTweets{
@@ -476,6 +476,11 @@ select{
 }
 .uaTabTopRight{
     overflow-y: auto;
+}
+.barGraphTab{
+    height:360px;
+    overflow-y: auto;
+    overflow-x:hidden;
 }
 @media (max-width: 767.98px) {
     .dFlexBut{
@@ -594,7 +599,7 @@ select{
     .haTab {
      
         overflow-x: hidden;
-        overflow-y: hidden;
+     
     }
 }
 @media  screen and (max-width: 1440px) {
@@ -812,4 +817,57 @@ select{
     100% {
         transform: rotate(360deg);
     }
+}
+
+
+
+
+
+
+
+
+
+
+
+.tt-input, /* UPDATE: newer versions use tt-input instead of tt-query */
+.tt-hint {
+    padding: 8px 12px;
+    line-height: 30px;
+    border-radius: 8px;
+    outline: none;
+}
+
+.tt-input { /* UPDATE: newer versions use tt-input instead of tt-query */
+
+}
+
+.tt-hint {
+    color: #999;
+}
+
+.tt-menu { /* UPDATE: newer versions use tt-menu instead of tt-dropdown-menu */
+   
+    margin-top: 12px;
+    padding: 8px 0;
+    background-color: #fff;
+    border: 1px solid #ccc;
+    border: 1px solid rgba(0, 0, 0, 0.2);
+    border-radius: 8px;
+    box-shadow: 0 5px 10px rgba(0,0,0,.2);
+}
+
+.tt-suggestion {
+    padding: 3px 20px;
+
+    line-height: 24px;
+}
+
+.tt-suggestion.tt-is-under-cursor { /* UPDATE: newer versions use .tt-suggestion.tt-cursor */
+    color: #fff;
+    background-color: #0097cf;
+
+}
+
+.tt-suggestion p {
+    margin: 0;
 }

@@ -76,16 +76,30 @@ Route::group(['prefix' => 'login'], function () {
 });
 
 //Define API routes requiring middleware here for  Historical Analysis
+// Route::group(['prefix' => 'HA'], function () {
+//     Route::post('freqDistDataHA', 'HistoricalAnalysisController@getFrequencyDataForHistorical');
+//     Route::post('sentDistDataHA', 'HistoricalAnalysisController@getFrequencyDataForHistorical');
+//     Route::post('getCooccurDataForHA', 'HistoricalAnalysisController@getCooccurDataForHA');
+//     Route::get('coOccurDataFormatterHA', 'HistoricalAnalysisController@data_formatter_for_co_occur_ha');
+//     Route::get('topDataHA', 'HistoricalAnalysisController@get_top_data_ha');
+//     Route::get('tweetsHA', 'HistoricalAnalysisController@get_tweets_ha');
+//     Route::get('getTweetsInfoHA', 'HistoricalAnalysisController@get_tweets_info_ha');
+//     Route::get('getUserInfoHA', 'HistoricalAnalysisController@get_user_info_ha');
+
+
+//     Route::get('getTopLatLngHA', 'HistoricalAnalysisController@get_top_data_lat_lng_ha');
+// });
 Route::group(['prefix' => 'HA'], function () {
-    Route::get('freqDistDataHA', 'HistoricalAnalysisController@get_frequency_distribution_data_ha');
-    Route::get('sentDistDataHA', 'HistoricalAnalysisController@get_sentiment_distribution_data_ha');
-    Route::get('coOccurDataHA', 'HistoricalAnalysisController@get_co_occur_data_ha');
-    Route::get('coOccurDataFormatterHA', 'HistoricalAnalysisController@data_formatter_for_co_occur_ha');
-    Route::get('topDataHA', 'HistoricalAnalysisController@get_top_data_ha');
-    Route::get('tweetsHA', 'HistoricalAnalysisController@get_tweets_ha');
-    Route::get('getTweetsInfoHA', 'HistoricalAnalysisController@get_tweets_info_ha');
-    Route::get('getUserInfoHA', 'HistoricalAnalysisController@get_user_info_ha');
+    Route::post('getFrequencyDataForHistorical', 'HistoricalController@getFrequencyDataForHistorical');
+    Route::post('getSentimentDataForHistorical', 'HistoricalController@getSentimentDataForHistorical');
+    Route::post('getCooccurDataForHA', 'HistoricalController@getCooccurDataForHA');
 });
+
+
+
+
+
+
 
 //Define API routes requiring middleware here for Network Analysis
 Route::group(['prefix' => 'na'], function () {
@@ -93,30 +107,30 @@ Route::group(['prefix' => 'na'], function () {
     Route::get('graph_view_data_formator','networkAnalysisController@graph_view_data_formator_for_rendering_in_visjs');
     Route::get('readcsv','networkAnalysisController@read_csv_file');
     Route::get('readcsv','networkAnalysisController@read_csv_file');
-    Route::get('centrality_data_formator', 'networkAnalysisController@centrality_data_formator_for_rendering_in_visjs');
+    Route::post('centrality_data_formator', 'networkAnalysisController@centrality_data_formator_for_rendering_in_visjs');
     Route::get('mysessionid','networkAnalysisController@mysessionid');
     // Route::get('centrality', 'networkAnalysisController@centrality');
     Route::post('centrality', 'networkAnalysisController@centrality');
 
-    Route::get('link_prediction_data_formator','networkAnalysisController@link_prediction_data_formator_new');
-    Route::get('link_prediction','networkAnalysisController@linkPrediction');
+    Route::post('link_prediction_data_formator','networkAnalysisController@link_prediction_data_formator_new');
+    Route::post('link_prediction','networkAnalysisController@linkPrediction');
     Route::get('shortest_path_data_formator','networkAnalysisController@shortest_path_data_formator_new');
-    Route::get('shortestpath','networkAnalysisController@shortestpath');
-    Route::get('communitydetection','networkAnalysisController@community_detection');
-    Route::get('community_data_formator', 'networkAnalysisController@community_data_formator_for_rendering_in_visjs');
+    Route::post('shortestpath','networkAnalysisController@shortestpath');
+    Route::post('communitydetection','networkAnalysisController@community_detection');
+    Route::post('community_data_formator', 'networkAnalysisController@community_data_formator_for_rendering_in_visjs');
 
-    Route::get('union','networkAnalysisController@union');
-    Route::get('union_data_formator','networkAnalysisController@union_data_formator');
-    Route::get('intersection','networkAnalysisController@intersection');
-    Route::get('difference','networkAnalysisController@difference');
-    Route::get('formator_inter_diff','networkAnalysisController@difference_data_formator');
+    Route::post('union','networkAnalysisController@union');
+    Route::post('union_data_formator','networkAnalysisController@union_data_formator');
+    Route::post('intersection','networkAnalysisController@intersection');
+    Route::post('difference','networkAnalysisController@difference');
+    Route::post('formator_inter_diff','networkAnalysisController@difference_data_formator');
 
     Route::post('writedelete','networkAnalysisController@write_delete');
     Route::get('isfileexist','networkAnalysisController@isfileexist');
     Route::post('fileupload','networkAnalysisController@fileupload');
 
     Route::get('fileUploadRequest','networkAnalysisController@fileUploadRequest');
-    Route::get('requestToSparkandStoreResult','networkAnalysisController@requestToSpark');
+    Route::post('requestToSparkandStoreResult','networkAnalysisController@requestToSpark');
 
     
 
@@ -143,7 +157,21 @@ Route::group(['prefix' => 'UA'], function () {
 //Define API routes requiring middleware here for Map
 Route::group(['prefix' => 'LM'], function () {
     Route::get('/getTime','LocationMap@get_current_date_time');
+    Route::get('/getTweetId','LocationMap@get_tweet_id_list');
 });
+
+
+
+
+//Define API routes requiring middleware here for Trend Analysis
+Route::group(['prefix' => 'TA'], function () {
+    Route::post('/getTopTrending','TrendAnalysisController@getTrending');
+ 
+});
+
+
+
+
 
 //Resource Route for feedback controller
 Route::post('/feedback', 'FeebackController@insertFeedback');

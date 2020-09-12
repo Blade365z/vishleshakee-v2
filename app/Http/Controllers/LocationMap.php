@@ -6,6 +6,9 @@ use Illuminate\Http\Request;
 use App\DBModel\DBmodel;
 use App\DBModel\DBmodelAsync;
 use App\Http\Controllers\Home as Hm;
+
+use App\Http\Controllers\CommonController;
+
 use App\Library\Utilities as Ut;
 
 
@@ -40,10 +43,33 @@ class LocationMap extends Controller
     }
 
     public function get_current_date_time(){
+        $interval = $_GET['interval'];
         $datetime_object = new Hm;
-        $current_datetime_to_datetime = $datetime_object->CurrentDateTimeGeneratorPublic(900);
+        $current_datetime_to_datetime = $datetime_object->CurrentDateTimeGeneratorPublic(3600);
         
         return $current_datetime_to_datetime;
+    }
+
+    public function get_tweet_id_list(){
+
+        $commonObj = new CommonController;
+        
+        
+        $query = $_GET['query'];
+        $from_datetime = $_GET['from'];
+        $to_datetime = $_GET['to'];
+        
+        $r = $commonObj->get_tweets($to_datetime,$from_datetime,$query,'10sec','all');
+        
+        $tweetid_list_array = array();
+        
+            
+        foreach ($r['data'] as $tid) {
+            array_push($tweetid_list_array, $tid);
+        }
+            
+        
+        return $this->tweet_info($tweetid_list_array);
     }
 
 

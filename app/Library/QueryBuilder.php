@@ -101,8 +101,32 @@ class QueryBuilder{
         
 
         // for top_hashtag, top_mention, top_user
-        $feature_option_split = explode("_", $feature_option); //$feature_option = 'top_hashtag'/'top_mention'
-        if($feature_option_split[0] == 'top'){
+        $feature_option_split = explode("_", $feature_option); //$feature_option = 'top_hashtag'/'top_mention' or 'top_latlng_hashtag'/'top_latlng_mention'
+        if(($feature_option_split[0] == 'top') and ($feature_option_split[1] == 'latlng')){  
+            // to get top data from location_token_co_occur...................................................
+            // get country, state, city from mysql
+            $location_list = ['india', 'delhi'];
+            $query_class = $this->get_query_class($feature_option_split[2], $feature_option_split[0]);
+            if(($range_type == '10sec') or ($range_type == 'hour') or ($range_type == 'day')){
+                if($range_type == '10sec'){
+                    $table_name = 'location_token_co_occur';
+                    $input_args = $ut_obj->get_10sec_list_for_cassandra($to_datetime, $from_datetime);
+                    $where_clause = "created_date = ? AND class=" . $query_class . " AND created_time = ?";                   
+                }else if($range_type == 'hour'){
+                    $table_name = 'location_token_co_occur_hour_wise';
+                    $input_args = $ut_obj->get_hour_list_for_cassandra($to_datetime, $from_datetime);
+                    $where_clause = "created_date = ? AND class=" . $query_class . " AND created_time = ?"; 
+                }else if($range_type == 'day'){
+                    $table_name = 'location_token_co_occur_day_wise';
+                    $input_args = $ut_obj->get_day_list_for_cassandra($to_datetime, $from_datetime);
+                    $where_clause = "created_date = ? AND class=" . $query_class; 
+                }
+            }
+            $columns = 'category_class_list, count_list, token_name';
+            $prepared_statement = "SELECT ".$columns." FROM ".$table_name." WHERE ".$where_clause;  
+            $final_res[0] = $prepared_statement;
+            $final_res[1] = $input_args;
+        }else if($feature_option_split[0] == 'top'){
             $query_class = $this->get_query_class($feature_option_split[1], $feature_option_split[0]);
             if(($range_type == '10sec') or ($range_type == 'hour') or ($range_type == 'day')){
                 if($range_type == '10sec'){
@@ -156,20 +180,19 @@ class QueryBuilder{
         
         return $final_res;
     }
-    
+
 
 
 
 
     /**
-    * Get class of token or co-occur of token
+    * Get class of token or co-occur of token('hashtag'/'mention'/'user'/'#COVID'/'@modi')
     *
     * @return integer
     */
     public function get_query_class($token=null, $option=null, $co_occur_option=null){
         if($option == 'co_occur'){
-            if (strpos($token, '#') !== false) {
-               
+            if (strpos($token, '#') !== false) {               
                 switch ($co_occur_option) {
                     case 'mention':
                         $class = 2;
@@ -247,6 +270,8 @@ class QueryBuilder{
         }else{
             if (strpos($token, '#') !== false) {
                 $class = 0;
+            } else  if (strpos($token, '^') !== false) {
+                $class = 4;
             } else  if (strpos($token, '*') !== false) {
                 $class = 3;
             } else  if (strpos($token, '$') !== false) {
