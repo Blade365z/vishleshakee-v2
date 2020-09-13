@@ -1018,13 +1018,13 @@ class CommonController extends Controller
         }
 
         // 2nd level
-        foreach($co_occur_result as $key => $value){
+        foreach($co_occur_result as $key => $count){
             $co_occur_result_2nd_level = $this->get_co_occur_data($to_datetime, $from_datetime, $key, $range_type = null, $co_occur_option);
             if($no_of_nodes)
                 $co_occur_result_2nd_level = array_slice($co_occur_result_2nd_level['data'], 0, $no_of_nodes);
-            foreach ($co_occur_result_2nd_level as $k => $v) {
+            foreach ($co_occur_result_2nd_level as $k => $c) {
                 if (in_array($k, $nodes)) {
-                    $edges[] = [$key, $k, (string) $v];
+                    $edges[] = [$key, $k, (string) $c];
                 }
             }
         }
