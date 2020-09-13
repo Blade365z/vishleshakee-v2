@@ -124,7 +124,6 @@ export const getCooccurDataForUA = async (query, from, to, option, uniqueID, use
     let dataArgsForRead=JSON.stringify({
         option, uniqueID, userID,limit:50,mode:'read'
     });
-
     let response = await fetch('UA/getCooccurDataForUser', {
         method: 'post',
         headers: HeadersForApi,

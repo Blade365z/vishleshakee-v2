@@ -13,9 +13,7 @@ import { getCurrentDate, getRangeType, dateProcessor } from '../utilitiesJS/smat
 import { TweetsGenerator } from '../utilitiesJS/TweetGenerator.js';
 import { generateUniqueID } from '../utilitiesJS/uniqueIDGenerator.js';
 import { generateFreqDistBarChart, generateFrequencyLineChart, generateSentiDistBarChart, generateSentiDistLineChart, generateBarChartForCooccur } from './chartHelper.js';
-import { smatFeedbackMain } from '../utilitiesJS/smatFeedback.js'
-
-
+import {makeSmatReady} from '../utilitiesJS/smatExtras.js'
 
 
 
@@ -26,22 +24,27 @@ var suggestionPopularNewsHandleIDs = ['$19897138', '$16343974', '$39240673', '$2
 var SearchID, fromDate, toDate;   //Global Variable to keep Track of current search
 var mentionUniqueID, hashtagsUniqueID, userID;
 //Logic Implementation 
-jQuery(function(){
-    toDate = getCurrentDate()
-    fromDate = dateProcessor(toDate, '-', 3);
-    if (localStorage.getItem('smat.me')) {
+jQuery(function () {
+    makeSmatReady();
+      if (localStorage.getItem('smat.me')) {
         let userInfoTemp = JSON.parse(localStorage.getItem('smat.me'));
         userID = userInfoTemp['id'];
     } else {
         window.location.href = 'login';
     }
-
+    toDate = getCurrentDate()
+    fromDate = dateProcessor(toDate, '-', 3);
+    if(incoming){
+        SearchID=incoming;
+        initateUserSearch(SearchID);
+    }
+    
     $('.nav-item ').removeClass('smat-nav-active');
     $('#nav-UA').addClass('smat-nav-active');
     generateSuggestions(suggestionPopularIDs, 'suggUsers', 'users')
     generateSuggestions(suggestionPopularNewsHandleIDs, 'suggNews', 'news')
     // generateSuggestions(null, 'suggNews')
- 
+
 
     $('#fromDateUA').val(fromDate);
     $('#toDateUA').val(toDate);
@@ -72,21 +75,12 @@ jQuery(function(){
     $('.suggHandles').on('click', function () {
         let capturedToken = $(this).attr('value');
         initateUserSearch(capturedToken);
-    })
+    });
+
+
     let tweetDivHeight = $('#userInfoDiv').height();
     $('#uaTweetsDiv').css('max-height', tweetDivHeight - 10 + 'px');
-    $('#frqTabUA').on('click', function () {
-        // let rangeType = getRangeType(fromDate, toDate);
-        // frequencyDistributionUA(SearchID, rangeType, fromDate, toDate, null, 'freqContentUA', false);
-
-    });
-    $('#sentiTabUA').on('click', function () {
-        // let rangeType = getRangeType(fromDate, toDate);
-     
-        // generateSentimentSummary(null, 'summaryContent-1', 'hour');
-    });
-
-
+ 
     let suggShowFLag = 1;
     $('#showUAsugg').on('click', function () {
         if (suggShowFLag == 0) {
@@ -102,11 +96,8 @@ jQuery(function(){
     });
 
 
-    
-    $('body').on('click', 'div .closeGraph', function () {
-        let graphCaptured = $(this).attr('value');
-        $('.' + graphCaptured).remove();
-    })
+
+
     $('body').on('click', 'div .filterTweets', function () {
         let args = $(this).attr('value');
         args = args.split(/[|]/).filter(Boolean);
@@ -121,11 +112,6 @@ jQuery(function(){
             });
         }
     })
-
-    //For Feedback Please execute this function
-    smatFeedbackMain();
-
-
 });
 
 const generateSuggestions = (userIDArray, div, type = null) => {
@@ -193,9 +179,9 @@ Please NOTE :
 */
 let freqParentDiv = 'freqContentUA';
 export const frequencyDistributionUA = (query = null, rangeType, fromDate = null, toDate = null, toTime = null, div, appendArg = false) => {
-    let chartType='freq-chart';
-    let appendedChartParentID = rangeType+'-'+chartType;
-    $('.' +appendedChartParentID).remove();
+    let chartType = 'freq-chart';
+    let appendedChartParentID = rangeType + '-' + chartType;
+    $('.' + appendedChartParentID).remove();
 
     let chartDivID = div + '-' + rangeType + '-chart';
     let summaryDivID = div + '-' + rangeType + '-summary';
@@ -206,7 +192,7 @@ export const frequencyDistributionUA = (query = null, rangeType, fromDate = null
         $('.10sec-chart').remove();
     }
     if (appendArg) {
-        $('#' + freqParentDiv).append('<div class=" mt-2   appendedChart ' + appendedChartParentID  + '"><div class="d-flex"> <div class="mr-auto closeGraph"    value="' + rangeType + '-charts" title="close" >  <i class="fas fa-times"></i> </div> </div> <div class="row"><div class="col-sm-8"><div class="uaTab freqDistChart border" id="' + chartDivID + '" ></div></div><div class="col-sm-4"><div class="freqDistTweets border" id="' + chartTweetDivID + '"></div><div class="freqDistSummary border d-flex pt-2"  id="' + summaryDivID + '" ></div></div></div></div>');
+        $('#' + freqParentDiv).append('<div class=" mt-2   appendedChart ' + appendedChartParentID + '"><div class="d-flex"> <div class="mr-auto closeGraph"    value="' + rangeType + '-charts" title="close" >  <i class="fas fa-times"></i> </div> </div> <div class="row"><div class="col-sm-8"><div class="uaTab freqDistChart border" id="' + chartDivID + '" ></div></div><div class="col-sm-4"><div class="freqDistTweets border" id="' + chartTweetDivID + '"></div><div class="freqDistSummary border d-flex pt-2"  id="' + summaryDivID + '" ></div></div></div></div>');
     } else {
         $('#' + div).html('<div><div class="row"><div class="col-sm-8"><div class="uaTab freqDistChart border" id="' + chartDivID + '" ></div></div><div class="col-sm-4"><div class="freqDistTweets border" id="' + chartTweetDivID + '"></div><div class="freqDistSummary border d-flex pt-2"  id="' + summaryDivID + '" ></div></div></div></div>');
     }
@@ -245,9 +231,9 @@ export const frequencyDistributionUA = (query = null, rangeType, fromDate = null
 }
 let sentiParentDiv = 'sentiContentUA';
 export const sentimentDistributionUA = (query = null, rangeType, fromDate = null, toDate = null, toTime = null, div, appendArg = false) => {
-    let chartType='senti-chart';
-    let appendedChartParentID = rangeType+'-'+chartType;
-    $('.' +appendedChartParentID).remove();
+    let chartType = 'senti-chart';
+    let appendedChartParentID = rangeType + '-' + chartType;
+    $('.' + appendedChartParentID).remove();
     let chartDivID = div + '-' + rangeType + '-chart';
     let summaryDivID = div + '-' + rangeType + '-summary';
     let chartTweetDivID = div + rangeType + '-tweets';

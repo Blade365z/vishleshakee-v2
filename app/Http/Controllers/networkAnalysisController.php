@@ -2,12 +2,12 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-
 use App\Library\QueryBuilder as QB;
 use App\Library\Utilities as Ut;
 use App\DBModel\DBmodel;
 use App\DBModel\DBmodelAsync;
 use Illuminate\Support\Facades\Validator;
+use App\Http\Controllers\Home;
 
 
 use DateInterval;
@@ -19,9 +19,14 @@ use  CURLFile;
 class networkAnalysisController extends Controller
 {
  
-    public function generateNetwork(){
-        
+    public function getdirname(Request $request){
+        $GraphData_obj = new Home;
+        $result = $GraphData_obj->me(); //it will return  JsonResponse Object 
+        $user_id = ($result->getData())->{'id'}; //getData() will return stdClass object
+        return $user_id;
     }
+
+
 
     public function graph_view_data_formator_for_rendering_in_visjs(Request $request)
     {
@@ -129,16 +134,16 @@ class networkAnalysisController extends Controller
     }
 
     public function isfileexist(Request $request,$filename){
-        $dir_name = "netdir";
+        $dir_name = $this->getdirname($request);
         $filename = $_GET['input'];
         file_exists("storage/$dir_name/$filename.csv");
     }
     
     public function fileupload(Request $request)
     {
-        $x = $_POST["name"];
+        $x =  $request->input('name');
        // $dir_name = strval($this->get_session_uid($request));
-        $dir_name = "netdir";
+        $dir_name = "2";
 
         $validation = Validator::make($request->all(), [
             'select_file' => 'required|max:1520480'
@@ -168,7 +173,7 @@ class networkAnalysisController extends Controller
     public function read_csv_file(Request $request, $filename = null, $option = null)
     {
         //$dir_name = strval($this->get_session_uid($request));
-        $dir_name = "netdir";
+        $dir_name = $this->getdirname($request);
         $input = $request->input('input');
         // $input = $_GET['input'];
         if ($filename) {
@@ -218,11 +223,11 @@ class networkAnalysisController extends Controller
                            // }
                           //  array_push($final_node_arr, array("id" => $one_list[0], "label" =>  $user_name, "shape" => 'circularImage', "image" => $profile_image_link, "size" => (220 * $one_list[1]), "borderwidth" => 7, "border" => "#EA9999" ));
                 }else if(substr($one_list[0],0,1) == "#"){
-                             array_push($final_node_arr, array("id" => $one_list[0], "label" => $one_list[0], "shape" => 'circularImage', "image" => 'public/icons/hashtag.svg' , "size" => (220 * $one_list[1]), "borderwidth" => 7, "border" => "#EA9999" ));
+                             array_push($final_node_arr, array("id" => $one_list[0], "label" => $one_list[0], "shape" => 'circularImage', "image" => 'public/icons/hashtag.svg' , "size" => (2 * $one_list[1]), "borderwidth" => 7, "border" => "#EA9999" ));
                 }else if(substr($one_list[0],0,1) == "@"){
-                             array_push($final_node_arr, array("id" => $one_list[0], "label" => $one_list[0], "shape" => 'circularImage', "image" => 'public/icons/roshanmention.jpg' , "size" => (220 * $one_list[1]), "borderwidth" => 7, "border" => "#EA9999" ));
+                             array_push($final_node_arr, array("id" => $one_list[0], "label" => $one_list[0], "shape" => 'circularImage', "image" => 'public/icons/roshanmention.jpg' , "size" => (2 * $one_list[1]), "borderwidth" => 7, "border" => "#EA9999" ));
                 }else if(substr($one_list[0],0,1) == "*"){
-                             array_push($final_node_arr, array("id" => $one_list[0], "label" => $one_list[0], "shape" => 'circularImage', "image" => 'public/icons/keyword.svg' , "size" => (220 * $one_list[1]), "borderwidth" => 7, "border" => "#EA9999" ));
+                             array_push($final_node_arr, array("id" => $one_list[0], "label" => $one_list[0], "shape" => 'circularImage', "image" => 'public/icons/keyword.svg' , "size" => (2 * $one_list[1]), "borderwidth" => 7, "border" => "#EA9999" ));
                 }
             
             //array_push($final_node_arr, array("id" => $one_list[0], "label" => $one_list[0], "size" => (220 * $one_list[1])));
@@ -254,8 +259,8 @@ class networkAnalysisController extends Controller
         // $input = $_GET['input'];
        // $dir_name = strval($this->get_session_uid($request));
        // $read_path = "storage/$dir_name/$input.csv";
-        $dir_name = "netdir";
-        $read_path = "storage/netdir/$input.csv";
+        $dir_name = $this->getdirname($request);
+        $read_path = "storage/$dir_name/$input.csv";
         $algo_option = $request->input('algo_option');
 
         switch ($algo_option) {
@@ -314,7 +319,7 @@ class networkAnalysisController extends Controller
         $input = $request->input('input');
         // $input = "#nrc";
        // $dir_name = strval($this->get_session_uid($request));
-       $dir_name = "netdir"; 
+       $dir_name = $this->getdirname($request);
        $algo_option =  $request->input('algo_option');
         switch ($algo_option) {
             case 'adamicadar':
@@ -366,7 +371,7 @@ class networkAnalysisController extends Controller
     public function shortestpath(Request $request)
     {
         $input = $request->input('input');
-        $dir_name = "netdir";
+        $dir_name = $this->getdirname($request);
        // $dir_name = strval($this->get_session_uid($request));
         $algo_option = $request->input('algo_option');
         switch ($algo_option) {
@@ -406,7 +411,7 @@ class networkAnalysisController extends Controller
         $algo_option = $request->input('algo_option');
 
        // $dir_name = strval($this->get_session_uid($request));
-        $dir_name = "netdir";
+        $dir_name = $this->getdirname($request);
         $read_path = "storage/$dir_name/$input.csv";
         $handle = fopen($read_path, "r");
 
@@ -661,7 +666,7 @@ class networkAnalysisController extends Controller
         $input_arr = $request->input('input');
 
         // $input_arr = $_GET['input'];
-        $dir_name = "netdir";
+        $dir_name = $this->getdirname($request);
        // $dir_name = strval($this->get_session_uid($request));
         // $cmnd_str = "/usr/bin/python /var/www/html/front-end/python_files/generation.py 0 " . $dir_name;
         $cmnd_str = "/usr/bin/python python_files/generation.py 0 " . $dir_name;
@@ -683,7 +688,7 @@ class networkAnalysisController extends Controller
     {
         $input_arr = $request->input('input');
         //$dir_name = strval($this->get_session_uid($request));
-        $dir_name = "netdir";
+        $dir_name = $this->getdirname($request);
         // $cmnd_str = "/usr/bin/python /var/www/html/front-end/python_files/generation.py 333 1 storage/1/#modi.csv storage/1/#inc.csv";
 
         $cmnd_str = "/usr/bin/python python_files/generation.py 333 " . $dir_name;
@@ -865,7 +870,7 @@ class networkAnalysisController extends Controller
 
     public function read_json_file(Request $request)
     {
-        $dir_name = "netdir";
+        $dir_name = $this->getdirname($request);
         //$dir_name = strval($this->get_session_uid($request));
         //$input = $_GET['input'];
         $input =  $request->input('input');;
@@ -879,7 +884,7 @@ class networkAnalysisController extends Controller
     {
         $input_arr = $request->input('input');
         //$dir_name = strval($this->get_session_uid($request));
-        $dir_name = "netdir";
+        $dir_name = $this->getdirname($request);
         // $cmnd_str = "/usr/bin/python /var/www/html/front-end/python_files/generation.py 222 1 storage/1/#modi.csv storage/1/#inc.csv";
 
         $cmnd_str = "/usr/bin/python python_files/generation.py 222 " . $dir_name;
@@ -902,8 +907,7 @@ class networkAnalysisController extends Controller
         $unique_id = $_POST['uniqueid'];
 
         //$dir_name = strval($this->get_session_uid($request));
-        $dir_name = "netdir";
-        
+        $dir_name = $this->getdirname($request);
         $processed_array = array();
 
         for ($i = 0; $i < sizeof($data); $i++) {
@@ -943,7 +947,8 @@ class networkAnalysisController extends Controller
         $result = $this->curlData($query_list, $rname);
         $result = json_decode($result, true);
 
-        //echo json_encode(array('query_time' => $rname, 'status' => $result['state'], 'id' => $result['id']));
+        
+        // echo json_encode(array('query_time' => $rname, 'status' => $result['state'], 'id' => $result['id']));
         $id = $result['id'];
 
         while (1) {
@@ -964,7 +969,7 @@ class networkAnalysisController extends Controller
 
     private function get_filename($algo, $filename_arr)
     {
-        if ($algo == 'PageRank')
+        if ($algo == 'pgcen')
             $filename = $filename_arr[0] . 'centralities.csv';
         else if ($algo == 'degcen')
             //DegreeCentrality
@@ -993,6 +998,14 @@ class networkAnalysisController extends Controller
             $filename = $filename_arr[0] . 'communities.json';
         }else if($algo == 'ShortestPath'){
             $filename = $filename_arr[0] . 'shortestpath.csv';
+        }else if($algo == 'jaccardcoeff'){
+            $filename = $filename_arr[0] . 'linkprediction.csv';
+        }else if($algo == 'adamicadar'){
+            $filename = $filename_arr[0] . 'linkprediction.csv';
+        }else if($algo == 'resourceallocation'){
+            $filename = $filename_arr[0] . 'linkprediction.csv';
+        }else if($algo == 'commonneighbor'){
+            $filename = $filename_arr[0] . 'linkprediction.csv';
         }
 
         return $filename;
@@ -1030,7 +1043,7 @@ class networkAnalysisController extends Controller
         // $file = "storage/5e0c9c863e4af/01416885.csv";
         $filename_arr =  $_GET['filename_arr'];
         //$dir_name = strval($this->get_session_uid($request));
-        $dir_name = "netdir";
+        $dir_name = $this->getdirname($request);
         $curl = curl_init();
         curl_setopt($curl, CURLOPT_URL, "172.16.117.202/upload.php");
         curl_setopt($curl, CURLOPT_POST, 1);
@@ -1112,7 +1125,7 @@ class networkAnalysisController extends Controller
     public function storeAsJson(Request $request, $filename, $result_arr)
     {
        // $dir_name = strval($this->get_session_uid($request));
-        $dir_name = "netdir";
+        $dir_name = $this->getdirname($request);
         // Check whether the directory is already created
         if (!file_exists("storage/$dir_name")) {
             mkdir("storage/$dir_name");
@@ -1136,7 +1149,7 @@ class networkAnalysisController extends Controller
     public function storeAsCSV(Request $request, $filename, $result_arr, $algo_option)
     {
        // $dir_name = strval($this->get_session_uid($request));
-        $dir_name = "netdir";
+        $dir_name = $this->getdirname($request);
         // Check whether the directory is already created
         if (!file_exists("storage/$dir_name")) {
             mkdir("storage/$dir_name");
@@ -1173,6 +1186,20 @@ class networkAnalysisController extends Controller
                 array_push($rt, $value['0']);           
             }
             fputcsv($fp, $rt);
+        }else if($algo_option == 'jaccardcoeff'){
+            error_reporting(0);
+            $rt = array();
+            foreach($result_arr as $key => $value){
+                $line = array($value['src'], $value['dst'], $value["JC"]);
+                fputcsv($fp, $line);
+            }
+        }else if($algo_option == 'adamicadar'){
+            error_reporting(0);
+            $rt = array();
+            foreach($result_arr as $key => $value){
+                $line = array($value['src'], $value['dst'], $value["Adamic_Adar_Score"]);
+                fputcsv($fp, $line);
+            }
         }
 
         fclose($fp);

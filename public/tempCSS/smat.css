@@ -58,7 +58,10 @@ cursor: pointer;
 .verifiedIcon{
     height:13px;
 }
-
+.username:hover{
+    cursor:pointer;
+    opacity:50%;
+}
 .divLoader{
     height:35px;
 }

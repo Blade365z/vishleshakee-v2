@@ -38,7 +38,7 @@ export const checkIfFeedbackAlreadyGiven = async (userID,tweetID,feedbackType) =
 
 export const smatFeedbackMain = () => {
     var feedbackArgs = [];
-$('body').on('click','div .feedbackOption',function(){
+    $('body').on('click','div .feedbackOption',function(){
     let args = $(this).attr('value');
     feedbackArgs = args.split(/[|]/).filter(Boolean);
     let userIDForFeedbackTemp = feedbackArgs[1];

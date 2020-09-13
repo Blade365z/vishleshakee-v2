@@ -36,6 +36,8 @@ class HistoricalController extends Controller
             return response()->json(['error' => 'Please check yout arguments'], 404);
         }
     }
+
+
     public function getSentimentDataForHistorical(Request $request)
     {
         if ($request->input('to') && $request->input('from') && $request->input('query') && $request->input('rangeType')) {
@@ -66,6 +68,8 @@ class HistoricalController extends Controller
             return response()->json(['error' => 'Please check yout arguments'], 404);
         }
     }
+
+
     public function getCooccurDataForHA(Request $request)
     {
         if ($request->input('uniqueID') && $request->input('userID')  && $request->input('option')) {
@@ -101,7 +105,25 @@ class HistoricalController extends Controller
         }
 
     }
+
+    
     public function  temp(){
         echo 'lol';
+    }
+
+
+
+    public function get_top_data_lat_lng_ha(){
+        $commonObj = new CommonController;
+        $token = null;
+        if (isset($_GET['query'])) {
+            $token = $_GET['query'];
+        }
+        $from_datetime = $_GET['from_datetime'];
+        $to_datetime = $_GET['to_datetime'];
+        // $range_type = $_GET['range_type'];
+        $limit = $_GET['limit'];
+        $top_option = $_GET['top_option'];
+        return $commonObj->get_top_data_lat_lng($to_datetime, $from_datetime, $top_option, $limit, $token, '10sec');
     }
 }

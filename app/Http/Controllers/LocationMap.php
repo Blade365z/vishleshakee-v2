@@ -72,6 +72,21 @@ class LocationMap extends Controller
         return $this->tweet_info($tweetid_list_array);
     }
 
+    public function get_hashtags(){
+
+        $commonObj = new CommonController;
+        
+        
+        $query = $_GET['query'];
+        $from_datetime = $_GET['from'];
+        $to_datetime = $_GET['to'];
+        
+        $r = $commonObj->get_top_data_lat_lng($to_datetime,$from_datetime,'top_latlng_hashtag',$query,'10sec');
+        
+        return json_encode($r);
+        
+    }
+
 
     // This function is used for
     // public page to plot on the map

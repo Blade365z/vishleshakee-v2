@@ -56,13 +56,18 @@ export const render_linkprediction_graph = async (input,src) => {
 }
 
 export const update_view_graph_for_link_prediction = (res,src) => {
+    console.log("REST");
+    console.log(res);
     var query_index_label;
     for (var i = 0; i < res.length; i++) {
         if (res[i].id == src) {
+            console.log("SRC");
+            console.log(src);
             query_index_label = i;
             network_global.body.data.nodes._data[res[i].id].color = "brown";
             network_global.body.data.nodes._data[res[i].id].size = 40;
         } else {
+            console.log(res[i].id);
             network_global.body.data.nodes._data[res[i].id].color = "#ffa500";
             network_global.body.data.nodes._data[res[i].id].size = 40;
         }
@@ -104,6 +109,10 @@ export const update_view_graph_for_link_prediction = (res,src) => {
             });
         }
     }
+
+    console.log("NE");
+    console.log(new_array);
+    console.log(new_array_e);
 
     network_global.body.data.nodes.update(new_array);
     network_global.body.data.edges.update(ed);

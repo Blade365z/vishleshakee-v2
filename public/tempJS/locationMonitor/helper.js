@@ -42,3 +42,37 @@ export const getTweetIdList = (from_datetime,to_datetime,place) => {
 }
 
 
+
+
+
+export const getHashtag = (from_datetime,to_datetime,place) => {
+    
+    $.ajax({
+        type: "GET",
+        url: 'LM/getHashtag',
+        data:{from :from_datetime,
+                to:to_datetime,
+                query: place},
+        async: false,
+        success: function (response) {
+            
+            console.log(response);
+            
+            
+
+                
+        }
+    });
+
+    
+
+    
+    
+}
+
+
+
+
+
+
+

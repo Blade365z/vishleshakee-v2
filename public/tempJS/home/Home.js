@@ -15,7 +15,8 @@ import { getFreqDistData, getTopCooccurData, getMe, getSentiDistData, getTopData
 import { generateFrequencyChart, generateSentimentChart, generateBarChart } from './chartHelper.js';
 import { TweetsGenerator } from '../utilitiesJS/TweetGenerator.js';
 import { getCompleteMap } from '../utilitiesJS/getMap.js';
-import { smatFeedbackMain} from '../utilitiesJS/smatFeedback.js'
+import { makeSmatReady } from '../utilitiesJS/smatExtras.js'
+ 
 
 
 //Global variables 
@@ -46,7 +47,7 @@ window.onresize = function (event) {
 
 $(document).ready(function () {
   getMe();
-  
+  makeSmatReady();
   //Since all the logics implemented will be executed asynchronously, Therefore the function get
   getTopData(interval).then(response => {
 
@@ -184,7 +185,7 @@ $(document).ready(function () {
   //update public hahstag every 1 min 
 
   let updatePublicHashtagOneMinInt = setInterval(updatePublicTrendingHashtagsEveryOneMiute, 10000);
-  smatFeedbackMain();
+
 
 });
 

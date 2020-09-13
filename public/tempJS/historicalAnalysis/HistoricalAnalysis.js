@@ -5,12 +5,12 @@ import { generateFreqDistBarChart, generateFrequencyLineChart, generateSentiDist
 import { getCurrentDate, getRangeType, dateProcessor } from '../utilitiesJS/smatDate.js';
 import { TweetsGenerator } from '../utilitiesJS/TweetGenerator.js';
 import { generateUniqueID } from '../utilitiesJS/uniqueIDGenerator.js';
-import { smatFeedbackMain } from '../utilitiesJS/smatFeedback.js'
+import { makeSuggestionsRead,makeSmatReady } from '../utilitiesJS/smatExtras.js'
 
 
 
 
-
+ 
 
 //Global variable definitions 
 var mainInputCounter = 0, statusTableFlag = 0, searchType = 0;
@@ -28,7 +28,7 @@ if (localStorage.getItem('smat.me')) {
 }
 
 jQuery(function () {
-
+    makeSmatReady();
     // initiateHistoricalAnalysis('#WorldUnitedForSSRJustice','2020-09-08','2020-09-11');
 
     // /haQueryInputBox
@@ -38,25 +38,7 @@ jQuery(function () {
     $("#fromDateHA").val(fromDate);
     $("#toDateHA").val(fromDate);
     getTopDataHA(fromDate, fromDate, 'top_hashtag', 50).then(response => {
-        for (const [key, value] of Object.entries(response.data)) {
-            hashtagSuggestion.push(key);
-        }
-        // constructs the suggestion engine
-        var hashtags = new Bloodhound({
-            datumTokenizer: Bloodhound.tokenizers.whitespace,
-            queryTokenizer: Bloodhound.tokenizers.whitespace,
-            // `states` is an array of state names defined in "The Basics"
-            local: hashtagSuggestion
-        });
-        $('#haQueryInputBox .typeahead').typeahead({
-            hint: true,
-            highlight: true,
-            minLength: 1
-        },
-            {
-                name: 'hashtags',
-                source: hashtags
-            });
+        makeSuggestionsRead(response.data,'haQueryInputBox');
     });
 
     mainInputCounter = 0;
@@ -141,28 +123,17 @@ jQuery(function () {
 
 
     $('#frqTabHA').on('click', function () {
-        // let rangeType = getRangeType(fromDate, toDate);
-        // frequencyDistributionHA(query, rangeType, fromDate, toDate, null, 'freqContentHA', false);
     });
     $('#sentiTabHA').on('click', function () {
-
     });
 
     $('#mentionsTabHA').on('click', function () {
-
-    });
-    $('#tweetsTabHA').on('click', function () {
-        $('#summaryContent-1').html('');
-        generateTweets('tweetsContentHA');
-
     });
 
 
 
-    $('body').on('click', 'div .closeGraph', function () {
-        let graphCaptured = $(this).attr('value');
-        $('.' + graphCaptured).remove();
-    })
+
+    //TweetFiter
     $('body').on('click', 'div .filterTweets', function () {
         let args = $(this).attr('value');
         args = args.split(/[|]/).filter(Boolean);
@@ -176,10 +147,8 @@ jQuery(function () {
                 TweetsGenerator(response.data, 6, args[3], args[1], args[2], true, args[4]);
             });
         }
-    })
+    });
 
-    //For Feedback Please execute this function
-    smatFeedbackMain();
 
 
 
@@ -205,6 +174,8 @@ const updateStatusTable = (query, fromDate, toDate) => {
     hashtagUniqueID = generateUniqueID();
     userUniqueID = generateUniqueID();
     $('#haStatusTable').append('<tr><th scope="row">' + currentTimestamp + '</th><td>' + queryElement + '</td><td>' + fromDate + '</td><td>' + toDate + '</td><td>Ready</td><td><button class="btn btn-primary smat-rounded mx-1 showBtn" value="' + currentTimestamp + '"> Show </button><button class="btn btn-neg mx-1  smat-rounded"> Delete </button></td></tr>');
+
+    //TODO::status read--.
     let recordTemp = [{ 'query': query, 'from': fromDate, 'to': toDate, 'mentionUniqueID': mentionUniqueID, 'hashtagUniqueID': hashtagUniqueID, 'userUniqueID': userUniqueID }];
     searchRecords[currentTimestamp] = recordTemp;
 }
@@ -299,7 +270,7 @@ export const frequencyDistributionHA = (query = null, rangeType, fromDate = null
         $('.10sec-chart').remove();
     }
     if (appendArg) {
-        $('#' + freqParentDiv).append('<div class=" mt-2   appendedChart ' + appendedChartParentID + '"><div class="d-flex"> <div class="mr-auto closeGraph"    value="' + rangeType + '-charts" title="close" >  <i class="fas fa-times"></i> </div> </div> <div class="row"><div class="col-sm-8"><div class="haTab freqDistChart border" id="' + chartDivID + '" ></div></div><div class="col-sm-4"><div class="freqDistTweets border" id="' + chartTweetDivID + '"></div><div class="freqDistSummary border d-flex pt-2"  id="' + summaryDivID + '" ></div></div></div></div>');
+        $('#' + freqParentDiv).append('<div class=" mt-2   appendedChart ' + appendedChartParentID + '"   ><div class="d-flex"> <div class="mr-auto closeGraph"    value="' + rangeType + '-charts" title="close" >  <i class="fas fa-times"></i> </div> </div> <div class="row"><div class="col-sm-8"><div class="haTab freqDistChart border" id="' + chartDivID + '" ></div></div><div class="col-sm-4"><div class="freqDistTweets border" id="' + chartTweetDivID + '"></div><div class="freqDistSummary border d-flex pt-2"  id="' + summaryDivID + '" ></div></div></div></div>');
     } else {
         $('#' + div).html('<div><div class="row"><div class="col-sm-8"><div class="haTab freqDistChart border" id="' + chartDivID + '" ></div></div><div class="col-sm-4"><div class="freqDistTweets border" id="' + chartTweetDivID + '"></div><div class="freqDistSummary border d-flex pt-2"  id="' + summaryDivID + '" ></div></div></div></div>');
     }

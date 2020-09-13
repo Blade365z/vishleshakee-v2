@@ -31,12 +31,11 @@ export const getFreqDistDataForHA = async (query, from, to, toTime = null, range
     } else {
         dataArg = JSON.stringify({ query, from, to, rangeType, isDateTimeAlready });
     }
-
     let response = await fetch('HA/getFrequencyDataForHistorical', {
         method: 'post',
         headers: HeadersForApi,
         body: dataArg
-    });
+    }); 
     let data = await response.json()
 
     return data;

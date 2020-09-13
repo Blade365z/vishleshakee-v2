@@ -103,8 +103,11 @@
     </div>
 </div>
 <div class="mt-2" id="naPanel">
+
+    <div  class="text-center font-weight-bold" id="msg_displayer">SMAT</div>
+
     <div>
-        <p class="smat-box-title-large m-0">Showing Results for <span class="smat-value font-weight-bold text-dark" id="naShowingResForTitle"> </span> </p>
+        <p class="smat-box-title-large m-0">. <span class="smat-value font-weight-bold text-dark" id="naShowingResForTitle"> </span> </p>
     </div>
 
     <div class="smat-tabs">
@@ -187,12 +190,12 @@
                                             <div class="text-dark mx-2">
                                                 Select Centrality Algorithm Choice
                                             </div>
-                                            <label class="radio-inline mx-2 "><input type="radio" name="centralityInlineRadioOptions" value="degcen" checked>&nbsp Degree Centrality &nbsp &nbsp &nbsp 
+                                            <label class="radio-inline mx-2 " id="degcen" ><input type="radio" name="centralityInlineRadioOptions"  value="degcen" checked>&nbsp Degree Centrality &nbsp &nbsp &nbsp 
                                             </label>
-                                            <label class="radio-inline mx-2  "><input type="radio" name="centralityInlineRadioOptions" value="pgcen">&nbsp Page Rank Centrality
+                                            <label class="radio-inline mx-2  "  id="pgcen"><input type="radio" name="centralityInlineRadioOptions" value="pgcen">&nbsp Page Rank Centrality
                                             </label>
-                                            <label class="radio-inline mx-2  "><input type="radio" name="centralityInlineRadioOptions" value="btwncen">&nbsp Betweeness Centrality</label>
-                                            <label class="radio-inline mx-2 "><input type="radio" name="centralityInlineRadioOptions" value="evcen">&nbsp EV Centrality
+                                            <label class="radio-inline mx-2  " id="btwncen"><input type="radio" name="centralityInlineRadioOptions"  value="btwncen">&nbsp Betweeness Centrality</label>
+                                            <label class="radio-inline mx-2 "  id="evcen"><input type="radio" name="centralityInlineRadioOptions" value="evcen">&nbsp EV Centrality
                                             </label>
                                             <button type="submit" id="centrality_exec" class="btn btn-danger smat-rounded " style="margin-top:10px;">Execute</button>
                                         </div>
@@ -293,9 +296,13 @@
                                             <div class="text-dark mx-2">
                                                 Select Link Prediction Algorithm
                                             </div>
-                                            <label class="radio-inline mx-2 "><input type="radio" name="linkpredictionRadioOptions" value="adamicadar" checked>&nbsp Adamic Adar
+                                            <label class="radio-inline mx-2 " id = "adamicadar"><input type="radio"  name="linkpredictionRadioOptions" value="adamicadar" checked>&nbsp Adamic Adar
                                             </label>
-                                            <label class="radio-inline mx-2  "><input type="radio" name="linkpredictionRadioOptions" value="jaccardcoeff">&nbsp Jaccard Coefficient
+                                            <label class="radio-inline mx-2  " id = "jaccardcoeff"><input type="radio"  name="linkpredictionRadioOptions" value="jaccardcoeff">&nbsp Jaccard Coefficient
+                                            </label>
+                                            <label class="radio-inline mx-2  "  id = "resourceallocation"><input type="radio" name="linkpredictionRadioOptions" value="resourceallocation">&nbsp Resource Allocation
+                                            </label>
+                                            <label class="radio-inline mx-2  " id = "commonneighbors"><input type="radio"  name="linkpredictionRadioOptions" value="commonneighbors">&nbsp Common Neighbors
                                             </label>
                                         </div>
                                         <div>
@@ -318,7 +325,6 @@
                                     </div>
                                 </div>
                                 <div class="networkDiv" id="networkDivid">
-                                    //TODO:: Viz. Network Comes here
                                 </div>
                             </div>
                             <div class="tab-pane fade text-center p-1" id="unionContentNA" role="tabpanel" aria-labelledby="unionContentNA ">

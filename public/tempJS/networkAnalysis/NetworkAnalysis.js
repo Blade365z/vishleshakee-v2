@@ -5,7 +5,8 @@ import {roshan} from './visualizer.js';
 import {render_graph,union,intersection,exportnetwork,selected_graph_ids,render_centrality_graph,
        sparkUpload,get_network,writedelete,difference,shortestpaths,community_detection,centrality,linkprediction,
        render_linkprediction_graph,render_shortestpath_graph,render_community_graph1,draw_graph,update_view_graph_for_link_prediction,
-       render_graph_community,render_union_graph,render_graph_union,render_intersection_diff_graph,render_intersection_difference} from './helper.js';
+       render_graph_community,render_union_graph,render_graph_union,render_intersection_diff_graph,render_intersection_difference
+    } from './helper.js';
 
 let totalQueries;
 let searchRecords = [];
@@ -24,7 +25,9 @@ $(document).ready(function () {
         let toDateTemp = $('#toDateNA').val();
         let noOfNodesTemp = $('#nodesNA').val().trim();
         let naTypeTemp = $('#typeNA').val();
+        let netCategory = $("#net_category").val();
         let naEngine = $('#networkEngineNA').val();
+        console.log(netCategory);
         console.log('Submitted');
         generateCards(totalQueries, queryTemp, fromDateTemp, toDateTemp, noOfNodesTemp, naTypeTemp, naEngine, 'naCards');
     });
@@ -48,6 +51,28 @@ $(document).ready(function () {
     })
 
 })
+
+
+$("#networkEngineNA").on('click',function(){
+   let selected =  $("#networkEngineNA").val();
+   if(selected == "networkx"){
+    $("#resourceallocation").hide();
+    $("#commonneighbors").hide();
+    $("#async").show();
+    $("#grivan").show();
+    $("#btwncen").show();
+    $("#evcen").show();
+
+   }else if(selected == "spark"){
+    $("#resourceallocation").show();
+    $("#commonneighbors").show();
+    $("#async").hide();
+    $("#grivan").hide();
+    $("#btwncen").hide();
+    $("#evcen").hide();
+   }
+});
+
 
 $("#lpTabNA").on('click',function(){
     var select_graph = selected_graph_ids();
@@ -75,12 +100,14 @@ $("#importNA").on('click',function(){
     $("#myModal_file_upload").modal('show');
 });
 
+
 $('#upload_form').on('submit', function(event) {
     event.preventDefault();
     var unique_id = "a1";
     var n = new FormData(this);
 
     n.append("name", unique_id);
+    console.log("Uploading File");
     $.ajax({
             url: 'na/fileupload',
             method: "POST",
@@ -93,7 +120,7 @@ $('#upload_form').on('submit', function(event) {
 
             },
             success: function(data) {
-
+                console.log("Success");
             }
         })
         .fail(function(res) {
@@ -202,9 +229,10 @@ $("#link_prediction_exec").on('click',function(NAType=$("#networkEngineNA").val(
     var select_graph = selected_graph_ids();
     console.log(selected_graph_ids());
     let input = select_graph[0];
-    console.log("Centrality Scanner");
+    console.log("Link Prediction Scanner");
     console.log(NAType);
     console.log(algo_option);
+
     var url;
     var data = {};
 
@@ -246,7 +274,9 @@ $("#link_prediction_exec").on('click',function(NAType=$("#networkEngineNA").val(
             });
         }else if(NAType == "spark"){
             render_linkprediction_graph(data["query_list"][1],data["query_list"][2]).then(response =>{
-                alert();
+                console.log("LP");
+                console.log(response);
+                update_view_graph_for_link_prediction(response,data["query_list"][2]);
             })
         }
     })

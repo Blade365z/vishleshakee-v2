@@ -27,10 +27,15 @@ Route::get('/home', function () {
         $query = '';
         return view('modules.home', compact('query'));
     }
-
 });
 Route::get('/userAnalysis', function () {
-    return view('modules.userAnalysis');
+    if (isset($_GET['query'])) { 
+        $query = $_GET['query'];
+        return view('modules.userAnalysis', compact('query'));
+    } else {
+        $query = '';
+        return view('modules.userAnalysis', compact('query'));
+    }
 })->middleware('auth');
 
 Route::get('/historicalAnalysis', function () {
@@ -86,13 +91,16 @@ Route::group(['prefix' => 'login'], function () {
 //     Route::get('getTweetsInfoHA', 'HistoricalAnalysisController@get_tweets_info_ha');
 //     Route::get('getUserInfoHA', 'HistoricalAnalysisController@get_user_info_ha');
 
-
 //     Route::get('getTopLatLngHA', 'HistoricalAnalysisController@get_top_data_lat_lng_ha');
 // });
+
 Route::group(['prefix' => 'HA'], function () {
     Route::post('getFrequencyDataForHistorical', 'HistoricalController@getFrequencyDataForHistorical');
     Route::post('getSentimentDataForHistorical', 'HistoricalController@getSentimentDataForHistorical');
     Route::post('getCooccurDataForHA', 'HistoricalController@getCooccurDataForHA');
+
+    Route::get('getTopLatLngHA', 'HistoricalController@get_top_data_lat_lng_ha');
+    Route::get('genNetwork', 'CommonController@gen_network');
 });
 
 
@@ -158,6 +166,7 @@ Route::group(['prefix' => 'UA'], function () {
 Route::group(['prefix' => 'LM'], function () {
     Route::get('/getTime','LocationMap@get_current_date_time');
     Route::get('/getTweetId','LocationMap@get_tweet_id_list');
+    Route::get('/getHashtag','LocationMap@get_hashtags');
 });
 
 

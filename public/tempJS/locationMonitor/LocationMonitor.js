@@ -1,5 +1,5 @@
 import {wordCloudLM} from './chartHelper.js';
-import {get_current_time,getTweetIdList} from './helper.js';
+import {get_current_time,getTweetIdList,getHashtag} from './helper.js';
 
     var markersList = document.getElementById('markersList');
     L.MarkerCluster.include({
@@ -120,22 +120,60 @@ import {get_current_time,getTweetIdList} from './helper.js';
             place = "^"+$("#queryLM").val();
 
         localStorage.setItem("lmTefreshType", "manual");
+        
         if(timeLimit=="1 Minute"){
-            interval = 60;
-    
-        }
+            interval = 60;}
+
         else if(timeLimit=="15 Minutes"){
-            interval = 900;
-        }
+            interval = 900;}
+
         else if(timeLimit=="1 Hour"){
-            interval = 3600;
-        }
+            interval = 3600;}
+        
         console.log(interval+"   "+place+"  ");    
         global_datetime = get_current_time(interval);
         console.log(global_datetime);
         to_datetime = global_datetime[1];
         from_datetime = global_datetime[0];
-        rander_map(getTweetIdList(from_datetime,to_datetime,place));
+        
+        if(refresh_type=="Manual Refresh"){
+            for(var i=0;i<10000;i++){
+                clearInterval(i);}
+            getHashtag(from_datetime,to_datetime,place);
+            rander_map(getTweetIdList(from_datetime,to_datetime,place));}
+
+        else if(refresh_type=="Auto Refresh"){
+            for(var i=0;i<10000;i++){
+                clearInterval(i);}
+                setInterval(function(){
+                    var interval_,
+                        global_datetime_,
+                        from_datetime_,
+                        to_datetime_,
+                        
+                        timeLimit_ = $("#lmInterval :selected").val(),
+                        place_ = "^"+$("#queryLM").val();
+
+                    
+                    
+                    if(timeLimit_=="1 Minute"){
+                        interval_ = 60;}
+
+                    else if(timeLimit_=="15 Minutes"){
+                        interval_ = 900;}
+
+                    else if(timeLimit_=="1 Hour"){
+                        interval_ = 3600;}
+                    
+                    
+                    global_datetime_ = get_current_time(interval_);
+                    
+                    to_datetime_ = global_datetime_[1];
+                    from_datetime_ = global_datetime_[0];
+                    rander_map(getTweetIdList(from_datetime_,to_datetime_,place_));
+                },60000);
+            
+        }
     }
 
 

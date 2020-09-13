@@ -244,6 +244,9 @@
 
         </div>
     </div>
+    <script>
+        var incoming = {!! json_encode($query) !!}
+    </script>
     <script type="module" src="public/amcharts4/core.js"></script>
     <script type="module" src="public/amcharts4/charts.js"></script>
     <script type="module" src="public/tempJS/userAnalysis/UserAnalysis.js"></script>

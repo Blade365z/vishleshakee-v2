@@ -434,7 +434,7 @@ class CommonController extends Controller
      *
      * @return json
      */
-    public function get_co_occur_data($to_datetime = null, $from_datetime = null, $token = null, $range_type = null, $co_occur_option = null, $file_path = null, $need_to_store = false, $data_formatter = false,$userID=null)
+    public function get_co_occur_data($to_datetime = null, $from_datetime = null, $token = null, $range_type = null, $co_occur_option = null, $file_path = null, $need_to_store = false, $data_formatter = false, $userID=null)
     {
         $db_object = new DBmodelAsync;
         $db_object_not_async = new DBmodel;
@@ -519,7 +519,7 @@ class CommonController extends Controller
 
         if ($need_to_store) {
             if ($file_path) {
-                $ut_obj->write_to_file('csv', $file_path, $temp_arr, $token,$userID);
+                $ut_obj->write_to_file('csv', $file_path, $temp_arr, $token, $userID);
             } else {
                 $file_path = "common/" . $token . "_" . $co_occur_option . ".csv";
             }
@@ -673,6 +673,7 @@ class CommonController extends Controller
         $final_result["data"] = array_slice($hash_arr, 0, $limit);
         return ($final_result);
     }
+
 
     /**
      * get tweet ids list based on query
@@ -848,8 +849,7 @@ class CommonController extends Controller
             // user_id_list = ['$821712536215362', '$82171253621542']
             $stm_list = $qb_obj->get_statement(null, null, null, null, $feature_option='user_info', null, $async=true, null, $id_list=$user_id_list);        
             $result_async_from_db = $db_object->executeAsync_query($stm_list[1], $stm_list[0]);
-            foreach ($result_async_from_db as $rows) {
-             
+            foreach ($result_async_from_db as $rows) {             
                 foreach ($rows as $row) {
                     $author_name = null;
                     array_push($final_res,array('$'.$row['author_id'],$row["author"], $row["author_screen_name"], $row["profile_image_url_https"]));
@@ -911,7 +911,7 @@ class CommonController extends Controller
      *
      * @return json
     */ 
-    public function get_top_data_lat_lng($to_datetime = null, $from_datetime = null, $top_option = null, $limit = 50, $token = null, $range_type=null)
+    public function get_top_data_lat_lng($to_datetime = null, $from_datetime = null, $top_option = null, $token = null, $range_type=null)
     {
         $final_res = array();
         $ut_obj = new Ut;
@@ -921,13 +921,52 @@ class CommonController extends Controller
 
         if($range_type){           
             $stm_list = $qb_obj->get_statement($to_datetime, $from_datetime, $token, $range_type, $top_option);
-            $result_async_from_db = $db_object->executeAsync_query($stm_list[1], $stm_list[0]);           
+            $result_async_from_db = $db_object->executeAsync_query($stm_list[1], $stm_list[0]);  
+        }else{
+            //remain
         }
 
-        $hash_arr = array();
+        $lat_lng_hash_arr = array();
+        $hash_lat_lng_total_cat_info_arr = array();
 
-        $final_result["chart_type"] = "top_lat_lng";
-        $final_result["data"] = array_slice($hash_arr, 0, $limit);
+        foreach ($result_async_from_db as $rows) {             
+            foreach ($rows as $row) {
+                $tn = $row['token_name'];
+                $count_list = $row['count_list']->values();
+                $ar_sum = array_sum($count_list);
+                $lat = $row['tweet_cl_latitude'];
+                $lng = $row['tweet_cl_longitude'];
+                $lat_lng = $lat.'_'.$lng;
+                $com = $count_list[3] + $count_list[4] + $count_list[5];
+                $sec = $count_list[6] + $count_list[7] + $count_list[8];
+                $com_sec = $count_list[9] + $count_list[10] + $count_list[11];
+                $non_com_sec = $count_list[0] + $count_list[1] + $count_list[2];
+                if (array_key_exists($lat_lng, $lat_lng_hash_arr)) {
+                    if (!(in_array($tn, $lat_lng_hash_arr[$lat_lng]))) //for uniqueness
+                        array_push($lat_lng_hash_arr[$lat_lng], $tn);
+                } else {
+                    $lat_lng_hash_arr[$lat_lng] = array($tn);
+                }
+
+                if (array_key_exists($tn, $hash_lat_lng_total_cat_info_arr)) {
+                    if(array_key_exists($lat_lng, $hash_lat_lng_total_cat_info_arr[$tn])){
+                        $hash_lat_lng_total_cat_info_arr[$tn][$lat_lng][0] += $ar_sum;
+                        $hash_lat_lng_total_cat_info_arr[$tn][$lat_lng][1] += $com;
+                        $hash_lat_lng_total_cat_info_arr[$tn][$lat_lng][2] += $sec;
+                        $hash_lat_lng_total_cat_info_arr[$tn][$lat_lng][3] += $com_sec;
+                        $hash_lat_lng_total_cat_info_arr[$tn][$lat_lng][4] += $non_com_sec;
+                    }else{
+                        $hash_lat_lng_total_cat_info_arr[$tn][$lat_lng] = array($ar_sum, $com, $sec, $com_sec, $non_com_sec);
+                    }          
+                } else {
+                    $hash_lat_lng_total_cat_info_arr[$tn] = array($lat_lng => array($ar_sum, $com, $sec, $com_sec, $non_com_sec));
+                }
+            }
+        }   
+
+        $final_result["chart_type"] = "top_lat_lng_hash";
+        $final_result["lat_lng_hash_arr"] = $lat_lng_hash_arr;
+        $final_result["hash_lat_lng_total_cat_info_arr"] = $hash_lat_lng_total_cat_info_arr;
         return ($final_result);
     }
 
@@ -954,5 +993,40 @@ class CommonController extends Controller
         }
 
         return $index_arr;
+    }
+
+
+
+    public function gen_network(){
+        $token = '#COVID19';
+        $from_datetime='2020-09-13 00:00:00';
+        $to_datetime='2020-09-13 00:00:00';
+        $feature_option = 'co_occur';
+        $co_occur_option = 'hashtag';
+        $no_of_nodes = '50';
+        $framework = 'networkx';
+        $nodes = array();
+        $edges = array();
+        // 1st level
+        $co_occur_result = $this->get_co_occur_data($to_datetime, $from_datetime, $token, $range_type = null, $co_occur_option);
+        if($no_of_nodes)
+            $co_occur_result = array_slice($co_occur_result['data'], 0, $no_of_nodes);
+
+        // push nodes to array
+        foreach ($co_occur_result as $key => $value) {
+            array_push($nodes, $key);
+        }
+
+        // 2nd level
+        foreach($co_occur_result as $key => $value){
+            $co_occur_result_2nd_level = $this->get_co_occur_data($to_datetime, $from_datetime, $key, $range_type = null, $co_occur_option);
+            if($no_of_nodes)
+                $co_occur_result_2nd_level = array_slice($co_occur_result_2nd_level['data'], 0, $no_of_nodes);
+            foreach ($co_occur_result_2nd_level as $k => $v) {
+                if (in_array($k, $nodes)) {
+                    $edges[] = [$key, $k, (string) $v];
+                }
+            }
+        }
     }
 }
