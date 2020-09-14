@@ -8,7 +8,7 @@ use App\DBModel\DBmodel;
 use App\DBModel\DBmodelAsync;
 use Illuminate\Support\Facades\Validator;
 use App\Http\Controllers\Home;
-
+use App\Http\Controllers\CommonController;
 
 use DateInterval;
 use DateTime;
@@ -19,6 +19,63 @@ use  CURLFile;
 class networkAnalysisController extends Controller
 {
  
+    public function gen_network(Request $request){
+        $ut_obj = new Ut;
+        $token = $request->input('token');
+        $from_datetime=$request->input('fd');
+        $to_datetime=$request->input('td');
+        $feature_option = 'co_occur';
+        //$co_occur_option = 'hashtag';
+        $no_of_nodes = $request->input('noOfNodes');
+        $framework = 'networkx';
+        $filename = $request->input("filename");
+        $nodes = array();
+        $edges = array();
+
+        if($request->input('nettype') == "Hashtag-Hashtag"){
+            $co_occur_option = "hashtag";
+        }else  if($request->input('nettype') == "Hashtag-Mention"){
+            $co_occur_option = "mention";
+        }else if($request->input('nettype') == "Mention-Hashtag"){
+            $co_occur_option = "hashtag";
+        }else if($request->input('nettype') == "Hashtag-Keyword"){
+            $co_occur_option = "keyword";
+        }
+
+        $CC_obj = new CommonController;
+        // 1st level
+        $co_occur_result =  $CC_obj->get_co_occur_data($to_datetime, $from_datetime, $token, $range_type = null, $co_occur_option);
+        if($no_of_nodes)
+            $co_occur_result = array_slice($co_occur_result['data'], 0, $no_of_nodes);
+
+        // push node to nodes array
+        foreach ($co_occur_result as $key => $value) {
+            array_push($nodes, $key);
+        }
+
+        // 2nd level
+        foreach($co_occur_result as $key => $count){
+            $edges[] = [$token, $key, (string) $count];
+            $co_occur_result_2nd_level =  $CC_obj->get_co_occur_data($to_datetime, $from_datetime, $key, $range_type = null, $co_occur_option);
+            if($no_of_nodes)
+                $co_occur_result_2nd_level = array_slice($co_occur_result_2nd_level['data'], 0, $no_of_nodes);
+            foreach ($co_occur_result_2nd_level as $k => $c) {
+                // creating among connection
+                if (in_array($k, $nodes)) {
+                    $edges[] = [$key, $k, (string) $c]; 
+                }
+            }
+        }
+
+        $dir_name = "2";
+        $completeFilepath = "$dir_name/$filename" . ".csv";
+        // write to file
+        $ut_obj->write_to_file($file_type='csv', $file_path=$completeFilepath, $edges, $token=null, $userID=2);
+        echo json_encode(array('res'=>'success'));
+    }
+
+
+
     public function getdirname(Request $request){
         $GraphData_obj = new Home;
         $result = $GraphData_obj->me(); //it will return  JsonResponse Object 
@@ -173,7 +230,7 @@ class networkAnalysisController extends Controller
     public function read_csv_file(Request $request, $filename = null, $option = null)
     {
         //$dir_name = strval($this->get_session_uid($request));
-        $dir_name = $this->getdirname($request);
+        $dir_name = "2";
         $input = $request->input('input');
         // $input = $_GET['input'];
         if ($filename) {
@@ -211,8 +268,11 @@ class networkAnalysisController extends Controller
         $final_node_arr = array();
         $edges_temp_arr = array();
         
-    //    $GraphData_obj = new GraphData;
-
+        if($request->input('algo_option') == "pgcen"){
+            $multiplier = 80;
+        }else{
+            $multiplier = 1;
+        }
         // unique edges generation
         foreach ($network_centrality_arr as $one_list) {
              if(substr($one_list[0],0,1) == "$"){
@@ -223,11 +283,11 @@ class networkAnalysisController extends Controller
                            // }
                           //  array_push($final_node_arr, array("id" => $one_list[0], "label" =>  $user_name, "shape" => 'circularImage', "image" => $profile_image_link, "size" => (220 * $one_list[1]), "borderwidth" => 7, "border" => "#EA9999" ));
                 }else if(substr($one_list[0],0,1) == "#"){
-                             array_push($final_node_arr, array("id" => $one_list[0], "label" => $one_list[0], "shape" => 'circularImage', "image" => 'public/icons/hashtag.svg' , "size" => (2 * $one_list[1]), "borderwidth" => 7, "border" => "#EA9999" ));
+                             array_push($final_node_arr, array("id" => $one_list[0], "label" => $one_list[0], "shape" => 'circularImage', "image" => 'public/icons/hashtag.svg' , "size" => ($multiplier * $one_list[1]), "borderwidth" => 7, "border" => "#EA9999" ));
                 }else if(substr($one_list[0],0,1) == "@"){
-                             array_push($final_node_arr, array("id" => $one_list[0], "label" => $one_list[0], "shape" => 'circularImage', "image" => 'public/icons/roshanmention.jpg' , "size" => (2 * $one_list[1]), "borderwidth" => 7, "border" => "#EA9999" ));
+                             array_push($final_node_arr, array("id" => $one_list[0], "label" => $one_list[0], "shape" => 'circularImage', "image" => 'public/icons/roshanmention.jpg' , "size" => ($multiplier * $one_list[1]), "borderwidth" => 7, "border" => "#EA9999" ));
                 }else if(substr($one_list[0],0,1) == "*"){
-                             array_push($final_node_arr, array("id" => $one_list[0], "label" => $one_list[0], "shape" => 'circularImage', "image" => 'public/icons/keyword.svg' , "size" => (2 * $one_list[1]), "borderwidth" => 7, "border" => "#EA9999" ));
+                             array_push($final_node_arr, array("id" => $one_list[0], "label" => $one_list[0], "shape" => 'circularImage', "image" => 'public/icons/keyword.svg' , "size" => ($multiplier * $one_list[1]), "borderwidth" => 7, "border" => "#EA9999" ));
                 }
             
             //array_push($final_node_arr, array("id" => $one_list[0], "label" => $one_list[0], "size" => (220 * $one_list[1])));
@@ -1157,7 +1217,7 @@ class networkAnalysisController extends Controller
 
         $fp = fopen("storage/$dir_name/$filename", "w");
 
-        if(($algo_option == 'PageRank') or ($algo_option == 'degcen') ){
+        if(($algo_option == 'pgcen') or ($algo_option == 'degcen') ){
             foreach ($result_arr as $key => $value) {
                 $line = array($value['id'], $value['pagerank']);
                 fputcsv($fp, $line);
