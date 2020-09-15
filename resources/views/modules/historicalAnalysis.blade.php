@@ -26,11 +26,11 @@
         <div id="haDateInput">
             <div class="form-group  dateinputForm my-0  mr-2  border smat-rounded d-flex px-2 py-1  bg-white">
                 <i class="far fa-calendar-alt mx-2 text-normal " style="margin-top:11px;"></i>
-                <input type="text" class="form-control datepicker-here " id="fromDateHA" placeholder="From Date" onkeydown="return false;" style="border:0px;" autocomplete="OFF" data-language='en' required>
+                <input type="text" class="form-control datepicker-here  smat-from " id="fromDateHA" placeholder="From Date" onkeydown="return false;" style="border:0px;" autocomplete="OFF" data-language='en' required>
             </div>
             <div class="form-group dateinputForm my-0  mr-2 border smat-rounded d-flex px-2 py-1  bg-white">
                 <i class="far fa-calendar-alt mx-2 text-normal" style="margin-top:11px;"></i>
-                <input type="text" class="form-control datepicker-here " id="toDateHA" placeholder="To Date" onkeydown="return false;" style="border:0px;" autocomplete="OFF" data-language='en' required>
+                <input type="text" class="form-control datepicker-here  smat-to " id="toDateHA" placeholder="To Date" onkeydown="return false;" style="border:0px;" autocomplete="OFF" data-language='en' required>
             </div>
             <button class="btn smat-btn  smat-rounded  mx-1" id="submit-btn" type="submit"> <span> Search Result </span> </button>
             <button class="btn  text-normal smat-rounded  mx-1" id="showTableBtn" onclick="return false"> <span> Show Search History </span> </button>

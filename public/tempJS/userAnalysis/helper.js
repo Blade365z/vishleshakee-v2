@@ -72,7 +72,7 @@ export const getFreqDistDataForUA = async (query, from, to, toTime = null, range
     } else {
         dataArg = JSON.stringify({ query, from, to, rangeType, isDateTimeAlready });
     }
-
+    console.log(dataArg);
     let response = await fetch('UA/getFrequencyDataForUser', {
         method: 'post',
         headers: HeadersForApi,
@@ -117,7 +117,7 @@ export const getTweetIDsForUA = async (query, from = null, to = null, rangeType,
 }
 export const getCooccurDataForUA = async (query, from, to, option, uniqueID, userID) => {
     //TODO::REMOVE THE HARDCODE!!
-    query = "#WorldUnitedForSSRJustice";
+
     let dataArgs = JSON.stringify({
         query, from, to, option, uniqueID, userID,mode:'write'
     });

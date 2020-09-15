@@ -124,6 +124,21 @@ class HistoricalController extends Controller
         // $range_type = $_GET['range_type'];
         $limit = $_GET['limit'];
         $top_option = $_GET['top_option'];
-        return $commonObj->get_top_data_lat_lng($to_datetime, $from_datetime, $top_option, $limit, $token, '10sec');
+        return $commonObj->get_top_data_lat_lng($to_datetime, $from_datetime, $top_option, $token, '10sec');
+    }
+
+
+    public function get_top_data_cat_location_ha(){
+        $commonObj = new CommonController;
+        $token = null;
+        if (isset($_GET['query'])) {
+            $token = $_GET['query'];
+        }
+        $from_datetime = $_GET['from_datetime'];
+        $to_datetime = $_GET['to_datetime'];
+        // $range_type = $_GET['range_type'];
+        $limit = $_GET['limit'];
+        $top_option = $_GET['top_option'];
+        return $commonObj->get_top_data_cat_by_location($to_datetime, $from_datetime, $top_option, $token, '10sec');
     }
 }

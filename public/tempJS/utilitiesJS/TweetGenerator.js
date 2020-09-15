@@ -22,7 +22,11 @@ export const TweetsGenerator = (data_list, max_per_page, chart_draw_div_id, from
   TweetIDS = data_list;
   var tweetDiv = chart_draw_div_id + '_tweets';
   var tweet_div_page_selection = chart_draw_div_id + 'page-selection';
-  
+  let title='';
+  if(fromDate && toDate){
+    title='<div class="mx-1 mt-3 d-flex">Tweets from: ' + fromDate + ' to ' + toDate + ' &nbsp '  + '   </div>';
+  }
+
   if (filterOptions) {
     filterOptions = '<div class="btn-group pull-text-top ml-auto"><button type="button"\
                class="btn btn-white smat-rounded dropdown-toggle text-normal" data-toggle="dropdown"\
@@ -51,7 +55,7 @@ export const TweetsGenerator = (data_list, max_per_page, chart_draw_div_id, from
     filterOptions = '';
   }
 
-  $('#' + chart_draw_div_id).html('<div class="mx-1 mt-3 d-flex">Tweets from: ' + fromDate + ' to ' + toDate + ' &nbsp ' + filterOptions + '   </div><div id="' + tweetDiv + '"> </div><div> <div class="float-center " id="' + tweet_div_page_selection + '"></div>  </div>')
+  $('#' + chart_draw_div_id).html(title+'<div id="' + tweetDiv + '"> </div><div> <div class="float-center " id="' + tweet_div_page_selection + '"></div>  </div>')
 
 
   $(tweet_div_page_selection).empty();

@@ -1,7 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-
+use Illuminate\Http\Request;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -19,23 +19,32 @@ Route::get('/', function () {
     $URL = env('APP_URL', null);
     return redirect($URL . 'home');
 });
-Route::get('/home', function () {
-    if (isset($_GET['query'])) {
-        $query = $_GET['query'];
-        return view('modules.home', compact('query'));
-    } else {
-        $query = '';
-        return view('modules.home', compact('query'));
+Route::get('/home', function (Request $request) {
+    $query = '';
+    $from = '';
+    $to = '';
+    if ($request->input('query')) {
+        $query = $request->input('query');
+    } elseif ($request->input('query') && $request->input('from') && $request->input('to')) {
+        $query = $request->input('query');
+        $from = $request->input('from');
+        $to = $request->input('to');
     }
+    return view('modules.home', compact('query', 'from', 'to'));
 });
-Route::get('/userAnalysis', function () {
-    if (isset($_GET['query'])) { 
-        $query = $_GET['query'];
-        return view('modules.userAnalysis', compact('query'));
-    } else {
-        $query = '';
-        return view('modules.userAnalysis', compact('query'));
+Route::get('/userAnalysis', function (Request $request) {
+    $query = '';
+    $from = '';
+    $to = '';
+    if ($request->input('query')) {
+        $query = $request->input('query');
+    } elseif ($request->input('query') && $request->input('from') && $request->input('to')) {
+        $query = $request->input('query');
+        $from = $request->input('from');
+        $to = $request->input('to');
     }
+    return view('modules.userAnalysis', compact('query', 'from', 'to'));
+
 })->middleware('auth');
 
 Route::get('/historicalAnalysis', function () {
@@ -53,9 +62,6 @@ Route::get('/locationMonitor', function () {
 Route::get('/trendAnalysis', function () {
     return view('modules.trendAnalysis');
 })->middleware('auth');
-
-
-
 
 //Few Auth Routes
 Auth::routes();
@@ -94,54 +100,49 @@ Route::group(['prefix' => 'login'], function () {
 //     Route::get('getTopLatLngHA', 'HistoricalAnalysisController@get_top_data_lat_lng_ha');
 // });
 
+//Define API routes requiring middleware here for  Historical Analysis
 Route::group(['prefix' => 'HA'], function () {
     Route::post('getFrequencyDataForHistorical', 'HistoricalController@getFrequencyDataForHistorical');
     Route::post('getSentimentDataForHistorical', 'HistoricalController@getSentimentDataForHistorical');
     Route::post('getCooccurDataForHA', 'HistoricalController@getCooccurDataForHA');
 
     Route::get('getTopLatLngHA', 'HistoricalController@get_top_data_lat_lng_ha');
+    Route::get('getTopCatLocationHA', 'HistoricalController@get_top_data_cat_location_ha');
     Route::get('genNetwork', 'CommonController@gen_network');
 });
 
-
-
-
-
-
-
 //Define API routes requiring middleware here for Network Analysis
 Route::group(['prefix' => 'na'], function () {
-    Route::get('generateNetwork','networkAnalysisController@generateNetwork');
-    Route::get('graph_view_data_formator','networkAnalysisController@graph_view_data_formator_for_rendering_in_visjs');
-    Route::get('readcsv','networkAnalysisController@read_csv_file');
-    Route::get('readcsv','networkAnalysisController@read_csv_file');
+    Route::get('generateNetwork', 'networkAnalysisController@generateNetwork');
+    Route::post('graph_view_data_formator', 'networkAnalysisController@graph_view_data_formator_for_rendering_in_visjs');
+    Route::get('readcsv', 'networkAnalysisController@read_csv_file');
+    Route::get('readcsv', 'networkAnalysisController@read_csv_file');
     Route::post('centrality_data_formator', 'networkAnalysisController@centrality_data_formator_for_rendering_in_visjs');
-    Route::get('mysessionid','networkAnalysisController@mysessionid');
+    Route::get('mysessionid', 'networkAnalysisController@mysessionid');
     // Route::get('centrality', 'networkAnalysisController@centrality');
     Route::post('centrality', 'networkAnalysisController@centrality');
 
-    Route::post('link_prediction_data_formator','networkAnalysisController@link_prediction_data_formator_new');
-    Route::post('link_prediction','networkAnalysisController@linkPrediction');
-    Route::get('shortest_path_data_formator','networkAnalysisController@shortest_path_data_formator_new');
-    Route::post('shortestpath','networkAnalysisController@shortestpath');
-    Route::post('communitydetection','networkAnalysisController@community_detection');
+    Route::post('link_prediction_data_formator', 'networkAnalysisController@link_prediction_data_formator_new');
+    Route::post('link_prediction', 'networkAnalysisController@linkPrediction');
+    Route::get('shortest_path_data_formator', 'networkAnalysisController@shortest_path_data_formator_new');
+    Route::post('shortestpath', 'networkAnalysisController@shortestpath');
+    Route::post('communitydetection', 'networkAnalysisController@community_detection');
     Route::post('community_data_formator', 'networkAnalysisController@community_data_formator_for_rendering_in_visjs');
 
-    Route::post('union','networkAnalysisController@union');
-    Route::post('union_data_formator','networkAnalysisController@union_data_formator');
-    Route::post('intersection','networkAnalysisController@intersection');
-    Route::post('difference','networkAnalysisController@difference');
-    Route::post('formator_inter_diff','networkAnalysisController@difference_data_formator');
+    Route::post('union', 'networkAnalysisController@union');
+    Route::post('union_data_formator', 'networkAnalysisController@union_data_formator');
+    Route::post('intersection', 'networkAnalysisController@intersection');
+    Route::post('difference', 'networkAnalysisController@difference');
+    Route::post('formator_inter_diff', 'networkAnalysisController@difference_data_formator');
 
-    Route::post('writedelete','networkAnalysisController@write_delete');
-    Route::get('isfileexist','networkAnalysisController@isfileexist');
-    Route::post('fileupload','networkAnalysisController@fileupload');
+    Route::post('writedelete', 'networkAnalysisController@write_delete');
+    Route::get('isfileexist', 'networkAnalysisController@isfileexist');
+    Route::post('fileupload', 'networkAnalysisController@fileupload');
 
-    Route::get('fileUploadRequest','networkAnalysisController@fileUploadRequest');
-    Route::post('requestToSparkandStoreResult','networkAnalysisController@requestToSpark');
-
-    
-
+    Route::get('fileUploadRequest', 'networkAnalysisController@fileUploadRequest');
+    Route::post('requestToSparkandStoreResult', 'networkAnalysisController@requestToSpark');
+    Route::post('genNetwork', 'networkAnalysisController@gen_network');
+    Route::get('getdirname', 'networkAnalysisController@getdirname');
 
     //For network evolution
     Route::get('nettest', 'networkAnalysisEvolution@tester');
@@ -151,37 +152,31 @@ Route::group(['prefix' => 'na'], function () {
 //Define API routes requiring middleware here for User Analysis
 Route::group(['prefix' => 'UA'], function () {
     Route::post('/userlist', 'UserAnalysisController@first_list');
-    Route::get('/getpagingstate','UserAnalysisController@get_page_state_token');
-    Route::get('/getSuggestedUsers','UserAnalysisController@getSuggestedUsers');
-    Route::get('/getUserDetails','UserAnalysisController@getUserDetails');
-    Route::post('/getUserDetailsTemp','UserAnalysisController@getUserDetails');
-    Route::post('/getFrequencyDataForUser','UserAnalysisController@getFrequencyDataForUser');
-    Route::post('/getTweetIDs','UserAnalysisController@getTweetIDUA');
-    Route::post('/getSentimentDataForUser','UserAnalysisController@getSentimentDataForUser');
-    Route::post('/getCooccurDataForUser','UserAnalysisController@getCooccurDataForUser');
+    Route::get('/getpagingstate', 'UserAnalysisController@get_page_state_token');
+    Route::get('/getSuggestedUsers', 'UserAnalysisController@getSuggestedUsers');
+    Route::get('/getUserDetails', 'UserAnalysisController@getUserDetails');
+    Route::post('/getUserDetailsTemp', 'UserAnalysisController@getUserDetails');
+    Route::post('/getFrequencyDataForUser', 'UserAnalysisController@getFrequencyDataForUser');
+    Route::post('/getTweetIDs', 'UserAnalysisController@getTweetIDUA');
+    Route::post('/getSentimentDataForUser', 'UserAnalysisController@getSentimentDataForUser');
+    Route::post('/getCooccurDataForUser', 'UserAnalysisController@getCooccurDataForUser');
 });
-
 
 //Define API routes requiring middleware here for Map
 Route::group(['prefix' => 'LM'], function () {
-    Route::get('/getTime','LocationMap@get_current_date_time');
-    Route::get('/getTweetId','LocationMap@get_tweet_id_list');
-    Route::get('/getHashtag','LocationMap@get_hashtags');
+    Route::post('getTweetId', 'LocationMap@get_tweet_id_list');
+    Route::get('/getTime', 'LocationMap@get_current_date_time');
+    Route::post('getHashtag', 'LocationMap@get_hashtags');
+    Route::post('getTopHashtag', 'LocationMap@get_top_hashtags');
+    
 });
-
-
-
 
 //Define API routes requiring middleware here for Trend Analysis
 Route::group(['prefix' => 'TA'], function () {
-    Route::post('/getTopTrending','TrendAnalysisController@getTrending');
- 
+    Route::post('/getTopTrending', 'TrendAnalysisController@getTrending');
+
 });
-
-
-
-
 
 //Resource Route for feedback controller
 Route::post('/feedback', 'FeebackController@insertFeedback');
-Route::post('/getFeedback','FeebackController@checkIfFeedbackExist');
+Route::post('/getFeedback', 'FeebackController@checkIfFeedbackExist');

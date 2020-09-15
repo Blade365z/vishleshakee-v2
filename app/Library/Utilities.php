@@ -249,9 +249,18 @@ class Utilities{
                 $file = fopen($file_path, "w");
                 $parts = (array_chunk($data, 1000, true));
                 fputcsv($file, ['src', 'dst', 'count']);
-                foreach ($parts as $lines) {
-                    foreach ($lines as $key => $value) {
-                        fputcsv($file, array($token, $key, strval($value)));
+                if($token){
+                    foreach ($parts as $lines) {
+                        foreach ($lines as $key => $value) {
+                            fputcsv($file, array($token, $key, strval($value)));
+                        }
+                    }
+                }else{
+                    foreach ($parts as $lines) {                        
+                        foreach ($lines as $key) {
+                            // echo json_encode($key);
+                            fputcsv($file, $key);
+                        }
                     }
                 }
                 fclose($file);

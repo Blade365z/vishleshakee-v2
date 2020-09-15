@@ -458,7 +458,7 @@ class CommonController extends Controller
                     // past hours(hour table) ($to_datetime = 2020-09-08 00:00:00, $from_datetime= 2020-09-08 00:00:00)
                     $result_async_from_db1 = array();
                     $stm_list = $qb_obj->get_statement($to_datetime, $from_datetime, $token, 'hour', 'co_occur', $co_occur_option);
-                    $result_async_from_db1 = $db_object->executeAsync_query($stm_list[1], $stm_list[0]);                    
+                    $result_async_from_db1 = $db_object->executeAsync_query($stm_list[1], $stm_list[0]);        
                     // and current hour(10sec table)
                     $result_async_from_db2 = array(); 
                     $current_datetime_obj = new DateTime();
@@ -919,15 +919,18 @@ class CommonController extends Controller
         $db_object = new DBmodelAsync;
         $dbmodel_object = new DBmodel;
 
-        if($range_type){           
+        if($range_type){         
             $stm_list = $qb_obj->get_statement($to_datetime, $from_datetime, $token, $range_type, $top_option);
             $result_async_from_db = $db_object->executeAsync_query($stm_list[1], $stm_list[0]);  
         }else{
             //remain
         }
 
+        // echo json_encode($stm_list);
+
         $lat_lng_hash_arr = array();
         $hash_lat_lng_total_cat_info_arr = array();
+        $lat_lng_info_arr = array();
 
         foreach ($result_async_from_db as $rows) {             
             foreach ($rows as $row) {
@@ -948,6 +951,12 @@ class CommonController extends Controller
                     $lat_lng_hash_arr[$lat_lng] = array($tn);
                 }
 
+                if (array_key_exists($lat_lng, $lat_lng_info_arr)) {
+                   
+                } else {
+                    $lat_lng_info_arr[$lat_lng] = array($row['country'], $row['state'], $row['city']);
+                }
+
                 if (array_key_exists($tn, $hash_lat_lng_total_cat_info_arr)) {
                     if(array_key_exists($lat_lng, $hash_lat_lng_total_cat_info_arr[$tn])){
                         $hash_lat_lng_total_cat_info_arr[$tn][$lat_lng][0] += $ar_sum;
@@ -965,11 +974,90 @@ class CommonController extends Controller
         }   
 
         $final_result["chart_type"] = "top_lat_lng_hash";
+        $final_result["lat_lng_info_arr"] = $lat_lng_info_arr;
         $final_result["lat_lng_hash_arr"] = $lat_lng_hash_arr;
         $final_result["hash_lat_lng_total_cat_info_arr"] = $hash_lat_lng_total_cat_info_arr;
         return ($final_result);
     }
 
+
+
+    /**
+     * get top info(hashtag, mention, user) with category info search by location(country, state, city)
+     *
+     * @return json
+    */ 
+    public function get_top_data_cat_by_location($to_datetime = null, $from_datetime = null, $top_option = null, $token = null, $range_type=null)
+    {
+        $final_res = array();
+        $ut_obj = new Ut;
+        $qb_obj = new QB;
+        $db_object = new DBmodelAsync;
+        $dbmodel_object = new DBmodel;
+
+        if($range_type){         
+            $stm_list = $qb_obj->get_statement($to_datetime, $from_datetime, $token, $range_type, $top_option);
+            $result_async_from_db = $db_object->executeAsync_query($stm_list[1], $stm_list[0]);  
+        }else{
+            //remain
+        }
+
+
+        $top_data_with_cat_location = array();
+       
+
+        foreach ($result_async_from_db as $rows) {             
+            foreach ($rows as $row) {
+                $tn = $row['token_name'];
+                $count_list = $row['count_list']->values();
+                $ar_sum = array_sum($count_list);
+                $lat = $row['tweet_cl_latitude'];
+                $lng = $row['tweet_cl_longitude'];
+                $lat_lng = $lat.'_'.$lng;
+                $com = $count_list[3] + $count_list[4] + $count_list[5];
+                $sec = $count_list[6] + $count_list[7] + $count_list[8];
+                $com_sec = $count_list[9] + $count_list[10] + $count_list[11];
+                $non_com_sec = $count_list[0] + $count_list[1] + $count_list[2];
+
+                if (array_key_exists($tn, $top_data_with_cat_location)) {
+                    $top_data_with_cat_location[$tn][0] += $ar_sum;
+                    $top_data_with_cat_location[$tn][1] += $com;
+                    $top_data_with_cat_location[$tn][2] += $sec;
+                    $top_data_with_cat_location[$tn][3] += $com_sec;
+                    $top_data_with_cat_location[$tn][4] += $non_com_sec;         
+                } else {
+                    $top_data_with_cat_location[$tn] = array($ar_sum, $com, $sec, $com_sec, $non_com_sec);
+                }
+            }
+        }   
+
+        arsort($top_data_with_cat_location);
+        foreach ($top_data_with_cat_location as $h => $v) {           
+            $cat_arr_tmp = array($v[1], $v[2], $v[3], $v[4]);
+            $index_max = array_search(max($cat_arr_tmp), $cat_arr_tmp);
+            $cat = -1;
+            switch ($index_max) {
+                case 0:
+                    $cat = 'com';
+                    break;
+                case 1:
+                    $cat = 'sec';
+                    break;
+                case 2:
+                    $cat = 'com_sec';
+                    break;
+                case 3:
+                    $cat = 'normal';
+                    break;
+            }
+            // $top_data_with_cat_location[$h] = array($v[0], $cat, $v);
+            $top_data_with_cat_location[$h] = array($v[0], $cat); //total, category
+        }
+
+        $final_result["chart_type"] = "top_data_with_cat";
+        $final_result["top_data_with_cat_by_location"] = $top_data_with_cat_location;
+        return ($final_result);
+    }
 
 
 
@@ -997,10 +1085,16 @@ class CommonController extends Controller
 
 
 
+    /**
+     * generate network and write the file as csv
+     *
+     * @return 'success'
+    */ 
     public function gen_network(){
-        $token = '#COVID19';
-        $from_datetime='2020-09-13 00:00:00';
-        $to_datetime='2020-09-13 00:00:00';
+        $ut_obj = new Ut;
+        $token = '@ndtv';
+        $from_datetime='2020-09-15 00:00:00';
+        $to_datetime='2020-09-15 00:00:00';
         $feature_option = 'co_occur';
         $co_occur_option = 'hashtag';
         $no_of_nodes = '50';
@@ -1012,22 +1106,35 @@ class CommonController extends Controller
         if($no_of_nodes)
             $co_occur_result = array_slice($co_occur_result['data'], 0, $no_of_nodes);
 
-        // push nodes to array
+        // push node to nodes array
         foreach ($co_occur_result as $key => $value) {
             array_push($nodes, $key);
         }
 
         // 2nd level
+        $i=0;
         foreach($co_occur_result as $key => $count){
             $edges[] = [$token, $key, (string) $count];
             $co_occur_result_2nd_level = $this->get_co_occur_data($to_datetime, $from_datetime, $key, $range_type = null, $co_occur_option);
             if($no_of_nodes)
                 $co_occur_result_2nd_level = array_slice($co_occur_result_2nd_level['data'], 0, $no_of_nodes);
             foreach ($co_occur_result_2nd_level as $k => $c) {
+                // creating among connection
                 if (in_array($k, $nodes)) {
-                    $edges[] = [$key, $k, (string) $c];
+                    $edges[] = [$key, $k, (string) $c]; 
                 }
             }
+            // echo (new DateTime())->format('y-m-d H:i:s');
+            echo $i;
+            $i += 1;
+            echo "    ";
+            ob_flush();
+            flush();
+            sleep(2);
         }
+
+        // write to file
+        $ut_obj->write_to_file($file_type='csv', $file_path='2/test_narendramodi_hashtag.csv', $edges, $token=null, $userID=2);
+        echo json_encode(array('res'=>'success'));
     }
 }

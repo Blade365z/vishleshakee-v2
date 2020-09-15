@@ -122,7 +122,7 @@ class QueryBuilder{
                     $where_clause = "created_date = ? AND class=" . $query_class; 
                 }
             }
-            $columns = 'category_class_list, count_list, token_name, tweet_cl_latitude, tweet_cl_longitude';
+            $columns = 'category_class_list, count_list, token_name, tweet_cl_latitude, tweet_cl_longitude, country, city, state';
             $prepared_statement = "SELECT ".$columns." FROM ".$table_name." WHERE ".$where_clause. " AND ".$loc_str;  
             $final_res[0] = $prepared_statement;
             $final_res[1] = $input_args;
@@ -204,6 +204,9 @@ class QueryBuilder{
                     case 'user':
                         $class = 8;
                         break;
+                    case 'keyword':
+                        $class = 4;
+                        break;
                     default:
                         # code...
                         break;
@@ -211,13 +214,13 @@ class QueryBuilder{
             } else  if (strpos($token, '*') !== false) {
                 switch ($co_occur_option) {
                     case 'mention':
-                        $class = 7;
+                        $class = 111;
                         break;
                     case 'hashtag':
-                        $class = 5;
+                        $class = 111;
                         break;
                     case 'user':
-                        $class = 12;
+                        $class = 111;
                         break;
                     default:
                         # code...
@@ -239,13 +242,16 @@ class QueryBuilder{
             }else  if (strpos($token, '@') !== false) {
                 switch ($co_occur_option) {
                     case 'mention':
-                        $class = 11;
+                        $class = 1;
                         break;
                     case 'hashtag':
-                        $class = 9;
+                        $class = 3;
                         break;
                     case 'user':
-                        $class = 12;
+                        $class = 10;
+                        break;
+                    case 'keyword':
+                        $class = 6;
                         break;
 
                     default:

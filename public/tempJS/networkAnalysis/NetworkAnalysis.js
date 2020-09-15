@@ -5,7 +5,8 @@ import {roshan} from './visualizer.js';
 import {render_graph,union,intersection,exportnetwork,selected_graph_ids,render_centrality_graph,
        sparkUpload,get_network,writedelete,difference,shortestpaths,community_detection,centrality,linkprediction,
        render_linkprediction_graph,render_shortestpath_graph,render_community_graph1,draw_graph,update_view_graph_for_link_prediction,
-       render_graph_community,render_union_graph,render_graph_union,render_intersection_diff_graph,render_intersection_difference
+       render_graph_community,render_union_graph,render_graph_union,render_intersection_diff_graph,render_intersection_difference,
+       networkGeneration
     } from './helper.js';
 
 let totalQueries;
@@ -22,14 +23,22 @@ $(document).ready(function () {
         totalQueries += 1;
         let queryTemp = $('#queryNA').val().trim();
         let fromDateTemp = $('#fromDateNA').val();
+        let fromDateStripped = fromDateTemp;
+        fromDateTemp = fromDateTemp+" 00:00:00";
         let toDateTemp = $('#toDateNA').val();
+        let toDateStripped = toDateTemp;
+        toDateTemp = toDateTemp+" 00:00:00";
         let noOfNodesTemp = $('#nodesNA').val().trim();
         let naTypeTemp = $('#typeNA').val();
         let netCategory = $("#net_category").val();
         let naEngine = $('#networkEngineNA').val();
-        console.log(netCategory);
+        let filename = queryTemp+fromDateStripped+toDateStripped+noOfNodesTemp+naTypeTemp;
+        console.log(queryTemp,naEngine);
         console.log('Submitted');
-        generateCards(totalQueries, queryTemp, fromDateTemp, toDateTemp, noOfNodesTemp, naTypeTemp, naEngine, 'naCards');
+        networkGeneration('na/genNetwork',queryTemp,fromDateTemp,toDateTemp,noOfNodesTemp,naTypeTemp,filename).then(response => {
+            $("#msg_displayer").empty();
+            generateCards(totalQueries, queryTemp, fromDateStripped, toDateStripped, noOfNodesTemp, naTypeTemp, naEngine,filename,'naCards');
+        })
     });
 
     $('body').on('click', 'div .networkCardDetails', function () {
@@ -37,9 +46,13 @@ $(document).ready(function () {
         let index = $(this).attr('value');
         let cardData = searchRecords[index - 1];
         let id = searchRecords[index - 1].id;
-        let filename = "filecode-"+id;
+        let filename = cardIDdictionary[id];
+        console.log("FILE");
+        console.log(filename);
         showing_results_for(cardData);
-        render_graph(filename,"networkDivid");
+        render_graph('na/graph_view_data_formator',filename).then(response =>{
+            draw_graph(response,"networkDivid");
+        });
 
         //updating network summary information
        $(".subject").empty();
@@ -105,40 +118,20 @@ $('#upload_form').on('submit', function(event) {
     event.preventDefault();
     var unique_id = "a1";
     var n = new FormData(this);
-
     n.append("name", unique_id);
-    console.log("Uploading File");
-    $.ajax({
-            url: 'na/fileupload',
-            method: "POST",
-            data: n,
-            dataType: 'JSON',
-            contentType: false,
-            cache: false,
-            processData: false,
-            beforeSend: function() {
-
-            },
-            success: function(data) {
-                console.log("Success");
-            }
-        })
-        .fail(function(res) {
-            console.log("error");
-            console.log(res);
-        })
-        
     $('#myModal_file_upload').modal('toggle');           
+    return output;
+        
 });
 
 
-const generateCards = (id, query, fromDateTemp, toDateTemp, noOfNodesTemp, naTypeTemp, naEngine, div) => {
+const generateCards = (id, query, fromDateTemp, toDateTemp, noOfNodesTemp, naTypeTemp, naEngine, filename, div) => {
     let tempArr = [];
-    tempArr = { 'id': id, 'query': query, 'from': fromDateTemp, 'to': toDateTemp, 'nodesNo': noOfNodesTemp, 'naType': naTypeTemp, 'naEngine': naEngine };
+    tempArr = { 'id': id, 'query': query, 'from': fromDateTemp, 'to': toDateTemp, 'nodesNo': noOfNodesTemp, 'naType': naTypeTemp, 'filename': filename, 'naEngine': naEngine };
     searchRecords.push(tempArr);
-    let cardID = "filecode-"+id;
-    cardIDdictionary[id] = cardID;
-    $('#'+div).append('<div class="col-md-2" value="'+id+'"><div class="card shadow p-0"><div class="card-body p-0"><div class="d-flex px-3 pt-3"><span class="pull-left"><i id="deleteCard" class="fa fa-window-close text-neg" aria-hidden="true"></i></span><div class="naCardNum text-center ml-auto mr-auto">'+padNumber(id)+'</div><span class="pull-right ml-auto"><input class="form-check-input position-static" type="checkbox" id='+cardID+'></span></div><div class="text-left networkCardDetails px-3 pb-3" style="border-radius:10px;" value="'+id+'" ><p class="font-weight-bold m-0" style="font-size:16px;" cardquery="'+query+'"> '+query+'</p><p class="  smat-dash-title " style="margin-top:-2px;margin-bottom:0px;"> From: '+fromDateTemp+' </p><p class="   smat-dash-title " style="margin-top:-2px;margin-bottom:0px;" > To:'+toDateTemp+' </p><p class=" smat-dash-title " style="margin-top:-2px;margin-bottom:0px;"> Nodes: '+noOfNodesTemp+'</p><p class="  smat-dash-title " style="margin-top:-2px;margin-bottom:0px;" > Type: '+naTypeTemp+'</p><p class=" smat-dash-title " style="margin-top:-2px;margin-bottom:0px;"> Status: Ready</p></div></div></div></div>');
+    cardIDdictionary[id] = filename;
+    console.log(cardIDdictionary,filename);
+    $('#'+div).append('<div class="col-md-2" value="'+id+'"><div class="card shadow p-0"><div class="card-body p-0"><div class="d-flex px-3 pt-3"><span class="pull-left"><i id="deleteCard" class="fa fa-window-close text-neg" aria-hidden="true"></i></span><div class="naCardNum text-center ml-auto mr-auto">'+padNumber(id)+'</div><span class="pull-right ml-auto"><input class="form-check-input position-static" type="checkbox" id='+filename+'></span></div><div class="text-left networkCardDetails px-3 pb-3" style="border-radius:10px;" value="'+id+'" ><p class="font-weight-bold m-0" style="font-size:16px;" cardquery="'+query+'"> '+query+'</p><p class="  smat-dash-title " style="margin-top:-2px;margin-bottom:0px;"> From: '+fromDateTemp+' </p><p class="   smat-dash-title " style="margin-top:-2px;margin-bottom:0px;" > To:'+toDateTemp+' </p><p class=" smat-dash-title " style="margin-top:-2px;margin-bottom:0px;"> Nodes: '+noOfNodesTemp+'</p><p class="  smat-dash-title " style="margin-top:-2px;margin-bottom:0px;" > Type: '+naTypeTemp+'</p><p class=" smat-dash-title " style="margin-top:-2px;margin-bottom:0px;"> Status: Ready</p></div></div></div></div>');
     // $('#' + div).append('<div class="col-sm-2" ><div class="card shadow networkCardDetails" value="' + id + '"><div class="card-body "><div class="d-flex"><div class="" ><p class="m-0 naCardNum"> ' + id + ' </p></div><div class="text-left ml-1 "><p class="font-weight-bold mb-1">' + query + ' </p> <p class=" mb-1 pull-text-top smat-dash-title"> <span> From:</span>' + fromDateTemp + '</p> <p class="mb-1 pull-text-top smat-dash-title"> <span> To:</span> ' + toDateTemp + '</p> <p class="mb-1 pull-text-top smat-dash-title">' + naTypeTemp + '</p><p class="mb-1 pull-text-top smat-dash-title">' + noOfNodesTemp + ' Nodes</p> <p class="m-0 pull-text-top smat-dash-title text-success ">Ready  </div></div></div></div></div>');
 }
 
@@ -186,8 +179,10 @@ if (NAType == 'networkx') {
         input: input,
         algo_option: algo_option
     };
+    console.log("NXD");
+    console.log(data);
 } else if (NAType == 'spark') {
-    var query_list = [algo_option, input];
+    var query_list = [algo_option,input];
     var unique_name_timestamp = (new Date().getTime()).toString(); // create unique_name   
     url = 'na/requestToSparkandStoreResult';
     data = {
@@ -200,7 +195,7 @@ if (NAType == 'networkx') {
 //centrality(url,data,NAType);
 centrality(url,data,NAType).then(response => {
         if(NAType == "networkx"){
-            render_centrality_graph(data["input"], "networkDivid").then(response =>{
+            render_centrality_graph(data["input"], "networkDivid",data["algo_option"]).then(response =>{
                 $('.analysis_summary_div').empty();
                 $('.analysis_summary_div').append('<table> <tr><th>Node</th><th>Score</th></tr>');
                 for(var i=0; i<response["nodes"].length;i++){
@@ -210,7 +205,7 @@ centrality(url,data,NAType).then(response => {
                 draw_graph(response,"networkDivid");
             });
         }else if(NAType == "spark"){
-            render_centrality_graph(data["query_list"][1], "networkDivid").then(response =>{
+            render_centrality_graph(data["query_list"][1], "networkDivid",data["query_list"][0]).then(response =>{
                 $('.analysis_summary_div').empty();
                 $('.analysis_summary_div').append('<table> <tr><th>Node</th><th>Score</th></tr>');
                 for(var i=0; i<response["nodes"].length;i++){
@@ -270,13 +265,14 @@ $("#link_prediction_exec").on('click',function(NAType=$("#networkEngineNA").val(
                  $('.analysis_summary_div').append('<tr><td>'+data["src"]+'</td><td>'+response[i].id+'</td></tr>');
              }
              $('.analysis_summary_div').append('</table>');
-             update_view_graph_for_link_prediction(response,data["src"]);
+             update_view_graph_for_link_prediction(response,data["src"]),k_value;
             });
         }else if(NAType == "spark"){
+            let k_value = $("#nos_links_to_be_predicted").val();
             render_linkprediction_graph(data["query_list"][1],data["query_list"][2]).then(response =>{
                 console.log("LP");
                 console.log(response);
-                update_view_graph_for_link_prediction(response,data["query_list"][2]);
+                update_view_graph_for_link_prediction(response,data["query_list"][2],k_value);
             })
         }
     })
@@ -306,7 +302,7 @@ $("#sp_exec").on('click',function(NAType="networkx",algo_option=""){
 
 
     } else if (NAType == 'spark') {
-        var query_list = ['shortestpath', input, src, dst];
+        var query_list = ['ShortestPath', input, src, dst];
         var unique_name_timestamp = (new Date().getTime()).toString(); // create unique_name   
         url = 'na/requestToSparkandStoreResult';
         data = {

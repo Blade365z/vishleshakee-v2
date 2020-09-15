@@ -41,7 +41,7 @@ jQuery(function () {
 
     generateTrendingTokensForTA(fromDate, toDate, 'top_hashtag', 'taResultsHashtags', 'all');
     generateTrendingTokensForTA(fromDate, toDate, 'top_mention', 'taResultsMentions' , 'all');
-    generateTrendingTokensForTA(fromDate, toDate, 'top_user', 'taResultsUsers' , 'all');
+    // generateTrendingTokensForTA(fromDate, toDate, 'top_user', 'taResultsUsers' , 'all');
 
 
 
@@ -51,7 +51,7 @@ jQuery(function () {
         toDate=   $('#toDateTA').val();
         generateTrendingTokensForTA(fromDate, toDate, 'top_hashtag', 'taResultsHashtags', 'all');
         generateTrendingTokensForTA(fromDate, toDate, 'top_mention', 'taResultsMentions' , 'all');
-        generateTrendingTokensForTA(fromDate, toDate, 'top_user', 'taResultsUsers' , 'all');
+        // generateTrendingTokensForTA(fromDate, toDate, 'top_user', 'taResultsUsers' , 'all');
     })
     
 

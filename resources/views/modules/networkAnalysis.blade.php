@@ -69,8 +69,8 @@
             <div class="form-group  my-0  mr-2 border smat-rounded d-flex px-2 py-1  bg-white">
                 <select class="form-control" name="NAType" id="typeNA">
                     <option>Hashtag-Hashtag </option>
-                    <option>Hashtag-Mentions </option>
-                    <option>Mention-Mentions </option>
+                    <option>Hashtag-Mention </option>
+                    <option>Mention-Mention </option>
                 </select>
             </div>
             <div class="form-group  my-0  mr-2 border smat-rounded d-flex px-2 py-1  bg-white">
@@ -104,7 +104,7 @@
 </div>
 <div class="mt-2" id="naPanel">
 
-    <div  class="text-center font-weight-bold" id="msg_displayer">SMAT</div>
+    <div  class="text-center font-weight-bold" id="msg_displayer"></div>
 
     <div>
         <p class="smat-box-title-large m-0">. <span class="smat-value font-weight-bold text-dark" id="naShowingResForTitle"> </span> </p>
@@ -126,7 +126,7 @@
                 <a class="nav-link smat-rounded " id="diffTabNA" data-toggle="pill" href="#diffContentNA" role="tab" aria-controls="diffContentNA" aria-selected="false">Difference</a>
             </li>
             <li class="nav-item naTabs ">
-                <a class="nav-link smat-rounded " id="expansionTabNA" data-toggle="pill" href="#expansionContentNA" role="tab" aria-controls="expansionContentNA" aria-selected="false">Network Expansion</a>
+                {{-- <a class="nav-link smat-rounded " id="expansionTabNA" data-toggle="pill" href="#expansionContentNA" role="tab" aria-controls="expansionContentNA" aria-selected="false">Network Expansion</a> --}}
             </li>
 
         </ul>
@@ -145,9 +145,9 @@
 
                     </div>
                     <div class="bg-smat mt-1">
-                        <h1 class="m-0 text-dark nos_of_nodes"> 50</h1>
+                        <h1 class="m-0 text-dark nos_of_nodes"> -</h1>
                         <p class="smat-normal-text" style="margin-top:-10px;margin-bottom:0px;"> Total number of Nodes </p>
-                        <h1 class="m-0 text-dark nos_of_edges"> 450</h1>
+                        <h1 class="m-0 text-dark nos_of_edges"> -</h1>
                         <p class="smat-normal-text" style="margin-top:-10px;margin-bottom:0px;"> Total number of Edges </p>
 
                     </div>
@@ -155,7 +155,7 @@
             </div>
             <div class="card shadow mt-4">
             <h4 class="mt-2  text-center font-weight-bold text-dark"> Analysis Summary </h4>
-                <div class="card-body scroll" id='naSummary' style="overflow-x:hidden;overflow-y:scroll"> 
+                <div class="card-body scroll" id='naSummary' style="overflow-x:scroll;overflow-y:scroll"> 
                 <div class="analysis_summary_div" >
                             
                 </div>

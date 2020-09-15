@@ -15,7 +15,7 @@
         <div id="naInputPanel">
             <div class="form-group  text-normal  border smat-rounded d-flex  mr-2 px-2 py-1  bg-white" id="uaSearchInput">
                 <i class="fa fa-search px-1 pt-2" aria-hidden="true" style="margin-top:5px"></i>
-                <input type="text" class="form-control" value="assam" name="query" id="queryLM" placeholder="Search a location" style="border:0px;" autocomplete="OFF" required>
+                <input type="text" class="form-control" value="india" name="query" id="queryLM" placeholder="Search a location" style="border:0px;" autocomplete="OFF" required>
             </div>
 
             <div class="form-group   border smat-rounded d-flex px-2 py-1  bg-white">
@@ -54,10 +54,10 @@
                 </div>
                 <div class="ml-auto mr-3">
                     <h5>
-                        <span class="mx-3 clickable text-dark"><i class="fab fa-twitter" title="See Tweets"></i></span>
-                        <span class="mx-3 clickable text-dark "><i class="fas fa-redo-alt" title="Refresh"></i></span>
-                        <span class="mx-3 clickable text-dark "><i class="fa fa-expand" title="Full Screen"></i></span>
-                        <span class="mx-3 clickable text-dark"><i class="fas fa-filter" title="Filter"></i></span>
+                        <span class="mx-3 clickable text-dark" id="locationTweets"><i class="fab fa-twitter locationOptions" title="See Tweets"></i></span>
+                        <span class="mx-3 clickable text-dark "><i class="fas fa-redo-alt locationOptions " title="Refresh"></i></span>
+                        <span class="mx-3 clickable text-dark "><i class="fa fa-expand locationOptions " title="Full Screen"></i></span>
+                        <span class="mx-3 clickable text-dark"><i class="fas fa-filter locationOptions" title="Filter"></i></span>
                     </h5>
                 </div>
 
@@ -105,6 +105,9 @@
 
 <link rel="stylesheet" href="public/leaflet/fullscreen/Control.FullScreen.css" />
 <script src="public/leaflet/fullscreen/Control.FullScreen.js"></script>
+
+<script src="public/leaflet/pulse/L.Icon.Pulse.js"></script>
+<link rel="stylesheet" href="public/leaflet/pulse/L.Icon.Pulse.css">
 
 
 

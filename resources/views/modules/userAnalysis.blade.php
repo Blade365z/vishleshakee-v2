@@ -28,7 +28,7 @@
         </form>
     </div>
 
-    <div class="row" id="suggDiv" >
+    <div class="row" id="suggDiv">
         <div class="col-md-6">
             <div class="card shadow mb-2">
                 <div class="card-body">
@@ -77,13 +77,13 @@
                             <div class="d-flex mb-3">
                                 <div class="form-group   my-0  mr-2  border smat-rounded d-flex px-2 py-1  bg-white">
                                     <i class="far fa-calendar-alt mx-2 text-normal " style="margin-top:11px;"></i>
-                                    <input type="text" class="form-control datepicker-here " name="fromDate" id="fromDateUA"
+                                    <input type="text" class="form-control datepicker-here  smat-from" name="fromDate" id="fromDateUA"
                                         placeholder="From Date" onkeydown="return false;" style="border:0px;"
                                         autocomplete="OFF" data-language='en' required>
                                 </div>
                                 <div class="form-group  my-0  mr-2 border smat-rounded d-flex px-2 py-1  bg-white">
                                     <i class="far fa-calendar-alt mx-2 text-normal" style="margin-top:11px;"></i>
-                                    <input type="text" class="form-control datepicker-here " name="toDate" id="toDateUA"
+                                    <input type="text" class="form-control datepicker-here smat-to " name="toDate" id="toDateUA"
                                         placeholder="To Date" onkeydown="return false;" style="border:0px;"
                                         autocomplete="OFF" data-language='en' required>
                                 </div>
@@ -101,7 +101,7 @@
                                     <img class="profilePicLarge" id="currentUAProfilePic" />
                                 </div>
                                 <div class="mt-2">
-                                    <div class="text-center">
+                                    <div>
                                         <span class="userNameLarge mx-2 mb-1 text-dark" id="currentUAUserName"> </span><span
                                             id="currentUAVerified"> </span>
                                     </div>
@@ -171,16 +171,16 @@
                         <div class="tab-content" id="pills-tabContent">
 
                             <div class="tab-pane fade show active uaTabTopRight" id="hashtagsContentTab" role="tabpanel"
-                            aria-labelledby="hashtagsContentTab">hashtagsContentTab</div>
+                                aria-labelledby="hashtagsContentTab">hashtagsContentTab</div>
                             <div class="tab-pane fade uaTabTopRight" id="mentionsContentUA" role="tabpanel"
                                 aria-labelledby="mentionsContentUA">Mentions Tab</div>
-    
-                          
-    
-                            
-    
+
+
+
+
+
                         </div>
-    
+
 
 
                     </div>
@@ -211,9 +211,9 @@
                                     href="#sentiContentUA" role="tab" aria-controls="pills-profile"
                                     aria-selected="false">Sentiment</a>
                             </li>
-                         
 
-                        
+
+
 
                             <li class="nav-item">
                                 <a class="nav-link smat-rounded uaNav" id="locationTabUA" data-toggle="pill"
@@ -225,13 +225,13 @@
                     </div>
                     <div class="tab-content" id="pills-tabContent">
 
-                        <div class="tab-pane fade show active haTab" id="freqContentUA" role="tabpanel"
+                        <div class="tab-pane fade show active " id="freqContentUA" role="tabpanel"
                             aria-labelledby="freqContentUA">
                         </div>
-                        <div class="tab-pane fade haTab " id="sentiContentUA" role="tabpanel"
+                        <div class="tab-pane fade  " id="sentiContentUA" role="tabpanel"
                             aria-labelledby="sentiContentUA"> </div>
-                  
-                        <div class="tab-pane fade haTab " id="locationContentUA" role="tabpanel"
+
+                        <div class="tab-pane fade  " id="locationContentUA" role="tabpanel"
                             aria-labelledby="locationContentUA">locationContentUA </div>
 
                     </div>
@@ -245,8 +245,11 @@
         </div>
     </div>
     <script>
-        var incoming = {!! json_encode($query) !!}
+        var incoming =   @json($query ?? '');
+        var fromDateReceived =   @json($from ?? '');
+        var toDateReceived=  @json($to ?? '');
     </script>
+    
     <script type="module" src="public/amcharts4/core.js"></script>
     <script type="module" src="public/amcharts4/charts.js"></script>
     <script type="module" src="public/tempJS/userAnalysis/UserAnalysis.js"></script>

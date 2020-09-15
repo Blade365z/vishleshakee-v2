@@ -1260,8 +1260,21 @@ class networkAnalysisController extends Controller
                 $line = array($value['src'], $value['dst'], $value["Adamic_Adar_Score"]);
                 fputcsv($fp, $line);
             }
+        }else if($algo_option == 'resourceallocation'){
+            error_reporting(0);
+            $rt = array();
+            foreach($result_arr as $key => $value){
+                $line = array($value['src'], $value['dst'], $value["RA"]);
+                fputcsv($fp, $line);
+            }
+        }else if($algo_option == 'commonneighbor'){
+            error_reporting(0);
+            $rt = array();
+            foreach($result_arr as $key => $value){
+                $line = array($value['src'], $value['dst'], $value["RA"]);
+                fputcsv($fp, $line);
+            }
         }
-
         fclose($fp);
     }
 

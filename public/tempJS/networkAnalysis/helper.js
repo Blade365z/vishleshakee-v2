@@ -8,26 +8,43 @@ var HeadersForApi = {
 // Render Graph  for view
 var network_global;
 var global_edges;
-export const render_graph = (input,id_value) => {
-        
-        $.ajax({
-            url: 'na/graph_view_data_formator',
-            type: 'GET',
-            dataType: 'JSON',
-            async:true,
-            timeout:0,
-            data: {
-                input: input
-            }
-        })
-        .done(function(res) {
-            console.log(res);
-            draw_graph(res, id_value);
-        })
-        .fail(function(res) {
-            console.log(res);
-            console.log("error");
-        })
+
+
+export const render_graph = async (url,input) => {
+    let data = {
+        input : input
+    }
+    console.log("Printing Input");
+    console.log(data);
+    let response = await fetch(url,{
+        method : 'post',
+        headers : HeadersForApi,
+        body : JSON.stringify(data),
+    });
+    
+    let output = await response.json();
+    return output;
+}
+
+export const networkGeneration = async (url,queryTemp,fromDateTemp,toDateTemp,noOfNodesTemp,naTypeTemp,filename) => {
+    $("#msg_displayer").append('<p> Generating Network </p>');
+
+    let data = {
+        token : queryTemp,
+        fd : fromDateTemp,
+        td : toDateTemp,
+        noOfNodes : noOfNodesTemp,
+        nettype : naTypeTemp,
+        filename : filename
+    };
+
+    let response = await fetch(url,{
+        method : 'post',
+        headers : HeadersForApi,
+        body : JSON.stringify(data),
+    });
+    let output = await response.json();
+    return output;
 }
 
 export const linkprediction = async (url,data,NAType) =>{
@@ -55,11 +72,11 @@ export const render_linkprediction_graph = async (input,src) => {
     return output;
 }
 
-export const update_view_graph_for_link_prediction = (res,src) => {
+export const update_view_graph_for_link_prediction = (res,src,k_value) => {
     console.log("REST");
     console.log(res);
     var query_index_label;
-    for (var i = 0; i < res.length; i++) {
+    for (var i = 0; (i < res.length) && (i < k_value); i++) {
         if (res[i].id == src) {
             console.log("SRC");
             console.log(src);
@@ -131,8 +148,8 @@ export const centrality = async (url,data,NAType) =>{
     return output;
 }
 
-export const render_centrality_graph = async (input,id_value) =>{
-    let data = {input : input};
+export const render_centrality_graph = async (input,id_value,algo_option) =>{
+    let data = {input : input, algo_option : algo_option};
     let response = await fetch('na/centrality_data_formator',{
         method : 'post',
         headers : HeadersForApi,
@@ -387,7 +404,7 @@ export const draw_graph = (res,id_value) => {
     $(".nos_of_nodes").empty();
     $(".nos_of_nodes").text(nodes_arr.length);
     $(".nos_of_edges").empty();
-    $(".nos_of_edges").text(nodes_arr.length);
+    $(".nos_of_edges").text(edges_arr.length);
 
     
 

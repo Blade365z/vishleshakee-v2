@@ -10,9 +10,9 @@
         <form class=" smat-search-form "  id="publicSearchForm" action="home" method="GET" role="search">
         
             <div id="naInputPanel">
-                <div class="form-group  text-normal  border smat-rounded d-flex  mr-2 px-2 py-1  bg-white" id="uaSearchInput">
+                <div class="form-group  text-normal  border smat-rounded d-flex  mr-2 px-2 py-1  bg-white" id="homeSearchInput">
                     <i class="fa fa-search px-1 pt-2" aria-hidden="true" style="margin-top:5px"></i>
-                    <input type="text" class="form-control" name="query" id="queryLM" placeholder="Search a Hashtag or Mention" style="border:0px;" autocomplete="OFF" required>
+                    <input type="text" class="form-control typeahead" name="query" id="queryLM" placeholder="Search a Hashtag or Mention" style="border:0px;" autocomplete="OFF" required>
                 </div>
 
 
@@ -203,19 +203,19 @@
     <div class="col-sm-3">
         <div class="card shadow px-3 py-2">
             <div>
-                <p class="smat-box-title mb-1 font-weight-bold"> Alerts <i class="fa fa-exclamation-triangle mx-2  pulseBtn text-danger" aria-hidden="true"></i> </p>
+                <p class="smat-box-title mb-1 font-weight-bold"> Alerts <i class="fa fa-exclamation-triangle mx-2  pulseBtn text-danger" aria-hidden="true" ></i> </p>
             </div>
-            <div class="card-body p-0">
+            <div class="card-body p-0" id="alertsDiv">
 
                 <div>
-                    <p class="m-0 hashtags ">#SushantSinghRajput</p>
+                    <p class="m-0 hashtags " id="alert-1"></p>
                 </div>
 
                 <div>
-                    <p class="m-0 hashtags">#BanChineseApps</p>
+                    <p class="m-0 hashtags" id="alert-2"></p>
                 </div>
                 <div>
-                    <p class="m-0 hashtags">#Covid-19</p>
+                    <p class="m-0 hashtags" id="alert-3"></p>
                 </div>
 
             </div>
@@ -235,7 +235,7 @@
                             <li class="publicHashtagsFilter" value="normal">Normal</li>
                             <li class="publicHashtagsFilter" value="sec">Security</li>
                             <li class="publicHashtagsFilter" value="com">Communal</li>
-                            <li class="publicHashtagsFilter" value="seccom">Security & Communal</li>
+                            <li class="publicHashtagsFilter" value="com_sec">Security & Communal</li>
                         </ul>
                     </div>
                 </div>
@@ -266,7 +266,7 @@
 
 </div>
 <script>
-var incoming = {!! json_encode($query) !!}
+var incoming = @json($query ?? '') ;
 </script>
 <script type="module" src="public/amcharts4/core.js"></script>
 <script type="module" src="public/amcharts4/charts.js"></script>

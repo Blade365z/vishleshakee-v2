@@ -50,14 +50,14 @@ class LocationMap extends Controller
         return $current_datetime_to_datetime;
     }
 
-    public function get_tweet_id_list(){
+    public function get_tweet_id_list(Request $request){
 
+        $query = $request->input('query');
+        $from_datetime = $request->input('from');
+        $to_datetime = $request->input('to');
+        $option = $request->input('option');
+        
         $commonObj = new CommonController;
-        
-        
-        $query = $_GET['query'];
-        $from_datetime = $_GET['from'];
-        $to_datetime = $_GET['to'];
         
         $r = $commonObj->get_tweets($to_datetime,$from_datetime,$query,'10sec','all');
         
@@ -67,21 +67,38 @@ class LocationMap extends Controller
         foreach ($r['data'] as $tid) {
             array_push($tweetid_list_array, $tid);
         }
-            
-        
-        return $this->tweet_info($tweetid_list_array);
+
+        if($option=="tweet_id"){
+            return $tweetid_list_array;
+        }
+        else if($option=="tweet_info"){
+            return $this->tweet_info($tweetid_list_array);
+        }
     }
 
-    public function get_hashtags(){
+    public function get_top_hashtags(Request $request){
+        $commonObj = new CommonController;
+        $query = $request->input('query');
+        $from_datetime = $request->input('from');
+        $to_datetime = $request->input('to');
+        $r = $commonObj->get_top_data_cat_by_location('2020-09-12 23:30:00','2020-09-12 23:00:00','top_latlng_hashtag', $query, '10sec');
+        return $r;
+
+
+    }
+
+    public function get_hashtags(Request $request){
 
         $commonObj = new CommonController;
+        $query = $request->input('query');
+        $from_datetime = $request->input('from');
+        $to_datetime = $request->input('to');
         
+        // $query = $_GET['query'];
+        // $from_datetime = $_GET['from'];
+        // $to_datetime = $_GET['to'];
         
-        $query = $_GET['query'];
-        $from_datetime = $_GET['from'];
-        $to_datetime = $_GET['to'];
-        
-        $r = $commonObj->get_top_data_lat_lng($to_datetime,$from_datetime,'top_latlng_hashtag',$query,'10sec');
+        $r = $commonObj->get_top_data_lat_lng('2020-09-12 23:30:00','2020-09-12 23:00:00','top_latlng_hashtag',$query,'10sec');
         
         return json_encode($r);
         

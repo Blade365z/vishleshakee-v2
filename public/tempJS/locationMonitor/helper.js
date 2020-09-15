@@ -1,3 +1,10 @@
+var HeadersForApi = {
+    "Content-Type": "application/json",
+    "Accept": "application/json",
+    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+};
+
+
 export const get_current_time = (time) =>{
     var from_to_datetime;
     $.ajax({
@@ -15,64 +22,48 @@ export const get_current_time = (time) =>{
     return from_to_datetime;
 }
 
+export const getTweetIdList = async (from,to,query,option) => {
+    let dataArg;
+    dataArg = JSON.stringify({ from, to, query, option });
 
-export const getTweetIdList = (from_datetime,to_datetime,place) => {
-    var tweet_info;
-    $.ajax({
-        type: "GET",
-        url: 'LM/getTweetId',
-        data:{from :from_datetime,
-                to:to_datetime,
-                query: place},
-        async: false,
-        success: function (response) {
-            tweet_info = response;
-            console.log(tweet_info);
-            
-            
-
-                
-        }
+    let response = await fetch('LM/getTweetId', {
+        method: 'post',
+        headers: HeadersForApi,
+        body: dataArg
     });
 
-    return tweet_info;
-
-    
+    let data = await response.json();
+    return data;
     
 }
 
+export const getHashtag = async (from,to,query) => {
+    let dataArg;
+    var hashtagInfo;
+    dataArg = JSON.stringify({ from, to, query });
 
-
-
-
-export const getHashtag = (from_datetime,to_datetime,place) => {
-    
-    $.ajax({
-        type: "GET",
-        url: 'LM/getHashtag',
-        data:{from :from_datetime,
-                to:to_datetime,
-                query: place},
-        async: false,
-        success: function (response) {
-            
-            console.log(response);
-            
-            
-
-                
-        }
+    let response = await fetch('LM/getHashtag', {
+        method: 'post',
+        headers: HeadersForApi,
+        body: dataArg
     });
 
-    
-
-    
-    
+    let data = await response.json();
+    return data;    
 }
 
+export const getTopHashtag = async (from,to,query) => {
+    let dataArg;
+    var hashtagInfo;
+    dataArg = JSON.stringify({ from, to, query });
 
+    let response = await fetch('LM/getTopHashtag', {
+        method: 'post',
+        headers: HeadersForApi,
+        body: dataArg
+    });
 
-
-
-
-
+    let data = await response.json();
+    console.log(data);
+    return data;
+}

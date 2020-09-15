@@ -15,16 +15,12 @@ import { getFreqDistData, getTopCooccurData, getMe, getSentiDistData, getTopData
 import { generateFrequencyChart, generateSentimentChart, generateBarChart } from './chartHelper.js';
 import { TweetsGenerator } from '../utilitiesJS/TweetGenerator.js';
 import { getCompleteMap } from '../utilitiesJS/getMap.js';
-import { makeSmatReady } from '../utilitiesJS/smatExtras.js'
- 
+import { makeSuggestionsRead,makeSmatReady } from '../utilitiesJS/smatExtras.js'
+import { getCurrentDate } from '../utilitiesJS/smatDate.js';
 
 
 //Global variables 
-var MODE = '000';
-var interval = 900;
-var query = '';
-
-
+var MODE = '000',interval = 900,query = '';
 const publicAnalysisResultDiv = 'result-div';
 const publicAnalysisResultDivTitle = 'result-div-title';
 const publicAnalysisResultDivSubTitle = 'result-div-subtitle';
@@ -32,26 +28,30 @@ const modeDict = { '000': 'Frequency Distribution', '001': 'Sentiment Distributi
 const modeTitle = { '000': 'Zoom and click to know more.', '001': 'Zoom and click to know more.', '002': 'Click on the bar to analyse further.', '003': 'Click on the bar to analyse further.', '004': 'Click on the markers to know more.', '005': 'Raw tweets posted by the users.' }
 const intervalValues = { '15': 900, '30': 1800, '45': 2700, '1': 3600, '2': 7200 };
 const categoryColor = { 'normal': 'text-normal', 'com': 'text-com', 'sec': 'text-sec', 'com_sec': 'text-com_sec' }
-
+var date = getCurrentDate();
 var TopTrendingData;
 
 
 
 
 
-window.onresize = function (event) {
-  let mainPublicCardHeight = $('#main-public-dash').height();
-  $('#public-trending').css('height', mainPublicCardHeight - 50);
 
-};
 
 $(document).ready(function () {
   getMe();
   makeSmatReady();
+  makeSuggestionsRead('homeSearchInput','top_hashtag',50);
   //Since all the logics implemented will be executed asynchronously, Therefore the function get
   getTopData(interval).then(response => {
 
     TopTrendingData = response.data
+    let alertOffset=0;
+    for (const [key, value] of Object.entries(TopTrendingData)) {
+      if(alertOffset===4)
+        break;
+      alertOffset+=1;
+      $('#alert-'+alertOffset).text(key);
+    }
     generatePublicHashtags(TopTrendingData, 'all');
     query = incoming ? query = incoming : Object.keys(TopTrendingData)[0];
     $('#publicCurrentQuery').text(query);
@@ -139,7 +139,12 @@ $(document).ready(function () {
     console.log(typeTemp)
     generatePublicHashtags(TopTrendingData, typeTemp);
   });
-
+  $('body').on('click', 'div .username', function () {
+    let queryCaptured = '$' + $(this).attr('value');
+    queryCaptured = encodeURIComponent(queryCaptured);
+    let redirectURL = 'userAnalysis' + '?query=' + queryCaptured+'&from='+date+'&to='+date    ;
+    window.open(redirectURL, '_blank');
+});
 
 
 
@@ -162,6 +167,7 @@ $(document).ready(function () {
     getTopData(interval).then(response => {
       TopTrendingData = response.data
       generatePublicHashtags(TopTrendingData, 'all');
+     
     })
     if (MODE == "000") {
       frequencyPublic(query, interval);

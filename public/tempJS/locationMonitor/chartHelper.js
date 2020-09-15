@@ -2,7 +2,7 @@
 
 
 
-export const wordCloudLM = (div) => {
+export const wordCloudLM = (hashtag_data,div) => {
     am4core.useTheme(am4themes_animated);
     // Themes end
 
@@ -12,7 +12,8 @@ export const wordCloudLM = (div) => {
     series.randomness = 0.1;
     series.rotationThreshold = 0.5;
 
-    var data = [{ 'token': '#SushantSinghRajput', 'count': 2344, 'color': '#297EB4' },
+    var data = [{ 'token': '#50DaysForSRKDay', 'count': 2344, 'color': '#297EB4' },
+    { 'token': '#SushantSinghRajput', 'count': 2344, 'color': '#297EB4' },
     { 'token': '#coronavirus', 'count': 1244, 'color': '#FF00FF' },
     { 'token': '#bantiktok', 'count': 4544, 'color': '#297EB4' },
     { 'token': '#iitguwahati', 'count': 1244, 'color': '#3D3D3D' },
@@ -58,6 +59,15 @@ export const wordCloudLM = (div) => {
 
     var hoverState = series.labels.template.states.create("hover");
     hoverState.properties.fill = am4core.color("#FF0000");
+    
+    series.labels.template.events.on("over", function (ev) {
+
+        var item = ev.target.tooltipDataItem.dataContext;
+        var token = item['tag'];
+        
+        wordcloudPlot(hashtag_data,token);
+        // plotEventOnMap(token, only_hashtag_place_data);
+    });
 
     // var subtitle = chart.titles.create();
     // subtitle.text = "(click to open)";

@@ -76,7 +76,10 @@ cursor: pointer;
 .btn-primary {
     background-color: var(--color-active) !important;
 }
-
+.locationOptions:hover{
+    cursor:pointer;
+    color:var(--color-active);    
+}
 
 
 .btn-neg {
@@ -362,9 +365,9 @@ color:white;
 }
 
 .haTab {
+    min-height:400px;
     overflow-x: hidden;
-
-}
+ }
 .closeGraph:hover{
     cursor: pointer;
     opacity: 50%;
@@ -464,10 +467,6 @@ select{
      opacity: 0.5;
     cursor: pointer !important;
 }
-.haTab,.uaTab{
-    min-height: 420px;
-
-}
 
 .freqDistTweets , .sentiDistTweets{
         height:360px;
@@ -480,10 +479,18 @@ select{
 .uaTabTopRight{
     overflow-y: auto;
 }
+
+.chartDiv{
+    height: 420px;
+    overflow-y: hidden;
+}
 .barGraphTab{
     height:360px;
     overflow-y: auto;
     overflow-x:hidden;
+}
+#alertsDiv{
+    height:60px;
 }
 @media (max-width: 767.98px) {
     .dFlexBut{
@@ -600,7 +607,7 @@ select{
         margin-top: -5px !important;
     }
     .haTab {
-     
+        height:400px;
         overflow-x: hidden;
      
     }

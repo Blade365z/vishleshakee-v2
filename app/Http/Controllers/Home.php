@@ -14,7 +14,7 @@ class Home extends Controller
     public function CurrentDateTimeGeneratorPublic($interval)
     {
 
-        $datetimeobj = new DateTime('2020-09-03 14:00:00');
+        $datetimeobj = new DateTime();
         $datetime = $datetimeobj->format('Y-m-d H:i:s');
         $datetime = date('Y-m-d H:i:s', strtotime($datetime) - 60);
         $datetime = new DateTime($datetime);
