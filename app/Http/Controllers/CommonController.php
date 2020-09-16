@@ -926,8 +926,6 @@ class CommonController extends Controller
             //remain
         }
 
-        // echo json_encode($stm_list);
-
         $lat_lng_hash_arr = array();
         $hash_lat_lng_total_cat_info_arr = array();
         $lat_lng_info_arr = array();
@@ -999,7 +997,7 @@ class CommonController extends Controller
             $stm_list = $qb_obj->get_statement($to_datetime, $from_datetime, $token, $range_type, $top_option);
             $result_async_from_db = $db_object->executeAsync_query($stm_list[1], $stm_list[0]);  
         }else{
-            //remain
+
         }
 
 

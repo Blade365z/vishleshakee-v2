@@ -15,6 +15,9 @@ import { makeSuggestionsRead,makeSmatReady } from '../utilitiesJS/smatExtras.js'
 //Global variable definitions 
 var mainInputCounter = 0, statusTableFlag = 0, searchType = 0;
 var searchRecords = [];
+// just for testing...............
+searchRecords[1113] =  [{ 'query': '(#Corona|#Coronavirus)', 'from': '2020-09-11', 'to': '2020-09-13', 'mentionUniqueID': 1234, 'hashtagUniqueID': 3456, 'userUniqueID': 7891, 'searchType': 'advance' }];
+// .....................................................end
 var fromDate = '', toDate = '', query = '';
 let hashtagSuggestion = [];
 //0:Normal, 1:AdvancedSearch
@@ -22,11 +25,12 @@ var mentionUniqueID = '', hashtagUniqueID = '', userUniqueID = '', userID;
 if (localStorage.getItem('smat.me')) {
     let userInfoTemp = JSON.parse(localStorage.getItem('smat.me'));
     userID = userInfoTemp['id'];
-
 } else {
     window.location.href = 'login';
 }
 
+
+// ready function
 jQuery(function () {
     makeSmatReady();
     // initiateHistoricalAnalysis('#WorldUnitedForSSRJustice','2020-09-08','2020-09-11');
@@ -71,6 +75,8 @@ jQuery(function () {
         }
 
     })
+    
+    
     $('#removeField').on('click', function () {
         $('#fieldID' + mainInputCounter).remove();
         mainInputCounter -= 1;
@@ -82,6 +88,8 @@ jQuery(function () {
             $('#addQueryButton').css('display', 'block');
         }
     });
+
+
 
     $('#haQueryInputs').on('submit', function (event) {
         event.preventDefault();
@@ -108,6 +116,9 @@ jQuery(function () {
         updateStatusTable(q, fromDate, toDate);
         resetQueryPanel(mainInputCounter);
     })
+  
+  
+  
     $('#showTableBtn').on('click', function () {
         if (statusTableFlag === 0) {
             $('#searchTable').css('display', 'block');
@@ -123,13 +134,17 @@ jQuery(function () {
 
     $('#frqTabHA').on('click', function () {
     });
+  
+  
+  
     $('#sentiTabHA').on('click', function () {
     });
 
+
+
+
     $('#mentionsTabHA').on('click', function () {
     });
-
-
 
 
     //TweetFiter
@@ -147,6 +162,9 @@ jQuery(function () {
             });
         }
     });
+  
+  
+  
     $('body').on('click', 'div .username', function () {
         let queryCaptured = '$' + $(this).attr('value');
         queryCaptured = encodeURIComponent(queryCaptured);
@@ -158,18 +176,26 @@ jQuery(function () {
 
 
 
+    //The Function below are specific to the query panel:: NOT COOMPLETED YET!!!
+    //TODO::Formulate these functions based on the searches
+    $('body').on('click', '.showBtn', function () {
+        $('#analysisPanelHA').css('display', 'block');
+        let recordsCaptured = searchRecords[$(this).attr('value')];
+        console.log(recordsCaptured);
+        if(recordsCaptured[0]['searchType'] == 'advance'){
+            // for advance search................
 
+        }else{
+            // for normal search........................
+            // initiateHistoricalAnalysis(recordsCaptured[0]['query'], recordsCaptured[0]['from'], recordsCaptured[0]['to'], recordsCaptured[0]['mentionUniqueID'], recordsCaptured[0]['hashtagUniqueID'], recordsCaptured[0]['userUniqueID']);
+        }
+    });
 });
 
 
-//The Function below are specific to the query panel:: NOT COOMPLETED YET!!!
-//TODO::Formulatem these functions based on the searches
-$('body').on('click', '.showBtn', function () {
-    $('#analysisPanelHA').css('display', 'block');
-    let recordsCaptured = searchRecords[$(this).attr('value')];
-    initiateHistoricalAnalysis(recordsCaptured[0]['query'], recordsCaptured[0]['from'], recordsCaptured[0]['to'], recordsCaptured[0]['mentionUniqueID'], recordsCaptured[0]['hashtagUniqueID'], recordsCaptured[0]['userUniqueID']);
 
-});
+
+
 const updateStatusTable = (query, fromDate, toDate) => {
     let currentTimestamp = new Date().getTime();
     let queryElement = decodeQuery(query);
@@ -183,6 +209,8 @@ const updateStatusTable = (query, fromDate, toDate) => {
     let recordTemp = [{ 'query': query, 'from': fromDate, 'to': toDate, 'mentionUniqueID': mentionUniqueID, 'hashtagUniqueID': hashtagUniqueID, 'userUniqueID': userUniqueID }];
     searchRecords[currentTimestamp] = recordTemp;
 }
+
+
 const resetQueryPanel = (counter) => {
     for (let i = 0; i <= counter; i++) {
         $('#fieldID' + i).remove();
@@ -191,8 +219,9 @@ const resetQueryPanel = (counter) => {
     $('#fromDateHA').val('');
     $('#toDateHA').val('');
     $('#removeField').css('display', 'none');
-
 }
+
+
 
 const decodeQuery = (query) => {
     // let query = '#CAA&#Radio+!*protest';
@@ -219,6 +248,8 @@ const decodeQuery = (query) => {
 
     return finalString;
 }
+
+
 
 const decodeOperand = (operand) => {
     if (operand == '&')
@@ -362,9 +393,6 @@ export const sentimentDistributionHA = (query = null, rangeType, fromDate = null
             TweetsGenerator(response.data, 6, chartTweetDivID, fromDate, fromDate, true, rangeType);
         });
     }
-
-
-
 }
 
 
@@ -379,13 +407,6 @@ const plotDistributionGraphHA = (query, fromDate, toDate, option, uniqueID, user
         console.log(response);
     });
 }
-
-
-
-
-
-
-
 
 
 
@@ -410,10 +431,10 @@ const freqSummaryGenerator = (data = null, div, rangeType) => {
     $('#publicSecTotal-' + rangeType).text(totalSec);
     $('#publicComTotal-' + rangeType).text(totalCom);
     $('#publiccom_secTotal-' + rangeType).text(totalcom_sec);
-
-
-
 }
+
+
+
 const generateSentimentSummary = (data = null, div, range) => {
     let arrTemp = [];
     let posSumTemp = 0, negSumTemp = 0, neuSumTemp = 0;
@@ -429,6 +450,10 @@ const generateSentimentSummary = (data = null, div, range) => {
     arrTemp = [posSumTemp, negSumTemp, neuSumTemp];
     generateSentimentSummaryBar(arrTemp, "sentiSummaryBar-" + range, 'hour')
 }
+
+
+
+
 const generateSentimentSummaryBar = (sentiTotalArray, div, range_type) => {
 
     let total_pos = sentiTotalArray[0];
@@ -460,11 +485,3 @@ const generateSentimentSummaryBar = (sentiTotalArray, div, range_type) => {
 
 
 }
-
-
-
-
-
-
-
-

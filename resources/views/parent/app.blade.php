@@ -31,3 +31,4 @@
 <script src="public/datepicker/datepicker-min.js"></script>
 <script src="public/datepicker/datepicker-en.js"></script>
 <script src="public/typeahead/typeahead.js"></script>
+<script type="module" src="public/tagCloudJS/tagcloud.js"></script>

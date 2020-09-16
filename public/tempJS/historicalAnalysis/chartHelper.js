@@ -117,7 +117,6 @@ export const generateFrequencyLineChart = (query, data = null, rangeType, div) =
     var chart = am4core.create(div, am4charts.XYChart);
     var dataTemp = [];
     for (const [key, freq] of Object.entries(data['data'])) {
-
         dataTemp.push({
             date: new Date(freq[0]),
             value1: freq[1]
@@ -293,8 +292,6 @@ export const generateSentiDistBarChart = (data, query, rangeType, div) => {
     // Add cursor
     chart.cursor = new am4charts.XYCursor();
     chart.scrollbarX = new am4core.Scrollbar();
-
-
 };
 
 

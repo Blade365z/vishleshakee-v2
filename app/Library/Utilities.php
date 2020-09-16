@@ -320,6 +320,11 @@ class Utilities{
 
 
 
+    /**
+        * get previous day or next day based on given date
+        *
+        * @return datetime in string format
+    */
     public function get_previous_next_day($date, $option){
         if($option == 'prev'){
             return date('Y-m-d', strtotime('-1 day', strtotime($date)));
@@ -338,15 +343,21 @@ class Utilities{
         if(floor($t/10) == 0)  //for 1-9 = 0(1-9) and others (10-24) = as it is
             $t = '0'.$t;        
         if($t == 24){
-            $res = ($this->get_previous_next_day($date, 'next')). ' 00:00:00'; 
+            $res = ($this->get_previous_next_day($date, 'next')). ' 00:00:00'; // current time-->"2020-09-16 24:00:00"  convert to "2020-09-17 00:00:00"
         }else{
-            $time_tmp = $t . ':00:00' ; // current time-->20:06:20  convert to 21:00:00
+            $time_tmp = $t . ':00:00' ; // current time-->"2020-09-16 20:06:20"  convert to "2020-09-16 21:00:00"
             $res = $date.' '.$time_tmp;
         }
         return $res;
     }
 
 
+
+    /**
+        * convert utc datetime to local datetime
+        *
+        * @return datetime in string format
+    */
     public function convert_utc_datetime_to_local_datetime($datetime_str){
         // $s = '2020-09-10 12:23:20';
         $date = new DateTime($datetime_str);

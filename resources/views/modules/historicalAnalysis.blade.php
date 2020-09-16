@@ -21,7 +21,6 @@
                     <button class="btn btn-primary smat-rounded mx-1 mt-2 " id="addQueryButton" onclick="return false"><i class="fa fa-plus" aria-hidden="true"></i></button>
                 </div>
             </div>
-
         </div>
         <div id="haDateInput">
             <div class="form-group  dateinputForm my-0  mr-2  border smat-rounded d-flex px-2 py-1  bg-white">
@@ -59,7 +58,17 @@
                         </tr>
                     </thead>
                     <tbody id="haStatusTable">
-
+                        <tr>
+                            <th scope="row">1113</th>
+                            <td><div><span>(#Corona|#Coronavirus)</span> </div></td>
+                            <td>2020-09-11</td>
+                            <td>2020-09-13</td>
+                            <td>Ready</td>
+                            <td>
+                                <button class="btn btn-primary smat-rounded mx-1 showBtn" value="1113"> Show </button>
+                                <button class="btn btn-neg mx-1  smat-rounded"> Delete </button>
+                            </td>
+                        </tr>
                     </tbody>
                 </table>
                 <div id="tableInitialTitle">

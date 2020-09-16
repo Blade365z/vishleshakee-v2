@@ -47,6 +47,7 @@ export const networkGeneration = async (url,queryTemp,fromDateTemp,toDateTemp,no
     return output;
 }
 
+
 export const linkprediction = async (url,data,NAType) =>{
     let response = await fetch(url,{
         method : 'post',
@@ -56,6 +57,7 @@ export const linkprediction = async (url,data,NAType) =>{
     let output = await response.json();
     return output;
 }
+
 
 export const render_linkprediction_graph = async (input,src) => {
     let source = src;

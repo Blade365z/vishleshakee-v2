@@ -1,10 +1,13 @@
 // import {wordCloudLM} from './chartHelper.js';
-import { get_current_time, getTweetIdList, getHashtag,getTopHashtag} from './helper.js';
+import { get_current_time, getTweetIdList, getHashtag, getTopHashtag } from './helper.js';
 import { TweetsGenerator } from '../utilitiesJS/TweetGenerator.js';
 
 
-var hashtag_info,global_tweetid_list;
+var hashtag_info, global_tweetid_list;
 var interval = 60;
+let currentlyTrendingLocFlag = 1;
+const categoryColor = { 'normal': 'text-normal', 'com': 'text-com', 'sec': 'text-sec', 'com_sec': 'text-com_sec' }
+const categoryColorHexDict = { 'normal': '#297EB4', 'com': '#ff0055', 'sec': '#3D3D3D', 'com_sec': '#FF00FF' };
 var global_datetime = get_current_time(interval);
 var markersList = document.getElementById('markersList');
 L.MarkerCluster.include({
@@ -121,12 +124,27 @@ jQuery(function () {
         ///Amitabh
         console.log(global_tweetid_list);
         let to = global_datetime[1];
-         let from = global_datetime[0];
-         let   place = "^" + $("#queryLM").val();
+        let from = global_datetime[0];
+        let place = "^" + $("#queryLM").val();
         $('#tweetsModal').modal('show');
         TweetsGenerator(global_tweetid_list, 6, 'tweets-modal-div', null, null, 'all');
 
     });
+    $('#currentlyTrendingLocBtn').on('click',function(){
+        if(currentlyTrendingLocFlag===1){
+            $('#currentlyTrendingLocBtn').removeClass('text-normal');
+            $('#currentlyTrendingLocBtn').attr('title','Show  trending hashtags');
+            $('#currentlyTrendingParentLoc').css('display','none');
+            currentlyTrendingLocFlag=0;
+            $('#lmMap').css('width','100%');
+        }else{
+            $('#currentlyTrendingLocBtn').addClass('text-normal');
+            $('#currentlyTrendingLocBtn').attr('title','Hide  trending hashtags');
+            $('#currentlyTrendingParentLoc').css('display','block');
+            currentlyTrendingLocFlag=1;
+            $('#lmMap').css('width','60%');
+        }
+    })
 
 });
 
@@ -165,28 +183,29 @@ function trigger() {
             clearInterval(i);
         }
 
-        getTweetIdList(from_datetime, to_datetime, place,"tweet_id").then(response => {
+        getTweetIdList(from_datetime, to_datetime, place, "tweet_id").then(response => {
             global_tweetid_list = response;
             console.log(global_tweetid_list);
-            
+
         });
 
-        
+
 
         getTopHashtag(from_datetime, to_datetime, place).then(response_2 => {
             // console.log(response_2["top_data_with_cat_by_location"]);
-            getHashtag(from_datetime, to_datetime, place).then(response =>{
-                plotHashtags(response,response_2["top_data_with_cat_by_location"]);
-                
+            generateCurrentlyTrending(response_2.top_data_with_cat_by_location, 'currentlyTrendingLocDiv', 'all', place);
+            getHashtag(from_datetime, to_datetime, place).then(response => {
+                plotHashtags(response, response_2["top_data_with_cat_by_location"]);
+
             });
-            
+
         });
-        
-        getTweetIdList(from_datetime, to_datetime, place,"tweet_info").then(response => {
+
+        getTweetIdList(from_datetime, to_datetime, place, "tweet_info").then(response => {
             rander_map(response);
         });
 
-        
+
     }
 
     else if (refresh_type == "Auto Refresh") {
@@ -222,14 +241,18 @@ function trigger() {
             to_datetime_ = global_datetime_[1];
             from_datetime_ = global_datetime_[0];
 
-            getTweetIdList(from_datetime, to_datetime, place,"tweet_id").then(response => {
-                global_tweetid_list = response;});
-    
-            getHashtag(from_datetime, to_datetime, place).then(response =>{
-                plotHashtags(response);});
-            
-            getTweetIdList(from_datetime, to_datetime, place,"tweet_info").then(response => {
-                rander_map(response);});
+            getTweetIdList(from_datetime, to_datetime, place, "tweet_id").then(response => {
+                global_tweetid_list = response;
+            });
+
+            getHashtag(from_datetime, to_datetime, place).then(response => {
+
+                plotHashtags(response);
+            });
+
+            getTweetIdList(from_datetime, to_datetime, place, "tweet_info").then(response => {
+                rander_map(response);
+            });
         }, 60000);
 
     }
@@ -238,7 +261,7 @@ function trigger() {
 
 const rander_map = (data) => {
     group1.clearLayers();
-    
+
     if (data.length == 0) {
         alert("Can't find the location");
     }
@@ -287,7 +310,7 @@ const rander_map = (data) => {
 }
 
 
-const plotHashtags = (data,data_2) => {
+const plotHashtags = (data, data_2) => {
 
     glow.clearLayers();
 
@@ -314,7 +337,8 @@ const plotHashtags = (data,data_2) => {
         color: '#2e7eb4',
         fillColor: '#2e7eb4'
     });
-    wordCloudLM(hashtag_data["hash_lat_lng_total_cat_info_arr"], 'trendingLM',data_2);
+
+    // wordCloudLM(hashtag_data["hash_lat_lng_total_cat_info_arr"], 'trendingLM', data_2);
 
     $.each(hashtag_data['lat_lng_hash_arr'], function (v, c) {
         var lat = v.split("_")[0],
@@ -407,16 +431,17 @@ const wordcloudPlot = (data_, hashtag) => {
     });
 }
 
-const wordCloudLM = (hashtag_latlng, div,response) => {
+const wordCloudLM = (hashtag_latlng, div, response) => {
     am4core.useTheme(am4themes_animated);
     // Themes end
 
     var chart = am4core.create(div, am4plugins_wordCloud.WordCloud);
     chart.fontFamily = "Courier New";
     var series = chart.series.push(new am4plugins_wordCloud.WordCloudSeries());
-    series.randomness = 0.1;
-    series.rotationThreshold = 0.5;
-
+    series.randomness =0;
+    series.rotationThreshold = 0;
+    series.minFontSize = am4core.percent(8);
+    series.maxFontSize = am4core.percent(30);
     var data = [{ 'token': '#50DaysForSRKDay', 'count': 2344, 'color': '#297EB4' },
     { 'token': '#SushantSinghRajput', 'count': 2344, 'color': '#297EB4' },
     { 'token': '#coronavirus', 'count': 1244, 'color': '#FF00FF' },
@@ -438,16 +463,16 @@ const wordCloudLM = (hashtag_latlng, div,response) => {
 
     var dataformat = [];
     $.each(response, function (v, c) {
-        console.log(v);
-        console.log(c[0]);
+        // console.log(v);
+        // console.log(c[0]);
         let token = v;
         let count = c[0];
         let color;
-        if(c[1]=='normal'){color ="#2e7eb4" }
-        else if(c[1]=='com'){color ="#f30155" }
-        else if(c[1]=='sec'){color = "#3d3d3d"}
-        else if(c[1]=='com_sec'){color = "#2e7eb4"}
-        
+        if (c[1] == 'normal') { color = "#2e7eb4" }
+        else if (c[1] == 'com') { color = "#f30155" }
+        else if (c[1] == 'sec') { color = "#3d3d3d" }
+        else if (c[1] == 'com_sec') { color = "#2e7eb4" }
+
         dataformat.push({
             tag: token,
             count: count,
@@ -487,9 +512,9 @@ const wordCloudLM = (hashtag_latlng, div,response) => {
 
         var item = ev.target.tooltipDataItem.dataContext;
         var token = item['tag'];
-        console.log(token);
+       
 
-        wordcloudPlot(hashtag_latlng, token);
+        // wordcloudPlot(hashtag_latlng, token);
         // plotEventOnMap(token, only_hashtag_place_data);
     });
 
@@ -502,3 +527,56 @@ const wordCloudLM = (hashtag_latlng, div,response) => {
     // title.fontWeight = "800";
 }
 
+
+
+const generateCurrentlyTrending = (data, div, filterArgument, query = null, interval = null) => {
+    
+    $('#currentlyTrendingLocBtn').addClass('text-normal');
+    $('#'+div).css('display','block');
+    $('#' + div).html('');
+    query = query.includes('^') ? query.replace('^', '') : query;
+    query = query[0] === query[0].toUpperCase() ? query : query[0].toUpperCase() + query.slice(1,);
+    $('#currentlyTrendingLocTitle').html('<div class="text-center" > <div >Trending from <b>  ' + query + ' </b> </div><div class="pull-text-top mb-1"><small class="text-muted "> Updates every ' + interval + ' seconds</div> </div>')
+    
+    const arrayTemp = data;
+    let arrayT = [];
+    for (const [key, value] of Object.entries(arrayTemp)) {
+        if (filterArgument !== 'all') {
+            if (value[1] !== filterArgument) {
+                continue;
+            }
+        }
+        ;
+        let category = (value[1] == 'normal') ? 'Normal' : ((value[1] == 'sec') ? 'Security' : ((value[1] == 'com') ? 'Communal' : 'Communal & Security'));
+
+        // let urlArg = key.includes('#') ? key.replace('#', '%23') : '' + key;
+        arrayT.push({
+            word:key,
+            weight:value[0],
+            color:categoryColorHexDict[value[1]]
+
+        })        
+       // $('#' + div).append('<div class="mb-1 publicHashtag-' + value[1] + '"><p class="hashtags"><a class="text-dark" href="?query=' + urlArg + '" target="_blank"  >' + key + '</a></p><p class=" m-0 smat-dash-title  text-dark "> <span>' + value[0] + '</span><span class="mx-1">Tweets</span><span class="mx-1"   title ="' + category + '" ><i class="fa fa-circle ' +    categoryColor[value[1]] + ' " aria-hidden="true"></i> </span></p></div>');
+        
+    }
+    let minFontSize=15,maxFontSize=55;
+    if(arrayT.length>10){
+        minFontSize=8,maxFontSize=30
+    }else if(arrayT.length>25){
+        minFontSize=8,maxFontSize=35
+    }
+
+    $("#"+div).jQWCloud({
+          words: arrayT,
+          minFont: minFontSize,
+          maxFont: maxFontSize,
+          verticalEnabled:false,
+          cloud_font_family:'roboto',
+          word_click :function(){
+              alert($(this).text())
+          },
+        
+
+        });
+        
+}

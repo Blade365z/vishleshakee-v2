@@ -6,7 +6,7 @@ developed at OSINT LAB , IIT-G
 IMPORTANT NOTE
 -----------------------------
 1.Use camelCase notations:)
-2.PLEASE NOTE that the range types are :: 1. days , 2.hour , 3.10sec
+2.PLEASE NOTE that the range types are :: 1. day , 2.hour , 3.10sec
 3.Avoid using synchronous requests as XML-http-requests has been deprecated already.
 
 Script written by : Mala Das (maladas601@gmail.com), Amitabh Boruah(amitabhyo@gmail.com)
@@ -24,6 +24,8 @@ var HeadersForApi = {
     'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
 };
 
+
+
 export const getFreqDistDataForHA = async (query, from, to, toTime = null, rangeType, isDateTimeAlready = 0) => {
     let dataArg;
     if (toTime) {
@@ -39,8 +41,9 @@ export const getFreqDistDataForHA = async (query, from, to, toTime = null, range
     let data = await response.json()
 
     return data;
-
 }
+
+
 
 export const getTweetIDsForHA = async (query, from = null, to = null, rangeType, filter = null, isDateTimeAlready = 0) => {
     let dataArgs;
@@ -58,6 +61,8 @@ export const getTweetIDsForHA = async (query, from = null, to = null, rangeType,
     return data;
 }
 
+
+
 export const getSentiDistDataForHA = async (query, from, to, toTime = null, rangeType, isDateTimeAlready = 0) => {
     let dataArg;
     if (toTime) {
@@ -74,8 +79,8 @@ export const getSentiDistDataForHA = async (query, from, to, toTime = null, rang
     let data = await response.json()
 
     return data;
-
 }
+
 
 
 export const getCooccurDataForHA = async (query, from, to, option, uniqueID, userID) => {
@@ -105,6 +110,8 @@ export const getCooccurDataForHA = async (query, from, to, option, uniqueID, use
         return readData;
     }
 } 
+
+
 
 export const getTopDataHA = async (from, to, option, limit) => {
     let dataArgs = JSON.stringify({
