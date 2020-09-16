@@ -270,9 +270,24 @@ const decodeOperand = (operand) => {
 
 const initiateHistoricalAnalysis = (queryTemp, fromTemp, toTemp, mentionID, hashtagID, activeUserID) => {
     //  mentionUniqueID = generateUniqueID();
+    query = queryTemp;
+    fromDate = fromTemp;
+    toDate = toTemp;
+    $('#currentlySearchedQuery').text(query);
+    $('#analysisPanelHA').css('display', 'block');
+    let rangeType = getRangeType(fromDate, toDate);
+    frequencyDistributionHA(query, rangeType, fromDate, toDate, null, 'freqContentHA', false);
+    sentimentDistributionHA(query, rangeType, fromDate, toDate, null, 'sentiContentHA', false);
+    plotDistributionGraphHA(query, fromDate, toDate, 'user', activeUserID, userID, 'usersContentHA');
+    plotDistributionGraphHA(query, fromDate, toDate, 'mention', mentionID, userID, 'mentionsContentHA');
+    plotDistributionGraphHA(query, fromDate, toDate, 'hashtag', hashtagID, userID, 'hashtagsContentTab');
+}
 
 
 
+
+const initiateHistoricalAnalysisAdvance = (queryTemp, fromTemp, toTemp, mentionID, hashtagID, activeUserID) => {
+    //  mentionUniqueID = generateUniqueID();
     query = queryTemp;
     fromDate = fromTemp;
     toDate = toTemp;

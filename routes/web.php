@@ -180,3 +180,8 @@ Route::group(['prefix' => 'TA'], function () {
 //Resource Route for feedback controller
 Route::post('/feedback', 'FeebackController@insertFeedback');
 Route::post('/getFeedback', 'FeebackController@checkIfFeedbackExist');
+
+
+
+Route::resource('status', 'queryStatusController', ['except' => ['show']]);
+Route::get('/status/{username}', 'queryStatusController@show');
