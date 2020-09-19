@@ -96,7 +96,7 @@
     </div>
 </div>
    
-<div class="my-3" id="searchTable">
+<div class="my-3" id="searchTable" style="display:none;">
     <div class="card">
         <div class="card-body">
             <div>
@@ -183,7 +183,7 @@
             </div>
             <div class="card shadow mt-4">
             <h4 class="mt-2  text-center font-weight-bold text-dark"> Analysis Summary </h4>
-                <div class="card-body " id='naSummary' style="overflow-x:hidden;overflow-y:auto"> 
+                <div class="card-body " id='naSummary' style="overflow-x:auto;overflow-y:auto"> 
                 <div class="analysis_summary_div" >
                             
                 </div>

@@ -1,7 +1,7 @@
 <?php
 
-use Illuminate\Support\Facades\Route;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Route;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -144,10 +144,13 @@ Route::group(['prefix' => 'na'], function () {
     Route::post('fileupload', 'networkAnalysisController@fileupload');
 
     Route::get('fileUploadRequest', 'networkAnalysisController@fileUploadRequest');
-    Route::post('requestToSparkandStoreResult', 'networkAnalysisController@requestToSpark');
+    // Route::post('requestToSparkandStoreResult', 'networkAnalysisController@requestToSpark');
+    Route::post('requestToSpark', 'networkAnalysisController@requestToSpark');
     Route::post('genNetwork', 'networkAnalysisController@gen_network');
     Route::get('getdirname', 'networkAnalysisController@getdirname');
 
+    Route::get('getsparkstatus/{sparkID}', 'networkAnalysisController@getSparkStats');
+    Route::post('getFromSparkAndStore','networkAnalysisController@getOuputFromSparkAndStore');
     //For network evolution
     Route::get('nettest', 'networkAnalysisEvolution@tester');
     Route::get('jobsubmit', 'networkAnalysisEvolution@jobSubmission');
@@ -173,7 +176,7 @@ Route::group(['prefix' => 'LM'], function () {
     Route::post('getHashtag', 'LocationMap@get_hashtags');
     Route::post('getTopHashtag', 'LocationMap@get_top_hashtags');
     Route::post('checkLocation', 'LocationMap@checkLocation_');
-    
+
 });
 
 //Define API routes requiring middleware here for Trend Analysis
@@ -185,8 +188,6 @@ Route::group(['prefix' => 'TA'], function () {
 //Resource Route for feedback controller
 Route::post('/feedback', 'FeebackController@insertFeedback');
 Route::post('/getFeedback', 'FeebackController@checkIfFeedbackExist');
-
-
 
 Route::resource('status', 'queryStatusController', ['except' => ['show']]);
 Route::get('/status/{username}', 'queryStatusController@show');

@@ -14,8 +14,8 @@ export const render_graph = async (url,input) => {
     let data = {
         input : input
     }
-    console.log("Printing Input");
-    console.log(data);
+    // console.log("Printing Input");
+    // console.log(data);
     let response = await fetch(url,{
         method : 'post',
         headers : HeadersForApi,
@@ -152,6 +152,7 @@ export const centrality = async (url,data,NAType) =>{
 
 export const render_centrality_graph = async (input,id_value,algo_option) =>{
     let data = {input : input, algo_option : algo_option};
+    console.log('QUERIES',data);
     let response = await fetch('na/centrality_data_formator',{
         method : 'post',
         headers : HeadersForApi,
@@ -732,18 +733,17 @@ export const writedelete = (unique_id) => {
 }
 
 export const sparkUpload = (filename_arr) =>{
-        console.log(filename_arr);
+        // console.log(filename_arr);
         $.ajax({
                 url: 'na/fileUploadRequest',
                 type: 'GET',
                 dataType: 'JSON',
                 data: {
                     filename_arr: filename_arr
-                },
-                async: false
+                }
             })
             .done(function(res) {
-                console.log(res);
+                // console.log(res);
             })
 }
 
@@ -845,7 +845,8 @@ export const render_intersection_difference = (res,id_value,option) => {
         });
     
         // to add edges dynamically
-        console.log("Generating Edges Now");
+        // console.log("Generating Edges Now");
+
         $.each(edges_arr, function(index, value) {
             setTimeout(function() {
                 edges.add({
@@ -855,7 +856,7 @@ export const render_intersection_difference = (res,id_value,option) => {
                 });
     
             }, 10);
-            console.log("Making an edge");
+            // console.log("Making an edge");
         });
     
     
@@ -1117,3 +1118,20 @@ var community_options = {
     }
 
 };
+
+
+
+export const storeResultofSparkFromController = async (sparkID, query_list ,userID) => {
+    let dataArgs = JSON.stringify({
+        id: sparkID,
+        query_list,
+        userID
+    });
+    let response = await fetch('na/getFromSparkAndStore', {
+        method: 'post',
+        headers: HeadersForApi,
+        body: dataArgs,
+    });
+    let output = await response.json();
+    return output;
+}
