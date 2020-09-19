@@ -106,6 +106,10 @@ Route::group(['prefix' => 'HA'], function () {
     Route::post('getSentimentDataForHistorical', 'HistoricalController@getSentimentDataForHistorical');
     Route::post('getCooccurDataForHA', 'HistoricalController@getCooccurDataForHA');
 
+    // just for testing
+    Route::get('freqDistDataHA', 'HistoricalController@getFrequencyDataForHA');
+    Route::get('sentDistDataHA', 'HistoricalController@getSentimentDataForHA');
+    Route::get('getCooccurDataForHA', 'HistoricalController@get_Co_occur_Data_For_HA');
     Route::get('getTopLatLngHA', 'HistoricalController@get_top_data_lat_lng_ha');
     Route::get('getTopCatLocationHA', 'HistoricalController@get_top_data_cat_location_ha');
     Route::get('genNetwork', 'CommonController@gen_network');
@@ -168,6 +172,7 @@ Route::group(['prefix' => 'LM'], function () {
     Route::get('/getTime', 'LocationMap@get_current_date_time');
     Route::post('getHashtag', 'LocationMap@get_hashtags');
     Route::post('getTopHashtag', 'LocationMap@get_top_hashtags');
+    Route::post('checkLocation', 'LocationMap@checkLocation_');
     
 });
 

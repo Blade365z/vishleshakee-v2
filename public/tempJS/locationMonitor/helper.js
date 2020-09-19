@@ -22,6 +22,21 @@ export const get_current_time = (time) =>{
     return from_to_datetime;
 }
 
+export const checkLocation = async (place) => {
+    let dataArg;
+    dataArg = JSON.stringify({ place });
+
+    let response = await fetch('LM/checkLocation', {
+        method: 'post',
+        headers: HeadersForApi,
+        body: dataArg
+    });
+
+    let data = await response.json();
+    return data;
+}
+
+
 export const getTweetIdList = async (from,to,query,option) => {
     let dataArg;
     dataArg = JSON.stringify({ from, to, query, option });
@@ -37,10 +52,10 @@ export const getTweetIdList = async (from,to,query,option) => {
     
 }
 
-export const getHashtag = async (from,to,query) => {
+export const getHashtag = async (from,to,query,type) => {
     let dataArg;
     var hashtagInfo;
-    dataArg = JSON.stringify({ from, to, query });
+    dataArg = JSON.stringify({ from, to, query,type });
 
     let response = await fetch('LM/getHashtag', {
         method: 'post',
@@ -52,10 +67,10 @@ export const getHashtag = async (from,to,query) => {
     return data;    
 }
 
-export const getTopHashtag = async (from,to,query) => {
+export const getTopHashtag = async (from,to,query,type) => {
     let dataArg;
     var hashtagInfo;
-    dataArg = JSON.stringify({ from, to, query });
+    dataArg = JSON.stringify({ from, to, query,type });
 
     let response = await fetch('LM/getTopHashtag', {
         method: 'post',
@@ -64,6 +79,6 @@ export const getTopHashtag = async (from,to,query) => {
     });
 
     let data = await response.json();
-    console.log(data);
+    
     return data;
 }

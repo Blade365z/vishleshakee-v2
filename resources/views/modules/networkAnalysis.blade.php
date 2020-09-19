@@ -18,7 +18,6 @@
     border: 1px solid #dddddd;
     text-align: center;
     padding: 5px;
-    width: 100%;
     }
 
     tr:nth-child(even) {
@@ -49,7 +48,7 @@
 
 <div class="mb-3">
     <form id="naInputInputs">
-
+ 
         <div id="naInputPanel">
             <div class="form-group   my-0  mr-2  border smat-rounded d-flex px-2 py-1  bg-white">
                 <input type="text" class="form-control" name="query" id="queryNA" placeholder="Query" style="border:0px;" autocomplete="OFF" required>
@@ -82,13 +81,7 @@
                     <option>Normal</option>
                 </select>
             </div>
-            <div class="form-group  my-0  mr-2 border smat-rounded d-flex px-2 py-1  bg-white">
-                <i class="fas fa-cog ml-2 text-normal" style="margin-top:11px;"></i>
-                <select class="form-control" name="NAEngine" id="networkEngineNA">
-                    <option value="networkx">Network X </option>
-                    <option value="spark">Spark</option>
-                </select>
-            </div>
+    
             <div class="d-flex">
                 <button class="btn smat-btn  smat-rounded  mx-1" id="submit-btn" type="submit"> <span>Search</span> </button>
                 <div class="mt-3 mx-2"> OR </div>
@@ -102,12 +95,43 @@
     <div class="row" id="naCards">
     </div>
 </div>
+   
+<div class="my-3" id="searchTable">
+    <div class="card">
+        <div class="card-body">
+            <div>
+                <p class="m-0 smat-box-title"> Recent Searches</p>
+            </div>
+            <div class="table-responsive ">
+                <table class="table  table-bordered">
+                    <thead>
+                        <tr>
+                            <th class="py-1 px-3 text-dark" scope="col">ID</th>
+                            <th class="py-1 px-3 text-dark " scope="col">Query</th>
+                            <th class="py-1 px-3 text-dark " scope="col">Analysis </th>
+                            <th class="py-1 px-3 text-dark " scope="col">From </th>
+                            <th class="py-1 px-3 text-dark " scope="col">To </th>
+                            <th class="py-1 px-3 text-dark " scope="col"> Status</th>
+                            <th class="py-1 px-3 text-dark" scope="col"> Options</th>
+                        </tr>
+                    </thead>
+                    <tbody id="naStatusTable">
+                  
+                    </tbody>
+                </table>
+                <div id="tableInitialTitle">
+                    <p class="m-0 text-center text-hint" disabled> Submit a query to perform analysis upon. </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 <div class="mt-2" id="naPanel">
 
     <div  class="text-center font-weight-bold" id="msg_displayer"></div>
 
     <div>
-        <p class="smat-box-title-large m-0">. <span class="smat-value font-weight-bold text-dark" id="naShowingResForTitle"> </span> </p>
+        <p class="smat-box-title-large m-0"> <span class="smat-value font-weight-bold text-dark" id="naShowingResForTitle"> </span> </p>
     </div>
 
     <div class="smat-tabs">
@@ -133,13 +157,17 @@
 
     </div>
 
+
+
+    
+    
     <div class="row">
         <div class="col-sm-3">
             <div class="card shadow">
                 <div class="card-body">
                     <div>
-                        <h4 class="m-0  font-weight-bold text-dark subject"> #coronavirus </h4>
-                        <p class="m-0 text-dark "> From: <span class="font-weight-bold from_date"> 2020-11-12</span> &nbsp To: <span class="font-weight-bold to_date"> 2020-12-12</span> </p>
+                        <h4 class="m-0  font-weight-bold text-dark subject">  </h4>
+                        <p class="m-0 text-dark "> From: <span class="font-weight-bold from_date"> </span> &nbsp To: <span class="font-weight-bold to_date"> </span> </p>
                         <p class="m-0  text-dark"> </p>
 
 
@@ -155,7 +183,7 @@
             </div>
             <div class="card shadow mt-4">
             <h4 class="mt-2  text-center font-weight-bold text-dark"> Analysis Summary </h4>
-                <div class="card-body scroll" id='naSummary' style="overflow-x:scroll;overflow-y:scroll"> 
+                <div class="card-body " id='naSummary' style="overflow-x:hidden;overflow-y:auto"> 
                 <div class="analysis_summary_div" >
                             
                 </div>
@@ -183,6 +211,16 @@
                                     <li class="nav-item naTabs-2 ">
                                         <a class="nav-link smat-rounded " id="lpTabNA" data-toggle="pill" href="#lpContent" role="tab" aria-controls="lpContent" aria-selected="false">Link Prediction</a>
                                     </li>
+                                    <li class="ml-auto">
+                                        <div class=" my-0  mr-2 border smat-rounded d-flex px-2   bg-white">
+                                            <i class="fas fa-cog ml-2 text-normal" style="margin-top:11px;"></i>
+                                            <select class="form-control" name="NAEngine" id="networkEngineNA">
+                                                <option class="engineSelectorOption"  value="networkx">Network X </option>
+                                                <option  class="engineSelectorOption" value="spark">Spark</option>
+                                            </select>
+                                        </div>
+
+                                    </li>
                                 </ul>
                                 <div class="tab-content " id="pills-tabContent">
                                     <div class="tab-pane fade show active " id="centrality_algo_choice" role="tabpanel" aria-labelledby="centralityContent">
@@ -197,7 +235,10 @@
                                             <label class="radio-inline mx-2  " id="btwncen"><input type="radio" name="centralityInlineRadioOptions"  value="btwncen">&nbsp Betweeness Centrality</label>
                                             <label class="radio-inline mx-2 "  id="evcen"><input type="radio" name="centralityInlineRadioOptions" value="evcen">&nbsp EV Centrality
                                             </label>
-                                            <button type="submit" id="centrality_exec" class="btn btn-danger smat-rounded " style="margin-top:10px;">Execute</button>
+                                            <div class="d-flex">
+                                            
+                                            <button type="submit" id="centrality_exec" class="btn btn-danger smat-rounded " >Execute</button>
+                                            </div>
                                         </div>
                                     </div>
 
@@ -225,23 +266,22 @@
                                         </div>
 
                                         <div class="tab-content " id="pills-tabContent">
-                                            <div class="tab-pane fade show active " id="asyncFluidContent" role="tabpanel" aria-labelledby="asyncFluidContent">
-
+                                            <div class="tab-pane fade show active  " id="asyncFluidContent" role="tabpanel" aria-labelledby="asyncFluidContent">
+                                        <div class="d-flex">
                                                     <div class="form-group   my-0  mr-2  border smat-rounded d-flex px-2   bg-white">
 
                                                         <input type="number" class="form-control smat-rounded  naInputs " id="noOfCommunities" placeholder="No. of Communities" style="border:0px;">
                                                     </div>
-
+                                             
+                                                    <button type="submit" class="btn btn-danger mt-1     smat-rounded" id="comm_exec" >Execute</button>
                                             </div>
-                                            <div class="tab-pane fade show active " id="emptyContent" role="tabpanel" aria-labelledby="emptyContent">
-
-
                                             </div>
+                                   
                                         </div>
 
                                         
                                         <div class="form-group mx-1">
-                                                <button type="submit" class="btn btn-danger mt-1    mb-2 smat-rounded" id="comm_exec" >Execute</button>
+                                          
                                         </div>
 
                                     </div>
@@ -274,6 +314,7 @@
                                                     <option value="AllPossibleShortestPath">All Possible Shortest Path</option>
                                                 </select>
                                             </div>
+                                        
                                             <div class="form-group mx-1">
                                                 <button type="submit" id="sp_exec" class="btn btn-danger smat-rounded " style="margin-top:30px;">Execute</button>
                                             </div>
@@ -307,18 +348,19 @@
                                         </div>
                                         <div>
                                             <div class="d-flex">
-                                                <div class="form-group pull-left mx-1">
+                                                <div class=" pull-left mx-1">
                                                     <div class="border smat-rounded">
                                                         <input type="text" class="form-control  naInputs smat-rounded " id="link_source_node" placeholder="Enter source" style="border:0px;">
                                                     </div>
                                                 </div>
-                                                <div class="form-group  mx-1">
+                                                <div class=" mx-1">
                                                     <div class="border smat-rounded">
                                                         <input type="text" class="form-control  naInputs smat-rounded " id="nos_links_to_be_predicted" placeholder="No. of links to be predicted" style="border:0px;">
                                                     </div>
                                                 </div>
-                                                <div class="form-group mx-1">
-                                                    <button type="submit" class="btn btn-danger smat-rounded" id="link_prediction_exec">Execute</button>
+                                      
+                                                <div class=" mx-1">
+                                                    <button type="submit" class="btn btn-danger smat-rounded mb-0" id="link_prediction_exec">Execute</button>
                                                 </div>
                                             </div>
                                         </div>
@@ -419,6 +461,7 @@
             </div>
         </div>
     </div>
+    
 </div>
 
 <link href="public/tempCSS/vis.css" rel="stylesheet" />

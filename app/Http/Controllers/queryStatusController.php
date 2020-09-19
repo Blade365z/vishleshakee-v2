@@ -2,8 +2,9 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
 use App\QueryStatus;
+use Illuminate\Http\Request;
+
 class queryStatusController extends Controller
 {
     /**
@@ -35,12 +36,14 @@ class queryStatusController extends Controller
     public function store(Request $request)
     {
         $request->validate([
+            'queryID' => 'required',
             'username' => 'required',
             'query' => 'required',
             'fromDate' => 'required',
             'toDate' => 'required',
         ]);
         $statusObj = new QueryStatus([
+            'queryID' => $request->get('queryID'),
             'username' => $request->get('username'),
             'query' => $request->get('query'),
             'fromDate' => $request->get('fromDate'),
@@ -58,7 +61,7 @@ class queryStatusController extends Controller
      */
     public function show($username)
     {
-        $statusObj = QueryStatus::where('username',$username)->firstOrFail();
+        $statusObj = QueryStatus::where('username', $username)->firstOrFail();
         return $statusObj;
     }
 

@@ -113,6 +113,66 @@ class HistoricalController extends Controller
 
 
 
+
+
+    // all these just for testing.........................................................
+
+    public function getFrequencyDataForHA(){
+        $common_object = new CommonController;
+        $adv_object = new HistoricalAdvanceController;
+        $token = null;
+        $token = $_GET['query'];
+        $from_datetime = $_GET['from_datetime'];
+        $to_datetime = $_GET['to_datetime'];
+        $range_type = $_GET['range_type'];
+        $search_type = $_GET['search_type'];
+        $filename = $_GET['filename'];
+        if($search_type == 'normal')
+            return $common_object->get_frequency_distribution_data($to_datetime, $from_datetime, $token, $range_type, $category_info_total = false, $category_info_details = true);
+        else    
+            return $adv_object->get_freq_from_file($to_datetime, $from_datetime, $token, $range_type, $category_info_total = false, $category_info_details = true, $filename);
+    }
+
+
+
+    public function getSentimentDataForHA(){
+        $common_object = new CommonController;
+        $token = null;
+        $token = $_GET['query'];
+        $from_datetime = $_GET['from_datetime'];
+        $to_datetime = $_GET['to_datetime'];
+        $range_type = $_GET['range_type'];
+        return $common_object->get_sentiment_distribution_data($to_datetime, $from_datetime, $token, $range_type);
+    }
+
+
+    public function get_Co_occur_Data_For_HA(){
+        $common_object = new CommonController;
+        $token = null;
+        $token = $_GET['query'];
+        $from_datetime = $_GET['from_datetime'];
+        $to_datetime = $_GET['to_datetime'];
+        // $range_type = $_GET['range_type'];
+        return $common_object->get_co_occur_data($to_datetime, $from_datetime, $token, $range_type = null, $co_occur_option = 'hashtag', $file_path = null, $need_to_store = false, $data_formatter = false, $userID=null);
+    }
+
+
+    public function get_tweets_ha()
+    {
+        $common_object = new CommonController;
+        $token = null;
+        if (isset($_GET['query'])) {
+            $token = $_GET['query'];
+        }
+        $from_datetime = $_GET['from_datetime'];
+        $to_datetime = $_GET['to_datetime'];
+        $range_type = $_GET['range_type'];
+        $filter_type = $_GET['filter_type'];
+        return $common_object->get_tweets($to_datetime, $from_datetime, $token, $range_type, $filter_type);
+    }
+
+
+
     public function get_top_data_lat_lng_ha(){
         $commonObj = new CommonController;
         $token = null;

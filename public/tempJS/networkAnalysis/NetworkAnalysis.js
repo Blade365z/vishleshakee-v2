@@ -1,6 +1,4 @@
 //void main
-
-
 import {roshan} from './visualizer.js';
 import {render_graph,union,intersection,exportnetwork,selected_graph_ids,render_centrality_graph,
        sparkUpload,get_network,writedelete,difference,shortestpaths,community_detection,centrality,linkprediction,
@@ -12,8 +10,37 @@ import {render_graph,union,intersection,exportnetwork,selected_graph_ids,render_
 let totalQueries;
 let searchRecords = [];
 var cardIDdictionary = {};
+var currentNetworkEngine = 'networkx' ,currentlyShowing;
 var community_algo_option = "Async Fluidic";
-$(document).ready(function () {
+jQuery(function () {
+    $('#networkEngineNA').on('change', function() {
+        console.log('changed');
+        let selected =  $("#networkEngineNA").val();
+        if(selected == "networkx"){
+         currentNetworkEngine=selected;
+         $("#resourceallocation").hide();
+         $("#commonneighbors").hide();
+         $("#async").show();
+         $("#grivan").show();
+         $("#btwncen").show();
+         $("#evcen").show();
+     
+        }else if(selected == "spark"){
+         currentNetworkEngine=selected;
+         $("#resourceallocation").show();
+         $("#commonneighbors").show();
+         $("#async").hide();
+         $("#grivan").hide();
+         $("#btwncen").hide();
+         $("#evcen").hide();
+        }
+        
+      });
+    /*
+    TEMP AMITABH 
+
+
+    */
     $('.nav-item ').removeClass('smat-nav-active');
     $('#nav-NA').addClass('smat-nav-active');
     totalQueries = 0;
@@ -46,6 +73,7 @@ $(document).ready(function () {
         let index = $(this).attr('value');
         let cardData = searchRecords[index - 1];
         let id = searchRecords[index - 1].id;
+        currentlyShowing = id;
         let filename = cardIDdictionary[id];
         console.log("FILE");
         console.log(filename);
@@ -66,25 +94,7 @@ $(document).ready(function () {
 })
 
 
-$("#networkEngineNA").on('click',function(){
-   let selected =  $("#networkEngineNA").val();
-   if(selected == "networkx"){
-    $("#resourceallocation").hide();
-    $("#commonneighbors").hide();
-    $("#async").show();
-    $("#grivan").show();
-    $("#btwncen").show();
-    $("#evcen").show();
 
-   }else if(selected == "spark"){
-    $("#resourceallocation").show();
-    $("#commonneighbors").show();
-    $("#async").hide();
-    $("#grivan").hide();
-    $("#btwncen").hide();
-    $("#evcen").hide();
-   }
-});
 
 
 $("#lpTabNA").on('click',function(){
@@ -179,11 +189,13 @@ if (NAType == 'networkx') {
         input: input,
         algo_option: algo_option
     };
-    console.log("NXD");
-    console.log(data);
+    console.log('Data args for centrality',data);
 } else if (NAType == 'spark') {
+    let queryMetaData = searchRecords[currentlyShowing-1];
+    transferQueryToStatusTable(queryMetaData,'Centrality');
+    input = queryMetaData.query;
     var query_list = [algo_option,input];
-    var unique_name_timestamp = (new Date().getTime()).toString(); // create unique_name   
+    var unique_name_timestamp = (new Date().getTime()).toString();   // create unique_name   
     url = 'na/requestToSparkandStoreResult';
     data = {
         query_list: query_list,
@@ -194,7 +206,8 @@ if (NAType == 'networkx') {
 }
 //centrality(url,data,NAType);
 centrality(url,data,NAType).then(response => {
-        if(NAType == "networkx"){
+     
+    if(NAType == "networkx"){
             render_centrality_graph(data["input"], "networkDivid",data["algo_option"]).then(response =>{
                 $('.analysis_summary_div').empty();
                 $('.analysis_summary_div').append('<table> <tr><th>Node</th><th>Score</th></tr>');
@@ -205,7 +218,7 @@ centrality(url,data,NAType).then(response => {
                 draw_graph(response,"networkDivid");
             });
         }else if(NAType == "spark"){
-            render_centrality_graph(data["query_list"][1], "networkDivid",data["query_list"][0]).then(response =>{
+                render_centrality_graph(data["query_list"][1], "networkDivid",data["query_list"][0]).then(response =>{
                 $('.analysis_summary_div').empty();
                 $('.analysis_summary_div').append('<table> <tr><th>Node</th><th>Score</th></tr>');
                 for(var i=0; i<response["nodes"].length;i++){
@@ -216,7 +229,9 @@ centrality(url,data,NAType).then(response => {
             });
         }
 });
-});
+
+}); 
+
 
 $("#link_prediction_exec").on('click',function(NAType=$("#networkEngineNA").val(),algo_option=""){
     var NAType=$("#networkEngineNA").val();
@@ -545,9 +560,6 @@ $("#difference_exec").on('click',function(NAType="networkx"){
     });
 });
 
-
-
-
 $("#usenetwork").on('click',function(){
     var generator = new IDGenerator();
     var unique_id = generator.generate();
@@ -574,3 +586,7 @@ function IDGenerator() {
     }
 }
 
+
+const transferQueryToStatusTable = (data,operation) =>{
+    $('#naStatusTable').append('<tr><th scope="row">' + data.id + '</th><td>' + data.query + '</td><td>' + operation + '</td><td>' + data.from + '</td><td>' + data.to + '</td><td>Running</td><td><button class="btn btn-primary smat-rounded mx-1 showBtn" value="' + data.id + '" disabled > Show </button><button class="btn btn-neg mx-1  smat-rounded"> Delete </button></td></tr>');
+}

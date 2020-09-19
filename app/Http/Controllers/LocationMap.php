@@ -81,6 +81,7 @@ class LocationMap extends Controller
         $query = $request->input('query');
         $from_datetime = $request->input('from');
         $to_datetime = $request->input('to');
+        $type = $request->input('type');
         $r = $commonObj->get_top_data_cat_by_location('2020-09-12 23:30:00','2020-09-12 23:00:00','top_latlng_hashtag', $query, '10sec');
         return $r;
 
@@ -93,7 +94,7 @@ class LocationMap extends Controller
         $query = $request->input('query');
         $from_datetime = $request->input('from');
         $to_datetime = $request->input('to');
-        
+        $type = $request->input('type');
         // $query = $_GET['query'];
         // $from_datetime = $_GET['from'];
         // $to_datetime = $_GET['to'];
@@ -134,6 +135,19 @@ class LocationMap extends Controller
         
 
         
+
+    }
+
+    public function checkLocation_(Request $request){
+        $place = $request->input('place');
+        $trigger = new DBmodel;
+        $statement = "SELECT code from location_code WHERE location ='" . $place . "'";
+        $result_code = $trigger->execute_query($statement,null,null);
+        foreach ($result_code as $c) {
+            $code = $c['code'];
+        }
+        return json_encode($code);
+
 
     }
 

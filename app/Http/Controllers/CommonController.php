@@ -1089,9 +1089,10 @@ class CommonController extends Controller
      * @return 'success'
     */ 
     public function gen_network(){
+        // echo "er";
         $ut_obj = new Ut;
-        $token = '@ndtv';
-        $from_datetime='2020-09-15 00:00:00';
+        $token = '#COVID';
+        $from_datetime='2020-09-12 00:00:00';
         $to_datetime='2020-09-15 00:00:00';
         $feature_option = 'co_occur';
         $co_occur_option = 'hashtag';
@@ -1133,6 +1134,6 @@ class CommonController extends Controller
 
         // write to file
         $ut_obj->write_to_file($file_type='csv', $file_path='2/test_narendramodi_hashtag.csv', $edges, $token=null, $userID=2);
-        echo json_encode(array('res'=>'success'));
+        echo json_encode(array('res'=>$edges));
     }
 }

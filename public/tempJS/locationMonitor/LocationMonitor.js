@@ -1,5 +1,5 @@
 // import {wordCloudLM} from './chartHelper.js';
-import { get_current_time, getTweetIdList, getHashtag, getTopHashtag } from './helper.js';
+import { get_current_time, getTweetIdList, getHashtag, getTopHashtag, checkLocation} from './helper.js';
 import { TweetsGenerator } from '../utilitiesJS/TweetGenerator.js';
 
 
@@ -122,7 +122,7 @@ jQuery(function () {
 
     $('#locationTweets').on('click', function () {
         ///Amitabh
-        console.log(global_tweetid_list);
+        
         let to = global_datetime[1];
         let from = global_datetime[0];
         let place = "^" + $("#queryLM").val();
@@ -152,7 +152,8 @@ jQuery(function () {
 
 
 function trigger() {
-    var from_datetime,
+    var type,
+        from_datetime,
         to_datetime,
         refresh_type = $("#lmTefreshType").val(),
         timeLimit = $("#lmInterval :selected").val(),
@@ -172,9 +173,7 @@ function trigger() {
         interval = 3600;
     }
 
-    // console.log(interval+"   "+place+"  ");    
-
-    // console.log(global_datetime);
+   
     to_datetime = global_datetime[1];
     from_datetime = global_datetime[0];
 
@@ -183,29 +182,26 @@ function trigger() {
             clearInterval(i);
         }
 
-        getTweetIdList(from_datetime, to_datetime, place, "tweet_id").then(response => {
-            global_tweetid_list = response;
-            console.log(global_tweetid_list);
-
+        checkLocation(place.split("^")[1]).then(result=>{
+            if(Number.isInteger(parseInt(result.value))==true){
+                getTweetIdList(from_datetime, to_datetime, place, "tweet_id").then(response => {
+                    global_tweetid_list = response;
+                });
+                getTweetIdList(from_datetime, to_datetime, place, "tweet_info").then(response => {
+                    rander_map(response);
+                });
+                
+                if((parseInt(result.value))==2){type = "country"}
+                else if((parseInt(result.value))==1){type = "state"}
+                else if((parseInt(result.value))==0){type = "city"}
+                
+                getTopHashtag(from_datetime, to_datetime, place,type).then(response_2 => {            
+                    getHashtag(from_datetime, to_datetime, place,type).then(response => {
+                        plotHashtags(response, response_2,place);        
+                    });        
+                });
+            }
         });
-
-
-
-        getTopHashtag(from_datetime, to_datetime, place).then(response_2 => {
-            // console.log(response_2["top_data_with_cat_by_location"]);
-            generateCurrentlyTrending(response_2.top_data_with_cat_by_location, 'currentlyTrendingLocDiv', 'all', place);
-            getHashtag(from_datetime, to_datetime, place).then(response => {
-                plotHashtags(response, response_2["top_data_with_cat_by_location"]);
-
-            });
-
-        });
-
-        getTweetIdList(from_datetime, to_datetime, place, "tweet_info").then(response => {
-            rander_map(response);
-        });
-
-
     }
 
     else if (refresh_type == "Auto Refresh") {
@@ -214,7 +210,7 @@ function trigger() {
         }
         setInterval(function () {
             var interval_,
-
+                type_,
                 from_datetime_,
                 to_datetime_,
 
@@ -241,17 +237,25 @@ function trigger() {
             to_datetime_ = global_datetime_[1];
             from_datetime_ = global_datetime_[0];
 
-            getTweetIdList(from_datetime, to_datetime, place, "tweet_id").then(response => {
-                global_tweetid_list = response;
-            });
-
-            getHashtag(from_datetime, to_datetime, place).then(response => {
-
-                plotHashtags(response);
-            });
-
-            getTweetIdList(from_datetime, to_datetime, place, "tweet_info").then(response => {
-                rander_map(response);
+            checkLocation(place_.split("^")[1]).then(result=>{
+                if(Number.isInteger(parseInt(result.value))==true){
+                    getTweetIdList(from_datetime_, to_datetime_, place_, "tweet_id").then(response => {
+                        global_tweetid_list = response;
+                    });
+                    getTweetIdList(from_datetime_, to_datetime_, place_, "tweet_info").then(response => {
+                        rander_map(response);
+                    });
+                    
+                    if((parseInt(result.value))==2){type_ = "country"}
+                    else if((parseInt(result.value))==1){type_ = "state"}
+                    else if((parseInt(result.value))==0){type_ = "city"}
+                    
+                    getTopHashtag(from_datetime_, to_datetime_, place_,type_).then(response_2 => {            
+                        getHashtag(from_datetime_, to_datetime_, place_,type_).then(response => {
+                            plotHashtags(response, response_2,place_);        
+                        });        
+                    });
+                }
             });
         }, 60000);
 
@@ -310,12 +314,12 @@ const rander_map = (data) => {
 }
 
 
-const plotHashtags = (data, data_2) => {
+const plotHashtags = (data, data_2,place) => {
 
     glow.clearLayers();
 
     var hashtag_data = data;
-    // console.log(data);
+    
 
     var normalIcon = L.icon.pulse({
         iconSize: [10, 10],
@@ -339,6 +343,7 @@ const plotHashtags = (data, data_2) => {
     });
 
     // wordCloudLM(hashtag_data["hash_lat_lng_total_cat_info_arr"], 'trendingLM', data_2);
+    generateCurrentlyTrending(data_2["top_data_with_cat_by_location"],hashtag_data["hash_lat_lng_total_cat_info_arr"], 'currentlyTrendingLocDiv', 'all', place);
 
     $.each(hashtag_data['lat_lng_hash_arr'], function (v, c) {
         var lat = v.split("_")[0],
@@ -422,7 +427,7 @@ const wordcloudPlot = (data_, hashtag) => {
     $.each(data_[hashtag], function (v, c) {
         var lat = v.split("_")[0],
             lng = v.split("_")[1];
-        console.log(lat);
+        
 
         L.marker([lat, lng], {
             'icon': HashtagIcon
@@ -463,8 +468,7 @@ const wordCloudLM = (hashtag_latlng, div, response) => {
 
     var dataformat = [];
     $.each(response, function (v, c) {
-        // console.log(v);
-        // console.log(c[0]);
+      
         let token = v;
         let count = c[0];
         let color;
@@ -529,7 +533,7 @@ const wordCloudLM = (hashtag_latlng, div, response) => {
 
 
 
-const generateCurrentlyTrending = (data, div, filterArgument, query = null, interval = null) => {
+const generateCurrentlyTrending = (data,data_hashtag_latlng, div, filterArgument, query = null, interval = null) => {
     
     $('#currentlyTrendingLocBtn').addClass('text-normal');
     $('#'+div).css('display','block');
@@ -575,6 +579,10 @@ const generateCurrentlyTrending = (data, div, filterArgument, query = null, inte
           word_click :function(){
               alert($(this).text())
           },
+          word_mouseOver :function(){
+            wordcloudPlot(data_hashtag_latlng,$(this).text());
+          },
+
         
 
         });
