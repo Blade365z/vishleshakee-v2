@@ -8,19 +8,19 @@ MODE LIST:
 003->TopUsers
 004->Locations
 005->Tweets
-*/ 
+*/
 
 //Imports from helper.js
 import { getFreqDistData, getTopCooccurData, getMe, getSentiDistData, getTopData, getTweetIDsFromController } from './helper.js';
 import { generateFrequencyChart, generateSentimentChart, generateBarChart } from './chartHelper.js';
 import { TweetsGenerator } from '../utilitiesJS/TweetGenerator.js';
 import { getCompleteMap } from '../utilitiesJS/getMap.js';
-import { makeSuggestionsRead,makeSmatReady } from '../utilitiesJS/smatExtras.js'
+import { makeSuggestionsRead, makeSmatReady } from '../utilitiesJS/smatExtras.js'
 import { getCurrentDate } from '../utilitiesJS/smatDate.js';
 
 
 //Global variables 
-var MODE = '000',interval = 900,query = '';
+var MODE = '000', interval = 900, query = '';
 const publicAnalysisResultDiv = 'result-div';
 const publicAnalysisResultDivTitle = 'result-div-title';
 const publicAnalysisResultDivSubTitle = 'result-div-subtitle';
@@ -34,24 +34,52 @@ var TopTrendingData;
 
 
 
-
-
-
-$(document).ready(function () {
+jQuery(function () {
   getMe();
   makeSmatReady();
-  makeSuggestionsRead('homeSearchInput','top_hashtag',50);
+  $('#alertsDiv').append('<div class="text-center  smat-loader"  id="alertBoxLoader"><i class="fa fa-circle-o-notch donutSpinner" aria-hidden="true"></i></div>')
+  if (localStorage.getItem('smat-currentlyTrending')) {
+    $('#alertBoxLoader').remove();
+    let alreadyStoredTemp = JSON.parse(localStorage.getItem('smat-currentlyTrending'));
+    for (let i = 0; i < alreadyStoredTemp.length; i++) {
+      let offset = i + 1;
+      $('#alert-' + offset).text(alreadyStoredTemp[i]);
+    }
+  }
+  makeSuggestionsRead('homeSearchInput', 'top_hashtag', 50, true).then(response => {
+    var response = response.slice(0, 3);
+    $('#alertBoxLoader').remove();
+    if (!localStorage.getItem('smat-currentlyTrending')) {
+      localStorage.setItem('smat-currentlyTrending', JSON.stringify(response));
+      for (let i = 0; i < response.length; i++) {
+        let offset = i + 1;
+        $('#alert-' + offset).text(response[i]);
+      }
+    } else {
+      let alreadyStoredTemp = JSON.parse(localStorage.getItem('smat-currentlyTrending'));
+
+      let checkFlag = 0;
+      for (let i = 0; i <= alreadyStoredTemp.length; i++) {
+        if (alreadyStoredTemp[i] !== response[i]) {
+          checkFlag = 1;
+        }
+      }
+
+      if (checkFlag == 1) {
+        localStorage.removeItem('smat-currentlyTrending');
+        localStorage.setItem('smat-currentlyTrending', JSON.stringify(response));
+        for (let i = 0; i < response.length; i++) {
+          let offset = i + 1;
+          $('#alert-' + offset).text(response[i]);
+        }
+      }
+    }
+  });
   //Since all the logics implemented will be executed asynchronously, Therefore the function get
   getTopData(interval).then(response => {
 
     TopTrendingData = response.data
-    let alertOffset=0;
-    for (const [key, value] of Object.entries(TopTrendingData)) {
-      if(alertOffset===4)
-        break;
-      alertOffset+=1;
-      $('#alert-'+alertOffset).text(key);
-    }
+
     generatePublicHashtags(TopTrendingData, 'all');
     query = incoming ? query = incoming : Object.keys(TopTrendingData)[0];
     $('#publicCurrentQuery').text(query);
@@ -62,7 +90,7 @@ $(document).ready(function () {
 
 
   let mainPublicCardHeight = $('#main-public-dash').height();
-  $('#public-trending').css('height', mainPublicCardHeight - 50);
+  $('#public-trending').css('height', mainPublicCardHeight - 56);
 
 
 
@@ -142,16 +170,16 @@ $(document).ready(function () {
   $('body').on('click', 'div .username', function () {
     let queryCaptured = '$' + $(this).attr('value');
     queryCaptured = encodeURIComponent(queryCaptured);
-    let redirectURL = 'userAnalysis' + '?query=' + queryCaptured+'&from='+date+'&to='+date    ;
+    let redirectURL = 'userAnalysis' + '?query=' + queryCaptured + '&from=' + date + '&to=' + date;
     window.open(redirectURL, '_blank');
-});
+  });
 
 
 
   $('body').on('click', 'div .filter-tweets', function () {
     let capturedClass = $(this).attr('value');
     capturedClass = capturedClass == 'all' ? null : capturedClass;
-    getTweetIDsFromController(null, query, queriedTweetFromTime, queriedTweetToTime, capturedClass).then(response =>{
+    getTweetIDsFromController(null, query, queriedTweetFromTime, queriedTweetToTime, capturedClass).then(response => {
       let tweetIDs = response[0]['data']['data'];
       TweetsGenerator(tweetIDs, 6, 'result-div');
     });
@@ -167,7 +195,7 @@ $(document).ready(function () {
     getTopData(interval).then(response => {
       TopTrendingData = response.data
       generatePublicHashtags(TopTrendingData, 'all');
-     
+
     })
     if (MODE == "000") {
       frequencyPublic(query, interval);
@@ -218,7 +246,7 @@ const sentimentPublic = () => {
   $('#' + publicAnalysisResultDiv).html('<div class="text-center pt-5 " ><i class="fa fa-circle-o-notch donutSpinner" aria-hidden="true"></i></div>')
 
   renderSentimentSummary('public-summary-1', 'public-summary-2')
-  getSentiDistData(interval, query).then(response=>{
+  getSentiDistData(interval, query).then(response => {
     generateSentimentChart(response, query, publicAnalysisResultDiv);
   });
 
@@ -228,18 +256,18 @@ const sentimentPublic = () => {
 
 const coOccurPublic = (type) => {
   $('#' + publicAnalysisResultDiv).html('<div class="text-center pt-5 " ><i class="fa fa-circle-o-notch donutSpinner" aria-hidden="true"></i></div>')
-  getTopCooccurData(interval, query, type).then(response=>{
+  getTopCooccurData(interval, query, type).then(response => {
     generateBarChart(response, query, publicAnalysisResultDiv, type);
   })
- 
+
 }
 
 
 let queriedTweetFromTime, queriedTweetToTime;
 const tweetPublic = () => {
-    $('#' + publicAnalysisResultDiv).html('<div class="text-center pt-5 " ><i class="fa fa-circle-o-notch donutSpinner" aria-hidden="true"></i></div>');
+  $('#' + publicAnalysisResultDiv).html('<div class="text-center pt-5 " ><i class="fa fa-circle-o-notch donutSpinner" aria-hidden="true"></i></div>');
   $('#public-summary-2').html('<div class="btn-group"><button type="button" class="btn btn-white smat-rounded dropdown-toggle text-normal" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Filter Tweets</button><div class="dropdown-menu dropdown-menu-right"><li class="dropdown-item clickable filter-tweets" value="all"> Show all tweets</li><li class="dropdown-item clickable filter-tweets" value="pos"><i class="fa fa-circle text-pos " aria-hidden="true"></i> Positive Tweets</li><li class="dropdown-item clickable filter-tweets" value="neg"><i class="fa fa-circle text-neg " aria-hidden="true"></i> Negative Tweets</li><li class="dropdown-item clickable filter-tweets" value="neu"> <i class="fa fa-circle text-neu" aria-hidden="true"></i> Neutral Tweets</li><li class="dropdown-item clickable filter-tweets" value="normal"> <i class="fa fa-circle text-normal" aria-hidden="true"></i> Normal Tweets</li><li class="dropdown-item clickable filter-tweets" value="com"> <i class="fa fa-circle text-com" aria-hidden="true"></i> Communal Tweets</li><li class="dropdown-item clickable filter-tweets" value="sec"> <i class="fa fa-circle text-sec" aria-hidden="true"></i> Security Tweets</li><li class="dropdown-item clickable filter-tweets" value="com_sec"> <i class="fa fa-circle text-com_sec" aria-hidden="true"></i> Communal and Security Tweets</li></div></div>');
-  getTweetIDsFromController(interval, query).then(response =>{
+  getTweetIDsFromController(interval, query).then(response => {
     let tweetIDs = response[0]['data']['data'];
     queriedTweetFromTime = response[0]['fromTime'];
     queriedTweetToTime = response[0]['toTime'];

@@ -36,9 +36,10 @@
         </a>
         <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdown">
         
-          <a class="dropdown-item" href="#">Give Feedback</a>
+          <a class="dropdown-item" href="#">About us</a>
           @if(Auth::check() && Auth::user()->role ==1)
           <a class="dropdown-item" href="register">Register User</a>
+          <a class="dropdown-item" href="feedback">See Feedbacks</a>
           @endif
 
           @if (Auth::check())

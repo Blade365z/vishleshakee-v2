@@ -150,7 +150,7 @@ Route::group(['prefix' => 'na'], function () {
     Route::get('getdirname', 'networkAnalysisController@getdirname');
 
     Route::get('getsparkstatus/{sparkID}', 'networkAnalysisController@getSparkStats');
-    Route::post('getFromSparkAndStore','networkAnalysisController@getOuputFromSparkAndStore');
+    Route::post('getFromSparkAndStore', 'networkAnalysisController@getOuputFromSparkAndStore');
     //For network evolution
     Route::get('nettest', 'networkAnalysisEvolution@tester');
     Route::get('jobsubmit', 'networkAnalysisEvolution@jobSubmission');
@@ -176,6 +176,7 @@ Route::group(['prefix' => 'LM'], function () {
     Route::post('getHashtag', 'LocationMap@get_hashtags');
     Route::post('getTopHashtag', 'LocationMap@get_top_hashtags');
     Route::post('checkLocation', 'LocationMap@checkLocation_');
+    Route::post('/getcityState', 'LocationMap@showData');
 
 });
 

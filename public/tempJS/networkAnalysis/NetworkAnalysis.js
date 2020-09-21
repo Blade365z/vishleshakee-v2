@@ -235,6 +235,7 @@ $("#centrality_exec").on('click', function (NAType, algo_option = $('#centrality
             });
         } else if (currentNetworkEngine == "spark") {
             let sparkID = response.id;
+            //TODO::tobealtered!
             let queryMetaData = searchRecords[currentlyShowing - 1];
 
             transferQueryToStatusTable(queryMetaData, 'Centrality',algo_option, sparkID);
@@ -253,10 +254,10 @@ $("#centrality_exec").on('click', function (NAType, algo_option = $('#centrality
 
                         }
                     })
-                    .catch(err => {
+                    .catch(err => {  
                         console.log(err)
                     })
-            }
+            }  
             checkSpartStatusInterval_centrality = setInterval(checkSparkStatus, 5000);
 
             // render_centrality_graph(data["query_list"][1], "networkDivid", data["query_list"][0]).then(response => {

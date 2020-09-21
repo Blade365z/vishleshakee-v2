@@ -1,10 +1,10 @@
 // import {wordCloudLM} from './chartHelper.js';
-import { get_current_time, getTweetIdList, getHashtag, getTopHashtag, checkLocation} from './helper.js';
+import { get_current_time, getTweetIdList, getHashtag, getTopHashtag, checkLocation } from './helper.js';
 import { TweetsGenerator } from '../utilitiesJS/TweetGenerator.js';
 
 
 var hashtag_info, global_tweetid_list;
-var interval = 60;
+var interval = 60, currentPlace;
 let currentlyTrendingLocFlag = 1;
 const categoryColor = { 'normal': 'text-normal', 'com': 'text-com', 'sec': 'text-sec', 'com_sec': 'text-com_sec' }
 const categoryColorHexDict = { 'normal': '#297EB4', 'com': '#ff0055', 'sec': '#3D3D3D', 'com_sec': '#FF00FF' };
@@ -96,6 +96,21 @@ function windowOnClick(event) {
 
 
 jQuery(function () {
+    /*
+     Below is the code writtn to filter out the hashtags from the word cloud.
+     written by : Amitabh Boruah(amitabhyo@gmail.com)
+    */
+    $('body').on('click', 'div .filter-hashtags', function () {
+        let filterValue = $(this).attr('value');
+        $('#currentlyTrendingLocBtn').addClass('text-normal');
+        $('#currentlyTrendingLocBtn').attr('title', 'Hide  trending hashtags');
+        $('#currentlyTrendingParentLoc').css('display', 'block');
+        currentlyTrendingLocFlag = 1;
+        $('#lmMap').css('width', '60%');
+
+        generateCurrentlyTrending(trendingGlobal, trendingGlobal, 'currentlyTrendingLocDiv', filterValue, currentPlace);
+    })
+
 
 
 
@@ -122,7 +137,7 @@ jQuery(function () {
 
     $('#locationTweets').on('click', function () {
         ///Amitabh
-        
+
         let to = global_datetime[1];
         let from = global_datetime[0];
         let place = "^" + $("#queryLM").val();
@@ -130,19 +145,19 @@ jQuery(function () {
         TweetsGenerator(global_tweetid_list, 6, 'tweets-modal-div', null, null, 'all');
 
     });
-    $('#currentlyTrendingLocBtn').on('click',function(){
-        if(currentlyTrendingLocFlag===1){
+    $('#currentlyTrendingLocBtn').on('click', function () {
+        if (currentlyTrendingLocFlag === 1) {
             $('#currentlyTrendingLocBtn').removeClass('text-normal');
-            $('#currentlyTrendingLocBtn').attr('title','Show  trending hashtags');
-            $('#currentlyTrendingParentLoc').css('display','none');
-            currentlyTrendingLocFlag=0;
-            $('#lmMap').css('width','100%');
-        }else{
+            $('#currentlyTrendingLocBtn').attr('title', 'Show  trending hashtags');
+            $('#currentlyTrendingParentLoc').css('display', 'none');
+            currentlyTrendingLocFlag = 0;
+            $('#lmMap').css('width', '100%');
+        } else {
             $('#currentlyTrendingLocBtn').addClass('text-normal');
-            $('#currentlyTrendingLocBtn').attr('title','Hide  trending hashtags');
-            $('#currentlyTrendingParentLoc').css('display','block');
-            currentlyTrendingLocFlag=1;
-            $('#lmMap').css('width','60%');
+            $('#currentlyTrendingLocBtn').attr('title', 'Hide  trending hashtags');
+            $('#currentlyTrendingParentLoc').css('display', 'block');
+            currentlyTrendingLocFlag = 1;
+            $('#lmMap').css('width', '60%');
         }
     })
 
@@ -159,6 +174,8 @@ function trigger() {
         timeLimit = $("#lmInterval :selected").val(),
         place = "^" + $("#queryLM").val();
 
+
+    currentPlace = place
     localStorage.setItem("lmTefreshType", "manual");
 
     if (timeLimit == "1 Minute") {
@@ -173,7 +190,7 @@ function trigger() {
         interval = 3600;
     }
 
-   
+
     to_datetime = global_datetime[1];
     from_datetime = global_datetime[0];
 
@@ -182,24 +199,28 @@ function trigger() {
             clearInterval(i);
         }
 
-        checkLocation(place.split("^")[1]).then(result=>{
-            if(Number.isInteger(parseInt(result.value))==true){
+        checkLocation(place.split("^")[1]).then(result => {
+            console.log(result);
+            if (Number.isInteger(parseInt(result.value)) == true) {
                 getTweetIdList(from_datetime, to_datetime, place, "tweet_id").then(response => {
                     global_tweetid_list = response;
                 });
                 getTweetIdList(from_datetime, to_datetime, place, "tweet_info").then(response => {
                     rander_map(response);
                 });
-                
-                if((parseInt(result.value))==2){type = "country"}
-                else if((parseInt(result.value))==1){type = "state"}
-                else if((parseInt(result.value))==0){type = "city"}
-                
-                getTopHashtag(from_datetime, to_datetime, place,type).then(response_2 => {            
-                    getHashtag(from_datetime, to_datetime, place,type).then(response => {
-                        plotHashtags(response, response_2,place);        
-                    });        
+
+                if ((parseInt(result.value)) == 2) { type = "country" }
+                else if ((parseInt(result.value)) == 1) { type = "state" }
+                else if ((parseInt(result.value)) == 0) { type = "city" }
+
+                getTopHashtag(from_datetime, to_datetime, place, type).then(response_2 => {
+                    getHashtag(from_datetime, to_datetime, place, type).then(response => {
+                        plotHashtags(response, response_2, place);
+                    });
                 });
+            }
+            else {
+                $("#exampleModal").modal();
             }
         });
     }
@@ -237,24 +258,30 @@ function trigger() {
             to_datetime_ = global_datetime_[1];
             from_datetime_ = global_datetime_[0];
 
-            checkLocation(place_.split("^")[1]).then(result=>{
-                if(Number.isInteger(parseInt(result.value))==true){
+            checkLocation(place_.split("^")[1]).then(result => {
+                if (Number.isInteger(parseInt(result.value)) == true) {
                     getTweetIdList(from_datetime_, to_datetime_, place_, "tweet_id").then(response => {
                         global_tweetid_list = response;
                     });
                     getTweetIdList(from_datetime_, to_datetime_, place_, "tweet_info").then(response => {
                         rander_map(response);
                     });
-                    
-                    if((parseInt(result.value))==2){type_ = "country"}
-                    else if((parseInt(result.value))==1){type_ = "state"}
-                    else if((parseInt(result.value))==0){type_ = "city"}
-                    
-                    getTopHashtag(from_datetime_, to_datetime_, place_,type_).then(response_2 => {            
-                        getHashtag(from_datetime_, to_datetime_, place_,type_).then(response => {
-                            plotHashtags(response, response_2,place_);        
-                        });        
+
+                    if ((parseInt(result.value)) == 2) { type_ = "country" }
+                    else if ((parseInt(result.value)) == 1) { type_ = "state" }
+                    else if ((parseInt(result.value)) == 0) { type_ = "city" }
+
+                    getTopHashtag(from_datetime_, to_datetime_, place_, type_).then(response_2 => {
+                        getHashtag(from_datetime_, to_datetime_, place_, type_).then(response => {
+                            plotHashtags(response, response_2, place_);
+                        });
                     });
+                }
+                else {
+                    $("#exampleModal").modal();
+                    for (var i = 0; i < 10000; i++) {
+                        clearInterval(i);
+                    }
                 }
             });
         }, 60000);
@@ -314,12 +341,12 @@ const rander_map = (data) => {
 }
 
 
-const plotHashtags = (data, data_2,place) => {
+const plotHashtags = (data, data_2, place) => {
 
     glow.clearLayers();
 
     var hashtag_data = data;
-    
+
 
     var normalIcon = L.icon.pulse({
         iconSize: [10, 10],
@@ -343,7 +370,7 @@ const plotHashtags = (data, data_2,place) => {
     });
 
     // wordCloudLM(hashtag_data["hash_lat_lng_total_cat_info_arr"], 'trendingLM', data_2);
-    generateCurrentlyTrending(data_2["top_data_with_cat_by_location"],hashtag_data["hash_lat_lng_total_cat_info_arr"], 'currentlyTrendingLocDiv', 'all', place);
+    generateCurrentlyTrending(data_2["top_data_with_cat_by_location"], hashtag_data["hash_lat_lng_total_cat_info_arr"], 'currentlyTrendingLocDiv', 'all', place);
 
     $.each(hashtag_data['lat_lng_hash_arr'], function (v, c) {
         var lat = v.split("_")[0],
@@ -427,7 +454,7 @@ const wordcloudPlot = (data_, hashtag) => {
     $.each(data_[hashtag], function (v, c) {
         var lat = v.split("_")[0],
             lng = v.split("_")[1];
-        
+
 
         L.marker([lat, lng], {
             'icon': HashtagIcon
@@ -443,7 +470,7 @@ const wordCloudLM = (hashtag_latlng, div, response) => {
     var chart = am4core.create(div, am4plugins_wordCloud.WordCloud);
     chart.fontFamily = "Courier New";
     var series = chart.series.push(new am4plugins_wordCloud.WordCloudSeries());
-    series.randomness =0;
+    series.randomness = 0;
     series.rotationThreshold = 0;
     series.minFontSize = am4core.percent(8);
     series.maxFontSize = am4core.percent(30);
@@ -468,7 +495,7 @@ const wordCloudLM = (hashtag_latlng, div, response) => {
 
     var dataformat = [];
     $.each(response, function (v, c) {
-      
+
         let token = v;
         let count = c[0];
         let color;
@@ -516,7 +543,7 @@ const wordCloudLM = (hashtag_latlng, div, response) => {
 
         var item = ev.target.tooltipDataItem.dataContext;
         var token = item['tag'];
-       
+
 
         // wordcloudPlot(hashtag_latlng, token);
         // plotEventOnMap(token, only_hashtag_place_data);
@@ -532,16 +559,17 @@ const wordCloudLM = (hashtag_latlng, div, response) => {
 }
 
 
-
-const generateCurrentlyTrending = (data,data_hashtag_latlng, div, filterArgument, query = null, interval = null) => {
-    
+let trendingGlobal, trendingGlobal_latLong;
+const generateCurrentlyTrending = (data, data_hashtag_latlng, div, filterArgument, query = null, interval = null) => {
+    trendingGlobal = data;
+    trendingGlobal_latLong = data_hashtag_latlng;
     $('#currentlyTrendingLocBtn').addClass('text-normal');
-    $('#'+div).css('display','block');
+    $('#' + div).css('display', 'block');
     $('#' + div).html('');
     query = query.includes('^') ? query.replace('^', '') : query;
     query = query[0] === query[0].toUpperCase() ? query : query[0].toUpperCase() + query.slice(1,);
-    $('#currentlyTrendingLocTitle').html('<div class="text-center" > <div >Trending from <b>  ' + query + ' </b> </div><div class="pull-text-top mb-1"><small class="text-muted "> Updates every ' + interval + ' seconds</div> </div>')
-    
+    $('#currentlyTrendingLocTitle').html('<div class="text-center m-0 " > <p class="m-0 smat-box-title-large  " >Trending from <b>  ' + query + ' </b> </p><p class="pull-text-top mb-1"><small class="text-muted pull-text-top "> Updates every ' + interval + ' seconds</small> </p>')
+
     const arrayTemp = data;
     let arrayT = [];
     for (const [key, value] of Object.entries(arrayTemp)) {
@@ -555,36 +583,42 @@ const generateCurrentlyTrending = (data,data_hashtag_latlng, div, filterArgument
 
         // let urlArg = key.includes('#') ? key.replace('#', '%23') : '' + key;
         arrayT.push({
-            word:key,
-            weight:value[0],
-            color:categoryColorHexDict[value[1]]
+            word: key,
+            weight: value[0],
+            color: categoryColorHexDict[value[1]]
 
-        })        
-       // $('#' + div).append('<div class="mb-1 publicHashtag-' + value[1] + '"><p class="hashtags"><a class="text-dark" href="?query=' + urlArg + '" target="_blank"  >' + key + '</a></p><p class=" m-0 smat-dash-title  text-dark "> <span>' + value[0] + '</span><span class="mx-1">Tweets</span><span class="mx-1"   title ="' + category + '" ><i class="fa fa-circle ' +    categoryColor[value[1]] + ' " aria-hidden="true"></i> </span></p></div>');
-        
+        })
     }
-    let minFontSize=15,maxFontSize=55;
-    if(arrayT.length>10){
-        minFontSize=8,maxFontSize=30
-    }else if(arrayT.length>25){
-        minFontSize=8,maxFontSize=35
+    let minFontSize = 12, maxFontSize = 55;
+    let padding = 5;
+    if (arrayT.length > 10) {
+        padding = 0;
+        minFontSize = 8, maxFontSize = 30
+    } else if (arrayT.length > 25) {
+        minFontSize = 8, maxFontSize = 35
+        padding = 0;
     }
 
-    $("#"+div).jQWCloud({
-          words: arrayT,
-          minFont: minFontSize,
-          maxFont: maxFontSize,
-          verticalEnabled:false,
-          cloud_font_family:'roboto',
-          word_click :function(){
-              alert($(this).text())
-          },
-          word_mouseOver :function(){
-            wordcloudPlot(data_hashtag_latlng,$(this).text());
-          },
+    $("#" + div).jQWCloud({
+        words: arrayT,
+        minFont: minFontSize,
+        maxFont: maxFontSize,
+        verticalEnabled: false,
+        padding_left: padding,
+        cloud_font_family: 'roboto',
+        word_click: function () {
+            alert($(this).text())
+        },
+        word_mouseOver: function () {
+            $(this).css('opacity', '50%');
+            $(this).css('cursor', 'pointer');
+            wordcloudPlot(data_hashtag_latlng, $(this).text());
+        },
+        word_mouseOut: function () {
+            $(this).css('opacity', '100%');
+        },
 
-        
 
-        });
-        
+    });
+
 }

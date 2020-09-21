@@ -6,6 +6,29 @@
     <link rel="stylesheet" href="public/leaflet/leaflet_modal.css">
 
 
+
+    <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel"></h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    Location Doest Not Exist!
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+
     <div class="smat-mainHeading ">
         Location Monitor
     </div>
@@ -36,9 +59,45 @@
 
                     </select>
                 </div>
-                <div class="d-flex">
-                    <button class="btn smat-btn  smat-rounded  mx-1 mb-3" id="submit-btn" type="submit"> <span>Search
+                <div>
+                    <button class="btn smat-btn  smat-rounded  mx-1" id="submit-btn" type="submit"> <span>Search
                             Location</span> </button>
+
+
+                </div>
+                <div class="pt-2 smat-rounded  ml-auto  ">
+                    <h5>
+                        <span class="mx-3 clickable text-dark" id="locationTweets"><i class="fab fa-twitter locationOptions"
+                                title="See Tweets"></i></span>
+                        <span class="mx-3 clickable text-dark "><i class="fas fa-redo-alt locationOptions "
+                                title="Refresh"></i></span>
+
+                        <span class="mx-3 clickable text-dark">
+                            <div class="btn-group"> <i class="fas fa-filter locationOptions"  class="smat-rounded text-normal" data-toggle="dropdown"
+                                aria-haspopup="true" 
+                                        title="Filter"></i> 
+                                <div class="dropdown-menu dropdown-menu-right">
+                                    <li class="dropdown-item clickable filter-hashtags" value="all">Show All</li>
+                                    <li class="dropdown-item clickable filter-hashtags" value="normal"> <i
+                                            class="fa fa-circle text-normal" aria-hidden="true"></i> Normal Hashtags</li>
+                                    <li class="dropdown-item clickable filter-hashtags" value="com"> <i
+                                            class="fa fa-circle text-com" aria-hidden="true"></i> Communal Hashtags</li>
+                                    <li class="dropdown-item clickable filter-hashtags" value="sec"> <i
+                                            class="fa fa-circle text-sec" aria-hidden="true"></i> Security Hashtags</li>
+                                    <li class="dropdown-item clickable filter-hashtags" value="com_sec"> <i
+                                            class="fa fa-circle text-com_sec" aria-hidden="true"></i> Communal and Security
+                                            Hashtags</li>
+                                </div>
+                            </div>
+
+
+
+
+
+                        </span>
+                        <span class="mx-3 clickable text-dark"> <i class="fas fa-hashtag locationOptions "
+                                id="currentlyTrendingLocBtn" title="Hide trending hashtags"></i> </span>
+                    </h5>
 
                 </div>
                 <!-- <button class="btn  text-normal smat-rounded  mx-1" id="showTableBtn" onclick="return false"> <span> Show Search History </span> </button> -->
@@ -49,6 +108,35 @@
 
 
     <div id="lmPanel">
+        <div class="d-flex">
+            <div class="p-1" id="lmMap">
+
+            </div>
+
+            <div class="modal_lm">
+                <div class="modal-content">
+                    <span class="close-button">&times;</span>
+                    <ul id="markersList"></ul>
+                </div>
+            </div>
+            <div class="mx-3" id="currentlyTrendingParentLoc">
+                <div id="currentlyTrendingLocTitle">
+
+                </div>
+                <div id="currentlyTrendingLocDiv">
+
+
+                </div>
+
+            </div>
+        </div>
+
+
+
+    </div>
+
+
+    {{-- <div id="lmPanel">
         <div class="card shadow">
             <div class="card-body">
                 <div class="dFlexBut">
@@ -83,7 +171,7 @@
                             <ul id="markersList"></ul>
                         </div>
                     </div>
-                    <div  id="currentlyTrendingParentLoc">
+                    <div id="currentlyTrendingParentLoc">
                         <div id="currentlyTrendingLocTitle">
 
                         </div>
@@ -102,7 +190,7 @@
     </div>
     <div class="mt-3">
 
-    </div>
+    </div> --}}
 
 
     <script type="module" src="public/amcharts4/core.js"></script>

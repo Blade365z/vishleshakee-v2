@@ -1,5 +1,5 @@
 import { smatFeedbackMain } from './smatFeedback.js';
-import {getTopDataHA} from '../historicalAnalysis/helper.js';
+import { getTopDataHA } from '../historicalAnalysis/helper.js';
 
 export const makeSmatReady = () => {
     $('body').on('click', 'div .closeGraph', function () {
@@ -8,22 +8,22 @@ export const makeSmatReady = () => {
     });
     //For Feedback Please execute this function
     smatFeedbackMain();
-  
+
 }
 
 
 
 
-export const makeSuggestionsRead = (div,type,limit) => {
-    let date = '2020-09-08'; //TODO::Take current day here
-    getTopDataHA(date, date, type, limit).then(response => {
+export const makeSuggestionsRead = async (div, type, limit) => {
+    let date = '2020-09-18'; //TODO::Take current day here
+    let gloabalArr;
+    gloabalArr = await getTopDataHA(date, date, type, limit).then(response => {
         response = response.data;
         var suggestionsArr = [];
 
         for (const [key, value] of Object.entries(response)) {
             suggestionsArr.push(key);
         }
-        console.log(suggestionsArr);
         // constructs the suggestion engine
         var suggestions = new Bloodhound({
             datumTokenizer: Bloodhound.tokenizers.whitespace,
@@ -41,7 +41,8 @@ export const makeSuggestionsRead = (div,type,limit) => {
                 name: 'suggestions',
                 source: suggestions
             });
-    });
+        return suggestionsArr;
 
-   
+    });
+    return gloabalArr;
 }
