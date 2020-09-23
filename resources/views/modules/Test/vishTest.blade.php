@@ -24,3 +24,20 @@
                 </div>
             </div>
         </div> -->
+
+
+{{-- 
+        {
+            "queryID": 12345,
+            "userID": 34211,
+            "query": "#AWS",
+            "fromDate": "2020-12-12",
+            "toDate": "2020-12-14"
+        } 
+        
+        
+
+GET :://
+http://172.16.117.160/vishleshakee/status/34211
+
+--}}

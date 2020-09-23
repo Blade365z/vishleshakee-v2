@@ -4,11 +4,12 @@ import { TweetsGenerator } from '../utilitiesJS/TweetGenerator.js';
 
 
 var hashtag_info, global_tweetid_list;
-var interval = 60, currentPlace;
+var interval = 1000, currentPlace;
 let currentlyTrendingLocFlag = 1;
 const categoryColor = { 'normal': 'text-normal', 'com': 'text-com', 'sec': 'text-sec', 'com_sec': 'text-com_sec' }
 const categoryColorHexDict = { 'normal': '#297EB4', 'com': '#ff0055', 'sec': '#3D3D3D', 'com_sec': '#FF00FF' };
 var global_datetime = get_current_time(interval);
+console.log(global_datetime);
 var markersList = document.getElementById('markersList');
 L.MarkerCluster.include({
     spiderfy: function () {
@@ -163,7 +164,13 @@ jQuery(function () {
 
 });
 
-
+$('div.col > button.button1').on('click', function (e) {
+    console.log("wwwwwwwwwwwwwwwwws");
+    
+    $("#queryLM").val($("#location_button").text());
+    console.log($("#location_button").text());
+    trigger();
+});
 
 
 function trigger() {
@@ -204,6 +211,7 @@ function trigger() {
             if (Number.isInteger(parseInt(result.value)) == true) {
                 getTweetIdList(from_datetime, to_datetime, place, "tweet_id").then(response => {
                     global_tweetid_list = response;
+                    console.log(global_tweetid_list);
                 });
                 getTweetIdList(from_datetime, to_datetime, place, "tweet_info").then(response => {
                     rander_map(response);
@@ -220,6 +228,7 @@ function trigger() {
                 });
             }
             else {
+                $("#modal_text").text("Location Doest Not Exist!");
                 $("#exampleModal").modal();
             }
         });
@@ -278,6 +287,7 @@ function trigger() {
                     });
                 }
                 else {
+                    $("#modal_text").text("Location Does not Exist!");
                     $("#exampleModal").modal();
                     for (var i = 0; i < 10000; i++) {
                         clearInterval(i);
@@ -294,7 +304,8 @@ const rander_map = (data) => {
     group1.clearLayers();
 
     if (data.length == 0) {
-        alert("Can't find the location");
+        $("#modal_text").text("Location based tweet not found!");
+        $("#exampleModal").modal();
     }
 
     if (data[0]["sentiment"]["value"] == "2") {
@@ -426,7 +437,7 @@ const plotHashtags = (data, data_2, place) => {
         var div_style = `<div class="row">
                                 <div class="col">
                                     <div class="row">
-                                        <div class="row" style=" display: inline-block; position: relative; margin-left: 5px; margin-right: 5px;" >
+                                        <div class="row" style=" display: inline-block; position: relative; margin-left: 15px; margin-right: 5px;" >
                                         `+ hashtags_div;
 
         div_style += `</div>

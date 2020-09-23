@@ -16,7 +16,7 @@ import { makeSuggestionsRead,makeSmatReady } from '../utilitiesJS/smatExtras.js'
 var mainInputCounter = 0, statusTableFlag = 0, searchType = 0;
 var searchRecords = [];
 // just for testing...............
-searchRecords[1113] =  [{ 'query': '(#Corona|#Coronavirus)', 'from': '2020-09-11', 'to': '2020-09-13', 'mentionUniqueID': 1234, 'hashtagUniqueID': 3456, 'userUniqueID': 7891, 'searchType': 'advance' }];
+// searchRecords[1113] =  [{ 'query': '(#Corona|#Coronavirus)', 'from': '2020-09-11', 'to': '2020-09-13', 'mentionUniqueID': 1234, 'hashtagUniqueID': 3456, 'userUniqueID': 7891, 'searchType': 'advance' }];
 // .....................................................end
 var fromDate = '', toDate = '', query = '';
 let hashtagSuggestion = [];
@@ -36,7 +36,6 @@ jQuery(function () {
     // initiateHistoricalAnalysis('#WorldUnitedForSSRJustice','2020-09-08','2020-09-11');
 
     // /haQueryInputBox
-
     fromDate = getCurrentDate()
     toDate = dateProcessor(toDate, '-', 0);
     $("#fromDateHA").val(fromDate);
@@ -50,33 +49,40 @@ jQuery(function () {
     $('.nav-item ').removeClass('smat-nav-active');
     $('#nav-HA').addClass('smat-nav-active');
 
+
+    // *********** ADD btn
     $('#addQueryButton').on('click', function () {
         mainInputCounter += 1;
-        if (searchType !== 0)
-            searchType = 1;
+        if (mainInputCounter > 0) //each input will increase mainInputCounter
+            searchType = 1; //if more than ine input is available, thn it is advance search
         $('#removeField').css('display', 'block');
-
-        $('#queryInputDiv').append('<div id="fieldID' + mainInputCounter + '" ><div class=" form-group  d-flex"><div class="" value="' + mainInputCounter + '"><select class=" smat-select btn HA-operand-select mx-2" id="operandID' + mainInputCounter + '" ><option value="&">AND</option><option class="or-option"  value="+">OR</option></select></div><div class=" border smat-rounded px-2 py-1 bg-white w-100 d-flex" ><input  type="checkbox" value="" name="NOT" id="notID' + mainInputCounter + '" title="NOT" value="option2" style="margin-top:13px;"><input type="text" class="form-control  smat-ha-Input " id="queryID' + mainInputCounter + '" placeholder="Query"  autocomplete="OFF" required></div></div></div>');
+        if(mainInputCounter == 1){
+            $('#queryInputDiv').append('<div id="fieldID' + mainInputCounter + '" ><div class=" form-group  d-flex"><div class="" value="' + mainInputCounter + '"><select class=" smat-select btn HA-operand-select mx-2" id="operandID' + mainInputCounter + '" ><option value="&">AND</option><option class="or-option"  value="+">OR</option></select></div><div class=" border smat-rounded px-2 py-1 bg-white w-100 d-flex" ><input type="text" class="form-control  smat-ha-Input " id="queryID' + mainInputCounter + '" placeholder="Query"  autocomplete="OFF" required></div></div></div>');
+        }else{
+            // not operation enabled
+            $('#queryInputDiv').append('<div id="fieldID' + mainInputCounter + '" ><div class=" form-group  d-flex"><div class="" value="' + mainInputCounter + '"><select class=" smat-select btn HA-operand-select mx-2" id="operandID' + mainInputCounter + '" ><option value="&">AND</option><option class="or-option"  value="+">OR</option></select></div><div class=" border smat-rounded px-2 py-1 bg-white w-100 d-flex" ><input  type="checkbox" value="" name="NOT" id="notID' + mainInputCounter + '" title="NOT" value="option2" style="margin-top:13px;"><input type="text" class="form-control  smat-ha-Input " id="queryID' + mainInputCounter + '" placeholder="Query"  autocomplete="OFF" required></div></div></div>');
+        }
         if (mainInputCounter === 3) {
             $('#addQueryButton').css('display', 'none');
         }
     });
 
 
-    $('body').on('change', 'div .HA-operand-select', function () {
-        let operandTemp = $(this).val();
-        let idTemp = $(this).parent().attr('value');
-        $('#notID' + idTemp).prop('checked', false); // Unchecks it
-        if (operandTemp === '+') {
-
-            $('#notID' + idTemp).css('display', 'none');
-        } else {
-            $('#notID' + idTemp).css('display', 'block');
-        }
-
-    })
+    // *********** When OR selected hide NOT operation
+    // $('body').on('change', 'div .HA-operand-select', function () {
+    //     let operandTemp = $(this).val();
+    //     let idTemp = $(this).parent().attr('value');
+    //     $('#notID' + idTemp).prop('checked', false); // Unchecks it
+    //     if (operandTemp === '+') {
+    //         $('#notID' + idTemp).css('display', 'none');
+    //     } else {
+    //         $('#notID' + idTemp).css('display', 'block');
+    //     }
+    // })
     
     
+
+    // *********** Remove btn
     $('#removeField').on('click', function () {
         $('#fieldID' + mainInputCounter).remove();
         mainInputCounter -= 1;
@@ -91,10 +97,10 @@ jQuery(function () {
 
 
 
+    // *********** Submit btn
     $('#haQueryInputs').on('submit', function (event) {
         event.preventDefault();
         let q = $('#queryToken').val();
-
         statusTableFlag = 1;
         $('#searchTable').css('display', 'block');
         let fromDate = $('#fromDateHA').val();
@@ -104,8 +110,10 @@ jQuery(function () {
                 if (i != 0) {
                     let qTemp = '(' + q;
                     let queryInput = $('#queryID' + i).val();
-                    if (document.getElementById('notID' + i).checked) {
-                        queryInput = '!' + queryInput;
+                    if(i > 1){
+                        if (document.getElementById('notID' + i).checked) {
+                            queryInput = '!' + queryInput;
+                        }
                     }
                     let operandInput = $('#operandID' + i).val();
                     qTemp = qTemp + operandInput + queryInput + ')';
@@ -113,12 +121,13 @@ jQuery(function () {
                 }
             }
         }
-        updateStatusTable(q, fromDate, toDate);
+        updateStatusTable(q, fromDate, toDate, searchType);
         resetQueryPanel(mainInputCounter);
     })
   
+
   
-  
+    // *********** Show Search History
     $('#showTableBtn').on('click', function () {
         if (statusTableFlag === 0) {
             $('#searchTable').css('display', 'block');
@@ -128,8 +137,9 @@ jQuery(function () {
             $('#searchTable').css('display', 'none');
             statusTableFlag = 0;
         }
+    });
 
-    })
+
 
 
     $('#frqTabHA').on('click', function () {
@@ -182,13 +192,22 @@ jQuery(function () {
         $('#analysisPanelHA').css('display', 'block');
         let recordsCaptured = searchRecords[$(this).attr('value')];
         console.log(recordsCaptured);
-        if(recordsCaptured[0]['searchType'] == 'advance'){
+        if(recordsCaptured[0]['searchType'] == 1){
             // for advance search................
+            console.log(recordsCaptured[0]['query']);
             initiateHistoricalAnalysisAdvance(recordsCaptured[0]['query'], recordsCaptured[0]['from'], recordsCaptured[0]['to'], recordsCaptured[0]['mentionUniqueID'], recordsCaptured[0]['hashtagUniqueID'], recordsCaptured[0]['userUniqueID']);
         }else{
             // for normal search........................
             initiateHistoricalAnalysis(recordsCaptured[0]['query'], recordsCaptured[0]['from'], recordsCaptured[0]['to'], recordsCaptured[0]['mentionUniqueID'], recordsCaptured[0]['hashtagUniqueID'], recordsCaptured[0]['userUniqueID']);
         }
+    });
+
+
+
+    $('body').on('click', '.deleteBtn', function () {
+        // delete the data from mysql table
+        //delete the related file from storageg folder
+        // delete the row
     });
 });
 
@@ -196,19 +215,25 @@ jQuery(function () {
 
 
 
-const updateStatusTable = (query, fromDate, toDate) => {
+const updateStatusTable = (query, fromDate, toDate, searchType) => {
     let currentTimestamp = new Date().getTime();
     let queryElement = decodeQuery(query);
     $('#tableInitialTitle').remove();
     mentionUniqueID = generateUniqueID();
     hashtagUniqueID = generateUniqueID();
     userUniqueID = generateUniqueID();
-    $('#haStatusTable').append('<tr><th scope="row">' + currentTimestamp + '</th><td>' + queryElement + '</td><td>' + fromDate + '</td><td>' + toDate + '</td><td>Ready</td><td><button class="btn btn-primary smat-rounded mx-1 showBtn" value="' + currentTimestamp + '"> Show </button><button class="btn btn-neg mx-1  smat-rounded"> Delete </button></td></tr>');
+    if(searchType == 1){
+        $('#haStatusTable').append('<tr><th scope="row">' + currentTimestamp + '</th><td>' + queryElement + '</td><td>' + fromDate + '</td><td>' + toDate + '</td><td>Requesting..</td><td><button class="btn btn-primary smat-rounded mx-1 showBtn" value="' + currentTimestamp + '" disabled> Show </button><button class="btn btn-danger mx-1  smat-rounded deleteBtn" disabled> Delete </button></td></tr>');
+    }else{
+        $('#haStatusTable').append('<tr><th scope="row">' + currentTimestamp + '</th><td>' + queryElement + '</td><td>' + fromDate + '</td><td>' + toDate + '</td><td >Ready</td><td><button class="btn btn-primary smat-rounded mx-1 showBtn" value="' + currentTimestamp + '"> Show </button><button class="btn btn-danger mx-1  smat-rounded deleteBtn"> Delete </button></td></tr>');
+    }
 
     //TODO::status read--.
-    let recordTemp = [{ 'query': query, 'from': fromDate, 'to': toDate, 'mentionUniqueID': mentionUniqueID, 'hashtagUniqueID': hashtagUniqueID, 'userUniqueID': userUniqueID }];
+    let recordTemp = [{ 'query': query, 'from': fromDate, 'to': toDate, 'mentionUniqueID': mentionUniqueID, 'hashtagUniqueID': hashtagUniqueID, 'userUniqueID': userUniqueID , 'searchType': searchType}];
     searchRecords[currentTimestamp] = recordTemp;
 }
+
+
 
 
 const resetQueryPanel = (counter) => {
@@ -219,6 +244,9 @@ const resetQueryPanel = (counter) => {
     $('#fromDateHA').val('');
     $('#toDateHA').val('');
     $('#removeField').css('display', 'none');
+
+    // mainInputCounter initialize to 0 again because it will restart again
+    mainInputCounter = 0;
 }
 
 
@@ -287,18 +315,23 @@ const initiateHistoricalAnalysis = (queryTemp, fromTemp, toTemp, mentionID, hash
 
 
 const initiateHistoricalAnalysisAdvance = (queryTemp, fromTemp, toTemp, mentionID, hashtagID, activeUserID) => {
-    //  mentionUniqueID = generateUniqueID();
     query = queryTemp;
     fromDate = fromTemp;
     toDate = toTemp;
     $('#currentlySearchedQuery').text(query);
     $('#analysisPanelHA').css('display', 'block');
     let rangeType = getRangeType(fromDate, toDate);
-    frequencyDistributionHA(query, rangeType, fromDate, toDate, null, 'freqContentHA', false);
-    sentimentDistributionHA(query, rangeType, fromDate, toDate, null, 'sentiContentHA', false);
-    plotDistributionGraphHA(query, fromDate, toDate, 'user', activeUserID, userID, 'usersContentHA');
-    plotDistributionGraphHA(query, fromDate, toDate, 'mention', mentionID, userID, 'mentionsContentHA');
-    plotDistributionGraphHA(query, fromDate, toDate, 'hashtag', hashtagID, userID, 'hashtagsContentTab');
+    // frequencyDistributionHA(query, rangeType, fromDate, toDate, null, 'freqContentHA', false);
+    // sentimentDistributionHA(query, rangeType, fromDate, toDate, null, 'sentiContentHA', false);
+    // plotDistributionGraphHA(query, fromDate, toDate, 'user', activeUserID, userID, 'usersContentHA');
+    // plotDistributionGraphHA(query, fromDate, toDate, 'mention', mentionID, userID, 'mentionsContentHA');
+    // plotDistributionGraphHA(query, fromDate, toDate, 'hashtag', hashtagID, userID, 'hashtagsContentTab');
+
+
+    // query to spark
+    //update the status  of table
+    //check status frequently
+    //when success, store to mysql and enable show and dlt btn
 }
 
 

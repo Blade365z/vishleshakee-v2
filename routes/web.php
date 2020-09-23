@@ -63,6 +63,16 @@ Route::get('/trendAnalysis', function () {
     return view('modules.trendAnalysis');
 })->middleware('auth');
 
+Route::get('/tracking', function (Request $request) {
+    if ($request->input('tweetID')) {
+        $tweetID = $request->input('tweetID');
+        return view('modules.tweetTracking', compact('tweetID'));
+    }else{
+        return view('modules.tweetTracking');
+    }
+   
+})->middleware('auth');
+
 //Few Auth Routes
 Auth::routes();
 Route::get('/logout', 'Auth\LoginController@logout')->name('logout');
@@ -87,24 +97,16 @@ Route::group(['prefix' => 'login'], function () {
 });
 
 //Define API routes requiring middleware here for  Historical Analysis
-// Route::group(['prefix' => 'HA'], function () {
-//     Route::post('freqDistDataHA', 'HistoricalAnalysisController@getFrequencyDataForHistorical');
-//     Route::post('sentDistDataHA', 'HistoricalAnalysisController@getFrequencyDataForHistorical');
-//     Route::post('getCooccurDataForHA', 'HistoricalAnalysisController@getCooccurDataForHA');
-//     Route::get('coOccurDataFormatterHA', 'HistoricalAnalysisController@data_formatter_for_co_occur_ha');
-//     Route::get('topDataHA', 'HistoricalAnalysisController@get_top_data_ha');
-//     Route::get('tweetsHA', 'HistoricalAnalysisController@get_tweets_ha');
-//     Route::get('getTweetsInfoHA', 'HistoricalAnalysisController@get_tweets_info_ha');
-//     Route::get('getUserInfoHA', 'HistoricalAnalysisController@get_user_info_ha');
-
-//     Route::get('getTopLatLngHA', 'HistoricalAnalysisController@get_top_data_lat_lng_ha');
-// });
-
-//Define API routes requiring middleware here for  Historical Analysis
 Route::group(['prefix' => 'HA'], function () {
     Route::post('getFrequencyDataForHistorical', 'HistoricalController@getFrequencyDataForHistorical');
     Route::post('getSentimentDataForHistorical', 'HistoricalController@getSentimentDataForHistorical');
     Route::post('getCooccurDataForHA', 'HistoricalController@getCooccurDataForHA');
+
+    //spark(advance search)
+    Route::post('requestToSpark', 'HistoricalAdvanceController@requestToSpark');
+    Route::post('getStatusFromSpark', 'HistoricalAdvanceController@getStatusFromSpark');
+    Route::post('getOuputFromSparkAndStoreAsJSON', 'HistoricalAdvanceController@getOuputFromSparkAndStoreAsJSON');
+    Route::post('storeToMySqlAdvanceSearchData', 'HistoricalAdvanceController@storeToMySqlAdvanceSearchData');
 
     // just for testing
     Route::get('freqDistDataHA', 'HistoricalController@getFrequencyDataForHA');
@@ -142,7 +144,6 @@ Route::group(['prefix' => 'na'], function () {
     Route::post('writedelete', 'networkAnalysisController@write_delete');
     Route::get('isfileexist', 'networkAnalysisController@isfileexist');
     Route::post('fileupload', 'networkAnalysisController@fileupload');
-
     Route::get('fileUploadRequest', 'networkAnalysisController@fileUploadRequest');
     // Route::post('requestToSparkandStoreResult', 'networkAnalysisController@requestToSpark');
     Route::post('requestToSpark', 'networkAnalysisController@requestToSpark');
@@ -177,7 +178,6 @@ Route::group(['prefix' => 'LM'], function () {
     Route::post('getTopHashtag', 'LocationMap@get_top_hashtags');
     Route::post('checkLocation', 'LocationMap@checkLocation_');
     Route::post('/getcityState', 'LocationMap@showData');
-
 });
 
 //Define API routes requiring middleware here for Trend Analysis
@@ -192,3 +192,11 @@ Route::post('/getFeedback', 'FeebackController@checkIfFeedbackExist');
 
 Route::resource('status', 'queryStatusController', ['except' => ['show']]);
 Route::get('/status/{username}', 'queryStatusController@show');
+
+
+
+//Define API routes requiring middleware here for Tweet Tracking
+Route::group(['prefix' => 'track'], function () {
+    Route::post('/getTweetInfo', 'TweetTracking@getTweetInfo');
+
+});

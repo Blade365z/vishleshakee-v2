@@ -50,8 +50,8 @@
     <form id="naInputInputs">
  
         <div id="naInputPanel">
-            <div class="form-group   my-0  mr-2  border smat-rounded d-flex px-2 py-1  bg-white">
-                <input type="text" class="form-control" name="query" id="queryNA" placeholder="Query" style="border:0px;" autocomplete="OFF" required>
+            <div class="form-group   my-0  mr-2  border smat-rounded d-flex px-2 py-1  bg-white" id="naQueryInputBox">
+                <input type="text" class="form-control typeahead" name="query" id="queryNA" placeholder="Query" style="border:0px;" autocomplete="OFF" required>
             </div>
 
             <div class="form-group  dateinputForm my-0  mr-2  border smat-rounded d-flex px-2 py-1  bg-white">
@@ -366,7 +366,7 @@
                                         </div>
                                     </div>
                                 </div>
-                                <div class="networkDiv" id="networkDivid">
+                                <div class="networkDiv m-3" id="networkDivid">
                                 </div>
                             </div>
                             <div class="tab-pane fade text-center p-1" id="unionContentNA" role="tabpanel" aria-labelledby="unionContentNA ">

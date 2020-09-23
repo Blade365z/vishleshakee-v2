@@ -42,7 +42,7 @@ class LocationMap extends Controller
     {
         $interval = $_GET['interval'];
         $datetime_object = new Hm;
-        $current_datetime_to_datetime = $datetime_object->CurrentDateTimeGeneratorPublic(3600);
+        $current_datetime_to_datetime = $datetime_object->CurrentDateTimeGeneratorPublic($interval);
 
         return $current_datetime_to_datetime;
     }
@@ -57,7 +57,7 @@ class LocationMap extends Controller
 
         $commonObj = new CommonController;
 
-        $r = $commonObj->get_tweets($to_datetime, $from_datetime, $query, '10sec', 'all');
+        $r = $commonObj->get_tweets('2020-09-12 23:30:00', '2020-09-12 23:00:00', $query, '10sec', 'all');
 
         $tweetid_list_array = array();
 
@@ -156,57 +156,33 @@ class LocationMap extends Controller
             $code = $c['code'];
         }
 
-        if ($code == 0) {
-            $statement = "SELECT state,country from city_state WHERE city = '" . $location . "'";
-            $result_city = $trigger->execute_query($statement, null, null);
-            foreach ($result_city as $k) {
-                $state = $k['state'];
-                $country = $k['country'];
-            }
-            $city = $location;
+        if ($code == 0) {$locationType = "city";}
+        elseif ($code == 1) {$locationType = "state";}
+        elseif ($code == 2) {$locationType = "country";}
 
-        } elseif ($code == 1) {
-            $city = 'null';
-            $statement = "SELECT country from city_state WHERE city = '" . $city . "' AND state='" . $location . "'";
-            $result_state = $trigger->execute_query($statement, null, null);
-            foreach ($result_state as $k) {
-                $country = $k['country'];
-            }
-            $city = ' ';
-            $state = $location;
-
-        } elseif ($code == 2) {
-            $city = ' ';
-            $state = ' ';
-            $country = $location;
-
-        }
+        $locationObj = CityState::where($locationType, $location)->firstOrFail();
+        // return $locationObj["state"];
 
         $city_state_country_stm = '';
-        if (($city == ' ') && ($state == ' ') && ($country == ' ')) {
+        if ($code == 0) {$city_state_country_stm = "country='" . $locationObj["country"] . "' AND state='" . $locationObj["state"] . "' AND city='" . $locationObj["city"] . "'";}
+        elseif ($code == 1) {$city_state_country_stm = "country='" . $locationObj["country"] . "' AND state='" . $locationObj["state"] . "'";}
+        elseif ($code == 2) {$city_state_country_stm = "country='" .$locationObj["country"] . "'";}
+        // if (($city == ' ') && ($state == ' ') && ($country == ' ')) {
             // echo nothing
-        } else if (($city != ' ') && ($state != ' ') && ($country != ' ')) {
-            $city_state_country_stm = "country='" . $country . "' AND state='" . $state . "' AND city='" . $city . "'";
-        } else if (($city == ' ') && ($state != ' ') && ($country != ' ')) {
-            $city_state_country_stm = "country='" . $country . "' AND state='" . $state . "'";
-        } else if (($city == ' ') && ($state == ' ') && ($country != ' ')) {
-            $city_state_country_stm = "country='" . $country . "'";
-        }
+        // } else if (($city != ' ') && ($state != ' ') && ($country != ' ')) {
+        //     $city_state_country_stm = "country='" . $country . "' AND state='" . $state . "' AND city='" . $city . "'";
+        // } else if (($city == ' ') && ($state != ' ') && ($country != ' ')) {
+        //     $city_state_country_stm = "country='" . $country . "' AND state='" . $state . "'";
+        // } else if (($city == ' ') && ($state == ' ') && ($country != ' ')) {
+        //     $city_state_country_stm = "country='" . $country . "'";
+        // }
 
         return $city_state_country_stm;
     }
 
     public function showData(Request $request)
     {
-        $request->validate([
-            'lType' => 'required',
-            'location' => 'required',
-        ]);
-        //location Type 1.city,2.state,3.country
-        $locationType = $request->input('lType');
-        $location = $request->input('location');
-        $locationObj = CityState::where($locationType, $location)->firstOrFail();
-        return $locationObj;
+
     }
 }
 

@@ -794,43 +794,52 @@ class CommonController extends Controller
      *
      * @return json
      */
-    public function get_tweets_info($tweet_id_list)
+    public function get_tweets_info($tweet_id_list, $async=true)
     {
         $ut_obj = new Ut;
         $qb_obj = new QB;
         $db_object = new DBmodelAsync;
+        $dbmodel_object = new DBmodel;
 
         $final_result = array();
-        $stm_list = $qb_obj->get_statement(null, null, null, null, $feature_option='tweet_info', null, $async=true, null, $id_list=$tweet_id_list);        
-        $result_async_from_db = $db_object->executeAsync_query($stm_list[1], $stm_list[0]);
-        foreach ($result_async_from_db as $rows) {
-            foreach ($rows as $row) {
-                $media_list_temp = array();
-                $media_list = $row["media_list"];
-                $c = $row["category"];
-                // for category                
-                if(($c == 11) or ($c == 12) or ($c == 13))
-                    $category = 'com';
-                else if(($c == 101) or ($c == 102) or ($c == 103))
-                    $category = 'sec';
-                else if(($c == 111) or ($c == 112) or ($c == 113))
-                    $category = 'com_sec';  
-                else if(($c == 1) or ($c == 2) or ($c == 3))
-                    $category = 'normal';
-                // ******
-                if (!is_null($media_list)) {
-                    foreach ($media_list as $m) {
-                        array_push($media_list_temp, array($m["media_type"], $m["media_url"]));
+        if($async){
+            $stm_list = $qb_obj->get_statement(null, null, null, null, $feature_option='tweet_info', null, $async=true, null, $id_list=$tweet_id_list);        
+            $result_async_from_db = $db_object->executeAsync_query($stm_list[1], $stm_list[0]);
+            foreach ($result_async_from_db as $rows) {
+                foreach ($rows as $row) {
+                    $media_list_temp = array();
+                    $media_list = $row["media_list"];
+                    $c = $row["category"];
+                    // for category                
+                    if(($c == 11) or ($c == 12) or ($c == 13))
+                        $category = 'com';
+                    else if(($c == 101) or ($c == 102) or ($c == 103))
+                        $category = 'sec';
+                    else if(($c == 111) or ($c == 112) or ($c == 113))
+                        $category = 'com_sec';  
+                    else if(($c == 1) or ($c == 2) or ($c == 3))
+                        $category = 'normal';
+                    // ******
+                    if (!is_null($media_list)) {
+                        foreach ($media_list as $m) {
+                            array_push($media_list_temp, array($m["media_type"], $m["media_url"]));
+                        }
                     }
+                    $datetime_str = $ut_obj->get_date_time_from_cass_date_obj($row["datetime"], 'Y-m-d H:i:s');
+                    $datetime_str = $ut_obj->convert_utc_datetime_to_local_datetime($datetime_str);
+                    $temp_arr = array("t_location" => $row["t_location"], "datetime" => $datetime_str, "tid" => $row["tid"], "author" => $row["author"], "author_id" => $row["author_id"], "author_profile_image" => $row["author_profile_image"], "author_screen_name" => $row["author_screen_name"], "sentiment" => $row["sentiment"]->value(), "quoted_source_id" => $row["quoted_source_id"], "tweet_text" => $row["tweet_text"], "retweet_source_id" => $row["retweet_source_id"], "media_list" => $media_list_temp, "type" => $row["type"], "category" => $category);
+                    array_push($final_result, $temp_arr);
                 }
-                $datetime_str = $ut_obj->get_date_time_from_cass_date_obj($row["datetime"], 'Y-m-d H:i:s');
-                $datetime_str = $ut_obj->convert_utc_datetime_to_local_datetime($datetime_str);
-                $temp_arr = array("t_location" => $row["t_location"], "datetime" => $datetime_str, "tid" => $row["tid"], "author" => $row["author"], "author_id" => $row["author_id"], "author_profile_image" => $row["author_profile_image"], "author_screen_name" => $row["author_screen_name"], "sentiment" => $row["sentiment"]->value(), "quoted_source_id" => $row["quoted_source_id"], "tweet_text" => $row["tweet_text"], "retweet_source_id" => $row["retweet_source_id"], "media_list" => $media_list_temp, "type" => $row["type"], "category" => $category);
-                array_push($final_result, $temp_arr);
             }
+            echo json_encode($final_result);  
+        }else{
+            $stm_list = $qb_obj->get_statement(null, null, $tweet_id_list, null, $feature_option='tweet_info', null, $async=false);
+            $final_result = $dbmodel_object->execute_query_first_require($stm_list[0]); // return StdClass() object
+            return $final_result;
         }
-        echo json_encode($final_result);    
+         
     }
+
 
 
     /**

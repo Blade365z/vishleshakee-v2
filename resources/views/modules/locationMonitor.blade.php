@@ -17,7 +17,7 @@
                         <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
-                <div class="modal-body">
+                <div class="modal-body" id="modal_text">
                     Location Doest Not Exist!
                 </div>
                 <div class="modal-footer">

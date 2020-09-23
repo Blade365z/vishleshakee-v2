@@ -9,7 +9,7 @@ class QueryStatus extends Model
     public $timestamps = false;
     protected $fillable = [
         'queryID',
-        'username',
+        'userID',
         'query',
         'fromDate',
         'toDate'

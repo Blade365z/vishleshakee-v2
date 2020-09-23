@@ -126,11 +126,13 @@ class HistoricalController extends Controller
         $to_datetime = $_GET['to_datetime'];
         $range_type = $_GET['range_type'];
         $search_type = $_GET['search_type'];
-        $filename = $_GET['filename'];
+       
         if($search_type == 'normal')
             return $common_object->get_frequency_distribution_data($to_datetime, $from_datetime, $token, $range_type, $category_info_total = false, $category_info_details = true);
-        else    
-            return $adv_object->get_freq_from_file($to_datetime, $from_datetime, $token, $range_type, $category_info_total = false, $category_info_details = true, $filename);
+        else {
+            $filename = $_GET['filename'];
+            return $adv_object->getDataForFrequncydistributionFromJson($to_datetime, $from_datetime, $token, $range_type, $category_info_total = false, $category_info_details = true, $filename);
+        }
     }
 
 

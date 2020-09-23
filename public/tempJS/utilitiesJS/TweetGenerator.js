@@ -125,7 +125,7 @@ export const get_tweets_info_AjaxRequest = (slice_tid_list, callback) => {
 
 export const generate_tweets_div = (tweetData, div, dropDownArg = true) => {
   let userIDTemp, feedback = '';
-
+  console.log(tweetData);
   if (localStorage.getItem('smat.me')) {
     let userInfoJSON = JSON.parse(localStorage.getItem('smat.me'));
     userIDTemp = userInfoJSON['id'];

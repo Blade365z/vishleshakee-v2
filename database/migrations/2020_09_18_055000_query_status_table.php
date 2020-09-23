@@ -15,7 +15,7 @@ class QueryStatusTable extends Migration
     {
         Schema::create('query_statuses', function (Blueprint $table) {
             $table->string('queryID');
-            $table->string('username');
+            $table->string('userID');
             $table->string('query');
             $table->string('fromDate');
             $table->string('toDate');

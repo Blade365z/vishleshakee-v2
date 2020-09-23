@@ -58,17 +58,7 @@
                         </tr>
                     </thead>
                     <tbody id="haStatusTable">
-                        <tr>
-                            <th scope="row">1113</th>
-                            <td><div><span>(#Corona|#Coronavirus)</span> </div></td>
-                            <td>2020-09-11</td>
-                            <td>2020-09-13</td>
-                            <td>Ready</td>
-                            <td>
-                                <button class="btn btn-primary smat-rounded mx-1 showBtn" value="1113"> Show </button>
-                                <button class="btn btn-neg mx-1  smat-rounded"> Delete </button>
-                            </td>
-                        </tr>
+                        
                     </tbody>
                 </table>
                 <div id="tableInitialTitle">

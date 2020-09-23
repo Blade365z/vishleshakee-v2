@@ -154,12 +154,16 @@ class QueryBuilder{
         
         // for tweet info
         if($feature_option == 'tweet_info'){
-            $final_res[0] = "SELECT t_location,datetime,tid,author,author_id,author_profile_image,author_screen_name,sentiment,quoted_source_id,tweet_text,retweet_source_id,media_list,type,category from tweet_info_by_id_test WHERE tid=?";
-            $input_args = array();
-            foreach ($id_list as $value) {
-                array_push($input_args, array($value));
+            if($async){
+                $final_res[0] = "SELECT t_location,datetime,tid,author,author_id,author_profile_image,author_screen_name,sentiment,quoted_source_id,tweet_text,retweet_source_id,media_list,type,category from tweet_info_by_id_test WHERE tid=?";
+                $input_args = array();
+                foreach ($id_list as $value) {
+                    array_push($input_args, array($value));
+                }
+                $final_res[1] = $input_args;
+            }else{
+                $final_res[0] = "SELECT t_location,datetime,tid,author,author_id,author_profile_image,author_screen_name,sentiment,quoted_source_id,replyto_source_id,retweet_source_id,tweet_text,retweet_source_id,media_list,type,category from tweet_info_by_id_test WHERE tid=" . "'" .$token."'";
             }
-            $final_res[1] = $input_args;
         }
 
         // for user info

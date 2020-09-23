@@ -37,14 +37,14 @@ class queryStatusController extends Controller
     {
         $request->validate([
             'queryID' => 'required',
-            'username' => 'required',
+            'userID' => 'required',
             'query' => 'required',
             'fromDate' => 'required',
             'toDate' => 'required',
         ]);
         $statusObj = new QueryStatus([
             'queryID' => $request->get('queryID'),
-            'username' => $request->get('username'),
+            'userID' => $request->get('userID'),
             'query' => $request->get('query'),
             'fromDate' => $request->get('fromDate'),
             'toDate' => $request->get('toDate'),
@@ -59,9 +59,9 @@ class queryStatusController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show($username)
+    public function show($id)
     {
-        $statusObj = QueryStatus::where('username', $username)->firstOrFail();
+        $statusObj = QueryStatus::where('userID', $id)->firstOrFail();
         return $statusObj;
     }
 

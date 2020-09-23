@@ -7,6 +7,9 @@ import {
     render_graph_community, render_union_graph, render_graph_union, render_intersection_diff_graph, render_intersection_difference,
     networkGeneration, storeResultofSparkFromController
 } from './helper.js';
+import { makeSuggestionsRead } from '../utilitiesJS/smatExtras.js'
+
+
 
 let totalQueries;
 let searchRecords = [];
@@ -24,6 +27,7 @@ if (localStorage.getItem('smat.me')) {
     window.location.href = 'login';
 }
 jQuery(function () {
+    makeSuggestionsRead ('naQueryInputBox','top_hashtag',50);
     $('#networkEngineNA').on('change', function () {
         console.log('changed');
         let selected = $("#networkEngineNA").val();
@@ -54,6 +58,15 @@ jQuery(function () {
         let args = $(this).attr('value');
         args = args.split(/[|]/).filter(Boolean);
         console.log(args);
+        render_centrality_graph(args[6], args[2], args[5]).then(response => {
+            console.log('RESPONSE', response);
+            $('.analysis_summary_div').html('');
+            $('.analysis_summary_div').append('<table class="table">  <thead> <tr><th>Node</th><th>Score</th></tr>  </thead> <tbody id="tableBody"> </tbody></table>');
+            for (var i = 0; i < response["nodes"].length; i++) {
+                $('#tableBody').append('<tr><td>' + response["nodes"][i]["label"] + '</td><td>' + response["nodes"][i]["size"] + '</td></tr>');
+            }
+            draw_graph(response, "networkDivid");
+        });
     });
 
 
@@ -225,10 +238,10 @@ $("#centrality_exec").on('click', function (NAType, algo_option = $('#centrality
         console.log('ID alloted:', response);
         if (currentNetworkEngine == "networkx") {
             render_centrality_graph(data["input"], "networkDivid", data["algo_option"]).then(response => {
-                $('.analysis_summary_div').empty();
-                $('.analysis_summary_div').append('<table> <tr><th>Node</th><th>Score</th></tr>');
+                $('.analysis_summary_div').html('');
+                $('.analysis_summary_div').append('<table class="table">  <thead> <tr><th>Node</th><th>Score</th></tr>  </thead> <tbody id="tableBody"> </tbody></table>');
                 for (var i = 0; i < response["nodes"].length; i++) {
-                    $('.analysis_summary_div').append('<tr><td>' + response["nodes"][i]["label"] + '</td><td>' + response["nodes"][i]["size"] + '</td></tr>');
+                    $('#tableBody').append('<tr><td>' + response["nodes"][i]["label"] + '</td><td>' + response["nodes"][i]["size"] + '</td></tr>');
                 }
                 $('.analysis_summary_div').append('</table>');
                 draw_graph(response, "networkDivid");
@@ -238,7 +251,7 @@ $("#centrality_exec").on('click', function (NAType, algo_option = $('#centrality
             //TODO::tobealtered!
             let queryMetaData = searchRecords[currentlyShowing - 1];
 
-            transferQueryToStatusTable(queryMetaData, 'Centrality',algo_option, sparkID);
+            transferQueryToStatusTable(queryMetaData, 'Centrality', algo_option, sparkID);
             function checkSparkStatus() {
                 fetch('na/getsparkstatus/' + sparkID, {
                     method: 'get'
@@ -248,16 +261,16 @@ $("#centrality_exec").on('click', function (NAType, algo_option = $('#centrality
                         if (response.state === 'success') {
                             let query_list = [algo_option, input];
                             storeResultofSparkFromController(sparkID, query_list, userID).then(response => {
-                                makeShowBtnReadyAfterSuccess(sparkID, response.filename, 'centrality', algo_option);
+                                makeShowBtnReadyAfterSuccess(sparkID, response.filename, 'centrality', algo_option,data["query_list"][1] );
                                 window.clearInterval(checkSpartStatusInterval_centrality);
                             })
 
                         }
                     })
-                    .catch(err => {  
+                    .catch(err => {
                         console.log(err)
                     })
-            }  
+            }
             checkSpartStatusInterval_centrality = setInterval(checkSparkStatus, 5000);
 
             // render_centrality_graph(data["query_list"][1], "networkDivid", data["query_list"][0]).then(response => {
@@ -630,20 +643,20 @@ function IDGenerator() {
 }
 
 
-const algoDict = {"degcen":'Degree Centrality',"pgcen":"Page Rank Centrality"};
-const transferQueryToStatusTable = (data, operation, algo ,sparkID = 123, renderDivID = 'networkDivid') => {
-    $('#searchTable').css('display','block');
+const algoDict = { "degcen": 'Degree Centrality', "pgcen": "Page Rank Centrality" };
+const transferQueryToStatusTable = (data, operation, algo, sparkID = 123, renderDivID = 'networkDivid') => {
+    $('#searchTable').css('display', 'block');
     let algoTitle = algoDict[algo];
-    $('#naStatusTable').append('<tr><th scope="row">' + data.id + '</th><td>' + data.query + '</td><td>' + operation+' ('+algoTitle+')' + '</td><td>' + data.from + '</td><td>' + data.to + '</td><td  id="' + sparkID + 'Status">Running...</td><td><button class="btn btn-secondary smat-rounded mx-1 showBtn" value="' + data.id + '|' + sparkID + '|' + renderDivID + '"  id="' + sparkID + 'Btn" disabled > Show </button><button class="btn btn-neg mx-1  smat-rounded"> Delete </button></td></tr>');
+    $('#naStatusTable').append('<tr><th scope="row">' + data.id + '</th><td>' + data.query + '</td><td>' + operation + ' (' + algoTitle + ')' + '</td><td>' + data.from + '</td><td>' + data.to + '</td><td  id="' + sparkID + 'Status">Running...</td><td><button class="btn btn-secondary smat-rounded mx-1 showBtn" value="' + data.id + '|' + sparkID + '|' + renderDivID + '"  id="' + sparkID + 'Btn" disabled > Show </button><button class="btn btn-neg mx-1  smat-rounded"> Delete </button></td></tr>');
 }
 
-const makeShowBtnReadyAfterSuccess = (sparkID, filename, mode, algo = null) => {
+const makeShowBtnReadyAfterSuccess = (sparkID, filename, mode, algo = null, originalFile) => {
     $('#' + sparkID + 'Btn').prop("disabled", false);
     let btnValue = $('#' + sparkID + 'Btn').attr('value');
     $('#' + sparkID + 'Btn').removeClass('btn-secondary');
     $('#' + sparkID + 'Btn').addClass('btn-primary');
     algo = algo == null ? '' : algo;
-    btnValue = btnValue + '|' + filename + '|' + mode + '|' + algo;
+    btnValue = btnValue + '|' + filename + '|' + mode + '|' + algo + '|' + originalFile;
     $('#' + sparkID + 'Btn').attr('value', btnValue);
     $('#' + sparkID + 'Status').text('Success');
 }
