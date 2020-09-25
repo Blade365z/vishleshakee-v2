@@ -199,7 +199,7 @@
     <script type="module" src="public/tempJS/locationMonitor/LocationMonitor.js"></script>
 
     <script src="public/leaflet/leaflet.js"></script>
-    <script src="public/leaflet/TileLayer.Grayscale.js"></script>
+    {{-- <script src="public/leaflet/TileLayer.Grayscale.js"></script> --}}
     <script src="public/leaflet/markerCluster/leaflet.markercluster-src.js"></script>
     <script src="public/leaflet/subgroup/leaflet.featuregroup.subgroup.js"></script>
 

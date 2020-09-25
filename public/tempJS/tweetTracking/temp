@@ -1,0 +1,42 @@
+//findHistroy using setinterval 
+
+// const findHistoryID = () => { 
+//     getTweetInfo(currentQuery).then(response => {
+     
+//         let type='',tempArr=[];
+//         if (response.type === "Tweet") {
+//             type = 'Tweet';
+//             tempArr = { 'id': currentQuery, 'type': type, 'source': response.retweet_source_id }
+//             sourceArray.push(tempArr);
+//             console.log(sourceArray)
+//             printTweetOnDiv(response, 3, type);
+//             clearInterval(trackTweetHistory);
+//         } else if (response.type === 'retweet') {
+//             type = 'retweet';
+//             tempArr = { 'id': currentQuery, 'type': type, 'source': response.retweet_source_id }
+//             sourceArray.push(tempArr);
+//             let offset = divOffsetFlag === 0 ? 1 : 2;
+//             printTweetOnDiv(response, offset, type);
+//             currentQuery=response.retweet_source_id
+//         } else if (response.type === "QuotedTweet") {
+//             type = 'QuotedTweet';
+//             tempArr = { 'id': currentQuery, 'type': type, 'source': response.quoted_source_id }
+//             sourceArray.push(tempArr);
+//             let offset = divOffsetFlag === 0 ? 1 : 2;
+//             printTweetOnDiv(response, offset, type);
+//             currentQuery=response.quoted_source_id
+
+//         } else if (response.type === "Reply") {
+//             type = 'Reply';
+//             tempArr = { 'id': currentQuery, 'type': type, 'source': response.replyto_source_id }
+//             sourceArray.push(tempArr);
+//             let offset = divOffsetFlag === 0 ? 1 : 2;
+//             printTweetOnDiv(response, offset, type);
+//             currentQuery=response.replyto_source_id
+//         }
+//     });
+// }
+
+
+//Put the below code in documnet.ready()
+    // trackTweetHistory = setInterval(findHistoryID, 400);

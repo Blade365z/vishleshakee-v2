@@ -8,6 +8,7 @@
 //Imports
 
 import { formulateUserSearch } from '../utilitiesJS/userSearch.js';
+import { get_tweet_location, getCompleteMap } from '../utilitiesJS/getMap.js';
 import { getSuggestionsForUA, getUserDetails, getFreqDistDataForUA, getTweetIDsForUA, getSentiDistDataForUA, getCooccurDataForUA } from './helper.js';
 import { getCurrentDate, getRangeType, dateProcessor } from '../utilitiesJS/smatDate.js';
 import { TweetsGenerator } from '../utilitiesJS/TweetGenerator.js';
@@ -90,6 +91,22 @@ jQuery(function () {
     $('#showUAsugg').on('click', function () {
         suggestionToggle();
     });
+
+    $('#locationTabUA').on('click', function () {
+        $('#locationContentUA').html('<div id="result-div-map" style="height:400px;"></div>');
+        let rangeType = getRangeType(fromDate, toDate);
+        
+        get_tweet_location(SearchID, fromDate, toDate, rangeType, null).then(response => {
+            console.log(response);
+            getCompleteMap('result-div-map',response);
+            for (var i = 0; i < response.length; i++) {
+                
+            }
+        });
+        
+    });
+
+    
 
 
 
@@ -197,7 +214,7 @@ export const frequencyDistributionUA = (query = null, rangeType, fromDate = null
         $('#' + div).html('<div><div class="row"><div class="col-sm-8"><div class="uaTab freqDistChart border resultDiv  chartDiv" id="' + chartDivID + '" ></div></div><div class="col-sm-4"><div class="freqDistTweets resultDiv   border" id="' + chartTweetDivID + '"></div><div class="freqDistSummary border d-flex pt-2 resultDiv "  id="' + summaryDivID + '" ></div></div></div></div>');
     }
     //Loader...
-    $('#' + chartDivID).html('<div class="text-center pt-5 " ><i class="fa fa-circle-o-notch donutSpinner" aria-hidden="true"></i></div>')
+    $('#' + chartDivID).html('<div class="text-center pt-5  " ><i class="fa fa-circle-o-notch donutSpinner" aria-hidden="true"></i></div>')
     $('#' + chartTweetDivID).html('<div class="text-center pt-5 " ><i class="fa fa-circle-o-notch donutSpinner" aria-hidden="true"></i></div>');
     if (rangeType == 'day') {
         getFreqDistDataForUA(query, fromDate, toDate, null, rangeType, 0).then(response => {

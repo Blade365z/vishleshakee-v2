@@ -31,7 +31,7 @@ L.MarkerCluster.include({
 });
 var attribution = '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors';
 var tileUrl = 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png';
-var tiles = L.tileLayer.grayscale(tileUrl, {
+var tiles = L.tileLayer(tileUrl, {
     attribution
 });
 var glow = new L.LayerGroup();
@@ -94,7 +94,23 @@ function windowOnClick(event) {
     }
 }
 
+var legend = L.control({
+    position: "topright"
+});
 
+legend.onAdd = function (LM_Map) {
+    var div = L.DomUtil.create("div", "legend shadow");
+    div.innerHTML += '<i style="background: #297eb4"></i><span>Normal Hashtags</span><br>';
+    div.innerHTML += '<i style="background: #f30155"></i><span>Communal Hashtags</span><br>';
+    div.innerHTML += '<i style="background: #3d3d3d"></i><span>Security Hashtags</span><br>';
+    div.innerHTML += '<i style="background: #f500ff"></i><span>Communal and Security Hashtags</span><br>';
+    div.innerHTML += '<i style="background: #00acee"></i><span>Tweets</span><br>';
+    // div.innerHTML += '<i style="background: green"></i><span>Trending Events</span><br>';
+
+    return div;
+};
+
+legend.addTo(LM_Map);
 
 jQuery(function () {
     /*
@@ -159,6 +175,7 @@ jQuery(function () {
             $('#currentlyTrendingParentLoc').css('display', 'block');
             currentlyTrendingLocFlag = 1;
             $('#lmMap').css('width', '60%');
+            
         }
     })
 

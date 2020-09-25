@@ -1,0 +1,15 @@
+src,dst,count
+#COVID,#HerdImmunity,2
+#COVID,#Trump,1
+#Trump,#AlexJones,1
+#Trump,#Pandemic,1
+#COVID,#Texas,1
+#COVID,#RKI,1
+#COVID,#PuertoRico,1
+#COVID,#Pandemic,1
+#Pandemic,#Trump,1
+#Pandemic,#AlexJones,1
+#COVID,#Florida,1
+#COVID,#AlexJones,1
+#AlexJones,#Trump,1
+#AlexJones,#Pandemic,1

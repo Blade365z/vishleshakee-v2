@@ -224,7 +224,6 @@ $("#centrality_exec").on('click', function (NAType, algo_option = $('#centrality
         };
         console.log('Data args for centrality', data);
     } else if (currentNetworkEngine == 'spark') {
-
         sparkUpload(selected_graph_ids());
         let input = select_graph[0];
         var query_list = [algo_option, input];
@@ -233,6 +232,7 @@ $("#centrality_exec").on('click', function (NAType, algo_option = $('#centrality
         data = {
             query_list, rname
         }
+        
     }
     centrality(url, data, currentNetworkEngine).then(response => {
         console.log('ID alloted:', response);
@@ -361,8 +361,7 @@ $("#sp_exec").on('click', function (NAType = "networkx", algo_option = "") {
     var url;
     var data = {};
 
-
-    if (NAType == 'networkx') {
+    if (currentNetworkEngine == 'networkx') {
         url = 'na/shortestpath';
         data = {
             input: input,
@@ -371,23 +370,52 @@ $("#sp_exec").on('click', function (NAType = "networkx", algo_option = "") {
             algo_option: algo_option
         };
 
-
-    } else if (NAType == 'spark') {
+    } else if (currentNetworkEngine == 'spark') {
+        sparkUpload(selected_graph_ids());
         var query_list = ['ShortestPath', input, src, dst];
-        var unique_name_timestamp = (new Date().getTime()).toString(); // create unique_name   
-        url = 'na/requestToSparkandStoreResult';
+        var rname = (new Date().getTime()).toString() + '-spark';   // create unique_name   
+        url = 'na/requestToSpark';
         data = {
             query_list: query_list,
-            rname: unique_name_timestamp
+            rname: rname
         };
-        sparkUpload(selected_graph_ids());
     } else {
     }
-    shortestpaths(url, data, NAType).then(response => {
-        if (NAType == "networkx") {
+    shortestpaths(url, data, currentNetworkEngine).then(response => {
+        if (currentNetworkEngine == "networkx") {
             render_shortestpath_graph(data["input"], data["src"], data["dst"]);
-        } else if (NAType == "spark") {
-            render_shortestpath_graph(data["query_list"][1], data["query_list"][2], data["query_list"][3]);
+        } else if (currentNetworkEngine == "spark") {
+            let sparkID = response.id;
+
+            console.log("I am logging Logger");
+            console.log(response);
+
+            //TODO::tobealtered!
+            let queryMetaData = searchRecords[currentlyShowing - 1];
+
+            transferQueryToStatusTable(queryMetaData, 'ShortestPath', algo_option, sparkID);
+            function checkSparkStatus() {
+                fetch('na/getsparkstatus/' + sparkID, {
+                    method: 'get'
+                }).then(response => response.json())
+                    .then(response => {
+                        console.log(response);
+                        if (response.state === 'success') {
+                            let query_list = [algo_option, input];
+                            storeResultofSparkFromController(sparkID, query_list, userID).then(response => {
+                                makeShowBtnReadyAfterSuccess(sparkID, response.filename, 'shortestpath', algo_option,data["query_list"][1] );
+                                window.clearInterval(checkSpartStatusInterval_centrality);
+                            })
+
+                        }
+                    })
+                    .catch(err => {
+                        console.log(err)
+                    })
+            }
+            checkSpartStatusInterval_centrality = setInterval(checkSparkStatus, 5000);
+
+           // render_shortestpath_graph(data["query_list"][1], data["query_list"][2], data["query_list"][3]);
         }
     });
 });
@@ -432,20 +460,19 @@ $("#comm_exec").on('click', function (NAType = $("#NAEngine").val(), algo_option
         };
     } else if (NAType == 'spark') {
 
+        sparkUpload(selected_graph_ids());
+        let input = select_graph[0];
+        var query_list = [algo_option, input];
+        var rname = (new Date().getTime()).toString() + '-spark'; 
+
         var query_list = ['lpa'];
         query_list.push(input);
 
-        // for (i = 0; i < input_array.length; i++) {
-        //     query_list.push(input_array[i]);
-        // }
-
-        var unique_name_timestamp = (new Date().getTime()).toString(); // create unique_name   
-        url = 'na/requestToSparkandStoreResult';
+        url = 'na/requestToSpark';
         data = {
             query_list: query_list,
-            rname: unique_name_timestamp
+            rname: rname
         };
-        sparkUpload(selected_graph_ids());
     } else {
     }
     community_detection(url, data, NAType).then(response => {

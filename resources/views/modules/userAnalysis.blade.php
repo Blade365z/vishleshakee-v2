@@ -1,5 +1,9 @@
 @extends('parent.app')
 @section('content')
+
+<link rel="stylesheet" href="public/leaflet/markerCluster/MarkerCluster.css">
+<link rel="stylesheet" href="public/leaflet/leaflet.css">
+
     <div class="smat-mainHeading ">
         User Analysis
     </div>
@@ -232,7 +236,7 @@
                             aria-labelledby="sentiContentUA"> </div>
 
                         <div class="tab-pane fade  " id="locationContentUA" role="tabpanel"
-                            aria-labelledby="locationContentUA">locationContentUA </div>
+                            aria-labelledby="locationContentUA"></div>
 
                     </div>
 
@@ -253,4 +257,9 @@
     <script type="module" src="public/amcharts4/core.js"></script>
     <script type="module" src="public/amcharts4/charts.js"></script>
     <script type="module" src="public/tempJS/userAnalysis/UserAnalysis.js"></script>
+
+    <script src="public/leaflet/leaflet.js"></script>
+    <script src="public/leaflet/TileLayer.Grayscale.js"></script>
+    <script src="public/leaflet/markerCluster/leaflet.markercluster-src.js"></script>
+    <script src="public/leaflet/subgroup/leaflet.featuregroup.subgroup.js"></script>
 @endsection

@@ -1,6 +1,9 @@
 @extends('parent.app')
 @section('content')
 
+<link rel="stylesheet" href="public/leaflet/markerCluster/MarkerCluster.css">
+<link rel="stylesheet" href="public/leaflet/leaflet.css">
+
 <div class="smat-mainHeading ">
     Historical Analysis
 </div>
@@ -121,7 +124,7 @@
                         <div class="tab-pane fade haTab barGraphTab " id="hashtagsContentTab" role="tabpanel" aria-labelledby="hashtagsContentTab"></div>
                         <div class="tab-pane fade haTab " id="tweetsContentHA" role="tabpanel" aria-labelledby="tweetsContentHA">tweetsContentHA </div>
                         <div class="tab-pane fade haTab " id="sensitivityContentHA" role="tabpanel" aria-labelledby="sensitivityContentHA">sensitivityContentHA </div>
-                        <div class="tab-pane fade haTab " id="locationContentHA" role="tabpanel" aria-labelledby="locationContentHA">locationContentHA </div>
+                        <div class="tab-pane fade haTab " id="locationContentHA" role="tabpanel" aria-labelledby="locationContentHA"></div>
                         
                     </div>
 
@@ -135,5 +138,10 @@
 <script type="module" src="public/amcharts4/core.js"></script>
 <script type="module" src="public/amcharts4/charts.js"></script>
 <script type="module" src="public/tempJS/historicalAnalysis/HistoricalAnalysis.js"></script>
+
+<script src="public/leaflet/leaflet.js"></script>
+<script src="public/leaflet/TileLayer.Grayscale.js"></script>
+<script src="public/leaflet/markerCluster/leaflet.markercluster-src.js"></script>
+<script src="public/leaflet/subgroup/leaflet.featuregroup.subgroup.js"></script>
 
 @endsection

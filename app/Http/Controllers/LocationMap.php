@@ -106,27 +106,48 @@ class LocationMap extends Controller
     //        as time
     // output: echo the results in json format
 
-    public function locationTweet()
+    public function location_tweet(Request $request)
     {
 
-        $db_object = new DBmodelAsync;
-        $query = $_GET['query'];
-        $interval = $_GET['interval'];
-        $tweet_object = new Hm;
-        $result = $tweet_object->getTweetIDData($interval, $query);
-
-        $tweetid_list_array = array();
-        foreach ($result as $rows) {
-
-            foreach ($rows['data']['data'] as $tid) {
+        if ($request->input('to') && $request->input('from') && $request->input('query')) {
+            $rangeType = $request->input('rangeType');
+            $query = $request->input('query');
+            $from = $request->input('from');
+            $to = $request->input('to');
+            if ($request->input('isDateTimeAlready') == 0) {
+                $fromTime = date('Y-m-d H:i:s', strtotime($from) + 0);
+                $toTime = date('Y-m-d H:i:s', strtotime($to) + 0);
+            } else {
+                $fromTime = $from;
+                $toTime = $to;
+            }
+            if ($request->input('filter') != 'all') {
+                $filter = $request->input('filter');
+            } else {
+                $filter = null;
+            }
+            //A little extra processing for 10seconds plot.
+            if ($rangeType == '10sec') {
+                $fromTime = date('Y-m-d H:i:s', strtotime($fromTime) - 3600);
+                $toTime = date('Y-m-d H:i:s', strtotime($toTime) + 0);
+            }
+            $arrTemp = ["range_type" => $rangeType, "fromTime" => $fromTime, "toTime" => $toTime, "query" => $query, "filter" => $filter];
+            $commonObj = new CommonController;
+            $data = $commonObj->get_tweets($toTime, $fromTime, $query, $rangeType, $filter);
+            
+         
+            $tweetid_list_array = array();
+            array_push($tweetid_list_array,'1300689867836395526');
+            array_push($tweetid_list_array,'1305520073982054404');
+            
+            foreach ($data['data'] as $tid) {
                 array_push($tweetid_list_array, $tid);
             }
 
-        }
+            $tweetid_list_array = array_unique($tweetid_list_array);
 
-        $tweetid_list_array = array_unique($tweetid_list_array);
-
-        echo $this->tweet_info($tweetid_list_array);
+            return $this->tweet_info($tweetid_list_array);
+    }
 
     }
 

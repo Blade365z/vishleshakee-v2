@@ -1,13 +1,14 @@
 //imports 
 
+import { get_tweet_location, getCompleteMap } from '../utilitiesJS/getMap.js';
 import { getFreqDistDataForHA, getTweetIDsForHA, getSentiDistDataForHA, getCooccurDataForHA } from './helper.js'
 import { generateFreqDistBarChart, generateFrequencyLineChart, generateSentiDistBarChart, generateSentiDistLineChart, generateBarChartForCooccur } from './chartHelper.js';
 import { getCurrentDate, getRangeType, dateProcessor } from '../utilitiesJS/smatDate.js';
 import { TweetsGenerator } from '../utilitiesJS/TweetGenerator.js';
 import { generateUniqueID } from '../utilitiesJS/uniqueIDGenerator.js';
 import { makeSuggestionsRead,makeSmatReady } from '../utilitiesJS/smatExtras.js'
-
-
+import { getDateRange } from '../utilitiesJS/smatDate.js'
+import { requestToSpark, checkStatus, storeToMySqlAdvanceSearchData, getOuputFromSparkAndStoreAsJSON, getFreqDistDataForAdvanceHA } from './Advancehelper.js'
 
 
  
@@ -57,10 +58,10 @@ jQuery(function () {
             searchType = 1; //if more than ine input is available, thn it is advance search
         $('#removeField').css('display', 'block');
         if(mainInputCounter == 1){
-            $('#queryInputDiv').append('<div id="fieldID' + mainInputCounter + '" ><div class=" form-group  d-flex"><div class="" value="' + mainInputCounter + '"><select class=" smat-select btn HA-operand-select mx-2" id="operandID' + mainInputCounter + '" ><option value="&">AND</option><option class="or-option"  value="+">OR</option></select></div><div class=" border smat-rounded px-2 py-1 bg-white w-100 d-flex" ><input type="text" class="form-control  smat-ha-Input " id="queryID' + mainInputCounter + '" placeholder="Query"  autocomplete="OFF" required></div></div></div>');
+            $('#queryInputDiv').append('<div id="fieldID' + mainInputCounter + '" ><div class=" form-group  d-flex"><div class="" value="' + mainInputCounter + '"><select class=" smat-select btn HA-operand-select mx-2" id="operandID' + mainInputCounter + '" ><option value="&">AND</option><option class="or-option"  value="|">OR</option></select></div><div class=" border smat-rounded px-2 py-1 bg-white w-100 d-flex" ><input type="text" class="form-control  smat-ha-Input " id="queryID' + mainInputCounter + '" placeholder="Query"  autocomplete="OFF" required></div></div></div>');
         }else{
             // not operation enabled
-            $('#queryInputDiv').append('<div id="fieldID' + mainInputCounter + '" ><div class=" form-group  d-flex"><div class="" value="' + mainInputCounter + '"><select class=" smat-select btn HA-operand-select mx-2" id="operandID' + mainInputCounter + '" ><option value="&">AND</option><option class="or-option"  value="+">OR</option></select></div><div class=" border smat-rounded px-2 py-1 bg-white w-100 d-flex" ><input  type="checkbox" value="" name="NOT" id="notID' + mainInputCounter + '" title="NOT" value="option2" style="margin-top:13px;"><input type="text" class="form-control  smat-ha-Input " id="queryID' + mainInputCounter + '" placeholder="Query"  autocomplete="OFF" required></div></div></div>');
+            $('#queryInputDiv').append('<div id="fieldID' + mainInputCounter + '" ><div class=" form-group  d-flex"><div class="" value="' + mainInputCounter + '"><select class=" smat-select btn HA-operand-select mx-2" id="operandID' + mainInputCounter + '" ><option value="&">AND</option><option class="or-option"  value="|">OR</option></select></div><div class=" border smat-rounded px-2 py-1 bg-white w-100 d-flex" ><input  type="checkbox" value="" name="NOT" id="notID' + mainInputCounter + '" title="NOT" value="option2" style="margin-top:13px;"><input type="text" class="form-control  smat-ha-Input " id="queryID' + mainInputCounter + '" placeholder="Query"  autocomplete="OFF" required></div></div></div>');
         }
         if (mainInputCounter === 3) {
             $('#addQueryButton').css('display', 'none');
@@ -121,6 +122,7 @@ jQuery(function () {
                 }
             }
         }
+        console.log(searchType);
         updateStatusTable(q, fromDate, toDate, searchType);
         resetQueryPanel(mainInputCounter);
     })
@@ -154,6 +156,22 @@ jQuery(function () {
 
 
     $('#mentionsTabHA').on('click', function () {
+    });
+
+
+
+    $('#locationTabHA').on('click', function () {
+        $('#locationContentHA').html('<div id="HA-div-map" style="height:400px;"></div>');
+        let rangeType = getRangeType(fromDate, toDate);
+       
+        get_tweet_location(query, fromDate, toDate, rangeType, null).then(response => {
+            
+            getCompleteMap('HA-div-map',response);
+            for (var i = 0; i < response.length; i++) {
+                
+            }
+        });
+
     });
 
 
@@ -195,10 +213,10 @@ jQuery(function () {
         if(recordsCaptured[0]['searchType'] == 1){
             // for advance search................
             console.log(recordsCaptured[0]['query']);
-            initiateHistoricalAnalysisAdvance(recordsCaptured[0]['query'], recordsCaptured[0]['from'], recordsCaptured[0]['to'], recordsCaptured[0]['mentionUniqueID'], recordsCaptured[0]['hashtagUniqueID'], recordsCaptured[0]['userUniqueID']);
+            initiateHistoricalAnalysisAdvance(recordsCaptured[0]['query'], recordsCaptured[0]['from'], recordsCaptured[0]['to'], recordsCaptured[0]['mentionUniqueID'], recordsCaptured[0]['hashtagUniqueID'], recordsCaptured[0]['userUniqueID'], recordsCaptured[0]['searchType'], recordsCaptured[0]['filename']);
         }else{
             // for normal search........................
-            initiateHistoricalAnalysis(recordsCaptured[0]['query'], recordsCaptured[0]['from'], recordsCaptured[0]['to'], recordsCaptured[0]['mentionUniqueID'], recordsCaptured[0]['hashtagUniqueID'], recordsCaptured[0]['userUniqueID']);
+            initiateHistoricalAnalysis(recordsCaptured[0]['query'], recordsCaptured[0]['from'], recordsCaptured[0]['to'], recordsCaptured[0]['mentionUniqueID'], recordsCaptured[0]['hashtagUniqueID'], recordsCaptured[0]['userUniqueID'], recordsCaptured[0]['searchType']);
         }
     });
 
@@ -222,15 +240,86 @@ const updateStatusTable = (query, fromDate, toDate, searchType) => {
     mentionUniqueID = generateUniqueID();
     hashtagUniqueID = generateUniqueID();
     userUniqueID = generateUniqueID();
-    if(searchType == 1){
-        $('#haStatusTable').append('<tr><th scope="row">' + currentTimestamp + '</th><td>' + queryElement + '</td><td>' + fromDate + '</td><td>' + toDate + '</td><td>Requesting..</td><td><button class="btn btn-primary smat-rounded mx-1 showBtn" value="' + currentTimestamp + '" disabled> Show </button><button class="btn btn-danger mx-1  smat-rounded deleteBtn" disabled> Delete </button></td></tr>');
-    }else{
+    //normal search ....add to Status Table
+    if(searchType == 0){
         $('#haStatusTable').append('<tr><th scope="row">' + currentTimestamp + '</th><td>' + queryElement + '</td><td>' + fromDate + '</td><td>' + toDate + '</td><td >Ready</td><td><button class="btn btn-primary smat-rounded mx-1 showBtn" value="' + currentTimestamp + '"> Show </button><button class="btn btn-danger mx-1  smat-rounded deleteBtn"> Delete </button></td></tr>');
-    }
 
-    //TODO::status read--.
-    let recordTemp = [{ 'query': query, 'from': fromDate, 'to': toDate, 'mentionUniqueID': mentionUniqueID, 'hashtagUniqueID': hashtagUniqueID, 'userUniqueID': userUniqueID , 'searchType': searchType}];
-    searchRecords[currentTimestamp] = recordTemp;
+        //TODO::status read--.
+        let recordTemp = [{ 'query': query, 'from': fromDate, 'to': toDate, 'mentionUniqueID': mentionUniqueID, 'hashtagUniqueID': hashtagUniqueID, 'userUniqueID': userUniqueID , 'searchType': searchType}];
+        searchRecords[currentTimestamp] = recordTemp;
+
+    //advance search ....add to Status Table
+    }else if(searchType == 1){
+        let recordTemp = [{ 'query': query, 'from': fromDate, 'to': toDate, 'mentionUniqueID': mentionUniqueID, 'hashtagUniqueID': hashtagUniqueID, 'userUniqueID': userUniqueID , 'searchType': searchType, "filename": currentTimestamp.toString()}];
+        searchRecords[currentTimestamp] = recordTemp;
+        // trigger to spark function
+        console.log(query);
+        triggerSparkRequest(query, fromDate, toDate, currentTimestamp.toString());
+    }
+}
+
+
+
+const triggerSparkRequest = (query, fromDate, toDate, unique_name_timestamp) => {   
+    let queries = [query, fromDate, toDate];
+    let query_list = get_tokens_wrt_pattern(queries); // get token
+    // let unique_name_timestamp = (new Date().getTime()).toString(); // create unique_name 
+    console.log(query_list);
+    // 1 request to spark.....
+    requestToSpark(query_list, unique_name_timestamp).then(data => {
+        console.log(data);
+        let sparkID = data.id;
+        // 2 add row to table UI.....
+        addToStatusTable(sparkID, query, fromDate, toDate, unique_name_timestamp);
+        // 3 check status until it becomes success.....
+        let checkSpartStatusInterval = setInterval( function() { checkSparkStatus(sparkID, unique_name_timestamp, fromDate, toDate, query, checkSpartStatusInterval); }, 10000);   
+        
+    });
+}
+
+
+
+
+const checkSparkStatus = (sparkID, unique_name_timestamp,  fromDate, toDate,  query, checkSpartStatusInterval) => {
+    checkStatus(sparkID, unique_name_timestamp).then(data => {
+        console.log(data);
+        if (data.status === 'success') {
+            window.clearInterval(checkSpartStatusInterval);//clear the interval
+            // 4 store to MySQl.....
+            storeToMySqlAdvanceSearchData(userID, unique_name_timestamp, fromDate, toDate, query).then(data => {
+                console.log(data);
+            });
+            // 5 write to file.....
+            getOuputFromSparkAndStoreAsJSON(sparkID, unique_name_timestamp, userID).then(data => {
+                console.log(data);
+                // 6 change status in table(UI).....  // (#Corona OR #Coronavirus)
+                makeShowBtnReadyAfterSuccess(sparkID, unique_name_timestamp);
+            });            
+        }else if (data.status === 'dead') {
+            window.clearInterval(checkSpartStatusInterval);//clear the interval
+            $('#' + sparkID + 'DeleteBtn').prop("disabled", false);
+            $('#' + sparkID + 'Status').text('Dead');
+        }
+    });
+}
+
+
+
+const addToStatusTable = (sparkID, query, fromDate, toDate, unique_name_timestamp) => {
+    let queryElement = decodeQuery(query);  
+    $('#haStatusTable').append('<tr><th scope="row">' + unique_name_timestamp + '</th><td>' + queryElement + '</td><td>' + fromDate + '</td><td>' + toDate + '</td><td id="' + sparkID + 'Status">Running..</td><td><button class="btn btn-primary smat-rounded mx-1 showBtn" value="' + unique_name_timestamp + '" id="' + sparkID + 'ShowBtn" disabled> Show </button><button class="btn btn-danger mx-1  smat-rounded deleteBtn" value="' + unique_name_timestamp + '" id="' + sparkID + 'DeleteBtn" disabled> Delete </button></td></tr>');
+}
+
+
+
+
+const makeShowBtnReadyAfterSuccess = (sparkID, filename) => {
+    $('#' + sparkID + 'ShowBtn').prop("disabled", false);
+    $('#' + sparkID + 'DeleteBtn').prop("disabled", false);
+    let btnValue = $('#' + sparkID + 'Btn').attr('value');
+    // $('#' + sparkID + 'Btn').removeClass('btn-secondary');
+    // $('#' + sparkID + 'Btn').addClass('btn-primary');
+    $('#' + sparkID + 'Status').text('Success');
 }
 
 
@@ -247,14 +336,32 @@ const resetQueryPanel = (counter) => {
 
     // mainInputCounter initialize to 0 again because it will restart again
     mainInputCounter = 0;
+    searchType = 0;
+}
+
+
+
+
+const get_tokens_wrt_pattern = (queries, pattern = null) => {
+    var final_query_list = [];
+    final_query_list = getDateRange(queries[1], queries[2]);
+    final_query_list.push('i');
+    if (pattern) {
+        var query_list = queries[0].trim().match(pattern);
+    } else {
+        // var pattern = /#(\w+)|@(\w+)|\*(\w+)|\&|\||\!|\(|\)/g;
+        var pattern = /#(\w+)|@(\w+)|\^(\w+)|\*(\w+)|\&|\||\!|\(|\)/g;
+        var query_list = queries[0].trim().match(pattern);
+    }
+    return final_query_list.concat(query_list);
 }
 
 
 
 const decodeQuery = (query) => {
     // let query = '#CAA&#Radio+!*protest';
-    let queries = query.split(/[+&]+/g).filter(Boolean);
-    let operands = query.match(/[+&]+/g);
+    let queries = query.split(/[|&]+/g).filter(Boolean);
+    let operands = query.match(/[|&]+/g);
 
     let counter = 0;
     let finalString = '';
@@ -296,7 +403,7 @@ const decodeOperand = (operand) => {
 
 
 
-const initiateHistoricalAnalysis = (queryTemp, fromTemp, toTemp, mentionID, hashtagID, activeUserID) => {
+const initiateHistoricalAnalysis = (queryTemp, fromTemp, toTemp, mentionID, hashtagID, activeUserID, searchType) => {
     //  mentionUniqueID = generateUniqueID();
     query = queryTemp;
     fromDate = fromTemp;
@@ -304,7 +411,7 @@ const initiateHistoricalAnalysis = (queryTemp, fromTemp, toTemp, mentionID, hash
     $('#currentlySearchedQuery').text(query);
     $('#analysisPanelHA').css('display', 'block');
     let rangeType = getRangeType(fromDate, toDate);
-    frequencyDistributionHA(query, rangeType, fromDate, toDate, null, 'freqContentHA', false);
+    frequencyDistributionHA(query, rangeType, fromDate, toDate, null, 'freqContentHA', false, searchType);
     sentimentDistributionHA(query, rangeType, fromDate, toDate, null, 'sentiContentHA', false);
     plotDistributionGraphHA(query, fromDate, toDate, 'user', activeUserID, userID, 'usersContentHA');
     plotDistributionGraphHA(query, fromDate, toDate, 'mention', mentionID, userID, 'mentionsContentHA');
@@ -314,14 +421,15 @@ const initiateHistoricalAnalysis = (queryTemp, fromTemp, toTemp, mentionID, hash
 
 
 
-const initiateHistoricalAnalysisAdvance = (queryTemp, fromTemp, toTemp, mentionID, hashtagID, activeUserID) => {
+const initiateHistoricalAnalysisAdvance = (queryTemp, fromTemp, toTemp, mentionID, hashtagID, activeUserID, searchType,  filename) => {
+    console.log("initiate advance seach analysis");
     query = queryTemp;
     fromDate = fromTemp;
     toDate = toTemp;
     $('#currentlySearchedQuery').text(query);
     $('#analysisPanelHA').css('display', 'block');
     let rangeType = getRangeType(fromDate, toDate);
-    // frequencyDistributionHA(query, rangeType, fromDate, toDate, null, 'freqContentHA', false);
+    frequencyDistributionHA(query, rangeType, fromDate, toDate, null, 'freqContentHA', false, searchType, filename);
     // sentimentDistributionHA(query, rangeType, fromDate, toDate, null, 'sentiContentHA', false);
     // plotDistributionGraphHA(query, fromDate, toDate, 'user', activeUserID, userID, 'usersContentHA');
     // plotDistributionGraphHA(query, fromDate, toDate, 'mention', mentionID, userID, 'mentionsContentHA');
@@ -338,7 +446,7 @@ const initiateHistoricalAnalysisAdvance = (queryTemp, fromTemp, toTemp, mentionI
 
 
 let freqParentDiv = 'freqContentHA';
-export const frequencyDistributionHA = (query = null, rangeType, fromDate = null, toDate = null, toTime = null, div, appendArg = false) => {
+export const frequencyDistributionHA = (query = null, rangeType, fromDate = null, toDate = null, toTime = null, div, appendArg = false, searchType=null, filename=null) => {
     let chartType = 'freq-chart';
     let appendedChartParentID = rangeType + '-' + chartType;
     $('.' + appendedChartParentID).remove();
@@ -357,17 +465,25 @@ export const frequencyDistributionHA = (query = null, rangeType, fromDate = null
     } else {
         $('#' + div).html('<div><div class="row"><div class="col-sm-8"><div class="haTab freqDistChart  chartDiv border" id="' + chartDivID + '" ></div></div><div class="col-sm-4"><div class="freqDistTweets border" id="' + chartTweetDivID + '"></div><div class="freqDistSummary border d-flex pt-2"  id="' + summaryDivID + '" ></div></div></div></div>');
     }
-    //Loader...
+    //Loader...userID
     $('#' + chartDivID).html('<div class="text-center pt-5 " ><i class="fa fa-circle-o-notch donutSpinner" aria-hidden="true"></i></div>')
     $('#' + chartTweetDivID).html('<div class="text-center pt-5 " ><i class="fa fa-circle-o-notch donutSpinner" aria-hidden="true"></i></div>')
     if (rangeType == 'day') {
-        getFreqDistDataForHA(query, fromDate, toDate, null, rangeType, 0).then(data => {
-            generateFreqDistBarChart(query, data, rangeType, chartDivID);
-            freqSummaryGenerator(data, summaryDivID, rangeType);
-        });
-        getTweetIDsForHA(query, fromDate, toDate, rangeType, null).then(response => {
-            TweetsGenerator(response.data, 6, chartTweetDivID, fromDate, toDate, true, rangeType);
-        });
+        if(searchType == 0){
+            getFreqDistDataForHA(query, fromDate, toDate, null, rangeType, 0).then(data => {
+                generateFreqDistBarChart(query, data, rangeType, chartDivID);
+                freqSummaryGenerator(data, summaryDivID, rangeType);
+            });
+            getTweetIDsForHA(query, fromDate, toDate, rangeType, null).then(response => {
+                TweetsGenerator(response.data, 6, chartTweetDivID, fromDate, toDate, true, rangeType);
+            });
+        }else if(searchType == 1){
+            getFreqDistDataForAdvanceHA(query, fromDate, toDate, rangeType, filename, userID).then(data => {
+                generateFreqDistBarChart(query, data, rangeType, chartDivID);
+                freqSummaryGenerator(data, summaryDivID, rangeType);
+            });
+        }
+       
 
     } else if (rangeType == 'hour') {
         getFreqDistDataForHA(query, fromDate, toDate, null, rangeType, 0).then(data => {

@@ -136,8 +136,9 @@ export const generate_tweets_div = (tweetData, div, dropDownArg = true) => {
     if (dropDownArg) {
       if (userIDTemp) {
         feedback = '<div class="ml-auto" > <i class="fas fa-chevron-circle-down nav-link  " id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" ></i>     <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdown">\
-      <li class="dropdown-item clickable feedbackOption" value="'+ tweet.tid + '|' + userIDTemp + '|' + tweet.sentiment + '|' + tweet.category + '"   id="feedbackOption-' + div + tweet.tid + '">Give Feedback</li>\
-      <li class="dropdown-item clickable "  id="' + div + tweet.tid + '">Track Tweet </li>\
+      <li class="dropdown-item clickable p-0 d-flex feedbackOption" value="'+ tweet.tid + '|' + userIDTemp + '|' + tweet.sentiment + '|' + tweet.category + '"   id="feedbackOption-' + div + tweet.tid + '"><span  class="w-100 ml-2 ">Give Feedback</span></li>\
+      <li class="dropdown-item clickable p-0 d-flex "  id="track' + div + tweet.tid + '"><a  class="w-100 ml-2" href="tracking?tweetID='+tweet.tid+'" target="_blank">Track Tweet </a></li>\
+      <li class="dropdown-item clickable p-0 d-flex "  id="originalPost-' + div + tweet.tid + '"><a  class="w-100 ml-2" href="http://www.twitter.com/'+tweet.author_screen_name+'/status/'+tweet.tid + '" target="_blank">Go to original post </a></li>\
       </div></div>';
       }
       else {

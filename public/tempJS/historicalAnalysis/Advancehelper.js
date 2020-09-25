@@ -1,7 +1,16 @@
-// this js is for advance search in historical analysis
+/* this js is for advance search in historical analysis */
 
 
-export const requestToSpark = (query_list, unique_name_timestamp) => {
+//API HEADERS for the http api requests
+var HeadersForApi = {
+    "Content-Type": "application/json",
+    "Accept": "application/json",
+    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+};
+
+
+
+export const requestToSpark = async (query_list, unique_name_timestamp) => {
     let dataArgs;
     dataArgs = JSON.stringify({ query_list, unique_name_timestamp });
     let response = await fetch('HA/requestToSpark', {
@@ -14,7 +23,7 @@ export const requestToSpark = (query_list, unique_name_timestamp) => {
 }
 
 
-export const checkStatus = (id, unique_name_timestamp) => {
+export const checkStatus = async (id, unique_name_timestamp) => {
     let dataArgs;
     dataArgs = JSON.stringify({ id, unique_name_timestamp });
     let response = await fetch('HA/getStatusFromSpark', {
@@ -27,7 +36,7 @@ export const checkStatus = (id, unique_name_timestamp) => {
 }
 
 
-export const storeToMySqlAdvanceSearchData = (userID, queryID, fromDate, toDate, query) => {
+export const storeToMySqlAdvanceSearchData = async (userID, queryID, fromDate, toDate, query) => {
     let dataArgs;
     dataArgs = JSON.stringify({ userID, queryID, fromDate, toDate,  query });
     let response = await fetch('status', {
@@ -41,9 +50,9 @@ export const storeToMySqlAdvanceSearchData = (userID, queryID, fromDate, toDate,
 
 
 
-export const getOuputFromSparkAndStoreAsJSON = (id, unique_name_timestamp) => {
+export const getOuputFromSparkAndStoreAsJSON = async (id, unique_name_timestamp, userid) => {
     let dataArgs;
-    dataArgs = JSON.stringify({ id, unique_name_timestamp });
+    dataArgs = JSON.stringify({ id, unique_name_timestamp, userid});
     let response = await fetch('HA/getOuputFromSparkAndStoreAsJSON', {
         method: 'post',
         headers: HeadersForApi,
@@ -56,16 +65,11 @@ export const getOuputFromSparkAndStoreAsJSON = (id, unique_name_timestamp) => {
 
 
 
-
-
-export const getFreqDistDataForAdvanceHA = async (query, from, to, toTime = null, rangeType, isDateTimeAlready = 0) => {
+export const getFreqDistDataForAdvanceHA = async (query, from, to, rangeType, filename, userid) => {
     let dataArg;
-    if (toTime) {
-        dataArg = JSON.stringify({ query, toTime, rangeType, isDateTimeAlready });
-    } else {
-        dataArg = JSON.stringify({ query, from, to, rangeType, isDateTimeAlready });
-    }
-    let response = await fetch('HA/getFrequencyDataForHistorical', {
+    dataArg = JSON.stringify({ query, to, from, rangeType, filename, userid });
+    
+    let response = await fetch('HA/getFrequencyDataForHistoricalAdvance', {
         method: 'post',
         headers: HeadersForApi,
         body: dataArg

@@ -108,6 +108,11 @@ Route::group(['prefix' => 'HA'], function () {
     Route::post('getOuputFromSparkAndStoreAsJSON', 'HistoricalAdvanceController@getOuputFromSparkAndStoreAsJSON');
     Route::post('storeToMySqlAdvanceSearchData', 'HistoricalAdvanceController@storeToMySqlAdvanceSearchData');
 
+    Route::post('getFrequencyDataForHistoricalAdvance', 'HistoricalAdvanceController@getFrequencyDataForHistoricalAdvance');
+    Route::post('getSentimentDataForHistoricalAdvance', 'HistoricalAdvanceController@getSentimentDataForHistoricalAdvance');
+    Route::post('getCooccurDataForHAAdvance', 'HistoricalAdvanceController@getCooccurDataForHAAdvance');
+
+
     // just for testing
     Route::get('freqDistDataHA', 'HistoricalController@getFrequencyDataForHA');
     Route::get('sentDistDataHA', 'HistoricalController@getSentimentDataForHA');
@@ -115,7 +120,11 @@ Route::group(['prefix' => 'HA'], function () {
     Route::get('getTopLatLngHA', 'HistoricalController@get_top_data_lat_lng_ha');
     Route::get('getTopCatLocationHA', 'HistoricalController@get_top_data_cat_location_ha');
     Route::get('genNetwork', 'CommonController@gen_network');
+    Route::get('getFrequencyDistributionTweet', 'HistoricalController@getFrequencyDistributionTweetHA');
+
 });
+
+
 
 //Define API routes requiring middleware here for Network Analysis
 Route::group(['prefix' => 'na'], function () {
@@ -178,6 +187,8 @@ Route::group(['prefix' => 'LM'], function () {
     Route::post('getTopHashtag', 'LocationMap@get_top_hashtags');
     Route::post('checkLocation', 'LocationMap@checkLocation_');
     Route::post('/getcityState', 'LocationMap@showData');
+    Route::post('/getTweetInfo', 'LocationMap@location_tweet');
+    
 });
 
 //Define API routes requiring middleware here for Trend Analysis
@@ -198,5 +209,5 @@ Route::get('/status/{username}', 'queryStatusController@show');
 //Define API routes requiring middleware here for Tweet Tracking
 Route::group(['prefix' => 'track'], function () {
     Route::post('/getTweetInfo', 'TweetTracking@getTweetInfo');
-
+    Route::post('/getFrequencyDistributionTweet', 'TweetTracking@getFrequencyDistributionTweet');
 });

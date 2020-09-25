@@ -308,7 +308,7 @@ class Utilities{
     public function write_to_file($file_type='csv', $file_path=null, $data=null, $token=null, $userID=null){
         if($file_path){
             $file_path = "storage/$file_path"; //"storage/$dir_name/$filename.csv"
-            if($file_type='csv'){
+            if($file_type=='csv'){
                 //checking directory is present or not
                 if (!file_exists("storage/$userID")) {
                     mkdir("storage/$userID");
@@ -332,9 +332,9 @@ class Utilities{
                     }
                 }
                 fclose($file);
-            }else if($file_type='json'){
+            }else if($file_type=='json'){
                 // $data should be in key value pair
-                $newJsonString = json_encode($data);
+                $newJsonString = json_encode($data, JSON_PRETTY_PRINT);
                 file_put_contents($file_path, $newJsonString);
             }
             return 1;

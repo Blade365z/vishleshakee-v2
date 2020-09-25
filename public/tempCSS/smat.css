@@ -18,6 +18,12 @@
     background-color: var(--color-normal);
     color:var(--color-bg);
 }
+.smat-loader{
+    padding-top:18%;
+}
+.smat-tweet-body-text{
+    font-size:13px;
+}
 .shadow {
     box-shadow:0px 20px 23px rgba(0, 0, 0, 0.061) !important;
   }
@@ -302,7 +308,9 @@ color:white;
     overflow-x: hidden;
     overflow-y: scroll;
 }
-
+.TTtab{
+    height:400px;
+}
 .footer {
     background-color: var(--color-blue);
     position: absolute;
@@ -611,7 +619,9 @@ select{
     .hashtags{
         font-size:14px;
     }
-
+    .smat-tweet-body-text{
+        font-size:15px;
+    }
 
     
     .container {
@@ -665,7 +675,7 @@ select{
     }
 }
     
-}
+
 @media screen and (max-width: 1600px) {
     .container {
         max-width: 1340px !important;
@@ -864,9 +874,6 @@ select{
     outline: none;
 }
 
-.tt-input { /* UPDATE: newer versions use tt-input instead of tt-query */
-
-}
 
 .tt-hint {
     color: #999;

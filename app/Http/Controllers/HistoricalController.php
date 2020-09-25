@@ -203,4 +203,16 @@ class HistoricalController extends Controller
         $top_option = $_GET['top_option'];
         return $commonObj->get_top_data_cat_by_location($to_datetime, $from_datetime, $top_option, $token, '10sec');
     }
+
+
+
+    public function getFrequencyDistributionTweetHA(){
+        $common_object = new TweetTracking;
+        $source_tweet_id =  $_GET['source_tweet_id'];
+        $distribution_type = $_GET['distribution_type'];
+        $from_datetime = $_GET['from_datetime'];
+        $to_datetime = $_GET['to_datetime'];
+
+        return $common_object->getFrequencyDistributionTweet($to_datetime, $from_datetime, $source_tweet_id, $distribution_type);
+    }
 }

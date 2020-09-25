@@ -1,4 +1,29 @@
-export const getCompleteMap = (id,query,interval,type,fromDT=null,toDT=null) => {
+//API HEADERS for the http api requests
+var HeadersForApi = {
+    "Content-Type": "application/json",
+    "Accept": "application/json",
+    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+};
+
+
+export const get_tweet_location = async(query, from = null, to = null, rangeType, filter = null, isDateTimeAlready = 0) => {
+    let dataArgs;
+    if (from != null && to != null && isDateTimeAlready == 0) {
+        dataArgs = JSON.stringify({ from, to, query, rangeType, filter, isDateTimeAlready });
+    } else if (isDateTimeAlready == 1) {
+        dataArgs = JSON.stringify({ from, to, query, rangeType, filter, isDateTimeAlready });
+    }
+    let response = await fetch('LM/getTweetInfo', {
+        method: 'post',
+        headers: HeadersForApi,
+        body: dataArgs
+    })
+    let data = await response.json();
+    return data;
+}
+
+
+export const getCompleteMap = (id,op) => {
     var markersList = document.getElementById('markersList');
     L.MarkerCluster.include({
         spiderfy: function () {
@@ -54,48 +79,48 @@ export const getCompleteMap = (id,query,interval,type,fromDT=null,toDT=null) => 
         iconSize: [35, 35] // size of the icon
     });
 
-    var tweet_details;
-    if(type = 'public'){
-        $.ajax({
-            type: "GET",
-            url: 'LM/mapTweet',
-            data:{interval,query},
-            async: false,
-            success: function (response) {
-                    tweet_details = response;
+    // var tweet_details;
+    // if(type = 'public'){
+    //     $.ajax({
+    //         type: "GET",
+    //         url: 'LM/mapTweet',
+    //         data:{interval,query},
+    //         async: false,
+    //         success: function (response) {
+    //                 tweet_details = response;
                     
-            }
-        });
-    }
-    else if(type = 'user'){
-        $.ajax({
-            type: "GET",
-            url: 'LM/mapTweetUser',
-            data:{interval,query},
-            async: false,
-            success: function (response) {
-                    tweet_details = response;
+    //         }
+    //     });
+    // }
+    // else if(type = 'user'){
+    //     $.ajax({
+    //         type: "GET",
+    //         url: 'LM/mapTweetUser',
+    //         data:{interval,query},
+    //         async: false,
+    //         success: function (response) {
+    //                 tweet_details = response;
                     
-            }
-        });
-    }
+    //         }
+    //     });
+    // }
 
-    else if(type = 'historical'){
-        $.ajax({
-            type: "GET",
-            url: 'LM/mapTweetHistorical',
-            data:{interval,query,fromDT,toDT},
-            async: false,
-            success: function (response) {
-                    tweet_details = response;
+    // else if(type = 'historical'){
+    //     $.ajax({
+    //         type: "GET",
+    //         url: 'LM/mapTweetHistorical',
+    //         data:{interval,query,fromDT,toDT},
+    //         async: false,
+    //         success: function (response) {
+    //                 tweet_details = response;
                     
-            }
-        });
-    }
+    //         }
+    //     });
+    // }
 
-    console.log(JSON.parse(tweet_details));
-    var op = JSON.parse(tweet_details);
-    console.log(op.length);
+    // console.log(JSON.parse(tweet_details));
+    // var op = JSON.parse(tweet_details);
+    // console.log(op.length);
     var location_tweet_count = 0;
     for (var i = 0; i < op.length; i++) {
         if (op[i].Latitude != null) {

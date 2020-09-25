@@ -182,6 +182,17 @@ class QueryBuilder{
                 $final_res[0] = "SELECT author_id, author, author_screen_name, profile_image_url_https,description,created_at,url,verified,location from user_record WHERE author_id=" . "'" .$token."'";
             }
         }
+
+
+
+        //for tweet tracking
+        if($feature_option == 'tweet_track'){
+            $input_args = $ut_obj->get_day_list_for_cassandra($to_datetime, $from_datetime);
+            $where_clause = "source_tweet_id='" . $token ."' AND datetime = ? AND tweet_type='" . $range_type ."'";
+            $prepared_statement = "SELECT * FROM tweet_track WHERE ".$where_clause;  
+            $final_res[0] = $prepared_statement;
+            $final_res[1] = $input_args;
+        }
         
         return $final_res;
     }

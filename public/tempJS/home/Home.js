@@ -83,7 +83,7 @@ jQuery(function () {
     generatePublicHashtags(TopTrendingData, 'all');
     query = incoming ? query = incoming : Object.keys(TopTrendingData)[0];
     $('#publicCurrentQuery').text(query);
-    $('#' + publicAnalysisResultDiv).html('<div class="text-center pt-5 " ><i class="fa fa-circle-o-notch donutSpinner mt-5" aria-hidden="true"></i></div>')
+    $('#' + publicAnalysisResultDiv).html('<div class="text-center smat-loader " ><i class="fa fa-circle-o-notch donutSpinner mt-5" aria-hidden="true"></i></div>')
     frequencyPublic(query, interval);
   });
 
@@ -128,7 +128,7 @@ jQuery(function () {
   $('.mentions-public-tab').on('click', function () {
     MODE = '002';
     $('#' + publicAnalysisResultDiv).html('')
-    $('#' + publicAnalysisResultDiv).html('<div class="text-center pt-5 " ><i class="fa fa-circle-o-notch donutSpinner" aria-hidden="true"></i></div>')
+    $('#' + publicAnalysisResultDiv).html('<div class="text-center smat-loader " ><i class="fa fa-circle-o-notch donutSpinner" aria-hidden="true"></i></div>')
     $('.public-analysis-tab').removeClass('smat-active ');
     $(this).addClass('smat-active ');
     $('.public-analysis-result').html('');
@@ -233,7 +233,7 @@ const updatePublicTrendingHashtagsEveryOneMiute = () => {
 
 const frequencyPublic = (queryArg, intervalArg) => {
 
-  $('#' + publicAnalysisResultDiv).html('<div class="text-center pt-5 " ><i class="fa fa-circle-o-notch donutSpinner" aria-hidden="true"></i></div>')
+  $('#' + publicAnalysisResultDiv).html('<div class="text-center smat-loader " ><i class="fa fa-circle-o-notch donutSpinner" aria-hidden="true"></i></div>')
   $('#public-summary-row').html('<div class="d-flex"> <span class="mx-2"><p class="m-0 smat-box-title-large font-weight-bold text-dark" id="freqTotalPublic">0</p><p class="pull-text-top smat-dash-title m-0 ">Tweets Arrived</p></span></div><div class="d-flex "><span class="mx-2"><p class="m-0 smat-box-title-large font-weight-bold text-normal" id="publicNormalTotal">0</p><p class="pull-text-top smat-dash-title m-0 ">Normal</p></span><span class="mx-2"><p class="m-0 smat-box-title-large font-weight-bold text-sec" id="publicSecTotal">0</p><p class="pull-text-top smat-dash-title m-0">Security</p></span><span class="mx-2"><p class="m-0 smat-box-title-large font-weight-bold text-com" id="publicComTotal">0</p><p class="pull-text-top smat-dash-title m-0">Communal</p></span><span class="mx-2"><p class="m-0 smat-box-title-large font-weight-bold text-com_sec" id="publiccom_secTotal">0</p><p class="pull-text-top smat-dash-title m-0">Sec.& Com.</p></span></div>');
   getFreqDistData(intervalArg, query).then(response => {
     // console.log(response);
@@ -243,7 +243,7 @@ const frequencyPublic = (queryArg, intervalArg) => {
 }
 
 const sentimentPublic = () => {
-  $('#' + publicAnalysisResultDiv).html('<div class="text-center pt-5 " ><i class="fa fa-circle-o-notch donutSpinner" aria-hidden="true"></i></div>')
+  $('#' + publicAnalysisResultDiv).html('<div class="text-center smat-loader " ><i class="fa fa-circle-o-notch donutSpinner" aria-hidden="true"></i></div>')
 
   renderSentimentSummary('public-summary-1', 'public-summary-2')
   getSentiDistData(interval, query).then(response => {
@@ -255,7 +255,7 @@ const sentimentPublic = () => {
 
 
 const coOccurPublic = (type) => {
-  $('#' + publicAnalysisResultDiv).html('<div class="text-center pt-5 " ><i class="fa fa-circle-o-notch donutSpinner" aria-hidden="true"></i></div>')
+  $('#' + publicAnalysisResultDiv).html('<div class="text-center smat-loader " ><i class="fa fa-circle-o-notch donutSpinner" aria-hidden="true"></i></div>')
   getTopCooccurData(interval, query, type).then(response => {
     generateBarChart(response, query, publicAnalysisResultDiv, type);
   })
@@ -265,7 +265,7 @@ const coOccurPublic = (type) => {
 
 let queriedTweetFromTime, queriedTweetToTime;
 const tweetPublic = () => {
-  $('#' + publicAnalysisResultDiv).html('<div class="text-center pt-5 " ><i class="fa fa-circle-o-notch donutSpinner" aria-hidden="true"></i></div>');
+  $('#' + publicAnalysisResultDiv).html('<div class="text-center smat-loader " ><i class="fa fa-circle-o-notch donutSpinner" aria-hidden="true"></i></div>');
   $('#public-summary-2').html('<div class="btn-group"><button type="button" class="btn btn-white smat-rounded dropdown-toggle text-normal" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Filter Tweets</button><div class="dropdown-menu dropdown-menu-right"><li class="dropdown-item clickable filter-tweets" value="all"> Show all tweets</li><li class="dropdown-item clickable filter-tweets" value="pos"><i class="fa fa-circle text-pos " aria-hidden="true"></i> Positive Tweets</li><li class="dropdown-item clickable filter-tweets" value="neg"><i class="fa fa-circle text-neg " aria-hidden="true"></i> Negative Tweets</li><li class="dropdown-item clickable filter-tweets" value="neu"> <i class="fa fa-circle text-neu" aria-hidden="true"></i> Neutral Tweets</li><li class="dropdown-item clickable filter-tweets" value="normal"> <i class="fa fa-circle text-normal" aria-hidden="true"></i> Normal Tweets</li><li class="dropdown-item clickable filter-tweets" value="com"> <i class="fa fa-circle text-com" aria-hidden="true"></i> Communal Tweets</li><li class="dropdown-item clickable filter-tweets" value="sec"> <i class="fa fa-circle text-sec" aria-hidden="true"></i> Security Tweets</li><li class="dropdown-item clickable filter-tweets" value="com_sec"> <i class="fa fa-circle text-com_sec" aria-hidden="true"></i> Communal and Security Tweets</li></div></div>');
   getTweetIDsFromController(interval, query).then(response => {
     let tweetIDs = response[0]['data']['data'];
@@ -319,7 +319,10 @@ const generatePublicLocations = () => {
   //TODO::Rajdeep
 
   $('#result-div').html('<div id="result-div-map" style="height:400px;"></div>');
-  getCompleteMap('result-div-map', query, interval, 'public');
+  console.log(queriedTweetFromTime);
+  console.log(queriedTweetToTime);
+  console.log(query);
+  // getCompleteMap('result-div-map', query, interval, 'public');
 
 
 }
