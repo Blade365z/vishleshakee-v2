@@ -51,8 +51,25 @@ Route::get('/historicalAnalysis', function () {
     return view('modules.historicalAnalysis');
 })->middleware('auth');
 
-Route::get('/networkAnalysis', function () {
-    return view('modules.networkAnalysis');
+Route::get('/networkAnalysis', function (Request $request) {
+    $query = '';
+    $from = '';
+    $to = '';
+    $uniqueID = '';
+    $realtion = '';
+    $user = '';
+    if ($request->input('query')) {
+        $query = $request->input('query');
+        $from = $request->input('from');
+        $to = $request->input('to');
+        $uniqueID = $request->input('uniqueID');
+        $relation = $request->input('realtion');
+        $user = $request->input('user');
+        return view('modules.networkAnalysis', compact('query', 'from', 'to','uniqueID','relation','user'));
+    } else {
+        return view('modules.networkAnalysis');
+    }
+
 })->middleware('auth');
 
 Route::get('/locationMonitor', function () {
@@ -63,14 +80,18 @@ Route::get('/trendAnalysis', function () {
     return view('modules.trendAnalysis');
 })->middleware('auth');
 
+Route::get('/feedbackPortal', function () {
+    return view('modules.feedbackManage');
+})->middleware('auth', 'isAdmin');
+
 Route::get('/tracking', function (Request $request) {
     if ($request->input('tweetID')) {
         $tweetID = $request->input('tweetID');
         return view('modules.tweetTracking', compact('tweetID'));
-    }else{
+    } else {
         return view('modules.tweetTracking');
     }
-   
+
 })->middleware('auth');
 
 //Few Auth Routes
@@ -88,6 +109,7 @@ Route::group(['prefix' => 'smat'], function () {
     Route::post('/getTopTrendingData', 'Home@getTopTrendingData');
     Route::post('/getTweetIDs', 'Home@getTweetIDData');
     Route::get('/getTweetsRaw', 'Home@getRawTweets');
+    Route::post('/getUserNameFromID', 'Home@getUserNameFromID');
 
 });
 
@@ -110,7 +132,10 @@ Route::group(['prefix' => 'HA'], function () {
 
     Route::post('getFrequencyDataForHistoricalAdvance', 'HistoricalAdvanceController@getFrequencyDataForHistoricalAdvance');
     Route::post('getSentimentDataForHistoricalAdvance', 'HistoricalAdvanceController@getSentimentDataForHistoricalAdvance');
-    Route::post('getCooccurDataForHAAdvance', 'HistoricalAdvanceController@getCooccurDataForHAAdvance');
+    Route::post('getCooccurDataForAdvance', 'HistoricalAdvanceController@getCooccurDataForAdvance');
+    Route::post('getTweetIDForAdvance', 'HistoricalAdvanceController@getTweetIDForAdvance');
+
+
 
 
     // just for testing
@@ -123,8 +148,6 @@ Route::group(['prefix' => 'HA'], function () {
     Route::get('getFrequencyDistributionTweet', 'HistoricalController@getFrequencyDistributionTweetHA');
 
 });
-
-
 
 //Define API routes requiring middleware here for Network Analysis
 Route::group(['prefix' => 'na'], function () {
@@ -188,7 +211,9 @@ Route::group(['prefix' => 'LM'], function () {
     Route::post('checkLocation', 'LocationMap@checkLocation_');
     Route::post('/getcityState', 'LocationMap@showData');
     Route::post('/getTweetInfo', 'LocationMap@location_tweet');
+    Route::post('/getTweetInfoHome', 'LocationMap@location_tweet_home');
     
+
 });
 
 //Define API routes requiring middleware here for Trend Analysis
@@ -200,11 +225,10 @@ Route::group(['prefix' => 'TA'], function () {
 //Resource Route for feedback controller
 Route::post('/feedback', 'FeebackController@insertFeedback');
 Route::post('/getFeedback', 'FeebackController@checkIfFeedbackExist');
+Route::post('/extractFeedbacks', 'FeebackController@extractFeedbacks');
 
 Route::resource('status', 'queryStatusController', ['except' => ['show']]);
 Route::get('/status/{username}', 'queryStatusController@show');
-
-
 
 //Define API routes requiring middleware here for Tweet Tracking
 Route::group(['prefix' => 'track'], function () {

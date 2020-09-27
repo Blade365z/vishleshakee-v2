@@ -463,7 +463,14 @@
     </div>
     
 </div>
-
+<script>
+    var incoming =   @json($query ?? '');
+    var fromDateReceived =   @json($from ?? '');
+    var toDateReceived=  @json($to ?? '');
+    var uniqueIDReceived =@json($uniqueID ?? '');
+    var relationReceived =@json($relation ?? '');
+    var userReceived =@json($user ?? '');
+</script>
 <link href="public/tempCSS/vis.css" rel="stylesheet" />
 <script type="text/javascript" src="public/tempJS/networkAnalysis/vis.js"></script>
 <script type="module" src="public/tempJS/networkAnalysis/NetworkAnalysis.js"></script>

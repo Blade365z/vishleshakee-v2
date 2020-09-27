@@ -12,15 +12,14 @@ IMPORTANT NOTE
 Script written by : Mala Das(maladas601@gmail.com), Amitabh Boruah(amitabhyo@gmail.com)
 */
 
-
-
-var TweetIDS;
+;
 
 
 export const TweetsGenerator = (data_list, max_per_page, chart_draw_div_id, fromDate, toDate, filterOptions = false, rangeType = null) => {
   //per page max (max_per_page)
-  TweetIDS = data_list;
+
   var tweetDiv = chart_draw_div_id + '_tweets';
+
   var tweet_div_page_selection = chart_draw_div_id + 'page-selection';
   let title='';
   if(fromDate && toDate){
@@ -62,7 +61,7 @@ export const TweetsGenerator = (data_list, max_per_page, chart_draw_div_id, from
   $(tweet_div_page_selection).removeData("twbs-pagination");
   $(tweet_div_page_selection).unbind("page");
 
-  var total_length = TweetIDS.length; // total_length = 384
+  var total_length = data_list.length; // total_length = 384
   var slot = total_length / max_per_page; // total_length = 3
   slot = (total_length % max_per_page) ? slot + 1 : slot; //if total_length = 384 ? 3+1 : 3
 
@@ -70,7 +69,7 @@ export const TweetsGenerator = (data_list, max_per_page, chart_draw_div_id, from
   var num = 1;
   var start_index = (num - 1) * max_per_page;
   var final_index = start_index + (max_per_page - 1);
-  var slice_tid_list = TweetIDS.slice(start_index, (final_index + 1));
+  var slice_tid_list = data_list.slice(start_index, (final_index + 1));
   get_tweets_info_AjaxRequest(slice_tid_list, function (result) {
     generate_tweets_div(result, tweetDiv);
   });
@@ -93,7 +92,7 @@ export const TweetsGenerator = (data_list, max_per_page, chart_draw_div_id, from
     ******************  */
     var start_index = (num - 1) * max_per_page;
     var final_index = start_index + (max_per_page - 1);
-    var slice_tid_list = TweetIDS.slice(start_index, (final_index + 1)); // slice list including 100 element 
+    var slice_tid_list = data_list.slice(start_index, (final_index + 1)); // slice list including 100 element 
 
     /* ****** 
     // depend on num --> tweet_id list will change on that div id = "content" and 
@@ -125,7 +124,6 @@ export const get_tweets_info_AjaxRequest = (slice_tid_list, callback) => {
 
 export const generate_tweets_div = (tweetData, div, dropDownArg = true) => {
   let userIDTemp, feedback = '';
-  console.log(tweetData);
   if (localStorage.getItem('smat.me')) {
     let userInfoJSON = JSON.parse(localStorage.getItem('smat.me'));
     userIDTemp = userInfoJSON['id'];

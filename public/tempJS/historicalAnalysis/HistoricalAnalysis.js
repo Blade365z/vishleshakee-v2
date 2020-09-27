@@ -8,7 +8,7 @@ import { TweetsGenerator } from '../utilitiesJS/TweetGenerator.js';
 import { generateUniqueID } from '../utilitiesJS/uniqueIDGenerator.js';
 import { makeSuggestionsRead,makeSmatReady } from '../utilitiesJS/smatExtras.js'
 import { getDateRange } from '../utilitiesJS/smatDate.js'
-import { requestToSpark, checkStatus, storeToMySqlAdvanceSearchData, getOuputFromSparkAndStoreAsJSON, getFreqDistDataForAdvanceHA } from './Advancehelper.js'
+import { requestToSpark, checkStatus, storeToMySqlAdvanceSearchData, getOuputFromSparkAndStoreAsJSON, getFreqDistDataForAdvanceHA, getSentiDistDataForAdvanceHA, getTweetIDsForAdvanceHA } from './Advancehelper.js'
 
 
  
@@ -411,7 +411,7 @@ const initiateHistoricalAnalysis = (queryTemp, fromTemp, toTemp, mentionID, hash
     $('#currentlySearchedQuery').text(query);
     $('#analysisPanelHA').css('display', 'block');
     let rangeType = getRangeType(fromDate, toDate);
-    frequencyDistributionHA(query, rangeType, fromDate, toDate, null, 'freqContentHA', false, searchType);
+    frequencyDistributionHA(query, rangeType, fromDate, toDate, null, 'freqContentHA', false);
     sentimentDistributionHA(query, rangeType, fromDate, toDate, null, 'sentiContentHA', false);
     plotDistributionGraphHA(query, fromDate, toDate, 'user', activeUserID, userID, 'usersContentHA');
     plotDistributionGraphHA(query, fromDate, toDate, 'mention', mentionID, userID, 'mentionsContentHA');
@@ -429,8 +429,8 @@ const initiateHistoricalAnalysisAdvance = (queryTemp, fromTemp, toTemp, mentionI
     $('#currentlySearchedQuery').text(query);
     $('#analysisPanelHA').css('display', 'block');
     let rangeType = getRangeType(fromDate, toDate);
-    frequencyDistributionHA(query, rangeType, fromDate, toDate, null, 'freqContentHA', false, searchType, filename);
-    // sentimentDistributionHA(query, rangeType, fromDate, toDate, null, 'sentiContentHA', false);
+    frequencyDistributionHA(query, rangeType, fromDate, toDate, null, 'freqContentHA', false, filename);
+    sentimentDistributionHA(query, rangeType, fromDate, toDate, null, 'sentiContentHA', false, filename);
     // plotDistributionGraphHA(query, fromDate, toDate, 'user', activeUserID, userID, 'usersContentHA');
     // plotDistributionGraphHA(query, fromDate, toDate, 'mention', mentionID, userID, 'mentionsContentHA');
     // plotDistributionGraphHA(query, fromDate, toDate, 'hashtag', hashtagID, userID, 'hashtagsContentTab');
@@ -446,7 +446,7 @@ const initiateHistoricalAnalysisAdvance = (queryTemp, fromTemp, toTemp, mentionI
 
 
 let freqParentDiv = 'freqContentHA';
-export const frequencyDistributionHA = (query = null, rangeType, fromDate = null, toDate = null, toTime = null, div, appendArg = false, searchType=null, filename=null) => {
+export const frequencyDistributionHA = (query = null, rangeType, fromDate = null, toDate = null, toTime = null, div, appendArg = false, filename=null) => {
     let chartType = 'freq-chart';
     let appendedChartParentID = rangeType + '-' + chartType;
     $('.' + appendedChartParentID).remove();
@@ -469,46 +469,77 @@ export const frequencyDistributionHA = (query = null, rangeType, fromDate = null
     $('#' + chartDivID).html('<div class="text-center pt-5 " ><i class="fa fa-circle-o-notch donutSpinner" aria-hidden="true"></i></div>')
     $('#' + chartTweetDivID).html('<div class="text-center pt-5 " ><i class="fa fa-circle-o-notch donutSpinner" aria-hidden="true"></i></div>')
     if (rangeType == 'day') {
-        if(searchType == 0){
+        if(filename){
+            getFreqDistDataForAdvanceHA(query, fromDate, toDate, rangeType, filename, userID).then(data => {
+                generateFreqDistBarChart(query, data, rangeType, chartDivID, filename);
+                freqSummaryGenerator(data, summaryDivID, rangeType);
+            });
+
+            getTweetIDsForAdvanceHA(query, fromDate, toDate, rangeType, null, filename, userID).then(response => {
+                console.log(rangeType);
+                TweetsGenerator(response.data, 6, chartTweetDivID, fromDate, toDate, true, rangeType);
+            });
+        }else{
             getFreqDistDataForHA(query, fromDate, toDate, null, rangeType, 0).then(data => {
                 generateFreqDistBarChart(query, data, rangeType, chartDivID);
                 freqSummaryGenerator(data, summaryDivID, rangeType);
             });
             getTweetIDsForHA(query, fromDate, toDate, rangeType, null).then(response => {
+                console.log(rangeType);
                 TweetsGenerator(response.data, 6, chartTweetDivID, fromDate, toDate, true, rangeType);
             });
-        }else if(searchType == 1){
+        }
+    } else if (rangeType == 'hour') {
+        if(filename){
             getFreqDistDataForAdvanceHA(query, fromDate, toDate, rangeType, filename, userID).then(data => {
+                generateFreqDistBarChart(query, data, rangeType, chartDivID, filename);
+                freqSummaryGenerator(data, summaryDivID, rangeType);
+            });
+
+            getTweetIDsForAdvanceHA(query, fromDate, toDate, rangeType, null, filename, userID).then(response => {
+                console.log(rangeType);
+                TweetsGenerator(response.data, 6, chartTweetDivID, fromDate, toDate, true, rangeType);
+            });
+        }else{
+            getFreqDistDataForHA(query, fromDate, toDate, null, rangeType, 0).then(data => {
                 generateFreqDistBarChart(query, data, rangeType, chartDivID);
                 freqSummaryGenerator(data, summaryDivID, rangeType);
             });
+            getTweetIDsForHA(query, fromDate, toDate, rangeType, null).then(response => {
+                console.log(rangeType);
+                TweetsGenerator(response.data, 6, chartTweetDivID, fromDate, toDate, true, rangeType);
+            });
         }
-       
-
-    } else if (rangeType == 'hour') {
-        getFreqDistDataForHA(query, fromDate, toDate, null, rangeType, 0).then(data => {
-            generateFreqDistBarChart(query, data, rangeType, chartDivID);
-            freqSummaryGenerator(data, summaryDivID, rangeType);
-        });
-        getTweetIDsForHA(query, fromDate, toDate, rangeType, null).then(response => {
-            TweetsGenerator(response.data, 6, chartTweetDivID, fromDate, toDate, true, rangeType);
-        });
-
     } else {
-        getFreqDistDataForHA(query, fromDate, toDate, null, rangeType, 1).then(data => {
-            generateFrequencyLineChart(query, data, rangeType, chartDivID);
-            freqSummaryGenerator(data, summaryDivID, rangeType);
-        });
-        getTweetIDsForHA(query, fromDate, toDate, rangeType, null, 1).then(response => {
-            let fromDateTemp = fromDate.split(/[ ,]+/).filter(Boolean);
-            TweetsGenerator(response.data, 6, chartTweetDivID, fromDate, fromDate, true, rangeType);
-        });
+        if(filename){
+            getFreqDistDataForAdvanceHA(query, fromDate, toDate, rangeType, filename, userID).then(data => {
+                generateFrequencyLineChart(query, data, rangeType, chartDivID, filename);
+                freqSummaryGenerator(data, summaryDivID, rangeType);
+            });
+
+            getTweetIDsForAdvanceHA(query, fromDate, toDate, rangeType, null, filename, userID).then(response => {
+                console.log(rangeType);
+                TweetsGenerator(response.data, 6, chartTweetDivID, fromDate, toDate, true, rangeType);
+            });
+        }else{
+            getFreqDistDataForHA(query, fromDate, toDate, null, rangeType, 1).then(data => {
+                generateFrequencyLineChart(query, data, rangeType, chartDivID);
+                freqSummaryGenerator(data, summaryDivID, rangeType);
+            });
+            getTweetIDsForHA(query, fromDate, toDate, rangeType, null, 1).then(response => {
+                console.log(rangeType);
+                let fromDateTemp = fromDate.split(/[ ,]+/).filter(Boolean);
+                TweetsGenerator(response.data, 6, chartTweetDivID, fromDate, fromDate, true, rangeType);
+            });
+        }
     }
 
 }
 
+
+
 let sentiParentDiv = 'sentiContentHA';
-export const sentimentDistributionHA = (query = null, rangeType, fromDate = null, toDate = null, toTime = null, div, appendArg = false) => {
+export const sentimentDistributionHA = (query = null, rangeType, fromDate = null, toDate = null, toTime = null, div, appendArg = false, filename=null) => {
     let chartType = 'senti-chart';
     let appendedChartParentID = rangeType + '-' + chartType;
     $('.' + appendedChartParentID).remove();
@@ -522,42 +553,64 @@ export const sentimentDistributionHA = (query = null, rangeType, fromDate = null
     if (appendArg) {
         $('#' + sentiParentDiv).append('<div class=" mt-2 ' + appendedChartParentID + '"><div class="d-flex"> <div class="mr-auto closeGraph"    value="' + rangeType + '-charts" title="close" >  <i class="fas fa-times"></i> </div> </div> <div class="row"><div class="col-sm-8"><div class="uaTab sentiDistChart  chartDiv border" id="' + chartDivID + '" ></div></div><div class="col-sm-4"><div class="sentiDistTweets border" id="' + chartTweetDivID + '"></div><div class="sentiDistSummary border d-flex pt-2"  id="' + summaryDivID + '" ></div></div></div></div>');
     } else {
-        $('#' + div).html('<div><div class="row"><div class="col-sm-8"><div class="uaTab sentiDistChart border" id="' + chartDivID + '" ></div></div><div class="col-sm-4"><div class="sentiDistTweets chartDiv border" id="' + chartTweetDivID + '"></div><div class="sentiDistSummary border d-flex pt-2"  id="' + summaryDivID + '" ></div></div></div></div>');
+        $('#' + div).html('<div><div class="row"><div class="col-sm-8"><div class="uaTab sentiDistChart chartDiv border" id="' + chartDivID + '" ></div></div><div class="col-sm-4"><div class="sentiDistTweets chartDiv border" id="' + chartTweetDivID + '"></div><div class="sentiDistSummary border d-flex pt-2"  id="' + summaryDivID + '" ></div></div></div></div>');
     }
     //Loader...
     $('#' + chartDivID).html('<div class="text-center pt-5 " ><i class="fa fa-circle-o-notch donutSpinner" aria-hidden="true"></i></div>');
     $('#' + chartTweetDivID).html('<div class="text-center pt-5 " ><i class="fa fa-circle-o-notch donutSpinner" aria-hidden="true"></i></div>');
     if (rangeType == 'day') {
-        getSentiDistDataForHA(query, fromDate, toDate, null, rangeType, 0).then(data => {
-            generateSentiDistBarChart(data, query, rangeType, chartDivID);
-            generateSentimentSummary(data, summaryDivID, rangeType);
-        })
+        if(filename){
+            getSentiDistDataForAdvanceHA(query, fromDate, toDate, rangeType, filename, userID).then(data => {
+                generateSentiDistBarChart(data, query, rangeType, chartDivID, filename);
+                generateSentimentSummary(data, summaryDivID, rangeType);
+            });
+        }else{
+            getSentiDistDataForHA(query, fromDate, toDate, null, rangeType, 0).then(data => {
+                generateSentiDistBarChart(data, query, rangeType, chartDivID);
+                generateSentimentSummary(data, summaryDivID, rangeType);
+            })
 
-        getTweetIDsForHA(query, fromDate, toDate, rangeType, null).then(response => {
-            TweetsGenerator(response.data, 6, chartTweetDivID, fromDate, toDate, true, rangeType);
-        });
+            getTweetIDsForHA(query, fromDate, toDate, rangeType, null).then(response => {
+                TweetsGenerator(response.data, 6, chartTweetDivID, fromDate, toDate, true, rangeType);
+            });
+        }
 
     } else if (rangeType == 'hour') {
-        getSentiDistDataForHA(query, fromDate, toDate, null, rangeType, 0).then(data => {
-            generateSentiDistBarChart(data, query, rangeType, chartDivID);
-            generateSentimentSummary(data, summaryDivID, rangeType);
-        })
-        getTweetIDsForHA(query, fromDate, toDate, rangeType, null).then(response => {
-            TweetsGenerator(response.data, 6, chartTweetDivID, fromDate, toDate, true, rangeType);
-        });
-
+        if(filename){
+            getSentiDistDataForAdvanceHA(query, fromDate, toDate, rangeType, filename, userID).then(data => {
+                generateSentiDistBarChart(data, query, rangeType, chartDivID, filename);
+                generateSentimentSummary(data, summaryDivID, rangeType);
+            });
+        }else{
+            getSentiDistDataForHA(query, fromDate, toDate, null, rangeType, 0).then(data => {
+                generateSentiDistBarChart(data, query, rangeType, chartDivID);
+                generateSentimentSummary(data, summaryDivID, rangeType);
+            })
+            getTweetIDsForHA(query, fromDate, toDate, rangeType, null).then(response => {
+                TweetsGenerator(response.data, 6, chartTweetDivID, fromDate, toDate, true, rangeType);
+            });
+        }
     } else {
-
-        getSentiDistDataForHA(query, fromDate, toDate, null, rangeType, 1).then(data => {
-            generateSentiDistLineChart(query, data, rangeType, chartDivID);
-            generateSentimentSummary(data, summaryDivID, rangeType);
-        })
-        getTweetIDsForHA(query, fromDate, toDate, rangeType, null, 1).then(response => {
-            let fromDateTemp = fromDate.split(/[ ,]+/).filter(Boolean);
-            TweetsGenerator(response.data, 6, chartTweetDivID, fromDate, fromDate, true, rangeType);
-        });
+        if(filename){
+            getSentiDistDataForAdvanceHA(query, fromDate, toDate, rangeType, filename, userID).then(data => {               
+                generateSentiDistLineChart(query, data, rangeType, chartDivID, filename);
+                generateSentimentSummary(data, summaryDivID, rangeType);
+            });
+        }else{
+            getSentiDistDataForHA(query, fromDate, toDate, null, rangeType, 1).then(data => {
+                generateSentiDistLineChart(query, data, rangeType, chartDivID);
+                generateSentimentSummary(data, summaryDivID, rangeType);
+            })
+            getTweetIDsForHA(query, fromDate, toDate, rangeType, null, 1).then(response => {
+                let fromDateTemp = fromDate.split(/[ ,]+/).filter(Boolean);
+                TweetsGenerator(response.data, 6, chartTweetDivID, fromDate, fromDate, true, rangeType);
+            });
+        }
     }
 }
+
+
+
 
 
 const plotDistributionGraphHA = (query, fromDate, toDate, option, uniqueID, userID, div) => {

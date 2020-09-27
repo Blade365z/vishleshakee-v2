@@ -516,7 +516,11 @@ select{
     height:60px;
 }
 
-
+#feedbackDiv{
+    height:400px;
+    overflow-x: hidden;
+    overflow-y: auto;
+}
 @media (max-width: 767.98px) {
     .dFlexBut{
         display: block;

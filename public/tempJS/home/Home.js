@@ -14,7 +14,7 @@ MODE LIST:
 import { getFreqDistData, getTopCooccurData, getMe, getSentiDistData, getTopData, getTweetIDsFromController } from './helper.js';
 import { generateFrequencyChart, generateSentimentChart, generateBarChart } from './chartHelper.js';
 import { TweetsGenerator } from '../utilitiesJS/TweetGenerator.js';
-import { getCompleteMap } from '../utilitiesJS/getMap.js';
+import { get_tweet_location_home,getCompleteMap } from '../utilitiesJS/getMap.js';
 import { makeSuggestionsRead, makeSmatReady } from '../utilitiesJS/smatExtras.js'
 import { getCurrentDate } from '../utilitiesJS/smatDate.js';
 
@@ -318,11 +318,21 @@ const generatePublicHashtags = (data, filterArgument = null) => {
 const generatePublicLocations = () => {
   //TODO::Rajdeep
 
-  $('#result-div').html('<div id="result-div-map" style="height:400px;"></div>');
-  console.log(queriedTweetFromTime);
-  console.log(queriedTweetToTime);
-  console.log(query);
-  // getCompleteMap('result-div-map', query, interval, 'public');
+  $('#result-div').html(`<div id="result-div-map" style="height:400px;"></div>
+                          <div class="modal_lm">
+                            <div class="modal-content">
+                                <span class="close-button">&times;</span>
+                                <ul id="markersList"></ul>
+                            </div>
+                          </div>`);
+  
+  let capturedClass = $(this).attr('value');
+  capturedClass = capturedClass == 'all' ? null : capturedClass;
+  get_tweet_location_home(interval, query, queriedTweetFromTime, queriedTweetToTime, capturedClass).then(response => {
+    console.log(response);
+    getCompleteMap('result-div-map',response);
+    
+  });
 
 
 }

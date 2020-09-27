@@ -151,6 +151,53 @@ class LocationMap extends Controller
 
     }
 
+    public function location_tweet_home($intervalArg = null, $queryArg = null, Request $request)
+    {
+        if (!$request->input('fromTime') || !$request->input('toTime')) {
+            if ($request->input('interval') && $request->input('query')) {
+                $interval = $request->input('interval');
+                if ($interval > 86400) {
+                    return response()->json(['error' => 'Not Allowed'], 404);
+                }
+                $query = $request->input('query');
+            } else if ($intervalArg && $queryArg) {
+                $interval = $intervalArg;
+                $query = $queryArg;
+
+            } else {
+                return response()->json(['error' => 'interval  or query not set'], 404);
+            }
+
+            $datetime_object = new Hm;
+            $dateTimeArgs = $datetime_object->CurrentDateTimeGeneratorPublic($interval);
+            $fromTime = $dateTimeArgs[0];
+            $toTime = $dateTimeArgs[1];
+        } else {
+            $fromTime = $request->input('fromTime');
+            $toTime = $request->input('toTime');
+            $query = $request->input('query');
+        }
+        if ($request->input('filter')) {
+            $filter = $request->input('filter');
+        } else {
+            $filter = null;
+        }
+        $commonObj = new CommonController;
+        $data = $commonObj->get_tweets($toTime, $fromTime, $query, '10sec', $filter);
+        // return $data;
+        $tweetid_list_array = array();
+        array_push($tweetid_list_array,'1300689867836395526');
+        array_push($tweetid_list_array,'1305520073982054404');
+        
+        foreach ($data['data'] as $tid) {
+            array_push($tweetid_list_array, $tid);
+        }
+
+        $tweetid_list_array = array_unique($tweetid_list_array);
+
+        return $this->tweet_info($tweetid_list_array);
+    }
+
     public function checkLocation_(Request $request)
     {
         $place = $request->input('place');
@@ -185,9 +232,9 @@ class LocationMap extends Controller
         // return $locationObj["state"];
 
         $city_state_country_stm = '';
-        if ($code == 0) {$city_state_country_stm = "country='" . $locationObj["country"] . "' AND state='" . $locationObj["state"] . "' AND city='" . $locationObj["city"] . "'";}
-        elseif ($code == 1) {$city_state_country_stm = "country='" . $locationObj["country"] . "' AND state='" . $locationObj["state"] . "'";}
-        elseif ($code == 2) {$city_state_country_stm = "country='" .$locationObj["country"] . "'";}
+        if ($code == 0) {$city_state_country_stm = "country='^" . $locationObj["country"] . "' AND state='^" . $locationObj["state"] . "' AND city='^" . $locationObj["city"] . "'";}
+        elseif ($code == 1) {$city_state_country_stm = "country='^" . $locationObj["country"] . "' AND state='^" . $locationObj["state"] . "'";}
+        elseif ($code == 2) {$city_state_country_stm = "country='^" .$locationObj["country"] . "'";}
         // if (($city == ' ') && ($state == ' ') && ($country == ' ')) {
             // echo nothing
         // } else if (($city != ' ') && ($state != ' ') && ($country != ' ')) {

@@ -39,7 +39,7 @@
           <a class="dropdown-item" href="#">About us</a>
           @if(Auth::check() && Auth::user()->role ==1)
           <a class="dropdown-item" href="register">Register User</a>
-          <a class="dropdown-item" href="feedback">See Feedbacks</a>
+          <a class="dropdown-item" href="feedbackPortal">See Feedbacks</a>
           @endif
 
           @if (Auth::check())

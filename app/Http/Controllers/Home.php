@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Controllers\CommonController;
+use App\User;
 use DateTime;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -14,7 +15,7 @@ class Home extends Controller
     public function CurrentDateTimeGeneratorPublic($interval)
     {
 
-        $datetimeobj = new DateTime('2020-09-8 15:00:00');
+        $datetimeobj = new DateTime();
         $datetime = $datetimeobj->format('Y-m-d H:i:s');
         $datetime = date('Y-m-d H:i:s', strtotime($datetime) - 60);
         $datetime = new DateTime($datetime);
@@ -43,6 +44,15 @@ class Home extends Controller
         } catch (Exception $e) {
             return response()->json(['error' => 'login status not found']);
         }
+    }
+    public function getUserNameFromID(Request $request)
+    {
+        $request->validate([
+            'id' => 'required']);
+        $idCaptured = $request->input('id');
+        $userObj = User::where('id', '=', $idCaptured)->firstOrFail();
+        $userObj=$userObj['username'];
+        return response()->json(['data' => $userObj], 200);
     }
     public function getFrequencyDistributionData(Request $request)
     {
@@ -111,10 +121,10 @@ class Home extends Controller
             $finalData = array(['data' => $data, 'finalTime' => $dateTimeArgs[1]]);
             return ($finalData);
         } else if ($request->input('fromTime') && $request->input('query')) {
-            $fromTime =$request->input('fromTime');
+            $fromTime = $request->input('fromTime');
             $fromTime = date('Y-m-d H:i:s', strtotime($fromTime) + 10);
-            $query =$request->input('query');
-            $option =$request->input('option');
+            $query = $request->input('query');
+            $option = $request->input('option');
             $commonObj = new CommonController;
             $data = $commonObj->get_co_occur_data($fromTime, $fromTime, $query, '10sec', $option, null, false, true);
             $finalData = array(['data' => $data, 'finalTime' => $fromTime]);

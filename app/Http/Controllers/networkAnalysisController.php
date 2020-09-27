@@ -263,7 +263,7 @@ class networkAnalysisController extends Controller
 
         }
 
-        $csvFile = file("storage/$dir_name/$input.csv");
+        $csvFile = file("storage/2/$input.csv");
         $final_arr = [];
         foreach ($csvFile as $line) {
             $final_arr[] = str_getcsv($line);
@@ -1220,9 +1220,11 @@ class networkAnalysisController extends Controller
         } else if ($algo_option == 'lpa') {
             $this->storeAsJson($request, $filename, $result_arr);
         } else if ($algo_option == 'ShortestPath') {
+            error_reporting(0);
             $rt = array();
             foreach ($result_arr as $key => $value) {
-                array_push($rt, $value['0']);
+                $line = array($value["P1"],$value["P2"]);
+                fputcsv($fp,$line);
             }
             fputcsv($fp, $rt);
         } else if ($algo_option == 'jaccardcoeff') {

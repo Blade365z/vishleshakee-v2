@@ -85,7 +85,7 @@ export const getSentiDistDataForHA = async (query, from, to, toTime = null, rang
 
 export const getCooccurDataForHA = async (query, from, to, option, uniqueID, userID) => {
    let dataArgs = JSON.stringify({
-        query, from, to, option, uniqueID, userID,mode:'write'
+        query, from, to, option, uniqueID, userID, mode:'write'
     });
     
     let dataArgsForRead=JSON.stringify({

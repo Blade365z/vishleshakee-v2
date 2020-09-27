@@ -1,6 +1,7 @@
 <?php
 namespace App\Library;
 
+use App\Http\Controllers\LocationMap;
 use App\Library\Utilities as Ut;
 // date_default_timezone_set('UTC');  //enable to get datetime as UTC
 date_default_timezone_set('Asia/Kolkata');  //enable to get datetime as local
@@ -106,6 +107,8 @@ class QueryBuilder{
             // to get top data from location_token_co_occur................................................................
             // get location statement after where clause after getting country, state, city from mysql by calling function
             $loc_str = "country='^india'";
+            // $location_obj = new LocationMap;
+            // $loc_str = $location_obj->get_location_statement($token);
             $query_class = $this->get_query_class($feature_option_split[2], $feature_option_split[0]);
             if(($range_type == '10sec') or ($range_type == 'hour') or ($range_type == 'day')){
                 if($range_type == '10sec'){

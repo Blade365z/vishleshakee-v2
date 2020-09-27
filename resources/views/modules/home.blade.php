@@ -1,7 +1,10 @@
 @extends('parent.app')
 @section('content')
+
 <link rel="stylesheet" href="public/leaflet/markerCluster/MarkerCluster.css">
+<link rel="stylesheet" href="public/leaflet/markerCluster/MarkerCluster.Default.css">
 <link rel="stylesheet" href="public/leaflet/leaflet.css">
+<link rel="stylesheet" href="public/leaflet/leaflet_modal.css">
 
 
 
@@ -122,6 +125,7 @@
 
 
                         <div class="public-analysis-result " id="result-div">
+                            
 
 
 

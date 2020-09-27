@@ -523,7 +523,7 @@ class CommonController extends Controller
             } else {
                 $file_path = "common/" . $token . "_" . $co_occur_option . ".csv";
             }
-            $ut_obj->write_to_file('csv', $file_path, $temp_arr, $token);
+            // $ut_obj->write_to_file('csv', $file_path, $temp_arr, $token);
             return (array('status' => 'success', 'nodes' => sizeof($temp_arr)));
         } else {
             if ($data_formatter) {

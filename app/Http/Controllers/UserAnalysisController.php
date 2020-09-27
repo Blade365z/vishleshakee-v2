@@ -138,6 +138,8 @@ class UserAnalysisController extends Controller
 
     }
 
+
+    
     public function getSentimentDataForUser(Request $request)
     {
         if ($request->input('to') && $request->input('from') && $request->input('query') && $request->input('rangeType')) {

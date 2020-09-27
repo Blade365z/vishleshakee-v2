@@ -72,7 +72,7 @@ export const getFreqDistDataForUA = async (query, from, to, toTime = null, range
     } else {
         dataArg = JSON.stringify({ query, from, to, rangeType, isDateTimeAlready });
     }
-    console.log(dataArg);
+    // console.log(dataArg);
     let response = await fetch('UA/getFrequencyDataForUser', {
         method: 'post',
         headers: HeadersForApi,
@@ -107,6 +107,7 @@ export const getTweetIDsForUA = async (query, from = null, to = null, rangeType,
     } else if (isDateTimeAlready == 1) {
         dataArgs = JSON.stringify({ from, to, query, rangeType, filter, isDateTimeAlready });
     }
+    console.log(dataArgs);
     let response = await fetch('UA/getTweetIDs', {
         method: 'post',
         headers: HeadersForApi,

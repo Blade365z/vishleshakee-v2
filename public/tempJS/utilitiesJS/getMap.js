@@ -22,8 +22,29 @@ export const get_tweet_location = async(query, from = null, to = null, rangeType
     return data;
 }
 
+export const get_tweet_location_home = async (interval = null, query, fromTime = null, toTime = null, filter = null) => {
+    let dataArgs;
+    if (interval == null && fromTime != null) {
+        dataArgs = JSON.stringify({ fromTime, toTime, query });
+    } else {
+        dataArgs = JSON.stringify({ interval, query });
+    }
+    if (filter !== null) {
+        dataArgs = JSON.stringify({ fromTime, toTime, query, filter });
+    }
+    let response = await fetch('LM/getTweetInfoHome', {
+        method: 'post',
+        headers: HeadersForApi,
+        body: dataArgs
+    })
+    let data = await response.json();
+    return data;
+}
+
 
 export const getCompleteMap = (id,op) => {
+    var modal = document.querySelector(".modal_lm");
+    var closeButton = document.querySelector(".close-button");
     var markersList = document.getElementById('markersList');
     L.MarkerCluster.include({
         spiderfy: function () {
@@ -78,6 +99,19 @@ export const getCompleteMap = (id,op) => {
         iconUrl: 'public/icons/twitter.png',
         iconSize: [35, 35] // size of the icon
     });
+
+    closeButton.addEventListener("click", closeModal);
+
+    function closeModal() {
+        // Use the unspiderfy method so that internal state is updated.
+        markerCluster.unspiderfy();
+    }
+
+    function windowOnClick(event) {
+        if (event.target === modal) {
+            closeModal();
+        }
+    }
 
     // var tweet_details;
     // if(type = 'public'){

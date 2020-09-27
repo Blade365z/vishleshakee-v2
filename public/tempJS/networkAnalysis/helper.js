@@ -272,7 +272,6 @@ export const render_shortestpath_graph = (input, src_id, dst_id) => {
         })
         .done(function(res) {
             console.log("I am printing from update_view_graph");
-            console.log(res);
             update_sp_graph(res);
         })
         .fail(function(res) {
@@ -283,6 +282,7 @@ export const render_shortestpath_graph = (input, src_id, dst_id) => {
 
     export const update_sp_graph = (res) =>  {
 
+        console.log(res);
         $('.analysis_summary_div').empty();
         $('.analysis_summary_div').append('<table> <tr><th>Node</th><th>Score</th></tr>');
         for(var i=0; i<res["paths"].length;i++){
@@ -296,8 +296,12 @@ export const render_shortestpath_graph = (input, src_id, dst_id) => {
 
         // Bug exists in shortest path NEED to BE CHECKED 
 
+         res["result"] = res["result"].filter(function (el) {
+            return el != null;
+          });
+
         for (var i = 1; i <= res["result"].length - 2; i++) {
-            if ((res["result"][i] != res["result"][0]) && (res["result"][i] != res["result"][res["result"].length - 1])) {
+            if ((res["result"][i] != res["result"][0]) && (res["result"][i] != res["result"][res["result"].length - 1]) && (res["result"][i] != null)) {
                 network_global.body.data.nodes._data[res["result"][i]].color = "#ffa500";
                 network_global.body.data.nodes._data[res["result"][i]].size = 100;
             } else {
@@ -1127,6 +1131,10 @@ export const storeResultofSparkFromController = async (sparkID, query_list ,user
         query_list,
         userID
     });
+
+    console.log("I am Printing inside");
+    console.log(dataArgs);
+
     let response = await fetch('na/getFromSparkAndStore', {
         method: 'post',
         headers: HeadersForApi,

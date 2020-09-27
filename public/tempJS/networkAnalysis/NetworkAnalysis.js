@@ -17,6 +17,9 @@ var cardIDdictionary = {};
 var currentNetworkEngine = 'networkx', currentlyShowing;
 var community_algo_option = "Async Fluidic";
 
+var SourceNode;
+var DestinationNode;
+
 //globals for sparkStatus 
 var checkSpartStatusInterval_centrality;
 var userID;
@@ -27,6 +30,14 @@ if (localStorage.getItem('smat.me')) {
     window.location.href = 'login';
 }
 jQuery(function () {
+    if(incoming){
+        //TODO::Redirection 
+        let filename = incoming + fromDateReceived + toDateReceived + 50 + 'Hashtag-Hashtag';
+        networkGeneration('na/genNetwork', incoming, fromDateReceived, toDateReceived, 50 , 'Hashtag-Hashtag', filename).then(response => {
+            $("#msg_displayer").empty();
+            generateCards(totalQueries, incoming, fromDateReceived, toDateReceived, 50, 'Hashtag-Hashtag', currentNetworkEngine, filename, 'naCards');
+        })
+    }
     makeSuggestionsRead ('naQueryInputBox','top_hashtag',50);
     $('#networkEngineNA').on('change', function () {
         console.log('changed');
@@ -57,16 +68,22 @@ jQuery(function () {
     $('body').on('click', 'div .showBtn', function () {
         let args = $(this).attr('value');
         args = args.split(/[|]/).filter(Boolean);
+        console.log("I am printing your ARGS");
         console.log(args);
-        render_centrality_graph(args[6], args[2], args[5]).then(response => {
-            console.log('RESPONSE', response);
-            $('.analysis_summary_div').html('');
-            $('.analysis_summary_div').append('<table class="table">  <thead> <tr><th>Node</th><th>Score</th></tr>  </thead> <tbody id="tableBody"> </tbody></table>');
-            for (var i = 0; i < response["nodes"].length; i++) {
-                $('#tableBody').append('<tr><td>' + response["nodes"][i]["label"] + '</td><td>' + response["nodes"][i]["size"] + '</td></tr>');
-            }
-            draw_graph(response, "networkDivid");
-        });
+
+        if(args[4] == "ShortestPath"){
+            render_shortestpath_graph(args[6],args[7],args[8]);
+        }else{
+            render_centrality_graph(args[6], args[2], args[5]).then(response => {
+                console.log('RESPONSE', response);
+                $('.analysis_summary_div').html('');
+                $('.analysis_summary_div').append('<table class="table">  <thead> <tr><th>Node</th><th>Score</th></tr>  </thead> <tbody id="tableBody"> </tbody></table>');
+                for (var i = 0; i < response["nodes"].length; i++) {
+                    $('#tableBody').append('<tr><td>' + response["nodes"][i]["label"] + '</td><td>' + response["nodes"][i]["size"] + '</td></tr>');
+                }
+                draw_graph(response, "networkDivid");
+            });
+        }
     });
 
 
@@ -314,6 +331,7 @@ $("#link_prediction_exec").on('click', function (NAType = $("#networkEngineNA").
         console.log(algo_option);
     } else if (NAType == 'spark') {
         let src = $("#link_source_node").val();
+        SourceNode = src;
         var query_list = [algo_option, input, src];
         var unique_name_timestamp = (new Date().getTime()).toString(); // create unique_name   
         url = 'na/requestToSparkandStoreResult';
@@ -339,6 +357,36 @@ $("#link_prediction_exec").on('click', function (NAType = $("#networkEngineNA").
                 update_view_graph_for_link_prediction(response, data["src"]), k_value;
             });
         } else if (NAType == "spark") {
+
+            let sparkID = response.id;
+            //TODO::tobealtered!
+            let queryMetaData = searchRecords[currentlyShowing - 1];
+
+            transferQueryToStatusTable(queryMetaData, 'linkprediction', algo_option, sparkID);
+            function checkSparkStatus() {
+                fetch('na/getsparkstatus/' + sparkID, {
+                    method: 'get'
+                }).then(response => response.json())
+                    .then(response => {
+                        console.log(response);
+                        if (response.state === 'success') {
+                            let query_list = [algo_option, input];
+                            storeResultofSparkFromController(sparkID, query_list, userID).then(response => {
+                                makeShowBtnReadyAfterSuccess(sparkID, response.filename, 'linkprediction', algo_option,data["query_list"][1] );
+                                window.clearInterval(checkSpartStatusInterval_centrality);
+                            })
+
+                        }
+                    })
+                    .catch(err => {
+                        console.log(err)
+                    })
+            }
+            checkSpartStatusInterval_centrality = setInterval(checkSparkStatus, 5000);
+
+
+
+
             let k_value = $("#nos_links_to_be_predicted").val();
             render_linkprediction_graph(data["query_list"][1], data["query_list"][2]).then(response => {
                 console.log("LP");
@@ -373,6 +421,8 @@ $("#sp_exec").on('click', function (NAType = "networkx", algo_option = "") {
     } else if (currentNetworkEngine == 'spark') {
         sparkUpload(selected_graph_ids());
         var query_list = ['ShortestPath', input, src, dst];
+        SourceNode = src;
+        DestinationNode = dst;
         var rname = (new Date().getTime()).toString() + '-spark';   // create unique_name   
         url = 'na/requestToSpark';
         data = {
@@ -386,6 +436,8 @@ $("#sp_exec").on('click', function (NAType = "networkx", algo_option = "") {
             render_shortestpath_graph(data["input"], data["src"], data["dst"]);
         } else if (currentNetworkEngine == "spark") {
             let sparkID = response.id;
+            // Hardcoding the Shortest Path
+            let algo_option = "ShortestPath"; 
 
             console.log("I am logging Logger");
             console.log(response);
@@ -403,7 +455,9 @@ $("#sp_exec").on('click', function (NAType = "networkx", algo_option = "") {
                         if (response.state === 'success') {
                             let query_list = [algo_option, input];
                             storeResultofSparkFromController(sparkID, query_list, userID).then(response => {
-                                makeShowBtnReadyAfterSuccess(sparkID, response.filename, 'shortestpath', algo_option,data["query_list"][1] );
+                                console.log("I am printing your response filename");
+                                console.log(response.filename);
+                                makeShowBtnReadyAfterSuccess(sparkID, response.filename, 'ShortestPath', algo_option,data["query_list"][1] );
                                 window.clearInterval(checkSpartStatusInterval_centrality);
                             })
 
@@ -458,7 +512,7 @@ $("#comm_exec").on('click', function (NAType = $("#NAEngine").val(), algo_option
             iterations: 1000,
             algo_option: algo_option
         };
-    } else if (NAType == 'spark') {
+    } else if (currentNetworkEngine == 'spark') {
 
         sparkUpload(selected_graph_ids());
         let input = select_graph[0];
@@ -476,11 +530,42 @@ $("#comm_exec").on('click', function (NAType = $("#NAEngine").val(), algo_option
     } else {
     }
     community_detection(url, data, NAType).then(response => {
-        if (NAType == "networkx") {
+        if (currentNetworkEngine == "networkx") {
             render_community_graph1(data["input"]).then(response => {
                 render_graph_community(response, "networkDivid");
             });
-        } else if (NAType == "spark") {
+        } else if (currentNetworkEngine == "spark") {
+
+            let sparkID = response.id;
+            //TODO::tobealtered!
+            let queryMetaData = searchRecords[currentlyShowing - 1];
+
+            transferQueryToStatusTable(queryMetaData, 'communities', algo_option, sparkID);
+            function checkSparkStatus() {
+                fetch('na/getsparkstatus/' + sparkID, {
+                    method: 'get'
+                }).then(response => response.json())
+                    .then(response => {
+                        console.log(response);
+                        if (response.state === 'success') {
+                            let query_list = [algo_option, input];
+                            storeResultofSparkFromController(sparkID, query_list, userID).then(response => {
+                                makeShowBtnReadyAfterSuccess(sparkID, response.filename, 'communities', algo_option,data["query_list"][1] );
+                                window.clearInterval(checkSpartStatusInterval_centrality);
+                            })
+
+                        }
+                    })
+                    .catch(err => {
+                        console.log(err)
+                    })
+            }
+            checkSpartStatusInterval_centrality = setInterval(checkSparkStatus, 5000);
+
+
+
+
+
             render_community_graph1(data["query_list"][1]).then(response => {
                 render_graph_community(response, "networkDivid");
             });
@@ -683,7 +768,7 @@ const makeShowBtnReadyAfterSuccess = (sparkID, filename, mode, algo = null, orig
     $('#' + sparkID + 'Btn').removeClass('btn-secondary');
     $('#' + sparkID + 'Btn').addClass('btn-primary');
     algo = algo == null ? '' : algo;
-    btnValue = btnValue + '|' + filename + '|' + mode + '|' + algo + '|' + originalFile;
+    btnValue = btnValue + '|' + filename + '|' + mode + '|' + algo + '|' + originalFile + '|' + SourceNode + '|' + DestinationNode;
     $('#' + sparkID + 'Btn').attr('value', btnValue);
     $('#' + sparkID + 'Status').text('Success');
 }

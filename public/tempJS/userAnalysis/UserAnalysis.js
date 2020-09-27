@@ -15,7 +15,7 @@ import { TweetsGenerator } from '../utilitiesJS/TweetGenerator.js';
 import { generateUniqueID } from '../utilitiesJS/uniqueIDGenerator.js';
 import { generateFreqDistBarChart, generateFrequencyLineChart, generateSentiDistBarChart, generateSentiDistLineChart, generateBarChartForCooccur } from './chartHelper.js';
 import { makeSmatReady } from '../utilitiesJS/smatExtras.js'
-
+import {forwardToNetworkAnalysis} from '../utilitiesJS/redirectionScripts.js';
 
 
 //Global Declaration
@@ -107,7 +107,11 @@ jQuery(function () {
     });
 
     
-
+    $('body').on('click','div .analyzeNetworkButton',function(){
+        let args = $(this).attr('value');
+        args = args.split(/[|]/).filter(Boolean);
+        forwardToNetworkAnalysis(args);
+    })
 
 
 
@@ -312,9 +316,9 @@ const plotDistributionGraphUA = (query, fromDate, toDate, option, uniqueID, user
 
 
     let chartDivID = option + '-chart';
-    $('#' + div).html('<div id="' + chartDivID + '"></div>');
-    $('#' + chartDivID).html('<div class="text-center pt-5 " ><i class="fa fa-circle-o-notch donutSpinner" aria-hidden="true"></i></div>');
+    $('#' + div).html('<div class="text-center pt-5 " ><i class="fa fa-circle-o-notch donutSpinner" aria-hidden="true"></i></div>');
     getCooccurDataForUA(query, fromDate, toDate, option, uniqueID, userID).then(response => {
+        $('#'+div).html('<div class=""><button class="btn smat-btn  smat-rounded  mx-1 analyzeNetworkButton "   value="'+query+'|'+toDate+'|'+fromDate+'|'+option+'|'+uniqueID+'|'+userID+'" > <span> Analyse network </span> </button></div><div id="'+chartDivID+'"></div>')
         response.length < 1 ? $('#' + chartDivID).html('<div class="alert-danger text-center m-3 p-2 smat-rounded"> No Data Found </div>') : generateBarChartForCooccur(query, response, chartDivID, option)
     });
 }

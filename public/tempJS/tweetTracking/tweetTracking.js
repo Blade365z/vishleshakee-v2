@@ -133,7 +133,7 @@ const printTweetOnDiv = (data, offset, type) => {
         analysisBtnFlag = true
     }
     $('#tweetTitle' + '-' + offset).text(tweetTypeDict[type]);
-    getTweetRAWTEMP(data, divTemp, true, analysisBtnFlag);
+    getTweetRAWTEMP(data, divTemp, false, analysisBtnFlag);
 }
 
 const getTweetRAWTEMP = (tweetData, div, dropDownArg = true, analysisBtnArg = false) => {

@@ -78,3 +78,50 @@ export const getFreqDistDataForAdvanceHA = async (query, from, to, rangeType, fi
 
     return data;
 }
+
+
+
+export const getSentiDistDataForAdvanceHA = async (query, from, to, rangeType, filename, userid) => {
+    let dataArg;
+    dataArg = JSON.stringify({ query, to, from, rangeType, filename, userid });
+    
+    let response = await fetch('HA/getSentimentDataForHistoricalAdvance', {
+        method: 'post',
+        headers: HeadersForApi,
+        body: dataArg
+    }); 
+    let data = await response.json()
+    return data;
+}
+
+
+
+
+export const getCooccurDataForAdvanceHA = async (query, from, to, option, uniqueID, userID, filename) => {
+    let dataArg;
+    dataArg = JSON.stringify({ query, from, to, option, uniqueID, userID, mode:'write', filename});
+    
+    let response = await fetch('HA/getCooccurDataForAdvance', {
+        method: 'post',
+        headers: HeadersForApi,
+        body: dataArg
+    }); 
+    let data = await response.json()
+    return data;
+}
+
+
+
+export const getTweetIDsForAdvanceHA = async (query, from = null, to = null, rangeType, filter = null,  userID, filename) => {
+    let dataArgs;   
+    dataArgs = JSON.stringify({ from, to, query, rangeType, filter, userID, filename });
+
+    let response = await fetch('HA/getTweetIDForAdvance', {
+        method: 'post',
+        headers: HeadersForApi,
+        body: dataArgs
+    });
+    
+    let data = await response.json();
+    return data;
+}
