@@ -231,7 +231,13 @@ function trigger() {
                     console.log(global_tweetid_list);
                 });
                 getTweetIdList(from_datetime, to_datetime, place, "tweet_info").then(response => {
-                    rander_map(response);
+                    if (response.length == 0) {
+                        $("#modal_text").text("Location based tweet not found!");
+                        $("#exampleModal").modal();
+                    }
+                    else{
+                        rander_map(response);
+                    }
                 });
 
                 if ((parseInt(result.value)) == 2) { type = "country" }
@@ -290,7 +296,14 @@ function trigger() {
                         global_tweetid_list = response;
                     });
                     getTweetIdList(from_datetime_, to_datetime_, place_, "tweet_info").then(response => {
-                        rander_map(response);
+                        if (response.length == 0) {
+                            $("#modal_text").text("Location based tweet not found!");
+                            $("#exampleModal").modal();
+                        }
+                        else{
+                            rander_map(response);
+                        }
+
                     });
 
                     if ((parseInt(result.value)) == 2) { type_ = "country" }
@@ -320,45 +333,47 @@ function trigger() {
 const rander_map = (data) => {
     group1.clearLayers();
 
-    if (data.length == 0) {
-        $("#modal_text").text("Location based tweet not found!");
-        $("#exampleModal").modal();
-    }
+    // if (data.length == 0) {
+    //     $("#modal_text").text("Location based tweet not found!");
+    //     $("#exampleModal").modal();
+    // }
+    // else{
 
-    if (data[0]["sentiment"]["value"] == "2") {
-        LM_Map.setView([parseFloat(data[0]["Latitude"]), parseFloat(data[0]["Longitude"])], 4);
-    } else if (data[0]["sentiment"]["value"] == "1") {
-        LM_Map.setView([parseFloat(data[0]["Latitude"]), parseFloat(data[0]["Longitude"])], 6);
-    } else if (data[0]["sentiment"]["value"] == "0") {
-        LM_Map.setView([parseFloat(data[0]["Latitude"]), parseFloat(data[0]["Longitude"])], 9);
-    }
-
-    for (var i = 0; i < data.length; i++) {
-        //   var dat = { lat: op[i].Latitude , lng: op[i].Longitude , count: 1};
-        //   heatmapLayer.addData(dat);
-        if (data[i]["Latitude"] != null) {
-
-
-            var senti = data[i]["sentiment"]["value"];
-            if (senti == "0") {
-
-                L.marker([parseFloat(data[i]["Latitude"]), parseFloat(data[i]["Longitude"])], {
-                    icon: tweetIcon
-                }).bindPopup("<div class='border-bottom'><b>" + data[i]["author"] + "</b> : @" + data[i]["author_screen_name"] + " " + "<img style= 'border-radius: 50%; width:10px;height:10px;' src='public/icons/yellow.png'> <br>" + data[i]["tweet"] + "</div>").addTo(group1);
-            } else if (senti == "1") {
-
-                L.marker([parseFloat(data[i]["Latitude"]), parseFloat(data[i]["Longitude"])], {
-                    icon: tweetIcon
-                }).bindPopup("<div class='border-bottom'><b>" + data[i]["author"] + "</b> : @" + data[i]["author_screen_name"] + " " + "<img style= 'border-radius: 50%; width:10px;height:10px;' src='public/icons/red.png'> <br>" + data[i]["tweet"] + "</div>").addTo(group1);
-            } else if (senti == "2") {
-
-                L.marker([parseFloat(data[i]["Latitude"]), parseFloat(data[i]["Longitude"])], {
-                    icon: tweetIcon
-                }).bindPopup("<div class='border-bottom'><b>" + data[i]["author"] + "</b> : @" + data[i]["author_screen_name"] + " " + "<img style= 'border-radius: 50%; width:10px;height:10px;' src='public/icons/green.png'> <br>" + data[i]["tweet"] + "</div>").addTo(group1);
-            }
-            group1.addTo(LM_Map);
+        if (data[0]["sentiment"]["value"] == "2") {
+            LM_Map.setView([parseFloat(data[0]["Latitude"]), parseFloat(data[0]["Longitude"])], 4);
+        } else if (data[0]["sentiment"]["value"] == "1") {
+            LM_Map.setView([parseFloat(data[0]["Latitude"]), parseFloat(data[0]["Longitude"])], 6);
+        } else if (data[0]["sentiment"]["value"] == "0") {
+            LM_Map.setView([parseFloat(data[0]["Latitude"]), parseFloat(data[0]["Longitude"])], 9);
         }
-    }
+
+        for (var i = 0; i < data.length; i++) {
+            //   var dat = { lat: op[i].Latitude , lng: op[i].Longitude , count: 1};
+            //   heatmapLayer.addData(dat);
+            if (data[i]["Latitude"] != null) {
+
+
+                var senti = data[i]["sentiment"]["value"];
+                if (senti == "0") {
+
+                    L.marker([parseFloat(data[i]["Latitude"]), parseFloat(data[i]["Longitude"])], {
+                        icon: tweetIcon
+                    }).bindPopup("<div class='border-bottom'><b>" + data[i]["author"] + "</b> : @" + data[i]["author_screen_name"] + " " + "<img style= 'border-radius: 50%; width:10px;height:10px;' src='public/icons/yellow.png'> <br>" + data[i]["tweet"] + "</div>").addTo(group1);
+                } else if (senti == "1") {
+
+                    L.marker([parseFloat(data[i]["Latitude"]), parseFloat(data[i]["Longitude"])], {
+                        icon: tweetIcon
+                    }).bindPopup("<div class='border-bottom'><b>" + data[i]["author"] + "</b> : @" + data[i]["author_screen_name"] + " " + "<img style= 'border-radius: 50%; width:10px;height:10px;' src='public/icons/red.png'> <br>" + data[i]["tweet"] + "</div>").addTo(group1);
+                } else if (senti == "2") {
+
+                    L.marker([parseFloat(data[i]["Latitude"]), parseFloat(data[i]["Longitude"])], {
+                        icon: tweetIcon
+                    }).bindPopup("<div class='border-bottom'><b>" + data[i]["author"] + "</b> : @" + data[i]["author_screen_name"] + " " + "<img style= 'border-radius: 50%; width:10px;height:10px;' src='public/icons/green.png'> <br>" + data[i]["tweet"] + "</div>").addTo(group1);
+                }
+                group1.addTo(LM_Map);
+            }
+        }
+    // }
 
 
 

@@ -61,7 +61,7 @@ class queryStatusController extends Controller
      */
     public function show($id)
     {
-        $statusObj = QueryStatus::where('userID', $id)->firstOrFail();
+        $statusObj = QueryStatus::where('userID', $id)->get();
         return $statusObj;
     }
 
@@ -96,6 +96,7 @@ class queryStatusController extends Controller
      */
     public function destroy($id)
     {
-        //
+        $statusObj = QueryStatus::where('queryID', $id)->delete();
+        return $statusObj;
     }
 }

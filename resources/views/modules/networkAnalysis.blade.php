@@ -149,6 +149,15 @@
             <li class="nav-item naTabs ">
                 <a class="nav-link smat-rounded " id="diffTabNA" data-toggle="pill" href="#diffContentNA" role="tab" aria-controls="diffContentNA" aria-selected="false">Difference</a>
             </li>
+            <li class="ml-auto">
+                <div class=" my-0  mr-2 border smat-rounded d-flex px-2   bg-white">
+                    <i class="fas fa-cog ml-2 text-normal" style="margin-top:11px;"></i>
+                    <select class="form-control" name="NAEngine" id="networkEngineNA">
+                        <option class="engineSelectorOption"  value="networkx">Network X </option>
+                        <option  class="engineSelectorOption" value="spark">Spark</option>
+                    </select>
+                </div>
+            </li>
             <li class="nav-item naTabs ">
                 {{-- <a class="nav-link smat-rounded " id="expansionTabNA" data-toggle="pill" href="#expansionContentNA" role="tab" aria-controls="expansionContentNA" aria-selected="false">Network Expansion</a> --}}
             </li>
@@ -219,7 +228,6 @@
                                                 <option  class="engineSelectorOption" value="spark">Spark</option>
                                             </select>
                                         </div>
-
                                     </li>
                                 </ul>
                                 <div class="tab-content " id="pills-tabContent">

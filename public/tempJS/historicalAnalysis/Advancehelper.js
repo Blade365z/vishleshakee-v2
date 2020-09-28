@@ -68,7 +68,7 @@ export const getOuputFromSparkAndStoreAsJSON = async (id, unique_name_timestamp,
 export const getFreqDistDataForAdvanceHA = async (query, from, to, rangeType, filename, userid) => {
     let dataArg;
     dataArg = JSON.stringify({ query, to, from, rangeType, filename, userid });
-    
+    console.log(dataArg);
     let response = await fetch('HA/getFrequencyDataForHistoricalAdvance', {
         method: 'post',
         headers: HeadersForApi,
@@ -100,6 +100,10 @@ export const getSentiDistDataForAdvanceHA = async (query, from, to, rangeType, f
 export const getCooccurDataForAdvanceHA = async (query, from, to, option, uniqueID, userID, filename) => {
     let dataArg;
     dataArg = JSON.stringify({ query, from, to, option, uniqueID, userID, mode:'write', filename});
+
+    let dataArgsForRead=JSON.stringify({
+        option, uniqueID, userID,limit:50,mode:'read'
+    });
     
     let response = await fetch('HA/getCooccurDataForAdvance', {
         method: 'post',
@@ -107,12 +111,25 @@ export const getCooccurDataForAdvanceHA = async (query, from, to, option, unique
         body: dataArg
     }); 
     let data = await response.json()
-    return data;
+    // return data;
+
+
+    // let data = await response.json();
+    if (data.status == "success") {
+        let readResponse = await fetch('HA/getCooccurDataForHA', {
+            method: 'post',
+            headers: HeadersForApi,
+            body: dataArgsForRead
+        })
+        let readData = await readResponse.json();
+        
+        return readData;
+    }
 }
 
 
 
-export const getTweetIDsForAdvanceHA = async (query, from = null, to = null, rangeType, filter = null,  userID, filename) => {
+export const getTweetIDsForAdvanceHA = async (query, from = null, to = null, rangeType, filter = null,  filename, userID) => {
     let dataArgs;   
     dataArgs = JSON.stringify({ from, to, query, rangeType, filter, userID, filename });
 

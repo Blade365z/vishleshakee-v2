@@ -19,6 +19,8 @@ Test ID's:
 2. Quoted : 1303260892776128512
 3: Three levels : 1303260736936792064,1303260963039133698
 retweet,reply,tweet,quotedTweet
+
+http://172.16.117.160/vishleshakee/tracking?tweetID=1310236170706497538
 */
 
 import { get_tweets_info_AjaxRequest, generate_tweets_div } from '../utilitiesJS/TweetGenerator.js';
@@ -133,67 +135,12 @@ const printTweetOnDiv = (data, offset, type) => {
         analysisBtnFlag = true
     }
     $('#tweetTitle' + '-' + offset).text(tweetTypeDict[type]);
-    getTweetRAWTEMP(data, divTemp, false, analysisBtnFlag);
+    generate_tweets_div(data, divTemp,true,analysisBtnFlag)
+
 }
 
-const getTweetRAWTEMP = (tweetData, div, dropDownArg = true, analysisBtnArg = false) => {
-    let userIDTemp, feedback = '', analysisBtn = '';
-    if (localStorage.getItem('smat.me')) {
-        let userInfoJSON = JSON.parse(localStorage.getItem('smat.me'));
-        userIDTemp = userInfoJSON['id'];
-    }
 
 
-
-    $('#' + div).html("");
-    tweetData.forEach(tweet => {
-
-
-
-        if (analysisBtnArg) {
-            analysisBtn = '<span class="btn-primary mx-2 px-2 py-1 tweetAnalysisBtn  smat-rounded" type="button"  value="' + tweet.tid + '">Analysis</span>';
-        } else {
-            analysisBtn = '';
-        }
-
-
-
-        if (dropDownArg) {
-            if (userIDTemp) {
-                feedback = '<div class="ml-auto" > <i class="fas fa-chevron-circle-down nav-link  " id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" ></i>     <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdown">\
-    <li class="dropdown-item clickable feedbackOption" value="'+ tweet.tid + '|' + userIDTemp + '|' + tweet.sentiment + '|' + tweet.category + '"   id="feedbackOption-' + div + tweet.tid + '">Give Feedback</li>\
-    <li class="dropdown-item clickable "  id="' + div + tweet.tid + '">Track Tweet </li>\
-    </div></div>';
-            }
-            else {
-                console.log('NOT LOGGED IN');
-            }
-        }
-        let sentiment = '', category = '', media = '', location = '';
-        let senticlass = '';
-        category = (tweet.category == 'normal') ? 'Normal' : ((tweet.category == 'sec') ? 'Security' : ((tweet.category == 'com') ? 'Communal' : 'Communal & Security'));
-        if (tweet.sentiment === 0) {
-            sentiment = 'Postive';
-            senticlass = 'pos'
-        } else if (tweet.sentiment === 1) {
-            sentiment = 'Negative';
-            senticlass = 'neg'
-        } else {
-            sentiment = 'Neutral';
-            senticlass = 'neu'
-        }
-
-        if (tweet.t_location) {
-            location = tweet.t_location;
-        }
-
-
-        $('#' + div).append('<div class="border  p-2 "><div class="d-flex"><div class="profilePictureDiv p-1 text-center mr-2"><img src="' + tweet.author_profile_image + '" style="height:33px;border-radius:50%" /></div><div> <p class="pt-1 m-0 font-weight-bold username"   value="' + tweet.author_id + '" >' + tweet.author + ' </p><p class="smat-dash-title pull-text-top m-0 "> @' + tweet.author_screen_name + ' </p></div> <div class="px-1 pt-1 mx-2  " >  <i class="fa fa-circle   text-' + tweet.category + '" aria-hidden="true" title="' + category + '"></i> </div> ' + feedback + '</div>  <div style="width:80%;"><p class="smat-tweet-body-text mb-1">' + tweet.tweet_text + '</p></div><div id="" class="row d-flex justify-content-center tweet_media_body_' + tweet['tid'] + '" ></div><div class="d-flex"><p class="m-0 tweet-details"> <span>  ' + tweet.datetime + '  &nbsp </span> <span>' + location + '</span> &nbsp ' + analysisBtn + ' <span class=" mx-2" >  <i class="fa fa-circle text-' + senticlass + '" aria-hidden="true" title="' + sentiment + '"></i>  ' + sentiment + '</span>              </p> </div></div>');
-
-
-
-    });
-}
 
 const adjustLines = () => {
     let widthOfTweetCard = $('.tweetCard').css('width');
@@ -205,7 +152,7 @@ const adjustLines = () => {
 }
 
 const initiateTweetAnalysis = (id, from, to, type) => {
-    id = '1308832944925147146'; //hardcoding it for now.
+    // id = '1308832944925147146'; //hardcoding it for now.
     currentlyAnalysed = id;
     $('#analysisType').text(tweetTypeDict[type]);
     $('.TTtab').html('<div class="text-center  smat-loader " ><i class="fa fa-circle-o-notch donutSpinner mt-5" aria-hidden="true"></i></div>');
@@ -214,21 +161,21 @@ const initiateTweetAnalysis = (id, from, to, type) => {
         if (response.data.length < 1) {
             $('#retweetContent').html('<div class="alert-danger text-center m-3 p-2 smat-rounded"> No Data Found </div>')
         } else {
-            drawFreqDataForTweet(response, 'retweetContent');
+            drawFreqDataForTweet(response, 'retweetContent',id,type);
         }
     });
     getFreqDataForTweets(id, from, to, 'QuotedTweet').then(response => {
         if (response.data.length < 1) {
             $('#quotedtweetContent').html('<div class="alert-danger text-center m-3 p-2 smat-rounded"> No Data Found </div>')
         } else {
-            drawFreqDataForTweet(response, 'quotedtweetContent');
+            drawFreqDataForTweet(response, 'quotedtweetContent',id,type);
         }
     });
     getFreqDataForTweets(id, from, to, 'Reply').then(response => {
         if (response.data.length < 1) {
             $('#replytweetContent').html('<div class="alert-danger text-center m-3 p-2 smat-rounded"> No Data Found </div>')
         } else {
-            drawFreqDataForTweet(response, 'replytweetContent');
+            drawFreqDataForTweet(response, 'replytweetContent',id,type);
         }
     });
 }

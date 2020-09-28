@@ -14,6 +14,7 @@ export const getTweetInfo = async (id) => {
             id
         })
     });
+    // console.log('ID',id);
     let data = await response.json()
     return data;
 }
@@ -23,7 +24,7 @@ export const getFreqDataForTweets = async(id,from,to,type) => {
     let dataArgs = JSON.stringify({
         id,from,to,type
     })
-    console.log(dataArgs);
+    // console.log(dataArgs);
     let response = await fetch('track/getFrequencyDistributionTweet', {
         method: 'post',
         headers: HeadersForApi,

@@ -73,6 +73,30 @@ jQuery(function () {
 
         if(args[4] == "ShortestPath"){
             render_shortestpath_graph(args[6],args[7],args[8]);
+        }else if(args[4] == "communities"){
+            render_community_graph1(args[6]).then(response => {
+                render_graph_community(response,"networkDivid");
+            });
+        }else if(args[4] == "union"){
+            console.log(args[6]);
+            let files = args[6].split("__");
+            render_union_graph(files).then(response => {
+                render_graph_union(response);
+            });
+        }else if(args[4] == "intersection"){
+            console.log(args[6]);
+            let files = args[6].split("__");
+            console.log(files);
+            render_union_graph(files).then(response => {
+                render_graph_union(response);
+            });
+        }else if(args[4] == "difference"){
+            console.log(args[6]);
+            let files = args[6].split("__");
+            console.log(files);
+            render_union_graph(files).then(response => {
+                render_graph_union(response);
+            });
         }else{
             render_centrality_graph(args[6], args[2], args[5]).then(response => {
                 console.log('RESPONSE', response);
@@ -566,53 +590,90 @@ $("#comm_exec").on('click', function (NAType = $("#NAEngine").val(), algo_option
 
 
 
-            render_community_graph1(data["query_list"][1]).then(response => {
-                render_graph_community(response, "networkDivid");
-            });
+            // render_community_graph1(data["query_list"][1]).then(response => {
+            //     render_graph_community(response, "networkDivid");
+            // });
         }
     })
 });
 
-$("#union_exec").on('click', function (NAType = "networkx") {
-    NAType = $("#networkEngineNA").val();
+$("#union_exec").on('click', function () {
     var url;
     var data = {};
     var input_arr = selected_graph_ids();
-    if (NAType == 'networkx') {
+    if (currentNetworkEngine == 'networkx') {
         url = 'na/union';
         data = {
             input: input_arr
         };
-    } else if (NAType == 'spark') {
+    } else if (currentNetworkEngine == 'spark') {
         var query_list = ['union'];
 
         for (var i = 0; i < input_arr.length; i++) {
             query_list.push(input_arr[i]);
         }
 
-        var unique_name_timestamp = (new Date().getTime()).toString(); // create unique_name   
-        url = 'na/requestToSparkandStoreResult';
-        data = {
-            query_list: query_list,
-            rname: unique_name_timestamp
-        };
         sparkUpload(selected_graph_ids());
+        var rname = (new Date().getTime()).toString() + '-spark';   // create unique_name   
+        url = 'na/requestToSpark';
+        data = {
+            query_list, rname
+        }
     } else {
         console.log("OO");
     }
-    union(url, data, NAType).then(response => {
-        if (NAType == "networkx") {
+    union(url, data, currentNetworkEngine).then(response => {
+        if (currentNetworkEngine == "networkx") {
             render_union_graph(data["input"]).then(response => {
                 render_graph_union(response);
             });
-        } else if (NAType == "spark") {
-            var arr1 = data["query_list"];
-            var arr12 = arr1.reverse();
-            arr12.pop();
-            var finalArray = arr12.reverse();
-            render_union_graph(finalArray).then(response => {
-                render_graph_union(response);
-            });
+        } else if (currentNetworkEngine == "spark") {
+
+            let sparkID = response.id;
+            //TODO::tobealtered!
+            let queryMetaData = searchRecords[currentlyShowing - 1];
+
+            let algo_option = "union";
+
+            transferQueryToStatusTable(queryMetaData, 'union',algo_option, sparkID);
+            function checkSparkStatus() {
+                fetch('na/getsparkstatus/' + sparkID, {
+                    method: 'get'
+                }).then(response => response.json())
+                    .then(response => {
+                        console.log(response);
+                        if (response.state === 'success') {
+                            let query_list = [algo_option];
+                            let conc;
+                            for(let i=0; i<input_arr.length; i++){
+                                query_list.push(input_arr[i]);
+                                if(i == 0){
+                                    conc = input_arr[i];
+                                }else{
+                                    conc = conc+"__"+input_arr[i];
+                                }
+                            }
+                            storeResultofSparkFromController(sparkID, query_list, userID).then(response => {
+                                console.log("I have received this as your filename");
+                                console.log(response.filename);
+                                makeShowBtnReadyAfterSuccess(sparkID, response.filename, 'union', algo_option,conc);
+                                window.clearInterval(checkSpartStatusInterval_centrality);
+                            })
+                        }
+                    })
+                    .catch(err => {
+                        console.log(err)
+                    })
+            }
+            checkSpartStatusInterval_centrality = setInterval(checkSparkStatus, 5000);
+
+            // var arr1 = data["query_list"];
+            // var arr12 = arr1.reverse();
+            // arr12.pop();
+            // var finalArray = arr12.reverse();
+            // render_union_graph(finalArray).then(response => {
+            //     render_graph_union(response);
+            // });
         }
     });
 });
@@ -628,7 +689,7 @@ $("#intersection_exec").on('click', function (NAType = "networkx") {
         data = {
             input: input_arr
         };
-    } else if (NAType == 'spark') {
+    } else if (currentNetworkEngine == 'spark') {
         var query_list = ['intersection'];
 
         for (var i = 0; i < input_arr.length; i++) {
@@ -649,14 +710,53 @@ $("#intersection_exec").on('click', function (NAType = "networkx") {
             render_intersection_diff_graph(data["input"], "intersection").then(response => {
                 render_intersection_difference(response, "intersection_displayer", "intersection");
             });
-        } else if (NAType == "spark") {
-            var arr1 = data["query_list"];
-            var arr12 = arr1.reverse();
-            arr12.pop();
-            var finalArray = arr12.reverse();
-            render_intersection_diff_graph(finalArray, "intersection").then(response => {
-                render_intersection_difference(response, "intersection_displayer", "intersection");
-            });
+        } else if (currentNetworkEngine == "spark") {
+
+            let sparkID = response.id;
+            //TODO::tobealtered!
+            let queryMetaData = searchRecords[currentlyShowing - 1];
+            let algo_option = "intersection";
+
+            transferQueryToStatusTable(queryMetaData, 'intersection',algo_option, sparkID);
+          
+            function checkSparkStatus() {
+                fetch('na/getsparkstatus/' + sparkID, {
+                    method: 'get'
+                }).then(response => response.json())
+                    .then(response => {
+                        console.log(response);
+                        if (response.state === 'success') {
+                            let query_list = [algo_option];
+                            let conc;
+                            for(let i=0; i<input_arr.length; i++){
+                                query_list.push(input_arr[i]);
+                                if(i == 0){
+                                    conc = input_arr[i];
+                                }else{
+                                    conc = conc+"__"+input_arr[i];
+                                }
+                            }
+                            storeResultofSparkFromController(sparkID, query_list, userID).then(response => {
+                                console.log("I have received this as your filename");
+                                console.log(response.filename);
+                                makeShowBtnReadyAfterSuccess(sparkID, response.filename, 'intersection', algo_option,conc);
+                                window.clearInterval(checkSpartStatusInterval_centrality);
+                            })
+                        }
+                    })
+                    .catch(err => {
+                        console.log(err)
+                    })
+            }
+            checkSpartStatusInterval_centrality = setInterval(checkSparkStatus, 5000);
+
+            // var arr1 = data["query_list"];
+            // var arr12 = arr1.reverse();
+            // arr12.pop();
+            // var finalArray = arr12.reverse();
+            // render_intersection_diff_graph(finalArray, "intersection").then(response => {
+            //     render_intersection_difference(response, "intersection_displayer", "intersection");
+            // });
         }
     });
 });

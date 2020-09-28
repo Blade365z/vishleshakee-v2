@@ -69,4 +69,32 @@ class TweetTracking extends Controller
 
         return json_encode($final_result);
     }
+
+
+
+    public function get_tweet_idlist_for_track_type_sourceid($date, $source_tweet_id, $tweet_type_of_dist){
+        $request->validate([
+            'sid' =>'required',
+            'to' => 'required',
+            'tweet_id_list_type' => 'required'
+        ]);
+        
+        $to= $request->input('to');
+        $from= $request->input('sid');
+        $tweet_id_list_type= $request->input('tweet_id_list_type');
+        $to_datetime = date('Y-m-d H:i:s', strtotime($to) + 0);    
+        $db_object = new DBmodelAsync;
+        $qb_obj = new QueryBuilder;
+        $ut_obj = new Utilities;
+        $final_result = array();
+        $temp_arr = array();
+
+        $stm_list = $qb_obj->get_statement($to_datetime, $from_datetime, $source_tweet_id, $distribution_type, 'tweet_track');
+        $result_async_from_db = $db_object->executeAsync_query($stm_list[1], $stm_list[0]);
+
+        foreach ($result_async_from_db as $rows) {
+
+
+        }
+    }
 }

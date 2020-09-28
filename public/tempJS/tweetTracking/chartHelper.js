@@ -6,8 +6,9 @@ PLEASE NOT THERE ARE TYPES::
 3.replytweet
 2.quotedtweet
 */
-export const drawFreqDataForTweet = (data,div) => {
+export const drawFreqDataForTweet = (data, div, id, type) => {
     // Create chart instance
+    console.log(id, '  ', type);
     var chart = am4core.create(div, am4charts.XYChart);
     // Add data
     var dataTemp = [];
@@ -18,9 +19,6 @@ export const drawFreqDataForTweet = (data,div) => {
         });
     }
     chart.data = dataTemp;
-
-
-
     // Create axes
     var dateAxis = chart.xAxes.push(new am4charts.DateAxis());
     dateAxis.renderer.minGridDistance = 50;
@@ -61,21 +59,13 @@ export const drawFreqDataForTweet = (data,div) => {
 
 
     // //Handling Click Events 
-    // series.columns.template.events.on("hit", function (ev) {
-    //     if (rangeType == 'day') {
-    //         let datetime_obj = ev.target.dataItem.component.tooltipDataItem.dataContext;
-    //         var date = getDateInFormat(datetime_obj['date'], 'Y-m-d');
-    //         var startTime = getDateInFormat(datetime_obj['date'], 'HH:MM:SS');
-    //         frequencyDistributionUA(query, 'hour', date, date, null, div, true);
-    //         //ARGS format :: (query=null,rangeType,fromDate=null,toDate=null,toTime=null,div,appendArg=false)
-    //     } else if (rangeType == 'hour') {
-    //         let datetime_obj = ev.target.dataItem.component.tooltipDataItem.dataContext;
-    //         let date = getDateInFormat(datetime_obj['date'], 'Y-m-d');
-    //         let startTime = getDateInFormat(datetime_obj['date'], 'HH:MM:SS');
-    //         let dateTimeTemp = date + ' ' + startTime;
-    //         console.log(div);
-    //         frequencyDistributionUA(query, '10sec', dateTimeTemp, dateTimeTemp, null, div, true);
-    //         //ARGS format :: (query=null,rangeType,fromDate=null,toDate=null,toTime=null,div,appendArg=false)
-    //     }
-    // });
+    series.columns.template.events.on("hit", function (ev) {
+        if (type == 'Tweet') {
+
+        } else if (type == 'QuotedTweet') {
+
+        } else if (type == 'Reply') {
+
+        }
+    });
 }

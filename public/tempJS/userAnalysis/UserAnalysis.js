@@ -209,8 +209,8 @@ export const frequencyDistributionUA = (query = null, rangeType, fromDate = null
     let chartTweetDivID = div + rangeType + '-tweets';
     // class="' + rangeType + '-charts"
     if (rangeType == 'hour') {
-        $('.hour-chart').remove();
-        $('.10sec-chart').remove();
+        $('.hour-'+chartType).remove();
+        $('.10sec-'+chartType).remove();
     }
     if (appendArg) {
         $('#' + freqParentDiv).append('<div class=" mt-2   appendedChart ' + appendedChartParentID + '"><div class="d-flex"> <div class="mr-auto closeGraph"    value="' + rangeType + '-charts" title="close" >  <i class="fas fa-times"></i> </div> </div> <div class="row"><div class="col-sm-8"><div class="uaTab freqDistChart resultDiv  chartDiv border" id="' + chartDivID + '" ></div></div><div class="col-sm-4"><div class="freqDistTweets border resultDiv " id="' + chartTweetDivID + '"></div><div class="freqDistSummary border d-flex pt-2 resultDiv "  id="' + summaryDivID + '" ></div></div></div></div>');
@@ -265,8 +265,8 @@ export const sentimentDistributionUA = (query = null, rangeType, fromDate = null
     let summaryDivID = div + '-' + rangeType + '-summary';
     let chartTweetDivID = div + rangeType + '-tweets';
     if (rangeType == 'hour') {
-        $('.hour-chart').remove();
-        $('.10sec-chart').remove();
+        $('.hour-'+chartType).remove();
+        $('.10sec-'+chartType).remove();
     }
     if (appendArg) {
         $('#' + sentiParentDiv).append('<div class=" mt-2 ' + appendedChartParentID + '"><div class="d-flex"> <div class="mr-auto closeGraph"    value="' + rangeType + '-charts" title="close" >  <i class="fas fa-times"></i> </div> </div> <div class="row"><div class="col-sm-8"><div class="uaTab sentiDistChart chartDiv border" id="' + chartDivID + '" ></div></div><div class="col-sm-4"><div class="sentiDistTweets border" id="' + chartTweetDivID + '"></div><div class="sentiDistSummary border d-flex pt-2"  id="' + summaryDivID + '" ></div></div></div></div>');

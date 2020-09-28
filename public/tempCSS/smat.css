@@ -31,6 +31,11 @@
     cursor: pointer;
     opacity: 50%;
 }
+#tweets-modal-div{
+    height:500px;
+    overflow-x:hidden;
+    overflow-y: auto;
+}
 @font-face {
     font-family: Roboto;
     src: url('Roboto-Regular.ttf');

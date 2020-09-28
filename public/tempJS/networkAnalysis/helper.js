@@ -176,6 +176,7 @@ export const community_detection = async (url,data,NAType) =>{
 }
 
 export const render_community_graph1 = async (input) => {
+    console.log(input);
     let data = {
         input : input
     };
@@ -525,6 +526,9 @@ export const selected_graph_ids = () => {
 }
 
 export const union = async (url,data,NAType) => {
+    console.log("Printing dependents");
+    console.log(url);
+    console.log(data);
     let response = await fetch(url,{
         method : 'post',
         headers : HeadersForApi,
@@ -553,6 +557,7 @@ export const render_union_graph = async (input) => {
 
 export const render_graph_union = (res) => {
 
+    console.log(res);
     var nodes_arr = res["nodes"];
     var edges_arr = res["edges"];
     var querynodeinfo = res["querynode"];

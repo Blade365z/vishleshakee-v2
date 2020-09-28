@@ -834,10 +834,33 @@ class CommonController extends Controller
             echo json_encode($final_result);  
         }else{
             $stm_list = $qb_obj->get_statement(null, null, $tweet_id_list, null, $feature_option='tweet_info', null, $async=false);
-            $final_result = $dbmodel_object->execute_query_first_require($stm_list[0]); // return StdClass() object
+            $row = $dbmodel_object->execute_query_first_require($stm_list[0]); // return StdClass() object
+
+            $media_list_temp = array();
+            $media_list = $row["media_list"];
+            $c = $row["category"];
+            // for category                
+            if(($c == 11) or ($c == 12) or ($c == 13))
+                $category = 'com';
+            else if(($c == 101) or ($c == 102) or ($c == 103))
+                $category = 'sec';
+            else if(($c == 111) or ($c == 112) or ($c == 113))
+                $category = 'com_sec';  
+            else if(($c == 1) or ($c == 2) or ($c == 3))
+                $category = 'normal';
+            // ******
+            if (!is_null($media_list)) {
+                foreach ($media_list as $m) {
+                    array_push($media_list_temp, array($m["media_type"], $m["media_url"]));
+                }
+            }
+            $datetime_str = $ut_obj->get_date_time_from_cass_date_obj($row["datetime"], 'Y-m-d H:i:s');
+            $datetime_str = $ut_obj->convert_utc_datetime_to_local_datetime($datetime_str);
+
+            $final_result = array("t_location" => $row["t_location"], "datetime" => $datetime_str, "tid" => $row["tid"], "author" => $row["author"], "author_id" => $row["author_id"], "author_profile_image" => $row["author_profile_image"], "author_screen_name" => $row["author_screen_name"], "sentiment" => $row["sentiment"]->value(), "quoted_source_id" => $row["quoted_source_id"], "tweet_text" => $row["tweet_text"], "retweet_source_id" => $row["retweet_source_id"], "replyto_source_id" => $row["replyto_source_id"], "media_list" => $media_list_temp, "type" => $row["type"], "category" => $category);
+
             return $final_result;
         }
-         
     }
 
 
@@ -907,7 +930,8 @@ class CommonController extends Controller
                 $uid_info_arr = json_decode($this->get_user_info($line[1], false)); //converted string StdClass() object to StdClass() object;
                 // {"author_id":"955979293615587330","author":"Emmanuel Batman \ud83c\udde6\ud83c\uddf7\ud83d\udc0d","author_screen_name":"EmmanuelBatman_","profile_image_url_https":"https:\/\/pbs.twimg.com\/profile_images\/1299482928007831552\/alqHQyCP_normal.jpg"}
                 // echo $uid_info_arr->{'author'};
-                array_push($final_res, array("id"=>$line[1], "count"=>intval($line[2]), "author"=> $uid_info_arr->{'author'}, "handle" =>  $uid_info_arr->{'author_screen_name'}));
+                if($uid_info_arr)
+                    array_push($final_res, array("id"=>$line[1], "count"=>intval($line[2]), "author"=> $uid_info_arr->{'author'}, "handle" =>  $uid_info_arr->{'author_screen_name'}));
             }
         }
         return ($final_res);

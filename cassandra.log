@@ -12085,3 +12085,4 @@
 25-09-2020 07:40:46 UTC [ERROR] Failed to send a heartbeat within connection idle interval. Terminating connection... (connection.cpp:348)
 25-09-2020 09:11:46 UTC [ERROR] Expected at least 4 bytes to decode int value (decoder.cpp:173)
 25-09-2020 09:11:47 UTC [ERROR] Expected at least 4 bytes to decode int value (decoder.cpp:173)
+28-09-2020 05:57:36 UTC [ERROR] Connection pool was unable to connect to host 172.16.117.201 because of the following error: Received error response 'Unable to perform authentication: Operation timed out - received only 0 responses.' (0x02000100) (connection_pool_connector.cpp:125)

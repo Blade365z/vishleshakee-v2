@@ -126,3 +126,19 @@ export const getTopDataHA = async (from, to, option, limit) => {
     let data = await response.json();
     return data;
 }
+
+export const getQueryStatues = async (userID) => {
+    let response = await fetch('status/'+userID, {
+        method: 'get'
+    })
+    let data = await response.json();
+    return data;
+}
+
+export const removeFromStatusTable = async(id) => {
+    let response = await fetch('status/'+id, {
+        method: 'delete'
+    })
+    let data = await response.json();
+    return data;
+}

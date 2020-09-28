@@ -234,4 +234,5 @@ Route::get('/status/{username}', 'queryStatusController@show');
 Route::group(['prefix' => 'track'], function () {
     Route::post('/getTweetInfo', 'TweetTracking@getTweetInfo');
     Route::post('/getFrequencyDistributionTweet', 'TweetTracking@getFrequencyDistributionTweet');
+    Route::post('/getTweetIDsForSource', 'TweetTracking@get_tweet_idlist_for_track_type_sourceid');
 });

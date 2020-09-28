@@ -137,8 +137,8 @@ class LocationMap extends Controller
             
          
             $tweetid_list_array = array();
-            array_push($tweetid_list_array,'1300689867836395526');
-            array_push($tweetid_list_array,'1305520073982054404');
+            // array_push($tweetid_list_array,'1300689867836395526');
+            // array_push($tweetid_list_array,'1305520073982054404');
             
             foreach ($data['data'] as $tid) {
                 array_push($tweetid_list_array, $tid);

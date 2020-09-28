@@ -15,7 +15,7 @@ export const makeSmatReady = () => {
 
 
 
-export const makeSuggestionsRead = async (div, type, limit) => {
+export const makeSuggestionsRead = async (div, type, limit ) => {
     let date =getCurrentDate(); //TODO::Take current day here
     let gloabalArr;
     gloabalArr = await getTopDataHA(date, date, type, limit).then(response => {
@@ -25,25 +25,30 @@ export const makeSuggestionsRead = async (div, type, limit) => {
         for (const [key, value] of Object.entries(response)) {
             suggestionsArr.push(key);
         }
-        // constructs the suggestion engine
-        var suggestions = new Bloodhound({
-            datumTokenizer: Bloodhound.tokenizers.whitespace,
-            queryTokenizer: Bloodhound.tokenizers.whitespace,
-            // `states` is an array of state names defined in "The Basics"
-            local: suggestionsArr
-        });
-        let divTemp = '#' + div + '  ' + '.typeahead';
-        $(divTemp).typeahead({
-            hint: true,
-            highlight: true,
-            minLength: 1
-        },
-            {
-                name: 'suggestions',
-                source: suggestions
-            });
+        makeDropDownReady(suggestionsArr,div,'suggestions');
         return suggestionsArr;
 
     });
     return gloabalArr;
+}
+
+
+export const makeDropDownReady = (array,div,name) =>{
+            // constructs the suggestion engine
+            var suggestions = new Bloodhound({
+                datumTokenizer: Bloodhound.tokenizers.whitespace,
+                queryTokenizer: Bloodhound.tokenizers.whitespace,
+                // `states` is an array of state names defined in "The Basics"
+                local: array
+            });
+            let divTemp = '#' + div + '  ' + '.typeahead';
+            $(divTemp).typeahead({
+                hint: true,
+                highlight: true,
+                minLength: 1
+            },
+                {
+                    name: name,
+                    source: suggestions
+                });
 }
