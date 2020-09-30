@@ -21,9 +21,9 @@ export const TweetsGenerator = (data_list, max_per_page, chart_draw_div_id, from
   var tweetDiv = chart_draw_div_id + '_tweets';
 
   var tweet_div_page_selection = chart_draw_div_id + 'page-selection';
-  let title='';
-  if(fromDate && toDate){
-    title='<div class="mx-1 mt-3 d-flex">Tweets from: ' + fromDate + ' to ' + toDate + ' &nbsp '  + '   </div>';
+  let title = '';
+  if (fromDate && toDate) {
+    title = '<div class="mx-1 mt-3 d-flex">Tweets from: ' + fromDate + ' to ' + toDate + ' &nbsp ' + '   </div>';
   }
 
   if (filterOptions) {
@@ -54,7 +54,7 @@ export const TweetsGenerator = (data_list, max_per_page, chart_draw_div_id, from
     filterOptions = '';
   }
 
-  $('#' + chart_draw_div_id).html(title+'<div id="' + tweetDiv + '"> </div><div> <div class="float-center " id="' + tweet_div_page_selection + '"></div>  </div>')
+  $('#' + chart_draw_div_id).html(title + '<div id="' + tweetDiv + '"> </div><div> <div class="float-center " id="' + tweet_div_page_selection + '"></div>  </div>')
 
 
   $(tweet_div_page_selection).empty();
@@ -122,8 +122,8 @@ export const get_tweets_info_AjaxRequest = (slice_tid_list, callback) => {
     })
 }
 
-export const generate_tweets_div = (tweetData, div, dropDownArg = true,analysisBtnArg = false) => {
-  let userIDTemp, feedback = '',analysisBtn = '';
+export const generate_tweets_div = (tweetData, div, dropDownArg = true, analysisBtnArg = false) => {
+  let userIDTemp, feedback = '', analysisBtn = '';
   if (localStorage.getItem('smat.me')) {
     let userInfoJSON = JSON.parse(localStorage.getItem('smat.me'));
     userIDTemp = userInfoJSON['id'];
@@ -134,15 +134,15 @@ export const generate_tweets_div = (tweetData, div, dropDownArg = true,analysisB
 
     if (analysisBtnArg) {
       analysisBtn = '<span class="btn-primary mx-2 px-2 py-1 tweetAnalysisBtn  smat-rounded" type="button"  value="' + tweet.tid + '">Analysis</span>';
-  } else {
+    } else {
       analysisBtn = '';
-  }
+    }
     if (dropDownArg) {
       if (userIDTemp) {
         feedback = '<div class="ml-auto" > <i class="fas fa-chevron-circle-down nav-link  " id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" ></i>     <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdown">\
       <li class="dropdown-item clickable p-0 d-flex feedbackOption" value="'+ tweet.tid + '|' + userIDTemp + '|' + tweet.sentiment + '|' + tweet.category + '"   id="feedbackOption-' + div + tweet.tid + '"><span  class="w-100 ml-2 ">Give Feedback</span></li>\
-      <li class="dropdown-item clickable p-0 d-flex "  id="track' + div + tweet.tid + '"><a  class="w-100 ml-2" href="tracking?tweetID='+tweet.tid+'" target="_blank">Track Tweet </a></li>\
-      <li class="dropdown-item clickable p-0 d-flex "  id="originalPost-' + div + tweet.tid + '"><a  class="w-100 ml-2" href="http://www.twitter.com/'+tweet.author_screen_name+'/status/'+tweet.tid + '" target="_blank">Go to original post </a></li>\
+      <li class="dropdown-item clickable p-0 d-flex "  id="track' + div + tweet.tid + '"><a  class="w-100 ml-2" href="tracking?tweetID=' + tweet.tid + '" target="_blank">Track Tweet </a></li>\
+      <li class="dropdown-item clickable p-0 d-flex "  id="originalPost-' + div + tweet.tid + '"><a  class="w-100 ml-2" href="http://www.twitter.com/' + tweet.author_screen_name + '/status/' + tweet.tid + '" target="_blank">Go to original post </a></li>\
       </div></div>';
       }
       else {
@@ -150,25 +150,25 @@ export const generate_tweets_div = (tweetData, div, dropDownArg = true,analysisB
       }
     }
     let sentiment = '', category = '', media = '', location = '';
-   let senticlass='';
+    let senticlass = '';
     category = (tweet.category == 'normal') ? 'Normal' : ((tweet.category == 'sec') ? 'Security' : ((tweet.category == 'com') ? 'Communal' : 'Communal & Security'));
     if (tweet.sentiment === 0) {
       sentiment = 'Postive';
-      senticlass='pos'
+      senticlass = 'pos'
     } else if (tweet.sentiment === 1) {
       sentiment = 'Negative';
-      senticlass='neg'
+      senticlass = 'neg'
     } else {
       sentiment = 'Neutral';
-      senticlass='neu'
+      senticlass = 'neu'
     }
 
     if (tweet.t_location) {
       location = tweet.t_location;
     }
 
- 
-    $('#' + div).append('<div class="border  p-2 "><div class="d-flex"><div class="profilePictureDiv p-1 text-center mr-2"><img src="' + tweet.author_profile_image + '" style="height:33px;border-radius:50%" /></div><div> <p class="pt-1 m-0 font-weight-bold username"   value="'+tweet.author_id+'" >' + tweet.author + ' </p><p class="smat-dash-title pull-text-top m-0 "> @' + tweet.author_screen_name + ' </p></div> <div class="px-1 pt-1 mx-2  " >  <i class="fa fa-circle   text-' + tweet.category + '" aria-hidden="true" title="' + category + '"></i> </div> ' + feedback + '</div>  <div style="width:80%;"><p class="smat-tweet-body-text mb-1">' + tweet.tweet_text + '</p></div><div id="" class="row d-flex justify-content-center tweet_media_body_' + tweet['tid'] + '" ></div><div class="d-flex"><p class="m-0 tweet-details"> <span>  ' + tweet.datetime + '  &nbsp </span> <span>' + location + '</span> &nbsp ' + analysisBtn + '   <span class=" mx-2" >  <i class="fa fa-circle text-' + senticlass + '" aria-hidden="true" title="' + sentiment + '"></i>  ' + sentiment + '</span>              </p> </div></div>');
+
+    $('#' + div).append('<div class="border  p-2 "><div class="d-flex"><div class="profilePictureDiv p-1 text-center mr-2"><img src="' + tweet.author_profile_image + '" style="height:33px;border-radius:50%" /></div><div> <p class="pt-1 m-0 font-weight-bold username"   value="' + tweet.author_id + '" >' + tweet.author + ' </p><p class="smat-dash-title pull-text-top m-0 "> @' + tweet.author_screen_name + ' </p></div> <div class="px-1 pt-1 mx-2  " >  <i class="fa fa-circle   text-' + tweet.category + '" aria-hidden="true" title="' + category + '"></i> </div> ' + feedback + '</div>  <div style="width:80%;"><p class="smat-tweet-body-text mb-1 filter_text">' + tweet.tweet_text + '</p></div><div id="" class="row d-flex justify-content-center tweet_media_body_' + tweet['tid'] + '" ></div><div class="d-flex"><p class="m-0 tweet-details"> <span>  ' + tweet.datetime + '  &nbsp </span> <span>' + location + '</span> &nbsp ' + analysisBtn + '   <span class=" mx-2" >  <i class="fa fa-circle text-' + senticlass + '" aria-hidden="true" title="' + sentiment + '"></i>  ' + sentiment + '</span>              </p> </div></div>');
 
 
 
@@ -200,7 +200,7 @@ export const generate_tweets_div = (tweetData, div, dropDownArg = true,analysisB
         }
       }
     }
-
+    tweetText();
   });
 
 }
@@ -208,3 +208,17 @@ export const generate_tweets_div = (tweetData, div, dropDownArg = true,analysisB
 
 
 
+
+function tweetText() {
+  $(".filter_text").each(function () {
+    var response = filter_text($(this).text());
+    $(this).html(response);
+  });
+}
+
+function filter_text(str) {
+  str = str.replace(/@([^\W]+)/g, '<span class="hashtags clickable text-normal query">@$1</span> ');
+  str = str.replace(/(https?:\/\/[^\s]+)/g, '<a href="$1"   target="_blank"> $1</a>');
+  str = str.replace(/#([^\W]+)/g, '<span class="hashtags clickable text-normal query" >#$1</span> ');
+  return str;
+}

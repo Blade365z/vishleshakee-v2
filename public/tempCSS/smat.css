@@ -42,7 +42,7 @@
 }
 
 #result-div tspan{
-    font-size:12px;
+    font-size:13px !important; 
 }
 .smat-dash-title {
     font-size: 11px ;
@@ -643,7 +643,7 @@ select{
         margin-top: -5px !important;
     }
     .haTab {
-        height:400px;
+        min-height:400px;
         overflow-x: hidden;
      
     }

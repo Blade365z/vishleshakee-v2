@@ -199,7 +199,7 @@ class QueryBuilder{
                 $final_res[0] = $prepared_statement;
                 $final_res[1] = $input_args;
             }else{
-                $where_clause = "source_tweet_id='" . $token ."' AND datetime = '" . $to_datetime ."' AND tweet_type='" . $range_type ."'";
+                $where_clause = "source_tweet_id='" . $token ."' AND datetime ='" . $to_datetime ."' AND tweet_type='" . $range_type ."'";
                 $prepared_statement = "SELECT * FROM tweet_track WHERE ".$where_clause;  
                 $final_res[0] = $prepared_statement;
             }

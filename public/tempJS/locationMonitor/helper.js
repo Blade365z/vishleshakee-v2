@@ -22,6 +22,22 @@ export const get_current_time = (time) =>{
     return from_to_datetime;
 }
 
+
+
+export const findLocation = async (location) => {
+    let dataArg;
+    dataArg = JSON.stringify({ location });
+
+    let response = await fetch('LM/getcityState', {
+        method: 'post',
+        headers: HeadersForApi,
+        body: dataArg
+    });
+
+    let data = await response.json();
+    return data;
+}
+
 export const checkLocation = async (place) => {
     let dataArg;
     dataArg = JSON.stringify({ place });

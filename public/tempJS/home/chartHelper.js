@@ -1,6 +1,8 @@
 
 import { getTweetIDsFromController, getFreqDistData, getSentiDistData, getTopCooccurData } from './helper.js'
 import { TweetsGenerator } from '../utilitiesJS/TweetGenerator.js'
+import { forwardToHistoricalAnalysis, forwardToUserAnalysis } from '../utilitiesJS/redirectionScripts.js';
+import { getCurrentDate } from '../utilitiesJS/smatDate.js';
 
 
 
@@ -180,11 +182,11 @@ export const generateSentimentChart = (data, query, div) => {
   // Create axes
   var dateAxis = chart.xAxes.push(new am4charts.DateAxis());
   dateAxis.title.text = "DateTime";
-		dateAxis.tooltipDateFormat = "HH:mm:ss, d MMMM";
-		dateAxis.baseInterval = {
-			"timeUnit": "second",
-			"count": 10
-		}
+  dateAxis.tooltipDateFormat = "HH:mm:ss, d MMMM";
+  dateAxis.baseInterval = {
+    "timeUnit": "second",
+    "count": 10
+  }
   var valueAxis = chart.yAxes.push(new am4charts.ValueAxis());
   valueAxis.min = 0;
   valueAxis.max = 100;
@@ -255,11 +257,19 @@ export const generateBarChart = (data = null, query, div, type) => {
   function generateChartData(data, type) {
     var chartData = [];
     data.forEach(element => {
-      chartData.push({
-        "token": element['handle'],
-        "count": element['count'],
-
-      });
+      if (type == 'mention') {
+        chartData.push({
+          "token": element['handle'],
+          "count": element['count'],
+        });
+      }
+      else if (type === 'user') {
+        chartData.push({
+          "token": element['handle'],
+          "count": element['count'],
+          'id': element['id'],
+        });
+      }
     });
 
     return chartData;
@@ -315,14 +325,15 @@ export const generateBarChart = (data = null, query, div, type) => {
   let finalTime = data[0]['finalTime'];
   console.log(finalTime);
   const updateBarChart = () => {
-
+    console.log(query,'------', type);
     // getTopCooccurData async (interval = null, query, option, isRealTime = false, fromTime = null)
     getTopCooccurData(null, query, type, true, finalTime).then(response => {
       finalTime = response[0]['finalTime'];
       response = response[0]['data'];
 
       let dataTemp = response;
-      if (dataTemp) {
+      console.log(dataTemp);
+      if (dataTemp.length > 1) {
         let lenofTempData = Object.keys(dataTemp).length - 1;
         if (lenofTempData > 1) {
           for (let i = 0; i <= lenofTempData; i++) {
@@ -338,10 +349,18 @@ export const generateBarChart = (data = null, query, div, type) => {
               }
             }
             if (flag == true) {
+              if(type=='hashtag' || type=='mention' ){
               chart.addData({
                 "token": dataTemp[i]['handle'],
                 "count": dataTemp[i]['count']
               });
+              }else if(type=='user'){
+                chart.addData({
+                  "token": dataTemp[i]['handle'],
+                  "count": dataTemp[i]['count'],
+                  "id": dataTemp[i]['id']
+                });
+              }
             }
           }
         } else {
@@ -358,10 +377,18 @@ export const generateBarChart = (data = null, query, div, type) => {
             }
           }
           if (flag == true) {
-            chart.addData({
-              "token": dataTemp['handle'],
-              "count": dataTemp['count']
-            });
+            if(type=='hashtag' || type=='mention' ){
+              chart.addData({
+                "token": dataTemp[i]['handle'],
+                "count": dataTemp[i]['count']
+              });
+              }else if(type=='user'){
+                chart.addData({
+                  "token": dataTemp[i]['handle'],
+                  "count": dataTemp[i]['count'],
+                  "id": dataTemp[i]['id']
+                });
+              }
 
           }
         }
@@ -373,10 +400,27 @@ export const generateBarChart = (data = null, query, div, type) => {
 
   categoryAxis.sortBySeries = series;
   chart.cursor = new am4charts.XYCursor();
-
+  series.columns.template.events.on("hit", function (ev) {
+    console.log(type);
+    if (type === 'mention' || type === 'hashtag') {
+      var item = ev.target.dataItem.dataContext.token;
+      if (localStorage.getItem('smat.me')) {
+        let queryFinal =query+'&'+item;
+        let date = getCurrentDate();
+        forwardToHistoricalAnalysis(queryFinal, date, date);
+      } else {
+        forwardToHistoricalAnalysis(item);
+      }
+    }else{
+      var item = ev.target.dataItem.dataContext.id;
+      if (localStorage.getItem('smat.me')) {
+        let date = getCurrentDate();
+        forwardToUserAnalysis(item,date,date);
+      } 
+    }
+  });
 
 }
-
 
 
 

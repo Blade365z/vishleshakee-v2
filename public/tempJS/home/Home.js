@@ -17,7 +17,7 @@ import { TweetsGenerator } from '../utilitiesJS/TweetGenerator.js';
 import { get_tweet_location_home,getCompleteMap } from '../utilitiesJS/getMap.js';
 import { makeSuggestionsRead, makeSmatReady } from '../utilitiesJS/smatExtras.js'
 import { getCurrentDate } from '../utilitiesJS/smatDate.js';
-
+import {forwardToUserAnalysis} from '../utilitiesJS/redirectionScripts.js';
 
 //Global variables 
 var MODE = '000', interval = 900, query = '';
@@ -30,11 +30,13 @@ const intervalValues = { '15': 900, '30': 1800, '45': 2700, '1': 3600, '2': 7200
 const categoryColor = { 'normal': 'text-normal', 'com': 'text-com', 'sec': 'text-sec', 'com_sec': 'text-com_sec' }
 var date = getCurrentDate();
 var TopTrendingData;
-
-
-
+var userID='';
 
 jQuery(function () {
+  if (localStorage.getItem('smat.me')) {
+    let userInfoTemp = JSON.parse(localStorage.getItem('smat.me'));
+    userID = userInfoTemp['id'];
+  } 
   getMe();
   makeSmatReady();
   $('#alertsDiv').append('<div class="text-center  smat-loader"  id="alertBoxLoader"><i class="fa fa-circle-o-notch donutSpinner" aria-hidden="true"></i></div>')
@@ -84,7 +86,7 @@ jQuery(function () {
     query = incoming ? query = incoming : Object.keys(TopTrendingData)[0];
     $('#publicCurrentQuery').text(query);
     $('#' + publicAnalysisResultDiv).html('<div class="text-center smat-loader " ><i class="fa fa-circle-o-notch donutSpinner mt-5" aria-hidden="true"></i></div>')
-    frequencyPublic(query, interval);
+    frequencyPublic(query, interval,'freq-public-tab');
   });
 
 
@@ -106,60 +108,42 @@ jQuery(function () {
   })
 
   $('.freq-public-tab').on('click', function () {
-    MODE = '000';
-    $('.public-analysis-tab').removeClass('smat-active ');
-    $(this).addClass('smat-active ');
-    $('.public-analysis-result').html('');
-    makePublicAnalysisReady(MODE);
-    frequencyPublic(query, interval);
+
+    frequencyPublic(query, interval,'freq-public-tab');
   });
 
 
   $('.senti-public-tab').on('click', function () {
-    MODE = '001';
     $('.public-analysis-tab').removeClass('smat-active ');
     $(this).addClass('smat-active ');
     $('.public-analysis-result').html('');
-    makePublicAnalysisReady(MODE);
-    sentimentPublic();
+    sentimentPublic(query, interval,'senti-public-tab');
 
   });
 
   $('.mentions-public-tab').on('click', function () {
-    MODE = '002';
-    $('#' + publicAnalysisResultDiv).html('')
-    $('#' + publicAnalysisResultDiv).html('<div class="text-center smat-loader " ><i class="fa fa-circle-o-notch donutSpinner" aria-hidden="true"></i></div>')
-    $('.public-analysis-tab').removeClass('smat-active ');
+  
     $(this).addClass('smat-active ');
     $('.public-analysis-result').html('');
-    makePublicAnalysisReady(MODE);
-    coOccurPublic('mention');
+    coOccurPublic('mention',query, interval,'mentions-public-tab');
 
   });
 
   $('.topusers-public-tab').on('click', function () {
-    MODE = '003';
-    $('.public-analysis-tab').removeClass('smat-active ');
-    $(this).addClass('smat-active ');
+   
     $('.public-analysis-result').html('');
-    makePublicAnalysisReady(MODE);
-    coOccurPublic('user');
+   
+    coOccurPublic('user',query, interval,'topusers-public-tab');
   });
   $('.locations-public-tab').on('click', function () {
-    MODE = '004';
-    $('.public-analysis-tab').removeClass('smat-active ');
-    $(this).addClass('smat-active ');
     $('.public-analysis-result').html('');
-    makePublicAnalysisReady(MODE);
-    generatePublicLocations();
+    generatePublicLocations(query, interval,'locations-public-tab');
   });
   $('.tweets-public-tab').on('click', function () {
-    MODE = '005';
-    $('.public-analysis-tab').removeClass('smat-active ');
-    $(this).addClass('smat-active ');
+  
     $('.public-analysis-result').html('');
-    makePublicAnalysisReady(MODE);
-    tweetPublic();
+   
+    tweetPublic(query, interval,'tweets-public-tab');
   });
 
   $('.publicHashtagsFilter').on('click', function () {
@@ -169,9 +153,7 @@ jQuery(function () {
   });
   $('body').on('click', 'div .username', function () {
     let queryCaptured = '$' + $(this).attr('value');
-    queryCaptured = encodeURIComponent(queryCaptured);
-    let redirectURL = 'userAnalysis' + '?query=' + queryCaptured + '&from=' + date + '&to=' + date;
-    window.open(redirectURL, '_blank');
+    forwardToUserAnalysis(queryCaptured,date,date);
   });
 
 
@@ -231,43 +213,70 @@ const updatePublicTrendingHashtagsEveryOneMiute = () => {
 
 }
 
-const frequencyPublic = (queryArg, intervalArg) => {
-
+const frequencyPublic = (queryArg, intervalArg,btnClass) => {
+  $('.public-analysis-tab').removeClass('smat-active ');
+  $('.'+btnClass).addClass('smat-active ');
+  $('.public-analysis-result').html('');
   $('#' + publicAnalysisResultDiv).html('<div class="text-center smat-loader " ><i class="fa fa-circle-o-notch donutSpinner" aria-hidden="true"></i></div>')
   $('#public-summary-row').html('<div class="d-flex"> <span class="mx-2"><p class="m-0 smat-box-title-large font-weight-bold text-dark" id="freqTotalPublic">0</p><p class="pull-text-top smat-dash-title m-0 ">Tweets Arrived</p></span></div><div class="d-flex "><span class="mx-2"><p class="m-0 smat-box-title-large font-weight-bold text-normal" id="publicNormalTotal">0</p><p class="pull-text-top smat-dash-title m-0 ">Normal</p></span><span class="mx-2"><p class="m-0 smat-box-title-large font-weight-bold text-sec" id="publicSecTotal">0</p><p class="pull-text-top smat-dash-title m-0">Security</p></span><span class="mx-2"><p class="m-0 smat-box-title-large font-weight-bold text-com" id="publicComTotal">0</p><p class="pull-text-top smat-dash-title m-0">Communal</p></span><span class="mx-2"><p class="m-0 smat-box-title-large font-weight-bold text-com_sec" id="publiccom_secTotal">0</p><p class="pull-text-top smat-dash-title m-0">Sec.& Com.</p></span></div>');
   getFreqDistData(intervalArg, query).then(response => {
     // console.log(response);
+    MODE = '000';
+    makePublicAnalysisReady(MODE);
     generateFrequencyChart(response, queryArg, publicAnalysisResultDiv);
   });
 
 }
 
-const sentimentPublic = () => {
+const sentimentPublic = (queryArg, intervalArg,btnClass) => {
+  $('.public-analysis-tab').removeClass('smat-active ');
+  $('.'+btnClass).addClass('smat-active ');
+  $('.public-analysis-result').html('');
   $('#' + publicAnalysisResultDiv).html('<div class="text-center smat-loader " ><i class="fa fa-circle-o-notch donutSpinner" aria-hidden="true"></i></div>')
 
   renderSentimentSummary('public-summary-1', 'public-summary-2')
-  getSentiDistData(interval, query).then(response => {
-    generateSentimentChart(response, query, publicAnalysisResultDiv);
+  getSentiDistData(intervalArg, queryArg).then(response => {
+    MODE = '001';
+    makePublicAnalysisReady(MODE);
+    generateSentimentChart(response, queryArg, publicAnalysisResultDiv);
   });
 
 
 }
 
 
-const coOccurPublic = (type) => {
-  $('#' + publicAnalysisResultDiv).html('<div class="text-center smat-loader " ><i class="fa fa-circle-o-notch donutSpinner" aria-hidden="true"></i></div>')
-  getTopCooccurData(interval, query, type).then(response => {
-    generateBarChart(response, query, publicAnalysisResultDiv, type);
+const coOccurPublic = (type,queryArg, intervalArg,btnClass) => {
+  $('.public-analysis-tab').removeClass('smat-active ');
+  $('.'+btnClass).addClass('smat-active ');
+  $('.public-analysis-result').html('');
+  let analysisButton = '';
+  // userID!=='' ? analysisButton = '<button class="btn smat-btn  smat-rounded  ml-auto mr-1 mt-1 analyzeNetworkButton " > <span> Analyse network </span> </button>' : '';
+  $('#'+publicAnalysisResultDiv).html('<div class="d-flex">'+analysisButton+'</div><div id="barChart"></div>')
+  $('#barChart').html('<div class="text-center smat-loader " ><i class="fa fa-circle-o-notch donutSpinner" aria-hidden="true"></i></div>')
+  getTopCooccurData(intervalArg, queryArg, type).then(response => {
+    if(type=='mention'){
+      MODE = '002';
+      makePublicAnalysisReady(MODE);
+    }else{
+      MODE = '003';
+      makePublicAnalysisReady(MODE);
+    }
+    generateBarChart(response, queryArg, 'barChart', type);
   })
 
 }
 
 
 let queriedTweetFromTime, queriedTweetToTime;
-const tweetPublic = () => {
+const tweetPublic = (queryArg, intervalArg,btnClass) => {
+  $('.public-analysis-tab').removeClass('smat-active ');
+  $('.'+btnClass).addClass('smat-active ');
+  $('.public-analysis-result').html('');
   $('#' + publicAnalysisResultDiv).html('<div class="text-center smat-loader " ><i class="fa fa-circle-o-notch donutSpinner" aria-hidden="true"></i></div>');
   $('#public-summary-2').html('<div class="btn-group"><button type="button" class="btn btn-white smat-rounded dropdown-toggle text-normal" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Filter Tweets</button><div class="dropdown-menu dropdown-menu-right"><li class="dropdown-item clickable filter-tweets" value="all"> Show all tweets</li><li class="dropdown-item clickable filter-tweets" value="pos"><i class="fa fa-circle text-pos " aria-hidden="true"></i> Positive Tweets</li><li class="dropdown-item clickable filter-tweets" value="neg"><i class="fa fa-circle text-neg " aria-hidden="true"></i> Negative Tweets</li><li class="dropdown-item clickable filter-tweets" value="neu"> <i class="fa fa-circle text-neu" aria-hidden="true"></i> Neutral Tweets</li><li class="dropdown-item clickable filter-tweets" value="normal"> <i class="fa fa-circle text-normal" aria-hidden="true"></i> Normal Tweets</li><li class="dropdown-item clickable filter-tweets" value="com"> <i class="fa fa-circle text-com" aria-hidden="true"></i> Communal Tweets</li><li class="dropdown-item clickable filter-tweets" value="sec"> <i class="fa fa-circle text-sec" aria-hidden="true"></i> Security Tweets</li><li class="dropdown-item clickable filter-tweets" value="com_sec"> <i class="fa fa-circle text-com_sec" aria-hidden="true"></i> Communal and Security Tweets</li></div></div>');
-  getTweetIDsFromController(interval, query).then(response => {
+  getTweetIDsFromController(intervalArg, queryArg).then(response => {
+    MODE = '005';
+    makePublicAnalysisReady(MODE);
     let tweetIDs = response[0]['data']['data'];
     queriedTweetFromTime = response[0]['fromTime'];
     queriedTweetToTime = response[0]['toTime'];
@@ -315,9 +324,11 @@ const generatePublicHashtags = (data, filterArgument = null) => {
 }
 
 
-const generatePublicLocations = () => {
+const generatePublicLocations = (queryArg, intervalArg,btnClass) => {
   //TODO::Rajdeep
-
+  $('.public-analysis-tab').removeClass('smat-active ');
+  $('.'+btnClass).addClass('smat-active ');
+  $('.public-analysis-result').html('');
   $('#result-div').html(`<div id="result-div-map" style="height:400px;"></div>
                           <div class="modal_lm">
                             <div class="modal-content">
@@ -328,7 +339,10 @@ const generatePublicLocations = () => {
   
   let capturedClass = $(this).attr('value');
   capturedClass = capturedClass == 'all' ? null : capturedClass;
-  get_tweet_location_home(interval, query, queriedTweetFromTime, queriedTweetToTime, capturedClass).then(response => {
+  get_tweet_location_home(intervalArg, queryArg, queriedTweetFromTime, queriedTweetToTime, capturedClass).then(response => {
+    MODE = '004';
+    makePublicAnalysisReady(MODE);
+
     console.log(response);
     getCompleteMap('result-div-map',response);
     

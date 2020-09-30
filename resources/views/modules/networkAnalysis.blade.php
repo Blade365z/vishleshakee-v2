@@ -67,9 +67,18 @@
             </div>
             <div class="form-group  my-0  mr-2 border smat-rounded d-flex px-2 py-1  bg-white">
                 <select class="form-control" name="NAType" id="typeNA">
-                    <option>Hashtag-Hashtag </option>
-                    <option>Hashtag-Mention </option>
+                    <option>Hashtag-Hashtag</option>
+                    <option>Hashtag-Mention</option>
+                    <option>Hashtag-Keyword</option>
+                    <option>Hashtag-User</option>
                     <option>Mention-Mention </option>
+                    <option>Mention-Hashtag </option>
+                    <option>Mention-Keyword </option>
+                    <option>User-Hashtag</option>
+                    <option>User-Mention</option>
+                    <option>Keyword-Hashtag</option>
+                    <option>Keyword-Mention</option>
+
                 </select>
             </div>
             <div class="form-group  my-0  mr-2 border smat-rounded d-flex px-2 py-1  bg-white">
@@ -87,7 +96,6 @@
                 <div class="mt-3 mx-2"> OR </div>
                 <button class="btn smat-btn  smat-rounded  mx-1" onclick="return false" id="importNA"> <span>Import</span> </button>
             </div>
-            <!-- <button class="btn  text-normal smat-rounded  mx-1" id="showTableBtn" onclick="return false"> <span> Show Search History </span> </button> -->
         </div>
     </form>
 </div>
@@ -151,8 +159,8 @@
             </li>
             <li class="ml-auto">
                 <div class=" my-0  mr-2 border smat-rounded d-flex px-2   bg-white">
-                    <i class="fas fa-cog ml-2 text-normal" style="margin-top:11px;"></i>
-                    <select class="form-control" name="NAEngine" id="networkEngineNA">
+                    <select class="form-control" name="NAEngine" id="binaryopsnetworkselector">
+                        <i class="fas fa-cog ml-2 text-normal" style="margin-top:11px;"></i>
                         <option class="engineSelectorOption"  value="networkx">Network X </option>
                         <option  class="engineSelectorOption" value="spark">Spark</option>
                     </select>
@@ -458,6 +466,7 @@
                             {{csrf_field()}}
                             <div class="form-group">
                                 <input type="file" name="select_file" id="select_file" />
+                                <input type="text" class="form-control smat-rounded  naInputs " id="cardnamefileupload" placeholder="Name your file" style="border:0px;">
                                 <input type="submit" name="upload" id="upload" class="btn btn-primary" value="Upload"> * .csv Only
                             </div>
                         </form>

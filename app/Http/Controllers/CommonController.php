@@ -522,6 +522,7 @@ class CommonController extends Controller
                 $ut_obj->write_to_file('csv', $file_path, $temp_arr, $token, $userID);
             } else {
                 $file_path = "common/" . $token . "_" . $co_occur_option . ".csv";
+                $ut_obj->write_to_file('csv', $file_path, $temp_arr, $token);
             }
             // $ut_obj->write_to_file('csv', $file_path, $temp_arr, $token);
             return (array('status' => 'success', 'nodes' => sizeof($temp_arr)));
@@ -533,10 +534,15 @@ class CommonController extends Controller
                     } else if ($co_occur_option == 'hashtag') {
                         array_push($final_result, array("hashtag" => $key, "count" => intval($value)));
                     } else if ($co_occur_option == 'user') {
-                        array_push($final_result, array("handle" => $key, "count" => intval($value)));
-                        /* Conversion of $uid to user_name and user_screen_name
+                        // array_push($final_result, array("handle" => $key, "count" => intval($value)));
+                        /* Conversion of $uid to user_name and user_screen_name  //handle: author, count: , id: 
                         ..............................................................remain
                         */
+                        $uid_info_arr = json_decode($this->get_user_info($key, false)); //converted string StdClass() object to StdClass() object;
+                        // {"author_id":"955979293615587330","author":"Emmanuel Batman \ud83c\udde6\ud83c\uddf7\ud83d\udc0d","author_screen_name":"EmmanuelBatman_","profile_image_url_https":"https:\/\/pbs.twimg.com\/profile_images\/1299482928007831552\/alqHQyCP_normal.jpg"}
+                        // echo $uid_info_arr->{'author'};
+                        if($uid_info_arr)
+                            array_push($final_result, array("id"=>$key, "count"=>intval($value), "author_name"=> $uid_info_arr->{'author'}, "handle" =>  $uid_info_arr->{'author_screen_name'}));
                     }
                 }
                 return ($final_result);

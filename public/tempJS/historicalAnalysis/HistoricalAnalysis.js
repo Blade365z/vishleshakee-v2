@@ -36,6 +36,15 @@ var suggestionsGlobal, suggInputBoxBuffer = [];
 // ready function
 jQuery(function () {
     makeSmatReady();
+    fromDate = getCurrentDate()
+    toDate = dateProcessor(toDate, '-', 0);
+    if(incoming){
+        incoming.includes('&') ||  incoming.includes('|') ? searchType=1 :searchType;
+        updateStatusTable(incoming, fromDateReceived , toDateReceived, searchType,false,null,true);
+        setTimeout(() => {
+            $('.statusTableRow').removeClass('alert-danger');
+        }, 5000);
+    }
     // initiateHistoricalAnalysis('#WorldUnitedForSSRJustice','2020-09-08','2020-09-11');
     getQueryStatues(userID).then(response => {
         if (response) {
@@ -48,8 +57,8 @@ jQuery(function () {
         }
     })
     // /haQueryInputBox
-    fromDate = getCurrentDate()
-    toDate = dateProcessor(toDate, '-', 0);
+ 
+
     $("#fromDateHA").val(fromDate);
     $("#toDateHA").val(fromDate);
     makeSuggestionsRead('haQueryInputBox', 'top_hashtag', 50).then(response => {
@@ -70,17 +79,7 @@ jQuery(function () {
     $('.nav-item ').removeClass('smat-nav-active');
     $('#nav-HA').addClass('smat-nav-active');
 
-    $('body').on('click', 'div .deleteBtn', function () {
-        let type = $(this).attr('type');
-        if (type == '0') {
-            $(this).parent().parent().remove();
-        } else {
-            let filename = $(this).attr('value');
-            removeFromStatusTable(filename);
-            $(this).parent().parent().remove();
-            //TODO::Delete file.
-        }
-    })
+   
 
 
     // *********** ADD btn
@@ -140,6 +139,7 @@ jQuery(function () {
         let q = $('#queryToken').val();
         statusTableFlag = 1;
         $('#searchTable').css('display', 'block');
+        $('#analysisPanelHA').css('display', 'none');
         let fromDate = $('#fromDateHA').val();
         let toDate = $('#toDateHA').val();
         if (mainInputCounter > 0) {
@@ -161,7 +161,7 @@ jQuery(function () {
         console.log(searchType);
         updateStatusTable(q, fromDate, toDate, searchType);
         resetQueryPanel(mainInputCounter);
-    })
+    });
 
 
 
@@ -256,28 +256,36 @@ jQuery(function () {
     });
 
 
-
-    $('body').on('click', '.deleteBtn', function () {
-        // delete the data from mysql table
-        //delete the related file from storageg folder
-        // delete the row
-    });
+    $('body').on('click', 'div .deleteBtn', function () {
+        let type = $(this).attr('type');
+        if (type == '0') {
+            $(this).parent().parent().remove();
+        } else {
+            let filename = $(this).attr('value');
+            removeFromStatusTable(filename);
+            $(this).parent().parent().remove();
+            //TODO::Delete file.
+        }
+    })
 });
 
 
 
 
 
-const updateStatusTable = (query, fromDate, toDate, searchType, fromStatusTable = false, filename = null) => {
+const updateStatusTable = (query, fromDate, toDate, searchType, fromStatusTable = false, filename = null,highlight=false) => {
     let currentTimestamp = new Date().getTime();
     let queryElement = decodeQuery(query);
     $('#tableInitialTitle').remove();
     mentionUniqueID = generateUniqueID();
     hashtagUniqueID = generateUniqueID();
     userUniqueID = generateUniqueID();
-    //normal search ....add to Status Table
+    let highlightTag='';
+    highlight===true? highlightTag='alert-danger' : highlightTag;
+    console.log(highlightTag)
+    //normal search ....add to Status Tabl
     if (searchType == 0) {
-        $('#haStatusTable').append('<tr><th scope="row">' + currentTimestamp + '</th><td>' + queryElement + '</td><td>' + fromDate + '</td><td>' + toDate + '</td><td >Ready</td><td><button class="btn btn-primary smat-rounded mx-1 showBtn" value="' + currentTimestamp + '"> Show </button><button class="btn btn-danger mx-1  smat-rounded deleteBtn" type="0"> Delete </button></td></tr>');
+        $('#haStatusTable').append('<tr class="statusTableRow '+highlightTag+'"><th scope="row">' + currentTimestamp + '</th><td>' + queryElement + '</td><td>' + fromDate + '</td><td>' + toDate + '</td><td >Ready</td><td><button class="btn btn-primary smat-rounded mx-1 showBtn" value="' + currentTimestamp + '"> Show </button><button class="btn btn-danger mx-1  smat-rounded deleteBtn" type="0"> Delete </button></td></tr>');
 
         //TODO::status read--.
         let recordTemp = [{ 'query': query, 'from': fromDate, 'to': toDate, 'mentionUniqueID': mentionUniqueID, 'hashtagUniqueID': hashtagUniqueID, 'userUniqueID': userUniqueID, 'searchType': searchType }];
@@ -300,7 +308,7 @@ const updateStatusTable = (query, fromDate, toDate, searchType, fromStatusTable 
 
 
 
-const triggerSparkRequest = (query, fromDate, toDate, unique_name_timestamp) => {
+const triggerSparkRequest = (query, fromDate, toDate, unique_name_timestamp,highlight=false) => {
     let queries = [query, fromDate, toDate];
     let query_list = get_tokens_wrt_pattern(queries); // get token
     // let unique_name_timestamp = (new Date().getTime()).toString(); // create unique_name 
@@ -310,7 +318,7 @@ const triggerSparkRequest = (query, fromDate, toDate, unique_name_timestamp) => 
         console.log(data);
         let sparkID = data.id;
         // 2 add row to table UI.....
-        addToStatusTable(sparkID, query, fromDate, toDate, unique_name_timestamp);
+        addToStatusTable(sparkID, query, fromDate, toDate, unique_name_timestamp,highlight=false);
         // 3 check status until it becomes success.....
         let checkSpartStatusInterval = setInterval(function () { checkSparkStatus(sparkID, unique_name_timestamp, fromDate, toDate, query, checkSpartStatusInterval); }, 10000);
 

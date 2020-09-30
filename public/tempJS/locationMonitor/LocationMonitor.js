@@ -1,15 +1,17 @@
 // import {wordCloudLM} from './chartHelper.js';
 import { get_current_time, getTweetIdList, getHashtag, getTopHashtag, checkLocation } from './helper.js';
 import { TweetsGenerator } from '../utilitiesJS/TweetGenerator.js';
+import {forwardToHistoricalAnalysis,forwardToUserAnalysis } from '../utilitiesJS/redirectionScripts.js';
 
 
 var hashtag_info, global_tweetid_list;
-var interval = 1000, currentPlace;
+var interval, currentPlace;
 let currentlyTrendingLocFlag = 1;
 const categoryColor = { 'normal': 'text-normal', 'com': 'text-com', 'sec': 'text-sec', 'com_sec': 'text-com_sec' }
 const categoryColorHexDict = { 'normal': '#297EB4', 'com': '#ff0055', 'sec': '#3D3D3D', 'com_sec': '#FF00FF' };
-var global_datetime = get_current_time(interval);
-console.log(global_datetime);
+var global_datetime,global_datetime_;
+
+
 var markersList = document.getElementById('markersList');
 L.MarkerCluster.include({
     spiderfy: function () {
@@ -64,6 +66,7 @@ var markerCluster = L.markerClusterGroup({
     });
 markerCluster.addTo(LM_Map);
 
+
 var tweetIcon = L.icon({
     iconUrl: 'public/icons/twitter.png',
     iconSize: [35, 35] // size of the icon
@@ -93,6 +96,16 @@ function windowOnClick(event) {
         closeModal();
     }
 }
+
+var TweetCluster = {};
+var AllEvents = {
+    "Hashtags": glow,
+    "Tweets": group1
+};
+
+
+L.control.layers(TweetCluster,AllEvents).addTo(LM_Map);
+
 
 var legend = L.control({
     position: "topright"
@@ -177,17 +190,33 @@ jQuery(function () {
             $('#lmMap').css('width', '60%');
             
         }
-    })
+    });
 
-});
-
-$('div.col > button.button1').on('click', function (e) {
-    console.log("wwwwwwwwwwwwwwwwws");
+    $('body').on('click','div .button1' ,function (e) {
+        $("#queryLM").val($("#location_button").text());
+        console.log($("#location_button").text());
+        trigger();
+    });
     
-    $("#queryLM").val($("#location_button").text());
-    console.log($("#location_button").text());
-    trigger();
+    $('body').on('click','div .sensitive_class' ,function (e) {
+        
+        var token = $(this).text();
+        console.log(token);
+        forwardToHistoricalAnalysis(token,global_datetime[0],global_datetime[1]);
+        
+        
+    });
+
+    $('body').on('click', 'div .username', function () {
+        let queryCaptured = '$' + $(this).attr('value'); //Here query is userID
+        forwardToUserAnalysis(queryCaptured,global_datetime[0],global_datetime[1]);
+    });
+
 });
+
+
+
+
 
 
 function trigger() {
@@ -215,14 +244,20 @@ function trigger() {
     }
 
 
-    to_datetime = global_datetime[1];
-    from_datetime = global_datetime[0];
+
 
     if (refresh_type == "Manual Refresh") {
         for (var i = 0; i < 10000; i++) {
             clearInterval(i);
         }
-
+        
+        global_datetime = get_current_time(interval);
+        to_datetime = global_datetime[1];
+        from_datetime = global_datetime[0];
+        console.log(global_datetime);
+        // findLocation('guwahati').then(result=>{
+        //     console.log(result);
+        // });
         checkLocation(place.split("^")[1]).then(result => {
             console.log(result);
             if (Number.isInteger(parseInt(result.value)) == true) {
@@ -636,9 +671,9 @@ const generateCurrentlyTrending = (data, data_hashtag_latlng, div, filterArgumen
     let padding = 5;
     if (arrayT.length > 10) {
         padding = 0;
-        minFontSize = 8, maxFontSize = 30
+        minFontSize = 12, maxFontSize = 30
     } else if (arrayT.length > 25) {
-        minFontSize = 8, maxFontSize = 35
+        minFontSize = 12, maxFontSize = 35
         padding = 0;
     }
 
@@ -646,11 +681,12 @@ const generateCurrentlyTrending = (data, data_hashtag_latlng, div, filterArgumen
         words: arrayT,
         minFont: minFontSize,
         maxFont: maxFontSize,
-        verticalEnabled: false,
+        verticalEnabled: true,
         padding_left: padding,
         cloud_font_family: 'roboto',
         word_click: function () {
-            alert($(this).text())
+            forwardToHistoricalAnalysis($(this).text(),global_datetime[0],global_datetime[1]);
+            
         },
         word_mouseOver: function () {
             $(this).css('opacity', '50%');
@@ -665,3 +701,4 @@ const generateCurrentlyTrending = (data, data_hashtag_latlng, div, filterArgumen
     });
 
 }
+

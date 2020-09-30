@@ -34,6 +34,22 @@ class networkAnalysisController extends Controller
             $co_occur_option = "hashtag";
         } else if ($request->input('nettype') == "Hashtag-Keyword") {
             $co_occur_option = "keyword";
+        } else if ($request->input('nettype') == "Hashtag-User"){
+            $co_occur_option = "user";
+        }else if ($request->input('nettype') == "Mention-Mention"){
+            $co_occur_option = "mention";
+        }else if ($request->input('nettype') == "Mention-User"){
+            $co_occur_option = "user";
+        }else if ($request->input('nettype') == "Mention-Keyword"){
+            $co_occur_option = "keyword";
+        }else if ($request->input('nettype') == "Keyword-Hashtag"){
+            $co_occur_option = "hashtag";
+        }else if ($request->input('nettype') == "Keyword-Mention"){
+            $co_occur_option = "mention";
+        }else if ($request->input('nettype') == "User-Mention"){
+            $co_occur_option = "mention";
+        }else if ($request->input('nettype') == "User-Hashtag"){
+            $co_occur_option = "hashtag";
         }
 
         $CC_obj = new CommonController;
@@ -64,10 +80,10 @@ class networkAnalysisController extends Controller
             }
         }
 
-        $dir_name = "2";
+        $dir_name = $request->input("dir_name");
         $completeFilepath = "$dir_name/$filename" . ".csv";
         // write to file
-        $ut_obj->write_to_file($file_type = 'csv', $file_path = $completeFilepath, $edges, $token = null, $userID = 2);
+        $ut_obj->write_to_file($file_type = 'csv', $file_path = $completeFilepath, $edges, $token = null, $dir_name);
         echo json_encode(array('res' => 'success'));
     }
 
@@ -206,7 +222,7 @@ class networkAnalysisController extends Controller
         ]);
         if ($validation->passes()) {
             $image = $request->file('select_file');
-            $new_name = $x . '.' . $image->getClientOriginalExtension();
+            $new_name = $x . '.' . "csv";
             // $path = "/var/www/html/front-end/storage/$dir_name";
             $path = "storage/$dir_name";
 
@@ -228,7 +244,7 @@ class networkAnalysisController extends Controller
     public function read_csv_file(Request $request, $filename = null, $option = null)
     {
         //$dir_name = strval($this->get_session_uid($request));
-        $dir_name = "2";
+        $dir_name = $request->input('dir_name');
         $input = $request->input('input');
         // $input = $_GET['input'];
         if ($filename) {
@@ -390,7 +406,7 @@ class networkAnalysisController extends Controller
         $input = $request->input('input');
         // $input = "#nrc";
         // $dir_name = strval($this->get_session_uid($request));
-        $dir_name = $this->getdirname($request);
+        $dir_name = $request->input('dir_name');
         $algo_option = $request->input('algo_option');
         switch ($algo_option) {
             case 'adamicadar':
@@ -441,7 +457,7 @@ class networkAnalysisController extends Controller
     public function shortestpath(Request $request)
     {
         $input = $request->input('input');
-        $dir_name = $this->getdirname($request);
+        $dir_name = $request->input('dir_name');
         // $dir_name = strval($this->get_session_uid($request));
         $algo_option = $request->input('algo_option');
         switch ($algo_option) {
@@ -481,7 +497,7 @@ class networkAnalysisController extends Controller
         $algo_option = $request->input('algo_option');
 
         // $dir_name = strval($this->get_session_uid($request));
-        $dir_name = $this->getdirname($request);
+        $dir_name = $request->input('dir_name');
         $read_path = "storage/$dir_name/$input.csv";
         $handle = fopen($read_path, "r");
 
@@ -732,7 +748,7 @@ class networkAnalysisController extends Controller
         $input_arr = $request->input('input');
 
         // $input_arr = $_GET['input'];
-        $dir_name = $this->getdirname($request);
+        $dir_name = $request->input('dir_name');
         // $dir_name = strval($this->get_session_uid($request));
         // $cmnd_str = "/usr/bin/python /var/www/html/front-end/python_files/generation.py 0 " . $dir_name;
         $cmnd_str = "/usr/bin/python python_files/generation.py 0 " . $dir_name;
@@ -751,7 +767,7 @@ class networkAnalysisController extends Controller
     {
         $input_arr = $request->input('input');
         //$dir_name = strval($this->get_session_uid($request));
-        $dir_name = $this->getdirname($request);
+        $dir_name = $request->input('dir_name');
         // $cmnd_str = "/usr/bin/python /var/www/html/front-end/python_files/generation.py 333 1 storage/1/#modi.csv storage/1/#inc.csv";
 
         $cmnd_str = "/usr/bin/python python_files/generation.py 333 " . $dir_name;
@@ -927,7 +943,7 @@ class networkAnalysisController extends Controller
 
     public function read_json_file(Request $request)
     {
-        $dir_name = $this->getdirname($request);
+        $dir_name = $request->input('dir_name');
         //$dir_name = strval($this->get_session_uid($request));
         //$input = $_GET['input'];
         $input = $request->input('input');
@@ -941,7 +957,7 @@ class networkAnalysisController extends Controller
     {
         $input_arr = $request->input('input');
         //$dir_name = strval($this->get_session_uid($request));
-        $dir_name = $this->getdirname($request);
+        $dir_name = $request->input('dir_name');
         // $cmnd_str = "/usr/bin/python /var/www/html/front-end/python_files/generation.py 222 1 storage/1/#modi.csv storage/1/#inc.csv";
 
         $cmnd_str = "/usr/bin/python python_files/generation.py 222 " . $dir_name;
@@ -962,7 +978,7 @@ class networkAnalysisController extends Controller
         $unique_id = $_POST['uniqueid'];
 
         //$dir_name = strval($this->get_session_uid($request));
-        $dir_name = $this->getdirname($request);
+        $dir_name = $request->input('dir_name');
         $processed_array = array();
 
         for ($i = 0; $i < sizeof($data); $i++) {
@@ -1093,7 +1109,7 @@ class networkAnalysisController extends Controller
         // $file = "storage/5e0c9c863e4af/01416885.csv";
         $filename_arr = $_GET['filename_arr'];
         //$dir_name = strval($this->get_session_uid($request));
-        $dir_name = $this->getdirname($request);
+        $dir_name = $request->input('dir_name');
         $curl = curl_init();
         curl_setopt($curl, CURLOPT_URL, "172.16.117.202/upload.php");
         curl_setopt($curl, CURLOPT_POST, 1);
@@ -1169,7 +1185,7 @@ class networkAnalysisController extends Controller
     public function storeAsJson(Request $request, $filename, $result_arr)
     {
         // $dir_name = strval($this->get_session_uid($request));
-        $dir_name = $this->getdirname($request);
+        $dir_name = $request->input('dir_name');
         // Check whether the directory is already created
         if (!file_exists("storage/$dir_name")) {
             mkdir("storage/$dir_name");

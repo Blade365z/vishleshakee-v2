@@ -67,7 +67,7 @@ export const getTopCooccurData = async (interval = null, query, option, isRealTi
     } else {
         dataArgs = JSON.stringify({ fromTime, query, option });
     }
-    
+    console.log(dataArgs);
     let response = await fetch('smat/topCooccurDataPublic', {
         method: 'post',
         headers: HeadersForApi,
@@ -80,6 +80,7 @@ export const getTopCooccurData = async (interval = null, query, option, isRealTi
         data = data[0]['data'];
         if (data.status == "success") {
             noOfNodes = data['nodes'];
+            console.log(dataArgsForRead);
             let readResponse = await fetch('smat/readCooccurData', {
                 method: 'post',
                 headers: HeadersForApi,

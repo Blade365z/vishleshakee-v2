@@ -34,3 +34,20 @@ export const getFreqDataForTweets = async(id,from,to,type) => {
     return data;
 }
 
+
+
+export const getTweetsForSource = async(id,to,type) => {
+    let dataArgs = JSON.stringify({
+        sid:id,
+        to,
+        tweet_id_list_type:type
+    });
+    console.log(dataArgs)
+    let response = await fetch('track/getTweetIDsForSource', {
+        method: 'post',
+        headers: HeadersForApi,
+        body:dataArgs
+    });
+    let data = await response.json()
+    return data;
+}

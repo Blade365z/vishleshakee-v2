@@ -21,16 +21,13 @@ Route::get('/', function () {
 });
 Route::get('/home', function (Request $request) {
     $query = '';
-    $from = '';
-    $to = '';
     if ($request->input('query')) {
         $query = $request->input('query');
-    } elseif ($request->input('query') && $request->input('from') && $request->input('to')) {
+    } elseif ($request->input('query')) {
         $query = $request->input('query');
-        $from = $request->input('from');
-        $to = $request->input('to');
+      
     }
-    return view('modules.home', compact('query', 'from', 'to'));
+    return view('modules.home', compact('query'));
 });
 Route::get('/userAnalysis', function (Request $request) {
     $query = '';
@@ -47,8 +44,16 @@ Route::get('/userAnalysis', function (Request $request) {
 
 })->middleware('auth');
 
-Route::get('/historicalAnalysis', function () {
-    return view('modules.historicalAnalysis');
+Route::get('/historicalAnalysis', function (Request $request) {
+    $query = '';
+    $from = '';
+    $to = '';
+    if ($request->input('query') && $request->input('from') && $request->input('to')) {
+        $query = $request->input('query');
+        $from = $request->input('from');
+        $to = $request->input('to');
+    }
+    return view('modules.historicalAnalysis', compact('query', 'from', 'to'));
 })->middleware('auth');
 
 Route::get('/networkAnalysis', function (Request $request) {

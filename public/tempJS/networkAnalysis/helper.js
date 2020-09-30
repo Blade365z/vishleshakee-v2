@@ -8,14 +8,20 @@ var HeadersForApi = {
 // Render Graph  for view
 var network_global;
 var global_edges;
+var deletedNodes = [];
 
+function getmystoragedir(){
+    let userInfoTemp = JSON.parse(localStorage.getItem('smat.me'));
+    let userID = userInfoTemp['id'];
+    return userID;
+}
 
 export const render_graph = async (url,input) => {
+    let dir_name = getmystoragedir();
     let data = {
-        input : input
+        input : input,
+        dir_name: dir_name 
     }
-    // console.log("Printing Input");
-    // console.log(data);
     let response = await fetch(url,{
         method : 'post',
         headers : HeadersForApi,
@@ -29,13 +35,15 @@ export const render_graph = async (url,input) => {
 export const networkGeneration = async (url,queryTemp,fromDateTemp,toDateTemp,noOfNodesTemp,naTypeTemp,filename) => {
     $("#msg_displayer").append('<p> Generating Network </p>');
 
+    let dir_name = getmystoragedir();
     let data = {
         token : queryTemp,
         fd : fromDateTemp,
         td : toDateTemp,
         noOfNodes : noOfNodesTemp,
         nettype : naTypeTemp,
-        filename : filename
+        filename : filename,
+        dir_name : dir_name
     };
 
     let response = await fetch(url,{
@@ -60,10 +68,12 @@ export const linkprediction = async (url,data,NAType) =>{
 
 
 export const render_linkprediction_graph = async (input,src) => {
+    let dir_name = getmystoragedir();
     let source = src;
     let data = {
         input: input,
-        src: source
+        src: source,
+        dir_name: dir_name
     };
     let response = await fetch('na/link_prediction_data_formator',{
         method : 'post',
@@ -151,7 +161,8 @@ export const centrality = async (url,data,NAType) =>{
 }
 
 export const render_centrality_graph = async (input,id_value,algo_option) =>{
-    let data = {input : input, algo_option : algo_option};
+    let dir_name = getmystoragedir();
+    let data = {input : input, algo_option : algo_option, dir_name: dir_name};
     console.log('QUERIES',data);
     let response = await fetch('na/centrality_data_formator',{
         method : 'post',
@@ -177,8 +188,10 @@ export const community_detection = async (url,data,NAType) =>{
 
 export const render_community_graph1 = async (input) => {
     console.log(input);
+    let dir_name = getmystoragedir();
     let data = {
-        input : input
+        input : input,
+        dir_name : dir_name
     };
 
     let response = await fetch('na/community_data_formator',{
@@ -261,6 +274,7 @@ export const shortestpaths = async (url,data,NAType) =>{
 
 export const render_shortestpath_graph = (input, src_id, dst_id) => {
 // Render Shortest Path Graph 
+    let dir_name = getmystoragedir();
     $.ajax({
             url: 'na/shortest_path_data_formator',
             type: 'GET',
@@ -268,7 +282,8 @@ export const render_shortestpath_graph = (input, src_id, dst_id) => {
             data: {
                 input: input,
                 src: src_id,
-                dst: dst_id
+                dst: dst_id,
+                dir_name:dir_name
             }
         })
         .done(function(res) {
@@ -484,6 +499,9 @@ export const draw_graph = (res,id_value) => {
             $("#delete_permission").modal('show');
             $("#permission_granted").click(function() {
                global_edges = delete_node(properties,data);
+               if(!deletedNodes.includes(properties.nodes[0])){
+                deletedNodes.push(properties.nodes[0]);
+               }
             });
         }
     });
@@ -540,10 +558,12 @@ export const union = async (url,data,NAType) => {
 }
 
 export const render_union_graph = async (input) => {
+    let dir_name = getmystoragedir();
     let data = {
         input: input,
         option: "union",
-        inputnetid: input
+        inputnetid: input,
+        dir_name : dir_name
     }
     let response = await fetch('na/union_data_formator',{
         method : 'post',
@@ -553,6 +573,18 @@ export const render_union_graph = async (input) => {
 
     let output = await response.json();
     return output;
+}
+
+export const getDeletedNodes = async () => {
+    let sentence;
+    for(let i=0; i<deletedNodes.length; i++){
+        if(i==0){
+            sentence = deletedNodes[i];
+        }else{
+            sentence = sentence +","+ deletedNodes[i];
+        }
+    }
+    return sentence;
 }
 
 export const render_graph_union = (res) => {
@@ -671,9 +703,11 @@ export const difference = async (url,data,NAType) => {
 }
 
 export const render_intersection_diff_graph = async (input,option) => {
+    let dir_name = getmystoragedir();
     let data = {
         input : input,
-        option : option
+        option : option,
+        dir_name : dir_name
     }
 
     let response = await fetch('na/formator_inter_diff',{
@@ -719,13 +753,17 @@ export const exportnetwork = () => {
     }
 
 export const writedelete = (unique_id) => {
+    console.log("Printing Global Edges from Write Delete");
+    console.log(global_edges);
+    let dir_name = getmystoragedir();
     $.ajax({
         url: 'na/writedelete',
         type: 'POST',
-        // dataType: 'JSON',
+        dataType: 'JSON',
         data: {
             input: JSON.stringify(global_edges),
-            uniqueid: unique_id
+            uniqueid: unique_id,
+            dir_name : dir_name
         },
         beforeSend: function() {
 
@@ -742,13 +780,14 @@ export const writedelete = (unique_id) => {
 }
 
 export const sparkUpload = (filename_arr) =>{
-        // console.log(filename_arr);
+    let dir_name = getmystoragedir();
         $.ajax({
                 url: 'na/fileUploadRequest',
                 type: 'GET',
                 dataType: 'JSON',
                 data: {
-                    filename_arr: filename_arr
+                    filename_arr: filename_arr,
+                    dir_name : dir_name
                 }
             })
             .done(function(res) {
@@ -757,11 +796,13 @@ export const sparkUpload = (filename_arr) =>{
 }
 
 export const checkStatus = (id,unique_name_timestamp) =>{
+        let dir_name = getmystoragedir();
         $.ajax({
                 url: 'na/getStatusFromSpark',
                 type: 'GET',
                 data: {
-                    id: id
+                    id: id,
+                    dir_name : dir_name
                 },
                 dataType: 'json'
             })
@@ -781,12 +822,14 @@ export const checkStatus = (id,unique_name_timestamp) =>{
 }
 
 export const getOuputFromSparkAndStoreAsJSON = (id,unique_name_timestamp) =>{
+    let dir_name = getmystoragedir();
     $.ajax({
         url: 'na/getOuputFromSparkAndStoreAsJSON',
         type: 'GET',
         data: {
             id: id,
-            filename: unique_name_timestamp
+            filename: unique_name_timestamp,
+            dir_name : dir_name
         },
         dataType: 'json'
     })
@@ -804,6 +847,9 @@ export const render_intersection_difference = (res,id_value,option) => {
         var option = res["option"];
         var edges_to_be_used_while_saving = res["edges_to_be_used_while_saving"];  
   
+        console.log("I am printing result");
+        console.log(res);
+
         $('.analysis_summary_div').empty();
         if(info.length == 0){
             $('.analysis_summary_div').append('<b>No intersecting nodes.</b>');
@@ -813,7 +859,7 @@ export const render_intersection_difference = (res,id_value,option) => {
             if(option == "difference"){
                 var color_code = "#5c2480";
             }else{
-                var color_code = info[i]["color"];
+                var color_code = info["color"];
             }
             for(var i=0; i<info.length;i++){
                 let count = i + 1;
@@ -832,7 +878,6 @@ export const render_intersection_difference = (res,id_value,option) => {
             edges: edges
         };
     
-        var binary_ops_option_format = {};
         var network_global = new vis.Network(container, data, binary_ops_option_format);
         
         network_global.focus(1, {
@@ -972,7 +1017,6 @@ var global_options = {
         improvedLayout: false,
         randomSeed: 191006
     }
-
 };
 
 // Options format for link prediction and shortest path 
@@ -1131,8 +1175,10 @@ var community_options = {
 
 
 export const storeResultofSparkFromController = async (sparkID, query_list ,userID) => {
+    let dir_name = getmystoragedir();
     let dataArgs = JSON.stringify({
         id: sparkID,
+        dir_name : dir_name,
         query_list,
         userID
     });

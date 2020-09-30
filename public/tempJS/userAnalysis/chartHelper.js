@@ -19,7 +19,7 @@ Script written by : Mala Das(maladas601@gmail.com), Amitabh Boruah(amitabhyo@gma
 // Imports from external source
 import { getDateInFormat } from '../utilitiesJS/smatDate.js';
 import { frequencyDistributionUA, sentimentDistributionUA } from '../userAnalysis/UserAnalysis.js';
-
+import { forwardToHistoricalAnalysis } from '../utilitiesJS/redirectionScripts.js'
 //Global Declaration
 
 
@@ -29,6 +29,7 @@ import { frequencyDistributionUA, sentimentDistributionUA } from '../userAnalysi
 //Functions for Freqeuncy Distribution chart :: contains --->  1. Bar chart , 2. Line chart
 export const generateFreqDistBarChart = (query, data = null, rangeType, div) => {
     // Create chart instance
+    am4core.useTheme(am4themes_animated);
     var chart = am4core.create(div, am4charts.XYChart);
     // Add data
     var dataTemp = [];
@@ -115,6 +116,7 @@ export const generateFreqDistBarChart = (query, data = null, rangeType, div) => 
 
 
 export const generateFrequencyLineChart = (query, data = null, rangeType, div) => {
+    am4core.useTheme(am4themes_animated);
     var chart = am4core.create(div, am4charts.XYChart);
     var dataTemp = [];
     for (const [key, freq] of Object.entries(data['data'])) {
@@ -180,7 +182,7 @@ export const generateFrequencyLineChart = (query, data = null, rangeType, div) =
 
 
 export const generateSentiDistBarChart = (data, query, rangeType, div) => {
-
+    am4core.useTheme(am4themes_animated);
     var chart = am4core.create(div, am4charts.XYChart);
     chart.hiddenState.properties.opacity = 0; // this creates initial fade-in
 
@@ -280,7 +282,7 @@ export const generateSentiDistBarChart = (data, query, rangeType, div) => {
                     let datetime_obj = ev.target.dataItem.component.tooltipDataItem.dataContext;
                     var date = getDateInFormat(datetime_obj['date'], 'Y-m-d');
                     var startTime = getDateInFormat(datetime_obj['date'], 'HH:MM:SS');
-                   
+
                     sentimentDistributionUA(query, 'hour', date, date, null, div, true);
                 }
             });
@@ -301,7 +303,9 @@ export const generateSentiDistBarChart = (data, query, rangeType, div) => {
 
 
 export const generateSentiDistLineChart = (query, data = null, rangeType, div) => {
+
     am4core.ready(function () {
+        am4core.useTheme(am4themes_animated);
         var chart = am4core.create(div, am4charts.XYChart);
         // Increase contrast by taking evey second color
         chart.colors.list = [
@@ -323,7 +327,7 @@ export const generateSentiDistLineChart = (query, data = null, rangeType, div) =
         chart.data = dataTemp;
 
         chart.responsive.enabled = true;
-       
+
         // Create axes
         var dateAxis = chart.xAxes.push(new am4charts.DateAxis());
         dateAxis.renderer.minGridDistance = 50;
@@ -403,7 +407,7 @@ export const generateSentiDistLineChart = (query, data = null, rangeType, div) =
             image.verticalCenter = "middle";
             var hoverState = bullet.states.create("hover");
             hoverState.properties.scale = 3;
-            }
+        }
         createAxisAndSeries("pos", "Positive", false, 0);
         createAxisAndSeries("neg", "Negative", true, 1);
         createAxisAndSeries("neu", "Neutral", true, 2);
@@ -417,81 +421,86 @@ export const generateSentiDistLineChart = (query, data = null, rangeType, div) =
 };
 
 
-export const generateBarChartForCooccur = (query, data = null, div,option) => {
+export const generateBarChartForCooccur = (query, data = null, div, option, from, to) => {
+    am4core.useTheme(am4themes_animated);
     var chart = am4core.create(div, am4charts.XYChart);
 
     chart.padding(0, 0, 0, 0);
     chart.data = generateChartData(data, option);
     function generateChartData(data, option) {
-      var chartData = [];
-      data.forEach(element => {
-        if(option==='hashtag'){
-        chartData.push({
-          "token": element['hashtag'],
-          "count": element['count'],
-  
+        var chartData = [];
+        data.forEach(element => {
+            if (option === 'hashtag') {
+                chartData.push({
+                    "token": element['hashtag'],
+                    "count": element['count'],
+
+                });
+            } else if (option === 'mention') {
+                chartData.push({
+                    "token": element['handle'],
+                    "count": element['count'],
+
+                });
+            }
         });
-    }else if(option ==='mention'){
-        chartData.push({
-            "token": element['handle'],
-            "count": element['count'],
-    
-          });
+
+        return chartData;
     }
-      });
-  
-      return chartData;
-    }
-  
-  
-  
-  
-  
+
+
+
+
+
     //create category axis for names
     var categoryAxis = chart.yAxes.push(new am4charts.CategoryAxis());
     categoryAxis.id = "category_Axis";
-  
+
     categoryAxis.dataFields.category = "token";
-  
+
     categoryAxis.renderer.inversed = true;
     categoryAxis.renderer.grid.template.location = 0;
     categoryAxis.renderer.minGridDistance = 10;
-  
+
     //create value axis for count and expenses
     var valueAxis = chart.xAxes.push(new am4charts.ValueAxis());
     valueAxis.renderer.opposite = true;
-  
-  
+
+
     //create columns
     var series = chart.series.push(new am4charts.ColumnSeries());
     series.dataFields.categoryY = "token";
     series.dataFields.valueX = "count";
     categoryAxis.renderer.cellStartLocation = 0.2;
     categoryAxis.renderer.cellEndLocation = 1.1;
-  
+
     var cellSize = 30;
     chart.events.on("datavalidated", function (ev) {
-  
-      // Get objects of interest
-      var chart = ev.target;
-      var categoryAxis = chart.yAxes.getIndex(0);
-  
-      // Calculate how we need to adjust chart height
-      var adjustHeight = chart.data.length * cellSize - categoryAxis.pixelHeight;
-  
-      // get current chart height
-      var targetHeight = chart.pixelHeight + adjustHeight;
-  
-      // Set it on chart's container
-      chart.svgContainer.htmlElement.style.height = targetHeight + "px";
+
+        // Get objects of interest
+        var chart = ev.target;
+        var categoryAxis = chart.yAxes.getIndex(0);
+
+        // Calculate how we need to adjust chart height
+        var adjustHeight = chart.data.length * cellSize - categoryAxis.pixelHeight;
+
+        // get current chart height
+        var targetHeight = chart.pixelHeight + adjustHeight;
+
+        // Set it on chart's container
+        chart.svgContainer.htmlElement.style.height = targetHeight + "px";
     });
     series.columns.template.fillOpacity = 10;
     series.columns.template.fill = am4core.color("#4280B7");
     series.columns.template.strokeOpacity = 10;
     series.tooltipText = " {categoryY}: {valueX.value}" + "(Click to Know More)";
     series.columns.template.width = am4core.percent(50);
-  
+
     categoryAxis.sortBySeries = series;
     chart.cursor = new am4charts.XYCursor();
-  
+    series.columns.template.events.on("hit", function (ev) {
+        var item = ev.target.dataItem.component.tooltipDataItem.dataContext;
+        query = String(item.token);
+        forwardToHistoricalAnalysis(query, from, to);
+    });
 }

@@ -4,7 +4,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>TEST DOMAIN</title>
+    <title>Vishleshakee-v3</title>
     <script src="public/js/app.js" ></script>
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <link href="public/css/app.css" rel="stylesheet">

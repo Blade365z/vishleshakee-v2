@@ -39,6 +39,13 @@ var historyJSON = {};
 
 //Logic
 jQuery(function () {
+    makeSmatReady();
+    $('body').on('click', 'div .username', function () {
+        let queryCaptured = '$' + $(this).attr('value');
+        queryCaptured = encodeURIComponent(queryCaptured);
+        let redirectURL = 'userAnalysis' + '?query=' + queryCaptured + '&from=' + fromDate + '&to=' + toDate;
+        window.open(redirectURL, '_blank');
+      });
     toDate = getCurrentDate()
     fromDate = dateProcessor(toDate, '-', 7);
     $('#fromDateTT').val(fromDate);
@@ -161,21 +168,21 @@ const initiateTweetAnalysis = (id, from, to, type) => {
         if (response.data.length < 1) {
             $('#retweetContent').html('<div class="alert-danger text-center m-3 p-2 smat-rounded"> No Data Found </div>')
         } else {
-            drawFreqDataForTweet(response, 'retweetContent',id,type);
+            drawFreqDataForTweet(response, 'retweetContent',id, 'retweet');
         }
     });
     getFreqDataForTweets(id, from, to, 'QuotedTweet').then(response => {
         if (response.data.length < 1) {
             $('#quotedtweetContent').html('<div class="alert-danger text-center m-3 p-2 smat-rounded"> No Data Found </div>')
         } else {
-            drawFreqDataForTweet(response, 'quotedtweetContent',id,type);
+            drawFreqDataForTweet(response, 'quotedtweetContent',id,'QuotedTweet');
         }
     });
     getFreqDataForTweets(id, from, to, 'Reply').then(response => {
         if (response.data.length < 1) {
             $('#replytweetContent').html('<div class="alert-danger text-center m-3 p-2 smat-rounded"> No Data Found </div>')
         } else {
-            drawFreqDataForTweet(response, 'replytweetContent',id,type);
+            drawFreqDataForTweet(response, 'replytweetContent',id, 'Reply');
         }
     });
 }

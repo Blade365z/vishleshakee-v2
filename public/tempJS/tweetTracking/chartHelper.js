@@ -6,8 +6,14 @@ PLEASE NOT THERE ARE TYPES::
 3.replytweet
 2.quotedtweet
 */
+
+import {getTweetsForSource} from './helper.js';
+import { getDateInFormat } from '../utilitiesJS/smatDate.js';
+import {TweetsGenerator} from '../utilitiesJS/TweetGenerator.js'
+
 export const drawFreqDataForTweet = (data, div, id, type) => {
     // Create chart instance
+    am4core.useTheme(am4themes_animated);
     console.log(id, '  ', type);
     var chart = am4core.create(div, am4charts.XYChart);
     // Add data
@@ -60,12 +66,11 @@ export const drawFreqDataForTweet = (data, div, id, type) => {
 
     // //Handling Click Events 
     series.columns.template.events.on("hit", function (ev) {
-        if (type == 'Tweet') {
-
-        } else if (type == 'QuotedTweet') {
-
-        } else if (type == 'Reply') {
-
-        }
+        let datetime_obj = ev.target.dataItem.component.tooltipDataItem.dataContext;
+        var date = getDateInFormat(datetime_obj['date'], 'Y-m-d'); 
+        getTweetsForSource(id,date,type).then(response => {
+            $('#tweetsModal').modal('show');
+            TweetsGenerator(response.data,6,'tweets-modal-div',null,null,true,null);
+        })
     });
 }

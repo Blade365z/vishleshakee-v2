@@ -57,7 +57,7 @@ class LocationMap extends Controller
 
         $commonObj = new CommonController;
 
-        $r = $commonObj->get_tweets('2020-09-12 23:30:00', '2020-09-12 23:00:00', $query, '10sec', 'all');
+        $r = $commonObj->get_tweets($to_datetime, $from_datetime, $query, '10sec', 'all');
 
         $tweetid_list_array = array();
 
@@ -80,7 +80,7 @@ class LocationMap extends Controller
         $to_datetime = $request->input('to');
         $type = $request->input('type');
         // $all_location = $this->get_location_statement($query);
-        $r = $commonObj->get_top_data_cat_by_location('2020-09-12 23:30:00', '2020-09-12 23:00:00', 'top_latlng_hashtag', $query, '10sec');
+        $r = $commonObj->get_top_data_cat_by_location($to_datetime, $from_datetime, 'top_latlng_hashtag', $query, '10sec');
         return $r;
 
     }
@@ -94,7 +94,7 @@ class LocationMap extends Controller
         $to_datetime = $request->input('to');
         $type = $request->input('type');
         // $all_location = $this->get_location_statement($query);
-        $r = $commonObj->get_top_data_lat_lng('2020-09-12 23:30:00', '2020-09-12 23:00:00', 'top_latlng_hashtag', $query, '10sec');
+        $r = $commonObj->get_top_data_lat_lng($to_datetime, $from_datetime, 'top_latlng_hashtag', $query, '10sec');
 
         return json_encode($r);
 
@@ -186,8 +186,8 @@ class LocationMap extends Controller
         $data = $commonObj->get_tweets($toTime, $fromTime, $query, '10sec', $filter);
         // return $data;
         $tweetid_list_array = array();
-        array_push($tweetid_list_array,'1300689867836395526');
-        array_push($tweetid_list_array,'1305520073982054404');
+        // array_push($tweetid_list_array,'1300689867836395526');
+        // array_push($tweetid_list_array,'1305520073982054404');
         
         foreach ($data['data'] as $tid) {
             array_push($tweetid_list_array, $tid);
@@ -216,6 +216,7 @@ class LocationMap extends Controller
         $state = ' ';
         $city = ' ';
         $country = ' ';
+        $loc = array();
 
         $trigger = new DBmodel;
         $statement = "SELECT code from location_code WHERE location ='" . $location . "'";
@@ -229,8 +230,7 @@ class LocationMap extends Controller
         elseif ($code == 2) {$locationType = "country";}
 
         $locationObj = CityState::where($locationType, $location)->firstOrFail();
-        // return $locationObj["state"];
-
+        
         $city_state_country_stm = '';
         if ($code == 0) {$city_state_country_stm = "country='^" . $locationObj["country"] . "' AND state='^" . $locationObj["state"] . "' AND city='^" . $locationObj["city"] . "'";}
         elseif ($code == 1) {$city_state_country_stm = "country='^" . $locationObj["country"] . "' AND state='^" . $locationObj["state"] . "'";}
@@ -250,7 +250,8 @@ class LocationMap extends Controller
 
     public function showData(Request $request)
     {
-
+        $location = $request->input('location');
+        return json_encode($this->get_location_statement($location));
     }
 }
 

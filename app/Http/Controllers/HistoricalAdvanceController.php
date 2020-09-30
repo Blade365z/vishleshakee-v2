@@ -38,7 +38,7 @@ class HistoricalAdvanceController extends Controller
     public  function  curlData($query_list, $rname)
     {
         $curl = curl_init();
-        $data['conf'] = array('spark.jars.packages' => 'anguenot:pyspark-cassandra:2.4.0', 'spark.cassandra.connection.host' => '10.0.0.12', 'spark.cores.max' => 4);
+        $data['conf'] = array('spark.jars.packages' => 'anguenot:pyspark-cassandra:2.4.0', 'spark.cassandra.connection.host' => '172.16.117.201', 'spark.cores.max' => 4);
         // $data['file'] = 'local:/home/admin/bbk/dataset_builder/spark/batch/advance_query.py';
         $data['file'] = 'local:/home/admin/bbk/rahul_test1/spark/batch/new_advance_query.py';
         $data['args'] = $query_list;

@@ -256,6 +256,7 @@
     
     <script type="module" src="public/amcharts4/core.js"></script>
     <script type="module" src="public/amcharts4/charts.js"></script>
+    <script type="module" src="public/amcharts4/themes/animated.js"></script>
     <script type="module" src="public/tempJS/userAnalysis/UserAnalysis.js"></script>
 
     <script src="public/leaflet/leaflet.js"></script>

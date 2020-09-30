@@ -72,29 +72,30 @@ class TweetTracking extends Controller
 
 
 
-    public function get_tweet_idlist_for_track_type_sourceid($date, $source_tweet_id, $tweet_type_of_dist){
+    public function get_tweet_idlist_for_track_type_sourceid(Request $request){
         $request->validate([
             'sid' =>'required',
             'to' => 'required',
             'tweet_id_list_type' => 'required'
         ]);
-        
-        $to= $request->input('to');
-        $from= $request->input('sid');
-        $tweet_id_list_type= $request->input('tweet_id_list_type');
-        $to_datetime = date('Y-m-d H:i:s', strtotime($to) + 0);    
-        $db_object = new DBmodelAsync;
+        $db_object = new DBmodel;
         $qb_obj = new QueryBuilder;
         $ut_obj = new Utilities;
+        $to= $request->input('to');        
+        $source_tweet_id= $request->input('sid');
+        $tweet_id_list_type= $request->input('tweet_id_list_type');
+        
         $final_result = array();
-        $temp_arr = array();
+        $tweet_id_list = array();
 
-        $stm_list = $qb_obj->get_statement($to_datetime, $from_datetime, $source_tweet_id, $distribution_type, 'tweet_track');
-        $result_async_from_db = $db_object->executeAsync_query($stm_list[1], $stm_list[0]);
-
-        foreach ($result_async_from_db as $rows) {
-
-
+        $stm_list = $qb_obj->get_statement($to, null, $source_tweet_id, $tweet_id_list_type, 'tweet_track');
+        $result = $db_object->execute_query($stm_list[0]);
+        foreach ($result as $row) {
+            array_push($tweet_id_list, $row['type_tweet_id']);
         }
+
+        $final_result["chart_type"] = "tweet_id_list_for_tweet_track";
+        $final_result["data"] = $tweet_id_list;
+        return $final_result;
     }
 }

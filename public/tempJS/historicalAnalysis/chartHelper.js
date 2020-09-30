@@ -28,6 +28,7 @@ import { frequencyDistributionHA, sentimentDistributionHA } from '../historicalA
 //Functions for Freqeuncy Distribution chart :: contains --->  1. Bar chart , 2. Line chart
 export const generateFreqDistBarChart = (query, data = null, rangeType, div, filename=null) => {
     // Create chart instance
+    am4core.useTheme(am4themes_animated);
     var chart = am4core.create(div, am4charts.XYChart);
     // Add data
     var dataTemp = [];
@@ -125,6 +126,7 @@ export const generateFreqDistBarChart = (query, data = null, rangeType, div, fil
 
 
 export const generateFrequencyLineChart = (query, data = null, rangeType, div, filename=null) => {
+    am4core.useTheme(am4themes_animated);
     var chart = am4core.create(div, am4charts.XYChart);
     var dataTemp = [];
     for (const [key, freq] of Object.entries(data['data'])) {
@@ -189,7 +191,7 @@ export const generateFrequencyLineChart = (query, data = null, rangeType, div, f
 
 
 export const generateSentiDistBarChart = (data, query, rangeType, div, filename=null) => {
-
+    am4core.useTheme(am4themes_animated);
     var chart = am4core.create(div, am4charts.XYChart);
     chart.hiddenState.properties.opacity = 0; // this creates initial fade-in
 
@@ -314,6 +316,7 @@ export const generateSentiDistBarChart = (data, query, rangeType, div, filename=
 
 export const generateSentiDistLineChart = (query, data = null, rangeType, div, filename=null) => {
     am4core.ready(function () {
+        am4core.useTheme(am4themes_animated);
         var chart = am4core.create(div, am4charts.XYChart);
         // Increase contrast by taking evey second color
         chart.colors.list = [
@@ -431,7 +434,7 @@ export const generateSentiDistLineChart = (query, data = null, rangeType, div, f
 
 export const generateBarChartForCooccur = (query, data = null, div, option) => {
     var chart = am4core.create(div, am4charts.XYChart);
-
+    am4core.useTheme(am4themes_animated);
     chart.padding(0, 0, 0, 0); 
     chart.data = generateChartData(data, option);
     function generateChartData(data, option) {
