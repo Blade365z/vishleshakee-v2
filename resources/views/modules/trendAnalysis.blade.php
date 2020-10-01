@@ -22,7 +22,7 @@
 <div>
 
     <div class="row">
-        <div class="col-sm-6">
+        <div class="col-sm-4">
             <div class="card shadow mt-1">
                 <div class="card-body">
                     <div>
@@ -36,7 +36,7 @@
                 </div>
             </div>
         </div>
-        <div class="col-sm-6">
+        <div class="col-sm-4">
             <div class="card shadow mt-1">
                 <div class="card-body">
                     <div>
@@ -49,7 +49,19 @@
                 </div>
             </div>
         </div>
+        <div class="col-sm-4">
+            <div class="card shadow mt-1">
+                <div class="card-body">
+                    <div>
+                        <p class="m-0 smat-box-title-large">Top Users</p>
+                    </div>
+                    <div class="taResults" id="taResultsUsers">
 
+
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 </div>
 

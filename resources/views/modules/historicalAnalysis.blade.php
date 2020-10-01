@@ -117,14 +117,14 @@
                         <div class="" id="summaryContent-1">
 
                         </div>
-                        <div class="tab-pane fade show active haTab" id="freqContentHA" role="tabpanel" aria-labelledby="freqContentHA"> </div>
-                        <div class="tab-pane fade haTab " id="sentiContentHA" role="tabpanel" aria-labelledby="sentiContentHA"> </div>
-                        <div class="tab-pane fade haTab barGraphTab" id="mentionsContentHA" role="tabpanel" aria-labelledby="mentionsContentHA"></div>
-                        <div class="tab-pane fade haTab barGraphTab" id="usersContentHA" role="tabpanel" aria-labelledby="usersContentHA"></div>
-                        <div class="tab-pane fade haTab barGraphTab " id="hashtagsContentTab" role="tabpanel" aria-labelledby="hashtagsContentTab"></div>
-                        <div class="tab-pane fade haTab " id="tweetsContentHA" role="tabpanel" aria-labelledby="tweetsContentHA">tweetsContentHA </div>
-                        <div class="tab-pane fade haTab " id="sensitivityContentHA" role="tabpanel" aria-labelledby="sensitivityContentHA">sensitivityContentHA </div>
-                        <div class="tab-pane fade haTab " id="locationContentHA" role="tabpanel" aria-labelledby="locationContentHA"></div>
+                        <div class="tab-pane fade show active " id="freqContentHA" role="tabpanel" aria-labelledby="freqContentHA"> </div>
+                        <div class="tab-pane fade  " id="sentiContentHA" role="tabpanel" aria-labelledby="sentiContentHA"> </div>
+                        <div class="tab-pane fade  barGraphTab" id="mentionsContentHA" role="tabpanel" aria-labelledby="mentionsContentHA"></div>
+                        <div class="tab-pane fade  barGraphTab" id="usersContentHA" role="tabpanel" aria-labelledby="usersContentHA"></div>
+                        <div class="tab-pane fade  barGraphTab " id="hashtagsContentTab" role="tabpanel" aria-labelledby="hashtagsContentTab"></div>
+                        <div class="tab-pane fade  " id="tweetsContentHA" role="tabpanel" aria-labelledby="tweetsContentHA">tweetsContentHA </div>
+                        <div class="tab-pane fade  " id="sensitivityContentHA" role="tabpanel" aria-labelledby="sensitivityContentHA">sensitivityContentHA </div>
+                        <div class="tab-pane fade  " id="locationContentHA" role="tabpanel" aria-labelledby="locationContentHA"></div>
                         
                     </div>
 

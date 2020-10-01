@@ -87,11 +87,13 @@ export const getCooccurDataForHA = async (query, from, to, option, uniqueID, use
    let dataArgs = JSON.stringify({
         query, from, to, option, uniqueID, userID, mode:'write'
     });
+    let dataArrayTemp = [];
+    let noOfNodes = 0;
     
     let dataArgsForRead=JSON.stringify({
         option, uniqueID, userID,limit:50,mode:'read'
     });
-    console.log(dataArgs)
+    // console.log(dataArgs)
     let response = await fetch('HA/getCooccurDataForHA', {
         method: 'post',
         headers: HeadersForApi,
@@ -100,14 +102,16 @@ export const getCooccurDataForHA = async (query, from, to, option, uniqueID, use
   
     let data = await response.json();
     if (data.status == "success") {
+        noOfNodes = data['nodes'];
         let readResponse = await fetch('HA/getCooccurDataForHA', {
             method: 'post',
             headers: HeadersForApi,
             body: dataArgsForRead
         })
         let readData = await readResponse.json();
-        
-        return readData;
+        dataArrayTemp.push({ 'data': readData, 'nodes': noOfNodes});
+        // console.log(dataArrayTemp)
+        return dataArrayTemp;
     }
 } 
 

@@ -257,7 +257,13 @@ export const generateBarChart = (data = null, query, div, type) => {
   function generateChartData(data, type) {
     var chartData = [];
     data.forEach(element => {
-      if (type == 'mention') {
+      if (type == 'hashtag') {
+        chartData.push({
+          "token": element['hashtag'],
+          "count": element['count'],
+        });
+      }
+      else if (type == 'mention') {
         chartData.push({
           "token": element['handle'],
           "count": element['count'],
@@ -275,11 +281,7 @@ export const generateBarChart = (data = null, query, div, type) => {
     return chartData;
   }
 
-
-
-
-
-  //create category axis for names
+//create category axis for names
   var categoryAxis = chart.yAxes.push(new am4charts.CategoryAxis());
   categoryAxis.id = "category_Axis";
 
@@ -325,7 +327,7 @@ export const generateBarChart = (data = null, query, div, type) => {
   let finalTime = data[0]['finalTime'];
   console.log(finalTime);
   const updateBarChart = () => {
-    console.log(query,'------', type);
+    console.log(query, '------', type);
     // getTopCooccurData async (interval = null, query, option, isRealTime = false, fromTime = null)
     getTopCooccurData(null, query, type, true, finalTime).then(response => {
       finalTime = response[0]['finalTime'];
@@ -339,22 +341,40 @@ export const generateBarChart = (data = null, query, div, type) => {
           for (let i = 0; i <= lenofTempData; i++) {
             let flag = false;
             for (let j = 0; j <= chart.data.length - 1; j++) {
-              if (dataTemp[i]['handle'] == chart.data[j]['token']) {
-                chart.data[j]['count'] += dataTemp[i]["count"];
-                chart.invalidateRawData();
-                flag = false;
-                break;
+              if (type === 'hashtag') {
+                if (dataTemp[i]['hashtag'] == chart.data[j]['token']) {
+                  chart.data[j]['count'] += dataTemp[i]["count"];
+                  chart.invalidateRawData();
+                  flag = false;
+                  break;
+                } else {
+                  flag = true;
+                }
               } else {
-                flag = true;
+                if (dataTemp[i]['handle'] == chart.data[j]['token']) {
+                  chart.data[j]['count'] += dataTemp[i]["count"];
+                  chart.invalidateRawData();
+                  flag = false;
+                  break;
+                } else {
+                  flag = true;
+                }
               }
+
             }
             if (flag == true) {
-              if(type=='hashtag' || type=='mention' ){
-              chart.addData({
-                "token": dataTemp[i]['handle'],
-                "count": dataTemp[i]['count']
-              });
-              }else if(type=='user'){
+              if (type == 'hashtag') {
+                chart.addData({
+                  "token": dataTemp[i]['hashtag'],
+                  "count": dataTemp[i]['count']
+                });
+              }
+              else if (type == 'mention') {
+                chart.addData({
+                  "token": dataTemp[i]['handle'],
+                  "count": dataTemp[i]['count']
+                });
+              } else if (type == 'user') {
                 chart.addData({
                   "token": dataTemp[i]['handle'],
                   "count": dataTemp[i]['count'],
@@ -367,28 +387,46 @@ export const generateBarChart = (data = null, query, div, type) => {
 
           let flag = false;
           for (let j = 0; j <= chart.data.length - 1; j++) {
-            if (dataTemp['handle'] == chart.data[j]['token']) {
-              chart.data[j]['count'] += dataTemp["count"];
-              chart.invalidateRawData();
-              flag = false;
-              break;
+            if (typee == 'hashtag') {
+              if (dataTemp['hashtag'] == chart.data[j]['token']) {
+                chart.data[j]['count'] += dataTemp["count"];
+                chart.invalidateRawData();
+                flag = false;
+                break;
+              } else {
+                flag = true;
+              }
             } else {
-              flag = true;
+              if (dataTemp['handle'] == chart.data[j]['token']) {
+                chart.data[j]['count'] += dataTemp["count"];
+                chart.invalidateRawData();
+                flag = false;
+                break;
+              } else {
+                flag = true;
+              }
             }
+
           }
           if (flag == true) {
-            if(type=='hashtag' || type=='mention' ){
+            if (type == 'hashtag') {
+              chart.addData({
+                "token": dataTemp[i]['hashtag'],
+                "count": dataTemp[i]['count']
+              });
+            }
+            else if (type == 'mention') {
               chart.addData({
                 "token": dataTemp[i]['handle'],
                 "count": dataTemp[i]['count']
               });
-              }else if(type=='user'){
-                chart.addData({
-                  "token": dataTemp[i]['handle'],
-                  "count": dataTemp[i]['count'],
-                  "id": dataTemp[i]['id']
-                });
-              }
+            } else if (type == 'user') {
+              chart.addData({
+                "token": dataTemp[i]['handle'],
+                "count": dataTemp[i]['count'],
+                "id": dataTemp[i]['id']
+              });
+            }
 
           }
         }
@@ -405,18 +443,18 @@ export const generateBarChart = (data = null, query, div, type) => {
     if (type === 'mention' || type === 'hashtag') {
       var item = ev.target.dataItem.dataContext.token;
       if (localStorage.getItem('smat.me')) {
-        let queryFinal =query+'&'+item;
+        let queryFinal = query + '&' + item;
         let date = getCurrentDate();
         forwardToHistoricalAnalysis(queryFinal, date, date);
       } else {
         forwardToHistoricalAnalysis(item);
       }
-    }else{
+    } else {
       var item = ev.target.dataItem.dataContext.id;
       if (localStorage.getItem('smat.me')) {
         let date = getCurrentDate();
-        forwardToUserAnalysis(item,date,date);
-      } 
+        forwardToUserAnalysis(item, date, date);
+      }
     }
   });
 

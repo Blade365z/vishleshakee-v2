@@ -136,10 +136,10 @@
 </div>
 <div class="mt-2" id="naPanel">
 
-    <div  class="text-center font-weight-bold" id="msg_displayer"></div>
+    <div  class=" d-flex justify-content-center font-weight-bold" id="msg_displayer"> HAHA </div>
 
     <div>
-        <p class="smat-box-title-large m-0"> <span class="smat-value font-weight-bold text-dark" id="naShowingResForTitle"> </span> </p>
+        <p class="smat-box-title-large m-0"> <span class="smat-value font-weight-bold text-center text-dark" id="naShowingResForTitle"> </span> </p>
     </div>
 
     <div class="smat-tabs">
@@ -158,7 +158,7 @@
                 <a class="nav-link smat-rounded " id="diffTabNA" data-toggle="pill" href="#diffContentNA" role="tab" aria-controls="diffContentNA" aria-selected="false">Difference</a>
             </li>
             <li class="ml-auto">
-                <div class=" my-0  mr-2 border smat-rounded d-flex px-2   bg-white">
+                <div class=" my-0  mr-2 border smat-rounded d-flex px-2   bg-white" style="display:none">
                     <select class="form-control" name="NAEngine" id="binaryopsnetworkselector">
                         <i class="fas fa-cog ml-2 text-normal" style="margin-top:11px;"></i>
                         <option class="engineSelectorOption"  value="networkx">Network X </option>
@@ -250,11 +250,8 @@
                                             </label>
                                             <label class="radio-inline mx-2  " id="btwncen"><input type="radio" name="centralityInlineRadioOptions"  value="btwncen">&nbsp Betweeness Centrality</label>
                                             <label class="radio-inline mx-2 "  id="evcen"><input type="radio" name="centralityInlineRadioOptions" value="evcen">&nbsp EV Centrality
-                                            </label>
-                                            <div class="d-flex">
-                                            
+                                            </label>                                            
                                             <button type="submit" id="centrality_exec" class="btn btn-danger smat-rounded " >Execute</button>
-                                            </div>
                                         </div>
                                     </div>
 

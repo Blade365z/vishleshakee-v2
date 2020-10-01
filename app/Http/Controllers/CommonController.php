@@ -11,7 +11,7 @@ use DateTime;
 
 // ini_set('max_execution_time', 0);
 // set_time_limit(0);
-ini_set('memory_limit','1000M');
+ini_set('memory_limit','2000M');
 
 class CommonController extends Controller
 {
@@ -534,13 +534,8 @@ class CommonController extends Controller
                     } else if ($co_occur_option == 'hashtag') {
                         array_push($final_result, array("hashtag" => $key, "count" => intval($value)));
                     } else if ($co_occur_option == 'user') {
-                        // array_push($final_result, array("handle" => $key, "count" => intval($value)));
-                        /* Conversion of $uid to user_name and user_screen_name  //handle: author, count: , id: 
-                        ..............................................................remain
-                        */
                         $uid_info_arr = json_decode($this->get_user_info($key, false)); //converted string StdClass() object to StdClass() object;
                         // {"author_id":"955979293615587330","author":"Emmanuel Batman \ud83c\udde6\ud83c\uddf7\ud83d\udc0d","author_screen_name":"EmmanuelBatman_","profile_image_url_https":"https:\/\/pbs.twimg.com\/profile_images\/1299482928007831552\/alqHQyCP_normal.jpg"}
-                        // echo $uid_info_arr->{'author'};
                         if($uid_info_arr)
                             array_push($final_result, array("id"=>$key, "count"=>intval($value), "author_name"=> $uid_info_arr->{'author'}, "handle" =>  $uid_info_arr->{'author_screen_name'}));
                     }
@@ -676,6 +671,17 @@ class CommonController extends Controller
             $hash_arr[$h] = array($v, $cat);
         }
         $final_result["chart_type"] = "top";
+        if($top_option == 'top_user'){
+            $temp_arr = array_slice($hash_arr, 0, $limit);
+            $hash_arr_tmp = array();
+            foreach ($temp_arr as $key => $value) {
+                $uid_info_arr = json_decode($this->get_user_info($key, false)); //converted string StdClass() object to StdClass() object;
+                // {"author_id":"955979293615587330","author":"Emmanuel Batman \ud83c\udde6\ud83c\uddf7\ud83d\udc0d","author_screen_name":"EmmanuelBatman_","profile_image_url_https":"https:\/\/pbs.twimg.com\/profile_images\/1299482928007831552\/alqHQyCP_normal.jpg"}
+                if($uid_info_arr)
+                    array_push($hash_arr_tmp, array("id"=>$key, "count"=>intval($value), "author_name"=> $uid_info_arr->{'author'}, "handle" =>  $uid_info_arr->{'author_screen_name'}));
+            }
+            $final_result["data"] = $hash_arr_tmp;
+        }else
         $final_result["data"] = array_slice($hash_arr, 0, $limit);
         return ($final_result);
     }
@@ -960,7 +966,7 @@ class CommonController extends Controller
 
         if($range_type){         
             $stm_list = $qb_obj->get_statement($to_datetime, $from_datetime, $token, $range_type, $top_option);
-            $result_async_from_db = $db_object->executeAsync_query($stm_list[1], $stm_list[0]);  
+            $result_async_from_db = $db_object->executeAsync_query($stm_list[1], $stm_list[0]);             
         }else{
             //remain
         }
@@ -1009,7 +1015,8 @@ class CommonController extends Controller
                 }
             }
         }   
-
+       
+        $final_result["stm"] =  $stm_list[0];
         $final_result["chart_type"] = "top_lat_lng_hash";
         $final_result["lat_lng_info_arr"] = $lat_lng_info_arr;
         $final_result["lat_lng_hash_arr"] = $lat_lng_hash_arr;
@@ -1091,6 +1098,7 @@ class CommonController extends Controller
             $top_data_with_cat_location[$h] = array($v[0], $cat); //total, category
         }
 
+        $final_result["stm"] =  $stm_list[0];
         $final_result["chart_type"] = "top_data_with_cat";
         $final_result["top_data_with_cat_by_location"] = $top_data_with_cat_location;
         return ($final_result);

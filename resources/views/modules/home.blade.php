@@ -17,12 +17,8 @@
                     <i class="fa fa-search px-1 pt-2" aria-hidden="true" style="margin-top:5px"></i>
                     <input type="text" class="form-control typeahead" name="query" id="queryLM" placeholder="Search a Hashtag or Mention" style="border:0px;" autocomplete="OFF" required>
                 </div>
-
-
-
                 <div class="d-flex">
                     <button class="btn smat-btn  smat-rounded  mx-1 mb-3" id="submit-btn" type="submit"> <span>Search</span> </button>
-
                 </div>
             </div>
         </form>
@@ -38,8 +34,11 @@
                         <li class="btn  btn-outline clickable  smat-rounded interval-buttons-public  mx-2" value="30">30 Mins</li>
                         <li class="btn  btn-outline clickable smat-rounded  interval-buttons-public  mx-2" value="45">45 Mins</li>
                         <li class="btn  btn-outline clickable smat-rounded  interval-buttons-public mx-2" value="1">1 Hour</li>
+                       
+          @if (Auth::check())
+                        <li class="btn  btn-outline clickable smat-rounded   mx-2" id='analyzeMoreBtn'>Analyse More</li>
                         <!-- <li class="btn  btn-outline  clickable smat-rounded interval-buttons-public mx-2" value="2">2 Hours</li> -->
-
+@endif
                     </div>
                 </div>
         <div>
@@ -69,10 +68,7 @@
                               
                             </div>
                         </div>
-
-
                     </div>
-
                 </div>
 
 
@@ -91,6 +87,12 @@
                                 <div class="text-center">
                                     <i class="fas dash_icons fa-grin"></i>
                                     <p class="smat-dash-title  m-0"> Sentiment </p>
+                                </div>
+                            </li>
+                            <li class="smat-list clickable public-analysis-tab    hashtags-public-tab py-2 ">
+                                <div class="text-center">
+                                    <i class="fas dash_icons fa-hashtag"></i>
+                                    <p class="smat-dash-title m-0 ">Hashtags </p>
                                 </div>
                             </li>
                             <li class="smat-list clickable public-analysis-tab    mentions-public-tab py-2 ">
@@ -118,6 +120,7 @@
                                     <p class="smat-dash-title m-0">Tweet Info.</p>
                                 </div>
                             </li>
+                            
                         </ul>
 
                     </div>

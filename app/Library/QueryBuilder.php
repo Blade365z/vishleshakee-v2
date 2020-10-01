@@ -100,15 +100,15 @@ class QueryBuilder{
             }
         }
         
-
+        //1601490319983 (current date advance search)
         // for top_hashtag, top_mention, top_user....................................................
         $feature_option_split = explode("_", $feature_option); //$feature_option = 'top_hashtag'/'top_mention' or 'top_latlng_hashtag'/'top_latlng_mention'
         if(($feature_option_split[0] == 'top') and ($feature_option_split[1] == 'latlng')){  
             // to get top data from location_token_co_occur.................
             // get location statement after where clause after getting country, state, city from mysql by calling function
-            $loc_str = "country='^india'";
-            // $location_obj = new LocationMap;
-            // $loc_str = $location_obj->get_location_statement($token);
+            // $loc_str = "country='^india'";
+            $location_obj = new LocationMap;
+            $loc_str = $location_obj->get_location_statement($token);
             $query_class = $this->get_query_class($feature_option_split[2], $feature_option_split[0]);
             if(($range_type == '10sec') or ($range_type == 'hour') or ($range_type == 'day')){
                 if($range_type == '10sec'){

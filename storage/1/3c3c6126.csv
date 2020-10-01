@@ -1,0 +1,11 @@
+src,dst,count
+@prefpolice,#Paris,11
+@prefpolice,#villejuif,1
+@prefpolice,#paris,1
+@prefpolice,#noexplosion,1
+@prefpolice,#falsealert,1
+@prefpolice,#Vincennes,1
+@prefpolice,#Monteuil,1
+@prefpolice,#HidalgoDemission,1
+@prefpolice,#France,1
+@prefpolice,#BREAKING,1

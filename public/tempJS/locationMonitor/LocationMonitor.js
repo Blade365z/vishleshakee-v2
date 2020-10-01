@@ -1,5 +1,5 @@
 // import {wordCloudLM} from './chartHelper.js';
-import { get_current_time, getTweetIdList, getHashtag, getTopHashtag, checkLocation } from './helper.js';
+import { get_current_time, getTweetIdList, getHashtag, getTopHashtag, checkLocation,findLocation } from './helper.js';
 import { TweetsGenerator } from '../utilitiesJS/TweetGenerator.js';
 import {forwardToHistoricalAnalysis,forwardToUserAnalysis } from '../utilitiesJS/redirectionScripts.js';
 
@@ -255,9 +255,9 @@ function trigger() {
         to_datetime = global_datetime[1];
         from_datetime = global_datetime[0];
         console.log(global_datetime);
-        // findLocation('guwahati').then(result=>{
-        //     console.log(result);
-        // });
+        findLocation('^guwahati').then(result=>{
+            console.log(result);
+        });
         checkLocation(place.split("^")[1]).then(result => {
             console.log(result);
             if (Number.isInteger(parseInt(result.value)) == true) {

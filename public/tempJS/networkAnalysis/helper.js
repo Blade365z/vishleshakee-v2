@@ -85,13 +85,9 @@ export const render_linkprediction_graph = async (input,src) => {
 }
 
 export const update_view_graph_for_link_prediction = (res,src,k_value) => {
-    console.log("REST");
-    console.log(res);
     var query_index_label;
     for (var i = 0; (i < res.length) && (i < k_value); i++) {
         if (res[i].id == src) {
-            console.log("SRC");
-            console.log(src);
             query_index_label = i;
             network_global.body.data.nodes._data[res[i].id].color = "brown";
             network_global.body.data.nodes._data[res[i].id].size = 40;
@@ -121,7 +117,6 @@ export const update_view_graph_for_link_prediction = (res,src,k_value) => {
                 ed.push({
                     from: res[query_index_label].id,
                     to: res[i].id,
-                   // label: res[i].id,
                     width: 10,
                     dashes: true,
                     color: "black"
@@ -131,18 +126,12 @@ export const update_view_graph_for_link_prediction = (res,src,k_value) => {
             ed.push({
                 from: src,
                 to: res[i].id,
-               // label: res[i].id,
                 width: 10,
                 dashes: true,
                 color: "black"
             });
         }
     }
-
-    console.log("NE");
-    console.log(new_array);
-    console.log(new_array_e);
-
     network_global.body.data.nodes.update(new_array);
     network_global.body.data.edges.update(ed);
 }
@@ -261,6 +250,39 @@ network_global.moveTo(scaleOption);
 
 }
 
+export const node_highlighting = async(input) =>{
+    
+    console.log("I am printing your input");
+    console.log(input);
+    network_global.body.data.nodes._data[input].size = 100;
+
+    console.log(input);
+
+    console.log(network_global.body.data.nodes);
+
+    $.each(network_global.body.data.nodes._data, function(index, value) {
+        if (value.id == input) {
+            console.log("Yes I got it");
+            network_global.body.data.nodes._data[input].size = 100;
+            network_global.body.data.nodes._data[input].font.size = 150;
+        } else {
+            network_global.body.data.nodes._data[value.id].size = 25;
+            network_global.body.data.nodes._data[value.id].font.size = 25;
+        }
+
+    });
+
+    let new_array = [];
+    $.each(network_global.body.data.nodes._data, function(index, value) {
+        new_array.push(value);
+    });
+
+    console.log(network_global.body.data.nodes._data[input].color);
+    console.log(network_global.body.data.nodes._data[input].size);
+
+    network_global.body.data.nodes.update(new_array);
+}
+
 export const shortestpaths = async (url,data,NAType) =>{
     let response = await fetch(url,{
         method : 'post',
@@ -300,7 +322,6 @@ export const render_shortestpath_graph = (input, src_id, dst_id) => {
 
         console.log(res);
         $('.analysis_summary_div').empty();
-        $('.analysis_summary_div').append('<table> <tr><th>Node</th><th>Score</th></tr>');
         for(var i=0; i<res["paths"].length;i++){
             $('.analysis_summary_div').append('<tr><td>'+(i+1)+'</td><td>'+res["paths"]+'</td></tr>');
         }
@@ -588,8 +609,6 @@ export const getDeletedNodes = async () => {
 }
 
 export const render_graph_union = (res) => {
-
-    console.log(res);
     var nodes_arr = res["nodes"];
     var edges_arr = res["edges"];
     var querynodeinfo = res["querynode"];
@@ -598,25 +617,21 @@ export const render_graph_union = (res) => {
 
 
     $('.analysis_summary_div').empty();
-    $('.analysis_summary_div').append('<table> <tr><th>Sl. No.</th><th>Color Code</th><th>Network Size</th></tr>');
-    console.log("SSS");
-    console.log(querynodeinfo);
+    $('.analysis_summary_div').append('<table> <tr><th>Network Size</th><th>Color Code</th></tr>');
     for(var i=0; i<querynodeinfo.length;i++){
         let color_code = querynodeinfo[i]["color"];
         let count = i + 1;
         let size_of_each_network = major_array[i].length - 2;
-        $('.analysis_summary_div').append('<tr><td>'+count+'</td><td style="background-color:'+querynodeinfo[i]["color"]+'"></td><td>'+size_of_each_network+'</td></tr>');
+        $('.analysis_summary_div').append('<tr><td>'+size_of_each_network+'</td><td style="background-color:'+querynodeinfo[i]["color"]+';width:100%"></td></tr>');
     }
     $('.analysis_summary_div').append('</table>');
 
 
-    $('.analysis_summary_div').append('<table> <tr><th>Sl. No.</th><th>Node Name</th><th>Color Code</th></tr>');
-    console.log("SSS");
-    console.log(querynodeinfo);
+    $('.analysis_summary_div').append('<table> <tr><th>Node Name</th><th>Color Code</th></tr>');
     for(var i=0; i<nodes_arr.length;i++){
         let color_code = nodes_arr[i]["color"];
         let count = i + 1;
-        $('.analysis_summary_div').append('<tr><td>'+count+'</td><td>'+nodes_arr[i]["id"]+'</td><td style="background-color:'+color_code+'"></td></tr>');
+        $('.analysis_summary_div').append('<tr><td>'+'<a href="#target" class="click_events">'+nodes_arr[i]["id"]+'</a>'+'</td><td style="background-color:'+color_code+';width:100%"></td></tr>');
     }
     $('.analysis_summary_div').append('</table>');
 
@@ -673,14 +688,7 @@ export const render_graph_union = (res) => {
     network_global.moveTo(scaleOption);
     
     //Adding control buttons
-    
-    network.addEventListener("load", () => {
-        network_global.redraw();
-    });
 }
-
-
-
 
 export const intersection = async (url,data,NAType) => {
     let response = await fetch(url,{
@@ -854,16 +862,16 @@ export const render_intersection_difference = (res,id_value,option) => {
         if(info.length == 0){
             $('.analysis_summary_div').append('<b>No intersecting nodes.</b>');
         }else{
-            $('.analysis_summary_div').append('<table> <tr><th>Sl. No.</th><th>Node Name</th><th>Color Code</th></tr>');
+            $('.analysis_summary_div').append('<table> <tr><th>Node Name</th><th>Color Code</th></tr>');
             console.log(info);
             if(option == "difference"){
                 var color_code = "#5c2480";
             }else{
-                var color_code = info["color"];
+                var color_code = "#F20000";
             }
             for(var i=0; i<info.length;i++){
                 let count = i + 1;
-                $('.analysis_summary_div').append('<tr><td>'+count+'</td><td>'+ info[i]["nodes"] +'</td><td style="background-color:'+color_code+'"></td></tr>');
+                $('.analysis_summary_div').append('<tr><td>'+'<a href="#target" class="click_events">'+ info[i]["nodes"] +'</a>'+'</td><td style="background-color:'+color_code+';width:100%"></td></tr>');
             }
             $('.analysis_summary_div').append('</table>');
         }      
@@ -878,15 +886,14 @@ export const render_intersection_difference = (res,id_value,option) => {
             edges: edges
         };
     
-        var network_global = new vis.Network(container, data, binary_ops_option_format);
+        network_global = new vis.Network(container, data, binary_ops_option_format);
         
         network_global.focus(1, {
             scale: 1
         });
     
         // to add node dynamically
-        $.each(nodes_arr, function(index, value) {
-        
+        $.each(nodes_arr, function(index, value) {  
                     nodes.add({
                     "id": value.id,
                     "label": value.label,
@@ -966,9 +973,7 @@ var binary_ops_option_format = {
         navigationButtons: true,
         keyboard: true
     },
-    
     physics: true,
-
     layout: {
         improvedLayout: false,
         randomSeed: 191006

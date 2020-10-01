@@ -17,15 +17,15 @@ import { TweetsGenerator } from '../utilitiesJS/TweetGenerator.js';
 import { get_tweet_location_home,getCompleteMap } from '../utilitiesJS/getMap.js';
 import { makeSuggestionsRead, makeSmatReady } from '../utilitiesJS/smatExtras.js'
 import { getCurrentDate } from '../utilitiesJS/smatDate.js';
-import {forwardToUserAnalysis} from '../utilitiesJS/redirectionScripts.js';
+import {forwardToHistoricalAnalysis, forwardToUserAnalysis} from '../utilitiesJS/redirectionScripts.js';
 
 //Global variables 
 var MODE = '000', interval = 900, query = '';
 const publicAnalysisResultDiv = 'result-div';
 const publicAnalysisResultDivTitle = 'result-div-title';
 const publicAnalysisResultDivSubTitle = 'result-div-subtitle';
-const modeDict = { '000': 'Frequency Distribution', '001': 'Sentiment Distribution', '002': 'Top Mentions', '003': 'Top Active Users', '004': 'Locations', '005': 'Tweet Information' };
-const modeTitle = { '000': 'Zoom and click to know more.', '001': 'Zoom and click to know more.', '002': 'Click on the bar to analyse further.', '003': 'Click on the bar to analyse further.', '004': 'Click on the markers to know more.', '005': 'Raw tweets posted by the users.' }
+const modeDict = { '000': 'Frequency Distribution', '001': 'Sentiment Distribution', '002': 'Top Mentions', '003': 'Top Active Users', '004': 'Locations', '005': 'Tweet Information' ,'006':'Top Hashtags' };
+const modeTitle = { '000': 'Zoom and click to know more.', '001': 'Zoom and click to know more.', '002': 'Click on the bar to analyse further.', '003': 'Click on the bar to analyse further.', '004': 'Click on the markers to know more.', '005': 'Raw tweets posted by the users.' ,'006':'Click on the bar to analyse further.' }
 const intervalValues = { '15': 900, '30': 1800, '45': 2700, '1': 3600, '2': 7200 };
 const categoryColor = { 'normal': 'text-normal', 'com': 'text-com', 'sec': 'text-sec', 'com_sec': 'text-com_sec' }
 var date = getCurrentDate();
@@ -108,26 +108,28 @@ jQuery(function () {
   })
 
   $('.freq-public-tab').on('click', function () {
-
-    frequencyPublic(query, interval,'freq-public-tab');
+        frequencyPublic(query, interval,'freq-public-tab');
   });
 
 
   $('.senti-public-tab').on('click', function () {
-    $('.public-analysis-tab').removeClass('smat-active ');
-    $(this).addClass('smat-active ');
+
     $('.public-analysis-result').html('');
     sentimentPublic(query, interval,'senti-public-tab');
 
   });
 
   $('.mentions-public-tab').on('click', function () {
-  
-    $(this).addClass('smat-active ');
     $('.public-analysis-result').html('');
     coOccurPublic('mention',query, interval,'mentions-public-tab');
 
   });
+  $('.hashtags-public-tab').on('click', function () {
+    $('.public-analysis-result').html('');
+    coOccurPublic('hashtag',query, interval,'hashtags-public-tab');
+
+  });
+
 
   $('.topusers-public-tab').on('click', function () {
    
@@ -155,7 +157,14 @@ jQuery(function () {
     let queryCaptured = '$' + $(this).attr('value');
     forwardToUserAnalysis(queryCaptured,date,date);
   });
+  $('body').on('click','#analyzeMoreBtn',function(){
+    forwardToHistoricalAnalysis(query,date,date);
+  })
 
+  $('body').on('click','div .query ',function(){
+    let queryCaptured = $(this).text().trim();
+    forwardToHistoricalAnalysis(queryCaptured,date,date); 
+});
 
 
   $('body').on('click', 'div .filter-tweets', function () {
@@ -194,7 +203,9 @@ jQuery(function () {
     }
     else if (MODE == "005") {
       tweetPublic();
-    }
+    } else if (MODE == "006") {
+      coOccurPublic('hashtag');
+    } 
   });
 
 
@@ -254,7 +265,11 @@ const coOccurPublic = (type,queryArg, intervalArg,btnClass) => {
   $('#'+publicAnalysisResultDiv).html('<div class="d-flex">'+analysisButton+'</div><div id="barChart"></div>')
   $('#barChart').html('<div class="text-center smat-loader " ><i class="fa fa-circle-o-notch donutSpinner" aria-hidden="true"></i></div>')
   getTopCooccurData(intervalArg, queryArg, type).then(response => {
-    if(type=='mention'){
+    if(type=='hashtag'){
+      MODE = '006';
+      makePublicAnalysisReady(MODE);
+    }
+    else if(type=='mention'){
       MODE = '002';
       makePublicAnalysisReady(MODE);
     }else{

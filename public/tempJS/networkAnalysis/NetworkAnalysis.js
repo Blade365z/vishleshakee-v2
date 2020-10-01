@@ -5,7 +5,7 @@ import {
     sparkUpload, get_network, writedelete, difference, shortestpaths, community_detection, centrality, linkprediction,
     render_linkprediction_graph, render_shortestpath_graph, render_community_graph1, draw_graph, update_view_graph_for_link_prediction,
     render_graph_community, render_union_graph, render_graph_union, render_intersection_diff_graph, render_intersection_difference,
-    networkGeneration, storeResultofSparkFromController,getDeletedNodes
+    networkGeneration, storeResultofSparkFromController,getDeletedNodes,node_highlighting
 } from './helper.js';
 import { makeSuggestionsRead } from '../utilitiesJS/smatExtras.js'
 
@@ -174,6 +174,11 @@ jQuery(function () {
         $(".to_date").empty();
         $(".to_date").text(searchRecords[index - 1].to);
     })
+
+    $(".analysis_summary_div").on('click', ".click_events", function() {
+        var input = $(this).text();
+        node_highlighting(input);
+    });
 })
 
 $("#lpTabNA").on('click', function () {
@@ -266,8 +271,6 @@ const generateCards = (id, query, fromDateTemp, toDateTemp, noOfNodesTemp, naTyp
     }
 }
 
-
-
 $("#naCards").on("click", "#deleteCard", function () {
     $(this).parent().parent().parent().parent().parent().remove();
 });
@@ -321,7 +324,7 @@ $("#centrality_exec").on('click', function (NAType, algo_option = $('#centrality
                 $('.analysis_summary_div').html('');
                 $('.analysis_summary_div').append('<table class="table">  <thead> <tr><th>Node</th><th>Score</th></tr>  </thead> <tbody id="tableBody"> </tbody></table>');
                 for (var i = 0; i < response["nodes"].length; i++) {
-                    $('#tableBody').append('<tr><td>' + response["nodes"][i]["label"] + '</td><td>' + response["nodes"][i]["size"] + '</td></tr>');
+                    $('#tableBody').append('<tr><td>'+'<a href="#target" class="click_events">'+ response["nodes"][i]["label"] +'</a>'+ '</td><td>' + response["nodes"][i]["size"] + '</td></tr>');
                 }
                 $('.analysis_summary_div').append('</table>');
                 draw_graph(response, "networkDivid");
@@ -407,7 +410,7 @@ $("#link_prediction_exec").on('click', function (NAType = $("#networkEngineNA").
                     if (data["src"] == response[i].id) {
                         continue;
                     }
-                    $('.analysis_summary_div').append('<tr><td>' + data["src"] + '</td><td>' + response[i].id + '</td></tr>');
+                    $('.analysis_summary_div').append('<tr><td>'+'<a href="#target" class="click_events">'+ data["src"] +'</a>'+'</td><td>' + response[i].id + '</td></tr>');
                 }
                 $('.analysis_summary_div').append('</table>');
                 update_view_graph_for_link_prediction(response, data["src"]);
@@ -431,7 +434,6 @@ $("#link_prediction_exec").on('click', function (NAType = $("#networkEngineNA").
                                 makeShowBtnReadyAfterSuccess(sparkID, response.filename, 'linkprediction', algo_option,data["query_list"][1] );
                                 window.clearInterval(checkSpartStatusInterval_centrality);
                             })
-
                         }
                     })
                     .catch(err => {
@@ -513,7 +515,6 @@ $("#sp_exec").on('click', function (NAType = "networkx", algo_option = "") {
                                 makeShowBtnReadyAfterSuccess(sparkID, response.filename, 'ShortestPath', algo_option,data["query_list"][1] );
                                 window.clearInterval(checkSpartStatusInterval_centrality);
                             })
-
                         }
                     })
                     .catch(err => {

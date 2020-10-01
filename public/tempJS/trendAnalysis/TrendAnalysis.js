@@ -40,20 +40,20 @@ jQuery(function () {
 
 
     generateTrendingTokensForTA(fromDate, toDate, 'top_hashtag', 'taResultsHashtags', 'all');
-    generateTrendingTokensForTA(fromDate, toDate, 'top_mention', 'taResultsMentions' , 'all');
-    // generateTrendingTokensForTA(fromDate, toDate, 'top_user', 'taResultsUsers' , 'all');
+    generateTrendingTokensForTA(fromDate, toDate, 'top_mention', 'taResultsMentions', 'all');
+    generateTrendingTokensForTA(fromDate, toDate, 'top_user', 'taResultsUsers', 'all');
 
 
 
-    $('#taQueryInputs').on('submit',function(e){
+    $('#taQueryInputs').on('submit', function (e) {
         e.preventDefault();
         fromDate = $('#fromDateTA').val();
-        toDate=   $('#toDateTA').val();
+        toDate = $('#toDateTA').val();
         generateTrendingTokensForTA(fromDate, toDate, 'top_hashtag', 'taResultsHashtags', 'all');
-        generateTrendingTokensForTA(fromDate, toDate, 'top_mention', 'taResultsMentions' , 'all');
-        // generateTrendingTokensForTA(fromDate, toDate, 'top_user', 'taResultsUsers' , 'all');
+        generateTrendingTokensForTA(fromDate, toDate, 'top_mention', 'taResultsMentions', 'all');
+        generateTrendingTokensForTA(fromDate, toDate, 'top_user', 'taResultsUsers', 'all');
     })
-    
+
 
 
 
@@ -66,15 +66,15 @@ jQuery(function () {
 
 const generateTrendingTokensForTA = (from, to, option, div = null, filterArgument = null) => {
     console.log('Trending data from : ', fromDate + ' to ' + toDate);
-    $('#'+div).html('');
+    $('#' + div).html('');
     $('#' + div).html('<div class="text-center pt-5  m-auto" ><i class="  m-auto fa fa-circle-o-notch donutSpinner" aria-hidden="true"></i></div>')
     getTrendingDataFromController(from, to, option, 50).then(response => {
-      
-        $('#'+div).html('');
-        
+
+        $('#' + div).html('');
+
         let dataArr = response.data;
         const arrayTemp = response.data;
-        if (option === 'top_hashtag' || option ==='top_mention') {
+        if (option === 'top_hashtag' || option === 'top_mention') {
             for (const [key, value] of Object.entries(arrayTemp)) {
                 if (filterArgument !== 'all') {
                     if (value[1] !== filterArgument) {
@@ -82,10 +82,10 @@ const generateTrendingTokensForTA = (from, to, option, div = null, filterArgumen
                     }
                 }
                 let category = (value[1] == 'normal') ? 'Normal' : ((value[1] == 'sec') ? 'Security' : ((value[1] == 'com') ? 'Communal' : 'Communal & Security'));
-                let urlArg = key.includes('#') ? key.replace('#', '%23') : '' + key;
-                $('#' + div).append('<div class="mb-1 publicHashtag-' + value[1] + '"><p class="hashtags"><a class="text-dark" href="historicalAnalysis?query=' + urlArg + '" target="_blank"  >' + key + '</a></p><p class=" m-0 smat-dash-title  text-dark "> <span>' + value[0] + '</span><span class="mx-1">Tweets</span><span class="mx-1"   title ="' + category + '" ><i class="fa fa-circle ' + categoryColor[value[1]] + ' " aria-hidden="true"></i> </span></p></div>');
+                $('#' + div).append('<div class="mb-1 publicHashtag-' + value[1] + '"><p class="hashtags"><a class="text-dark" href="historicalAnalysis?query=' + encodeURIComponent(key) + '&from=' + encodeURIComponent(from) + '&to=' + encodeURIComponent(to) + '" target="_blank"  >' + key + '</a></p><p class=" m-0 smat-dash-title  text-dark "> <span>' + value[0] + '</span><span class="mx-1">Tweets</span><span class="mx-1"   title ="' + category + '" ><i class="fa fa-circle ' + categoryColor[value[1]] + ' " aria-hidden="true"></i> </span></p></div>');
             }
+        } else {
+console.log(response);
         }
-
     })
 }

@@ -606,7 +606,7 @@ export const sentimentDistributionHA = (query = null, rangeType, fromDate = null
     if (appendArg) {
         $('#' + sentiParentDiv).append('<div class=" mt-2 ' + appendedChartParentID + '"><div class="d-flex"> <div class="mr-auto closeGraph"    value="' + rangeType + '-charts" title="close" >  <i class="fas fa-times"></i> </div> </div> <div class="row"><div class="col-sm-8"><div class="uaTab sentiDistChart  chartDiv border" id="' + chartDivID + '" ></div></div><div class="col-sm-4"><div class="sentiDistTweets border" id="' + chartTweetDivID + '"></div><div class="sentiDistSummary border d-flex pt-2"  id="' + summaryDivID + '" ></div></div></div></div>');
     } else {
-        $('#' + div).html('<div><div class="row"><div class="col-sm-8"><div class="uaTab sentiDistChart chartDiv border" id="' + chartDivID + '" ></div></div><div class="col-sm-4"><div class="sentiDistTweets chartDiv border" id="' + chartTweetDivID + '"></div><div class="sentiDistSummary border d-flex pt-2"  id="' + summaryDivID + '" ></div></div></div></div>');
+        $('#' + div).html('<div><div class="row"><div class="col-sm-8"><div class="uaTab sentiDistChart chartDiv border" id="' + chartDivID + '" ></div></div><div class="col-sm-4"><div class="sentiDistTweets  border" id="' + chartTweetDivID + '"></div><div class="sentiDistSummary border d-flex pt-2"  id="' + summaryDivID + '" ></div></div></div></div>');
     }
     //Loader...
     $('#' + chartDivID).html('<div class="text-center pt-5 " ><i class="fa fa-circle-o-notch donutSpinner" aria-hidden="true"></i></div>');
@@ -670,17 +670,17 @@ const plotDistributionGraphHA = (query, fromDate, toDate, option, uniqueID, user
     //Loader...
 
     let chartDivID = option + '-chart';
-    $('#' + div).html('<div class="d-flex" ><button class="btn btn-primary analyzeNetworkbtn mr-auto smat-rounded"> Analyze Network</button></div><div id="' + chartDivID + '"></div>');
+    $('#' + div).html('<div class="d-flex " ><span class="ml-auto mr-3"><p class="m-0 smat-box-title-large font-weight-bold text-dark" id="'+option+'-total">886</p><p class="pull-text-top smat-dash-title m-0 ">Total Nodes</p></span><button class="btn btn-primary  mr-3 analyzeNetworkbtn smat-rounded"> Analyze Network</button></div><div id="' + chartDivID + '"></div>');
     $('#' + chartDivID).html('<div class="text-center pt-5 " ><i class="fa fa-circle-o-notch donutSpinner" aria-hidden="true"></i></div>');
     if (filename) {
         getCooccurDataForAdvanceHA(query, fromDate, toDate, option, uniqueID, userID, filename).then(response => {
-            generateBarChartForCooccur(query, response, chartDivID, option)
-            console.log(response);
+            generateBarChartForCooccur(query, response['data'], chartDivID, option)
+            $('#'+option+'-total').text(response[0]['nodes']);
         });
     } else {
         getCooccurDataForHA(query, fromDate, toDate, option, uniqueID, userID).then(response => {
-            generateBarChartForCooccur(query, response, chartDivID, option)
-            console.log(response);
+            generateBarChartForCooccur(query, response[0]['data'], chartDivID, option)
+            $('#'+option+'-total').text(response[0]['nodes']);
         });
     }
 }

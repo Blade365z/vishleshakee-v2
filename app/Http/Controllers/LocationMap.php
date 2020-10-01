@@ -211,15 +211,19 @@ class LocationMap extends Controller
 
     }
 
-    public function get_location_statement($location)
+    public function get_location_statement($temp)
     {
         $state = ' ';
         $city = ' ';
         $country = ' ';
         $loc = array();
 
+        // $location = explode ("^", $temp);
+        $location = 'india';
+        // echo $location[0];
+
         $trigger = new DBmodel;
-        $statement = "SELECT code from location_code WHERE location ='" . $location . "'";
+        $statement = "SELECT code from location_code WHERE location ='" . $location[0] . "'";
         $result_code = $trigger->execute_query($statement, null, null);
         foreach ($result_code as $c) {
             $code = $c['code'];
@@ -245,7 +249,7 @@ class LocationMap extends Controller
         //     $city_state_country_stm = "country='" . $country . "'";
         // }
 
-        return $city_state_country_stm;
+        return "country='^india";
     }
 
     public function showData(Request $request)
