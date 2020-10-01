@@ -136,7 +136,7 @@
 </div>
 <div class="mt-2" id="naPanel">
 
-    <div  class=" d-flex justify-content-center font-weight-bold" id="msg_displayer"> HAHA </div>
+    <div  class=" d-flex justify-content-center font-weight-bold" id="msg_displayer"> </div>
 
     <div>
         <p class="smat-box-title-large m-0"> <span class="smat-value font-weight-bold text-center text-dark" id="naShowingResForTitle"> </span> </p>

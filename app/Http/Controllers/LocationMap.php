@@ -218,12 +218,11 @@ class LocationMap extends Controller
         $country = ' ';
         $loc = array();
 
-        // $location = explode ("^", $temp);
-        $location = 'india';
+        $location = explode ("^", $temp)[1];
         // echo $location[0];
 
         $trigger = new DBmodel;
-        $statement = "SELECT code from location_code WHERE location ='" . $location[0] . "'";
+        $statement = "SELECT code from location_code WHERE location ='" . $location . "'";
         $result_code = $trigger->execute_query($statement, null, null);
         foreach ($result_code as $c) {
             $code = $c['code'];
@@ -249,7 +248,7 @@ class LocationMap extends Controller
         //     $city_state_country_stm = "country='" . $country . "'";
         // }
 
-        return "country='^india";
+        return $city_state_country_stm;
     }
 
     public function showData(Request $request)

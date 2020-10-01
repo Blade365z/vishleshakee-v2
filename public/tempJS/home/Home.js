@@ -189,22 +189,22 @@ jQuery(function () {
 
     })
     if (MODE == "000") {
-      frequencyPublic(query, interval);
+      frequencyPublic(query, interval,'freq-public-tab');
     }
     else if (MODE == "001") {
-      sentimentPublic();
+      sentimentPublic(query, interval,'senti-public-tab');
 
     }
-    else if (MODE == "002") {
-      coOccurPublic('mention');
+    else if (MODE == "002") { 
+      coOccurPublic('mention',query, interval,'mentions-public-tab');
     }
     else if (MODE == "003") {
-      coOccurPublic('user');
+      coOccurPublic('user',query, interval,'topusers-public-tab');
     }
     else if (MODE == "005") {
-      tweetPublic();
+      tweetPublic(query, interval,'tweets-public-tab');
     } else if (MODE == "006") {
-      coOccurPublic('hashtag');
+      coOccurPublic('hashtag',query, interval,'hashtags-public-tab');
     } 
   });
 
@@ -261,7 +261,7 @@ const coOccurPublic = (type,queryArg, intervalArg,btnClass) => {
   $('.'+btnClass).addClass('smat-active ');
   $('.public-analysis-result').html('');
   let analysisButton = '';
-  // userID!=='' ? analysisButton = '<button class="btn smat-btn  smat-rounded  ml-auto mr-1 mt-1 analyzeNetworkButton " > <span> Analyse network </span> </button>' : '';
+  userID!=='' ? analysisButton = '<button class="btn btn-primary smat-rounded  ml-auto mr-3 mt-1 analyzeNetworkButton " > <span> Analyse network </span> </button>' : '';
   $('#'+publicAnalysisResultDiv).html('<div class="d-flex">'+analysisButton+'</div><div id="barChart"></div>')
   $('#barChart').html('<div class="text-center smat-loader " ><i class="fa fa-circle-o-notch donutSpinner" aria-hidden="true"></i></div>')
   getTopCooccurData(intervalArg, queryArg, type).then(response => {

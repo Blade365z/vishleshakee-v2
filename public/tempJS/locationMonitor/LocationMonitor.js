@@ -100,7 +100,8 @@ function windowOnClick(event) {
 var TweetCluster = {};
 var AllEvents = {
     "Hashtags": glow,
-    "Tweets": group1
+    "Tweets": group1,
+    "WordCloud Hashtags": WCmarker
 };
 
 

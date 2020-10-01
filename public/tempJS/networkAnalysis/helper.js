@@ -86,7 +86,7 @@ export const render_linkprediction_graph = async (input,src) => {
 
 export const update_view_graph_for_link_prediction = (res,src,k_value) => {
     var query_index_label;
-    for (var i = 0; (i < res.length) && (i < k_value); i++) {
+    for (var i = 0; (i < res.length); i++) {
         if (res[i].id == src) {
             query_index_label = i;
             network_global.body.data.nodes._data[res[i].id].color = "brown";
@@ -111,7 +111,7 @@ export const update_view_graph_for_link_prediction = (res,src,k_value) => {
     var ed = [];
     var edges = [];
 
-    for (var i = 0; i < res.length; i++) {
+    for (var i = 0;((i < res.length)); i++) {
         if(query_index_label){
             if (res[i].id != res[query_index_label].id) {
                 ed.push({
@@ -119,19 +119,12 @@ export const update_view_graph_for_link_prediction = (res,src,k_value) => {
                     to: res[i].id,
                     width: 10,
                     dashes: true,
-                    color: "black"
+                    color: "red"
                 });
             }
-        }else{
-            ed.push({
-                from: src,
-                to: res[i].id,
-                width: 10,
-                dashes: true,
-                color: "black"
-            });
         }
     }
+
     network_global.body.data.nodes.update(new_array);
     network_global.body.data.edges.update(ed);
 }
