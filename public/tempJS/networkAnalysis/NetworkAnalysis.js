@@ -5,9 +5,10 @@ import {
     sparkUpload, get_network, writedelete, difference, shortestpaths, community_detection, centrality, linkprediction,
     render_linkprediction_graph, render_shortestpath_graph, render_community_graph1, draw_graph, update_view_graph_for_link_prediction,
     render_graph_community, render_union_graph, render_graph_union, render_intersection_diff_graph, render_intersection_difference,
-    networkGeneration, storeResultofSparkFromController,getDeletedNodes,node_highlighting
+    networkGeneration, storeResultofSparkFromController,getDeletedNodes,node_highlighting,selected_graph_query
 } from './helper.js';
 import { makeSuggestionsRead } from '../utilitiesJS/smatExtras.js'
+import { formulateUserSearch } from '../utilitiesJS/userSearch.js';
 
 
 
@@ -21,6 +22,7 @@ var SourceNode;
 var DestinationNode;
 
 var currentviewingnetwork;
+var currentOperation;
 //globals for sparkStatus 
 var checkSpartStatusInterval_centrality;
 var userID;
@@ -31,12 +33,28 @@ if (localStorage.getItem('smat.me')) {
     window.location.href = 'login';
 }
 jQuery(function () {
+    // networkGeneration('na/genNetwork', queryTemp, fromDateTemp, toDateTemp, noOfNodesTemp, naTypeTemp, filename).then(response => {
+    //     generateCards(totalQueries, queryTemp, fromDateStripped, toDateStripped, noOfNodesTemp, naTypeTemp, naEngine, filename, 'naCards',"normal");
+    //     $("#msg_displayer").empty();
+    // })
+
     if(incoming){
+        console.log("Incoming");
+        console.log(incoming);
+        console.log("fromDate");
+        console.log(fromDateReceived);
+        console.log("toDate");
+        console.log(toDateReceived);
+        console.log("CRR NET ENGINE");
+        console.log(currentNetworkEngine);
+        console.log("Unique ID");
         //TODO::Redirection 
         let filename = incoming + fromDateReceived + toDateReceived + 50 + 'Hashtag-Hashtag';
         networkGeneration('na/genNetwork', incoming, fromDateReceived, toDateReceived, 50 , 'Hashtag-Hashtag', filename).then(response => {
-            $("#msg_displayer").empty();
-            generateCards(totalQueries, incoming, fromDateReceived, toDateReceived, 50, 'Hashtag-Hashtag', currentNetworkEngine, filename, 'naCards',"normal");
+            // generateCards(totalQueries, queryTemp, fromDateStripped, toDateStripped, noOfNodesTemp, naTypeTemp, naEngine, filename, 'naCards',"normal");
+
+            generateCards(totalQueries+2, incoming, fromDateReceived, toDateReceived, 50, 'Hashtag-Hashtag', currentNetworkEngine, filename, 'naCards',"normal");
+            
         })
     }
     makeSuggestionsRead ('naQueryInputBox','top_hashtag',50);
@@ -131,24 +149,29 @@ jQuery(function () {
         e.preventDefault();
         totalQueries += 1;
         let queryTemp = $('#queryNA').val().trim();
-        let fromDateTemp = $('#fromDateNA').val();
-        let fromDateStripped = fromDateTemp;
-        fromDateTemp = fromDateTemp + " 00:00:00";
-        let toDateTemp = $('#toDateNA').val();
-        let toDateStripped = toDateTemp;
-        toDateTemp = toDateTemp + " 00:00:00";
-        let noOfNodesTemp = $('#nodesNA').val().trim();
-        // noOfNodesTemp = noOfNodesTemp - 1;
-        let naTypeTemp = $('#typeNA').val();
-        let netCategory = $("#net_category").val();
-        let naEngine = $('#networkEngineNA').val();
-        let filename = queryTemp + fromDateStripped + toDateStripped + noOfNodesTemp + naTypeTemp;
-        console.log(queryTemp, naEngine);
-        console.log('Submitted');
-        networkGeneration('na/genNetwork', queryTemp, fromDateTemp, toDateTemp, noOfNodesTemp, naTypeTemp, filename).then(response => {
-            generateCards(totalQueries, queryTemp, fromDateStripped, toDateStripped, noOfNodesTemp, naTypeTemp, naEngine, filename, 'naCards',"normal");
-            $("#msg_displayer").empty();
-        })
+        if(queryTemp.includes('#')||queryTemp.includes('@')){
+            let fromDateTemp = $('#fromDateNA').val();
+            let fromDateStripped = fromDateTemp;
+            fromDateTemp = fromDateTemp + " 00:00:00";
+            let toDateTemp = $('#toDateNA').val();
+            let toDateStripped = toDateTemp;
+            toDateTemp = toDateTemp + " 00:00:00";
+            let noOfNodesTemp = $('#nodesNA').val().trim();
+            // noOfNodesTemp = noOfNodesTemp - 1;
+            let naTypeTemp = $('#typeNA').val();
+            let netCategory = $("#net_category").val();
+            let naEngine = $('#networkEngineNA').val();
+            let filename = queryTemp + fromDateStripped + toDateStripped + noOfNodesTemp + naTypeTemp;
+            console.log(queryTemp, naEngine);
+            console.log('Submitted');
+            networkGeneration('na/genNetwork', queryTemp, fromDateTemp, toDateTemp, noOfNodesTemp, naTypeTemp, filename).then(response => {
+                generateCards(totalQueries, queryTemp, fromDateStripped, toDateStripped, noOfNodesTemp, naTypeTemp, naEngine, filename, 'naCards',"normal");
+            })
+            $("#messagebox").append('<div class="card text-white m-2" style="background: white" id="infopanel"><i id="deleteinfoCard" class="fa fa-window-close text-neg" aria-hidden="true"></i><div class="d-flex justify-content-center font-weight-bold card-body"> Network Generated Successfully </div></div>');
+        }else{
+            formulateUserSearch(queryTemp, 'userContainerList');
+        }
+        // $("#messagebox").append('');
     });
 
     $('body').on('click', 'div .networkCardDetails', function () {
@@ -180,6 +203,23 @@ jQuery(function () {
         node_highlighting(input);
     });
 })
+
+$("#unionTabNA").on('click', function(){
+    currentOperation = "union";
+    $("#binaryopsnetworkselector").show();
+});
+
+$("#interSecTabNA").on('click',function(){
+    $("#binaryopsnetworkselector").show();
+});
+
+$("#diffTabNA").on('click',function(){
+    $("#binaryopsnetworkselector").show();
+});
+
+$("#netTabNA").on('click',function(){
+    $("#binaryopsnetworkselector").hide();
+});
 
 $("#lpTabNA").on('click', function () {
     var select_graph = selected_graph_ids();
@@ -275,6 +315,11 @@ $("#naCards").on("click", "#deleteCard", function () {
     $(this).parent().parent().parent().parent().parent().remove();
 });
 
+$("#messagebox").on("click","#infopanel #deleteinfoCard", function () {
+    alert($(this).parent().parent());
+    $(this).parent().remove();
+});
+
 function padNumber(d) {
     return (d < 10) ? d.toString() : d.toString();
     //return (d < 10) ? '0' + d.toString() : d.toString();
@@ -287,6 +332,17 @@ const showing_results_for = (cardData) => {
 }
 
 $("#centrality_exec").on('click', function (NAType, algo_option = $('#centrality_algo_choice').val()) {
+
+    if(selected_graph_ids().length > 1){
+        $("#messagebox").empty();
+        $("#messagebox").append('<div class="card text-black m-2" style="background: white" id="infopanel"><i id="deleteinfoCard" class="fa fa-window-close text-neg" aria-hidden="true"></i><div class="d-flex justify-content-center text-black font-weight-bold card-body"> Please, Select a Single Network </div></div>');
+        return;
+    }else if(selected_graph_ids().length == 0){
+        $("#messagebox").empty();
+        $("#messagebox").append('<div class="card text-black m-2" style="background: white" id="infopanel"><i id="deleteinfoCard" class="fa fa-window-close text-neg" aria-hidden="true"></i><div class="d-flex justify-content-center text-black font-weight-bold card-body"> Please, Select a Network </div></div>');
+        return;
+    }
+
     algo_option = $("input[name='centralityInlineRadioOptions']:checked").val();
     var select_graph = selected_graph_ids();
     let input = select_graph[0];
@@ -328,6 +384,8 @@ $("#centrality_exec").on('click', function (NAType, algo_option = $('#centrality
                 }
                 $('.analysis_summary_div').append('</table>');
                 draw_graph(response, "networkDivid");
+                $("#messagebox").empty();
+                $("#messagebox").append('<div class="card text-black m-2" style="background: white" id="infopanel"><i id="deleteinfoCard" class="fa fa-window-close text-neg" aria-hidden="true"></i><div class="d-flex justify-content-center text-black font-weight-bold card-body"> Centrality Successfully Calculated </div></div>');
             });
         } else if (currentNetworkEngine == "spark") {
             let sparkID = response.id;
@@ -355,6 +413,9 @@ $("#centrality_exec").on('click', function (NAType, algo_option = $('#centrality
                     })
             }
             checkSpartStatusInterval_centrality = setInterval(checkSparkStatus, 5000);
+
+            $("#messagebox").empty();
+            $("#messagebox").append('<div class="card text-black m-2" style="background: white" id="infopanel"><i id="deleteinfoCard" class="fa fa-window-close text-neg" aria-hidden="true"></i><div class="d-flex justify-content-center text-black font-weight-bold card-body"> Centrality Successfully Calculated </div></div>');
         }
     });
 
@@ -528,21 +589,38 @@ $("#sp_exec").on('click', function (NAType = "networkx", algo_option = "") {
 
 // Setting community detection algo option
 $("#async").on("click", function () {
+    $("#noOfCommunities").show();
     community_algo_option = $("#async").text();
 });
 
 $("#lpa").on("click", function () {
     community_algo_option = $("#lpa").text();
+    $("#noOfCommunities").hide();
 });
 
 $("#grivan").on("click", function () {
     community_algo_option = $("#grivan").text();
+    $("#noOfCommunities").hide();
 });
 
 $("#comm_exec").on('click', function (NAType = $("#NAEngine").val(), algo_option = "") {
+    if(selected_graph_ids().length > 1){
+        $("#messagebox").empty();
+        $("#messagebox").append('<div class="card text-black m-2" style="background: white" id="infopanel"><i id="deleteinfoCard" class="fa fa-window-close text-neg" aria-hidden="true"></i><div class="d-flex justify-content-center text-black font-weight-bold card-body"> Please, Select a Single Network </div></div>');
+        return;
+    }else if(selected_graph_ids().length == 0){
+        $("#messagebox").empty();
+        $("#messagebox").append('<div class="card text-black m-2" style="background: white" id="infopanel"><i id="deleteinfoCard" class="fa fa-window-close text-neg" aria-hidden="true"></i><div class="d-flex justify-content-center text-black font-weight-bold card-body"> Please, Select a Network </div></div>');
+        return;
+    }
     NAType = $("#networkEngineNA").val();
     if (community_algo_option == "Async Fluidic") {
         algo_option = "async";
+        if(!$("#noOfCommunities").val()){
+            $("#messagebox").empty();
+            $("#messagebox").append('<div class="card text-black m-2" style="background: white" id="infopanel"><i id="deleteinfoCard" class="fa fa-window-close text-neg" aria-hidden="true"></i><div class="d-flex justify-content-center text-black font-weight-bold card-body"> Please, enter number of communities </div></div>');
+            return;        
+        }
     } else if (community_algo_option == "Label Propagation") {
         algo_option = "lpa";
     } else if (community_algo_option == "Grivan Newman") {
@@ -592,6 +670,10 @@ $("#comm_exec").on('click', function (NAType = $("#NAEngine").val(), algo_option
             render_community_graph1(data["input"]).then(response => {
                 render_graph_community(response, "networkDivid");
             });
+
+            $("#messagebox").empty();
+            $("#messagebox").append('<div class="card text-black m-2" style="background: white" id="infopanel"><i id="deleteinfoCard" class="fa fa-window-close text-neg" aria-hidden="true"></i><div class="d-flex justify-content-center text-black font-weight-bold card-body"> Community Detection Performed Successfully </div></div>');
+
         } else if (currentNetworkEngine == "spark") {
 
             let sparkID = response.id;
@@ -611,7 +693,6 @@ $("#comm_exec").on('click', function (NAType = $("#NAEngine").val(), algo_option
                                 makeShowBtnReadyAfterSuccess(sparkID, response.filename, 'communities', algo_option,data["query_list"][1] );
                                 window.clearInterval(checkSpartStatusInterval_centrality);
                             })
-
                         }
                     })
                     .catch(err => {
@@ -619,11 +700,20 @@ $("#comm_exec").on('click', function (NAType = $("#NAEngine").val(), algo_option
                     })
             }
             checkSpartStatusInterval_centrality = setInterval(checkSparkStatus, 5000);
+
+            $("#messagebox").empty();
+            $("#messagebox").append('<div class="card text-black m-2" style="background: white" id="infopanel"><i id="deleteinfoCard" class="fa fa-window-close text-neg" aria-hidden="true"></i><div class="d-flex justify-content-center text-black font-weight-bold card-body"> Community Detection Performed Successfully </div></div>');
         }
     })
 });
 
 $("#union_exec").on('click', function () {
+    if((selected_graph_ids().length == 0) || (selected_graph_ids().length == 1)){
+        $("#messagebox").empty();
+        $("#messagebox").append('<div class="card text-black m-2" style="background: white" id="infopanel"><i id="deleteinfoCard" class="fa fa-window-close text-neg" aria-hidden="true"></i><div class="d-flex justify-content-center text-black font-weight-bold card-body"> Please, select at least 2 Networks </div></div>');
+        return;
+    }
+   
     var url;
     var data = {};
     var input_arr = selected_graph_ids();
@@ -703,6 +793,13 @@ $("#union_exec").on('click', function () {
 
 
 $("#intersection_exec").on('click', function (NAType = "networkx") {
+
+    if((selected_graph_ids().length == 0) || (selected_graph_ids().length == 1)){
+        $("#messagebox").empty();
+        $("#messagebox").append('<div class="card text-black m-2" style="background: white" id="infopanel"><i id="deleteinfoCard" class="fa fa-window-close text-neg" aria-hidden="true"></i><div class="d-flex justify-content-center text-black font-weight-bold card-body"> Please, select at least 2 Networks </div></div>');
+        return;
+    }
+
     NAType = $("#networkEngineNA").val();
     var url;
     var data = {};
@@ -736,6 +833,9 @@ $("#intersection_exec").on('click', function (NAType = "networkx") {
             render_intersection_diff_graph(data["input"], "intersection").then(response => {
                 render_intersection_difference(response, "intersection_displayer", "intersection");
             });
+            $("#messagebox").empty();
+            $("#messagebox").append('<div class="card text-black m-2" style="background: white" id="infopanel"><i id="deleteinfoCard" class="fa fa-window-close text-neg" aria-hidden="true"></i><div class="d-flex justify-content-center text-black font-weight-bold card-body"> Intersection Operation Performed Successfully </div></div>');
+            return;
         } else if (currentNetworkEngine == "spark") {
 
             let sparkID = response.id;
@@ -775,6 +875,10 @@ $("#intersection_exec").on('click', function (NAType = "networkx") {
                     })
             }
             checkSpartStatusInterval_centrality = setInterval(checkSparkStatus, 5000);
+
+            $("#messagebox").empty();
+            $("#messagebox").append('<div class="card text-black m-2" style="background: white" id="infopanel"><i id="deleteinfoCard" class="fa fa-window-close text-neg" aria-hidden="true"></i><div class="d-flex justify-content-center text-black font-weight-bold card-body"> Intersection Operation Performed Successfully </div></div>');
+            return;
         }
     });
 });
@@ -798,6 +902,13 @@ $("#export").on('click', function (NAType = "networkx") {
 });
 
 $("#difference_exec").on('click', function (NAType = "networkx") {
+
+    if((selected_graph_ids().length == 0) || (selected_graph_ids().length == 1)){
+        $("#messagebox").empty();
+        $("#messagebox").append('<div class="card text-black m-2" style="background: white" id="infopanel"><i id="deleteinfoCard" class="fa fa-window-close text-neg" aria-hidden="true"></i><div class="d-flex justify-content-center text-black font-weight-bold card-body"> Please, select at least 2 Networks </div></div>');
+        return;
+    }
+
     var NAType = $("#networkEngineNA").val();
     var url;
     var data = {};
@@ -839,6 +950,9 @@ $("#difference_exec").on('click', function (NAType = "networkx") {
             render_intersection_diff_graph(data["input"], "difference").then(response => {
                 render_intersection_difference(response, "difference_displayer", "difference");
             });
+            $("#messagebox").empty();
+            $("#messagebox").append('<div class="card text-black m-2" style="background: white" id="infopanel"><i id="deleteinfoCard" class="fa fa-window-close text-neg" aria-hidden="true"></i><div class="d-flex justify-content-center text-black font-weight-bold card-body"> Difference Operation Performed Successfully </div></div>');
+            return;
         } else if (currentNetworkEngine == "spark") {
 
 
@@ -879,6 +993,10 @@ $("#difference_exec").on('click', function (NAType = "networkx") {
                     })
             }
             checkSpartStatusInterval_centrality = setInterval(checkSparkStatus, 5000);
+
+            $("#messagebox").empty();
+            $("#messagebox").append('<div class="card text-black m-2" style="background: white" id="infopanel"><i id="deleteinfoCard" class="fa fa-window-close text-neg" aria-hidden="true"></i><div class="d-flex justify-content-center text-black font-weight-bold card-body"> Difference Operation Performed Successfully </div></div>');
+            return;
         }
     });
 });
@@ -886,13 +1004,20 @@ $("#difference_exec").on('click', function (NAType = "networkx") {
 $("#usenetwork").on('click', function () {
     var generator = new IDGenerator();
     var unique_id = generator.generate();
-    writedelete(unique_id);
-    let sentence;
-    getDeletedNodes().then(response => {
-        sentence = response;
-        totalQueries = totalQueries + 1;
-        generateCards(totalQueries, "Network "+currentviewingnetwork+" after deleting "+ sentence +"", "", "", "", "", "", unique_id, 'naCards',"afterdeletion");
-    });
+
+    if(currentOperation == "union"){
+        writedelete(unique_id);
+        generateCards(totalQueries, "Network  after deleting"+ +"", "", "", "", "", "", unique_id, 'naCards',"afterdeletion");
+
+    }else if(currentOperation == "deletion"){
+        writedelete(unique_id);
+        let sentence;
+        getDeletedNodes().then(response => {
+            sentence = response;
+            totalQueries = totalQueries + 1;
+            generateCards(totalQueries, "Network "+currentviewingnetwork+" after deleting "+ sentence +"", "", "", "", "", "", unique_id, 'naCards',"afterdeletion");
+        });
+    }
 });
 
 function IDGenerator() {

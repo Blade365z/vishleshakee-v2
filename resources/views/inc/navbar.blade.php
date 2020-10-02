@@ -35,13 +35,12 @@
           <i class="fa fa-user-circle" aria-hidden="true"></i>
         </a>
         <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdown">
-        
-          <a class="dropdown-item" href="#">About us</a>
+          <a class="dropdown-item" href="#">Help</a>
+          <a class="dropdown-item" href="https://www.iitg.ac.in/cseweb/osint/smat/" target="_blank">About us</a>
           @if(Auth::check() && Auth::user()->role ==1)
           <a class="dropdown-item" href="register">Register User</a>
           <a class="dropdown-item" href="feedbackPortal">See Feedbacks</a>
           @endif
-
           @if (Auth::check())
           <div class="dropdown-divider text-center"></div>
 

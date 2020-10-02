@@ -7,7 +7,7 @@
             <div class="card shadow">
          
                 <div class="card-body">
-                    <form method="POST" action="{{ route('register') }}">
+                    <form method="POST" action="register">
                         @csrf
                         <div class="text-center  mb-4 border-bottom">
                     <a class="navbar-brand m-0" href="/home"><img src="public/img/vishnavLogo.png" height="30px" /> </a>
@@ -32,6 +32,7 @@
                                 <select  class="form-control smat-rounded" name="organization" id="organization">
                                     <option value="iitg">IIT-Guwahati</option>
                                     <option value="mha">M.H.A</option>
+                                    <option value="other">Other</option>
                                 </select>
                             </div>
                         </div>

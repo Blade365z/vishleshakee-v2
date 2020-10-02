@@ -13,17 +13,20 @@
         <form class=" smat-search-form "  id="publicSearchForm" action="home" method="GET" role="search">
         
             <div id="naInputPanel">
-                <div class="form-group  text-normal  border smat-rounded d-flex  mr-2 px-2 py-1  bg-white" id="homeSearchInput">
+                <div class="form-group  text-normal  border smat-rounded d-flex  mr-2 px-2 py-1  bg-white mb-0" id="homeSearchInput">
                     <i class="fa fa-search px-1 pt-2" aria-hidden="true" style="margin-top:5px"></i>
                     <input type="text" class="form-control typeahead" name="query" id="queryLM" placeholder="Search a Hashtag or Mention" style="border:0px;" autocomplete="OFF" required>
+                    
                 </div>
                 <div class="d-flex">
-                    <button class="btn smat-btn  smat-rounded  mx-1 mb-3" id="submit-btn" type="submit"> <span>Search</span> </button>
+                    <button class="btn smat-btn  smat-rounded  mx-1 " id="submit-btn" type="submit"> <span>Search</span> </button>
                 </div>
+                
             </div>
+            <small class="text-muted">*Use the unique Userhandle to search by mention. </small>
         </form>
-
-        <div class="dFlexBut">
+     
+        <div class="dFlexBut mt-1">
                     <div class="mr-2 pt-2  text-muted ">
                        
                         Interval set to: 
@@ -208,7 +211,7 @@
         </div>
     </div>
     <div class="col-sm-3">
-        <div class="card shadow px-3 py-2">
+        <div class="card shadow px-3 py-3">
             <div>
                 <p class="smat-box-title mb-1 font-weight-bold"> Alerts <i class="fa fa-exclamation-triangle mx-2  pulseBtn text-danger" aria-hidden="true" ></i> </p>
             </div>
@@ -227,7 +230,7 @@
 
             </div>
         </div>
-        <div class="card shadow mt-4 px-3 py-2">
+        <div class="card shadow mt-4 px-3 py-3">
             <div class="d-flex ">
                 <div>
                     <p class="smat-box-title mb-1 font-weight-bold"> Trending Now</p>

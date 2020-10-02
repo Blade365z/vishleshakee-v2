@@ -1,0 +1,159 @@
+src,dst,count
+#Corona,*ärzte,1
+*ärzte,"*mund aufmache…",1
+*ärzte,"*kritische österreichische ärztin bemerkt",1
+*ärzte,*dass,1
+#Corona,"*genau darum geht",1
+"*genau darum geht","*völlig verschoben",1
+"*genau darum geht",*relationen,1
+"*genau darum geht","*haben derzeit…",1
+#Corona,"*lächerliche figur",1
+"*lächerliche figur","*u-ausschuss nicht gehört hätte",1
+"*lächerliche figur",*grünen,1
+"*lächerliche figur","*glaubt nicht wenn",1
+#Corona,"*kritische österreichische ärztin bemerkt",1
+"*kritische österreichische ärztin bemerkt",*ärzte,1
+"*kritische österreichische ärztin bemerkt","*mund aufmache…",1
+"*kritische österreichische ärztin bemerkt",*dass,1
+#Corona,"*komplett formulieren",1
+"*komplett formulieren","*stellvertretende nrw-ministerpräsident",1
+#Corona,"*haben derzeit…",1
+"*haben derzeit…","*völlig verschoben",1
+"*haben derzeit…",*relationen,1
+"*haben derzeit…","*genau darum geht",1
+#Corona,*grünen,1
+*grünen,"*u-ausschuss nicht gehört hätte",1
+*grünen,"*lächerliche figur",1
+*grünen,"*glaubt nicht wenn",1
+#Corona,"*glaubt nicht wenn",1
+"*glaubt nicht wenn","*u-ausschuss nicht gehört hätte",1
+"*glaubt nicht wenn","*lächerliche figur",1
+"*glaubt nicht wenn",*grünen,1
+#Corona,*gestern,1
+*gestern,*fälle,1
+*gestern,"*folge mit…",1
+*gestern,"*1494 neue zahl",1
+#Corona,"*gegen sich halbiert",1
+"*gegen sich halbiert",*zahl,1
+"*gegen sich halbiert",*sonnabend,1
+#Corona,"*nachbarländer auch ohne quarantäne möglich",1
+"*nachbarländer auch ohne quarantäne möglich",*reisen,1
+"*nachbarländer auch ohne quarantäne möglich",*fragen,1
+"*nachbarländer auch ohne quarantäne möglich",*anw…,1
+#Corona,*fälle,1
+*fälle,*gestern,1
+*fälle,"*folge mit…",1
+*fälle,"*1494 neue zahl",1
+#Corona,*fragen,1
+*fragen,*reisen,1
+*fragen,"*nachbarländer auch ohne quarantäne möglich",1
+*fragen,*anw…,1
+#Corona,"*folge mit…",1
+"*folge mit…",*gestern,1
+"*folge mit…",*fälle,1
+"*folge mit…","*1494 neue zahl",1
+#Corona,"*dass hinter",1
+"*dass hinter",*völlig,1
+"*dass hinter",*und&slash;od…,1
+"*dass hinter",*sehr,1
+#Corona,*dass,1
+#Corona,*beginn,1
+*beginn,"*simple grippe",2
+*beginn,*sagte,2
+*beginn,"*waadtländer staatsrat philippe",1
+*beginn,"*pandemie.» tru…",1
+#Corona,*anw…,1
+*anw…,*reisen,1
+*anw…,"*nachbarländer auch ohne quarantäne möglich",1
+*anw…,*fragen,1
+#Corona,*allianz,1
+*allianz,*rechts,1
+*allianz,*querdenkern,1
+*allianz,"*naiv über",1
+#Corona,"*mund aufmache…",1
+"*mund aufmache…",*ärzte,1
+"*mund aufmache…","*kritische österreichische ärztin bemerkt",1
+"*mund aufmache…",*dass,1
+#Corona,"*naiv über",1
+"*naiv über",*rechts,1
+"*naiv über",*querdenkern,1
+"*naiv über",*allianz,1
+#Corona,*zahl,1
+*zahl,*sonnabend,1
+*zahl,"*gegen sich halbiert",1
+#Corona,"*simple grippe",1
+"*simple grippe",*sagte,2
+"*simple grippe",*beginn,2
+"*simple grippe","*waadtländer staatsrat philippe",1
+"*simple grippe","*pandemie.» tru…",1
+#Corona,"*waadtländer staatsrat philippe",1
+"*waadtländer staatsrat philippe","*simple grippe",1
+"*waadtländer staatsrat philippe",*sagte,1
+"*waadtländer staatsrat philippe","*pandemie.» tru…",1
+"*waadtländer staatsrat philippe",*beginn,1
+#Corona,"*völlig verschoben",1
+"*völlig verschoben",*relationen,1
+"*völlig verschoben","*haben derzeit…",1
+"*völlig verschoben","*genau darum geht",1
+#Corona,*völlig,1
+*völlig,*und&slash;od…,1
+*völlig,*sehr,1
+*völlig,"*dass hinter",1
+#Corona,*und&slash;od…,1
+*und&slash;od…,*völlig,1
+*und&slash;od…,*sehr,1
+*und&slash;od…,"*dass hinter",1
+#Corona,"*u-ausschuss nicht gehört hätte",1
+"*u-ausschuss nicht gehört hätte","*lächerliche figur",1
+"*u-ausschuss nicht gehört hätte",*grünen,1
+"*u-ausschuss nicht gehört hätte","*glaubt nicht wenn",1
+#Corona,*streicht,1
+*streicht,"*programm ihren parteitag drastisch zusammen",1
+*streicht,*nötigste,1
+#Corona,"*stellvertretende nrw-ministerpräsident",1
+"*stellvertretende nrw-ministerpräsident","*komplett formulieren",1
+#Corona,*sonnabend,1
+*sonnabend,*zahl,1
+*sonnabend,"*gegen sich halbiert",1
+#Corona,*sehr,1
+*sehr,*völlig,1
+*sehr,*dass,1
+*sehr,"*dass hinter",1
+*sehr,*und&slash;od…,1
+#Corona,"*neuinfektion dort",1
+#Corona,*sagte,1
+*sagte,*beginn,2
+*sagte,"*simple grippe",2
+*sagte,"*waadtländer staatsrat philippe",1
+*sagte,"*pandemie.» tru…",1
+#Corona,*relationen,1
+*relationen,"*völlig verschoben",1
+*relationen,"*haben derzeit…",1
+*relationen,"*genau darum geht",1
+#Corona,*reisen,1
+*reisen,"*nachbarländer auch ohne quarantäne möglich",1
+*reisen,*fragen,1
+*reisen,*anw…,1
+#Corona,*rechts,1
+*rechts,*querdenkern,1
+*rechts,"*naiv über",1
+*rechts,*allianz,1
+#Corona,*querdenkern,1
+*querdenkern,*rechts,1
+*querdenkern,"*naiv über",1
+*querdenkern,*allianz,1
+#Corona,"*programm ihren parteitag drastisch zusammen",1
+"*programm ihren parteitag drastisch zusammen",*streicht,1
+"*programm ihren parteitag drastisch zusammen",*nötigste,1
+#Corona,"*pandemie.» tru…",1
+"*pandemie.» tru…","*waadtländer staatsrat philippe",1
+"*pandemie.» tru…","*simple grippe",1
+"*pandemie.» tru…",*sagte,1
+"*pandemie.» tru…",*beginn,1
+#Corona,*nötigste,1
+*nötigste,*streicht,1
+*nötigste,"*programm ihren parteitag drastisch zusammen",1
+#Corona,"*1494 neue zahl",1
+"*1494 neue zahl",*gestern,1
+"*1494 neue zahl",*fälle,1
+"*1494 neue zahl","*folge mit…",1

@@ -322,7 +322,7 @@ const plotDistributionGraphUA = (query, fromDate, toDate, option, uniqueID, user
     let chartDivID = option + '-chart';
     $('#' + div).html('<div class="text-center pt-5 " ><i class="fa fa-circle-o-notch donutSpinner" aria-hidden="true"></i></div>');
     getCooccurDataForUA(query, fromDate, toDate, option, uniqueID, userID).then(response => {
-        $('#'+div).html('<div class="d-flex"><button class="btn smat-btn  smat-rounded  ml-auto mr-1  mt-1 analyzeNetworkButton "   value="'+query+'|'+toDate+'|'+fromDate+'|'+option+'|'+uniqueID+'|'+userID+'" > <span> Analyse network </span> </button></div><div id="'+chartDivID+'"></div>')
+        $('#'+div).html('<div class="d-flex"><button class="btn btn-primary  smat-rounded  ml-auto mr-1  mt-1 analyzeNetworkButton "   value="'+query+'|'+toDate+'|'+fromDate+'|'+option+'|'+uniqueID+'|'+userID+'" > <span> Analyse network </span> </button></div><div class="px-3" id="'+chartDivID+'" style="min-height:30%;"></div>')
         response.length < 1 ? $('#' + div).html('<div class="alert-danger text-center m-3 p-2 smat-rounded"> No Data Found </div>') : generateBarChartForCooccur(query, response, chartDivID, option, fromDate, toDate)
     });
 0. }

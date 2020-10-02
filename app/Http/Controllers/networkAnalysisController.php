@@ -26,6 +26,7 @@ class networkAnalysisController extends Controller
         $nodes = array();
         $edges = array();
 
+        
         if ($request->input('nettype') == "Hashtag-Hashtag") {
             $co_occur_option = "hashtag";
         } else if ($request->input('nettype') == "Hashtag-Mention") {
@@ -34,12 +35,8 @@ class networkAnalysisController extends Controller
             $co_occur_option = "hashtag";
         } else if ($request->input('nettype') == "Hashtag-Keyword") {
             $co_occur_option = "keyword";
-        } else if ($request->input('nettype') == "Hashtag-User"){
-            $co_occur_option = "user";
         }else if ($request->input('nettype') == "Mention-Mention"){
             $co_occur_option = "mention";
-        }else if ($request->input('nettype') == "Mention-User"){
-            $co_occur_option = "user";
         }else if ($request->input('nettype') == "Mention-Keyword"){
             $co_occur_option = "keyword";
         }else if ($request->input('nettype') == "Keyword-Hashtag"){
@@ -50,6 +47,12 @@ class networkAnalysisController extends Controller
             $co_occur_option = "mention";
         }else if ($request->input('nettype') == "User-Hashtag"){
             $co_occur_option = "hashtag";
+        }else if ($request->input('nettype') == "Hashtag-User"){
+            // only one level
+            $co_occur_option = "user";
+        }else if ($request->input('nettype') == "Mention-User"){
+             // only one level
+            $co_occur_option = "user";
         }
 
         $CC_obj = new CommonController;
@@ -471,7 +474,8 @@ class networkAnalysisController extends Controller
                 $algo_choosen_option = '115';
                 break;
             case 'AllPossibleShortestPath':
-                $algo_choosen_option = '404';
+                $algo_choosen_option = '41';
+               // $algo_choosen_option = '404';
                 //Depth has to be considered
                 $depth = "null";
                 $k = "null";

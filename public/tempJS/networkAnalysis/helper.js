@@ -32,9 +32,9 @@ export const render_graph = async (url,input) => {
     return output;
 }
 
-export const networkGeneration = async (url,queryTemp,fromDateTemp,toDateTemp,noOfNodesTemp,naTypeTemp,filename) => {
-    $("#msg_displayer").append('<p> Generating Network </p>');
 
+
+export const networkGeneration = async (url,queryTemp,fromDateTemp,toDateTemp,noOfNodesTemp,naTypeTemp,filename) => {
     let dir_name = getmystoragedir();
     let data = {
         token : queryTemp,
@@ -92,7 +92,6 @@ export const update_view_graph_for_link_prediction = (res,src,k_value) => {
             network_global.body.data.nodes._data[res[i].id].color = "brown";
             network_global.body.data.nodes._data[res[i].id].size = 40;
         } else {
-            console.log(res[i].id);
             network_global.body.data.nodes._data[res[i].id].color = "#ffa500";
             network_global.body.data.nodes._data[res[i].id].size = 40;
         }
@@ -111,8 +110,9 @@ export const update_view_graph_for_link_prediction = (res,src,k_value) => {
     var ed = [];
     var edges = [];
 
+
     for (var i = 0;((i < res.length)); i++) {
-        if(query_index_label){
+        if( i < 3){
             if (res[i].id != res[query_index_label].id) {
                 ed.push({
                     from: res[query_index_label].id,
@@ -124,7 +124,6 @@ export const update_view_graph_for_link_prediction = (res,src,k_value) => {
             }
         }
     }
-
     network_global.body.data.nodes.update(new_array);
     network_global.body.data.edges.update(ed);
 }
@@ -191,7 +190,7 @@ export const render_graph_community = (res,id_value) =>{
     var edges_arr = res["edges"];
 
     $('.analysis_summary_div').empty();
-    $('.analysis_summary_div').append('<table> <tr><th>Node</th><th>Score</th></tr>');
+    // $('.analysis_summary_div').append('<table> <tr><th>Node</th><th>Score</th></tr>');
     for(var i=0; i<res["groups"].length;i++){
         console.log("Iterating");
         $('.analysis_summary_div').append('<tr><td>'+(i+1)+'</td><td>'+res["groups"][i]+'</td></tr>');
@@ -557,6 +556,14 @@ export const selected_graph_ids = () => {
     return ids_arr;
 }
 
+export const selected_graph_query = () => {
+    var ids_arr = [];
+    ids_arr = $( $('#naCards .col-md-2 .form-check-input:checked')).map(function(){
+        return this.query;
+    }).get()
+    return ids_arr;
+}
+
 export const union = async (url,data,NAType) => {
     console.log("Printing dependents");
     console.log(url);
@@ -607,6 +614,9 @@ export const render_graph_union = (res) => {
     var querynodeinfo = res["querynode"];
     var major_array = res["major"];
     var opr_type = res["operation"];
+
+    console.log("Render Graph");
+    console.log(querynodeinfo);
 
 
     $('.analysis_summary_div').empty();
@@ -676,6 +686,7 @@ export const render_graph_union = (res) => {
         console.log("Making an edge");
     });
 
+    global_edges = edges_arr;
     
     var scaleOption = {scale:0.2};
     network_global.moveTo(scaleOption);

@@ -308,8 +308,18 @@ color:white;
 .clickable {
     color: var(--color-normal);
     cursor: pointer;
+    
+}
+.clickable:hover{
+    text-decoration: underline;
 }
 
+.trends:hover {
+    background-color: rgb(209, 233, 255);
+    /* opacity: 10%; */
+    cursor: pointer;
+
+}
 #public-trending {
     height:350px;
     overflow-x: hidden;

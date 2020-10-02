@@ -85,7 +85,10 @@ const generateTrendingTokensForTA = (from, to, option, div = null, filterArgumen
                 $('#' + div).append('<div class="mb-1 publicHashtag-' + value[1] + '"><p class="hashtags"><a class="text-dark" href="historicalAnalysis?query=' + encodeURIComponent(key) + '&from=' + encodeURIComponent(from) + '&to=' + encodeURIComponent(to) + '" target="_blank"  >' + key + '</a></p><p class=" m-0 smat-dash-title  text-dark "> <span>' + value[0] + '</span><span class="mx-1">Tweets</span><span class="mx-1"   title ="' + category + '" ><i class="fa fa-circle ' + categoryColor[value[1]] + ' " aria-hidden="true"></i> </span></p></div>');
             }
         } else {
-console.log(response);
+            arrayTemp.forEach(element => {
+                    $('#' + div).append('<div class="mb-1 "><p class="hashtags"><a class="text-dark" href="userAnalysis?query=' + encodeURIComponent(element.id) + '&from=' + encodeURIComponent(from) + '&to=' + encodeURIComponent(to) + '" target="_blank"  >' + element.author_name + '</a></p><p class=" m-0 smat-dash-title  text-dark "> <span>' + element.count + '</span><span class="mx-1">Tweets</span></p></div>');
+                });
+            // 
         }
     })
 }

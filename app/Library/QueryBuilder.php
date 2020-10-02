@@ -248,6 +248,9 @@ class QueryBuilder{
                     case 'user':
                         $class = 111;
                         break;
+                    case 'keyword':
+                        $class = 22;
+                        break;
                     default:
                         # code...
                         break;

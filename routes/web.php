@@ -19,6 +19,10 @@ Route::get('/', function () {
     $URL = env('APP_URL', null);
     return redirect($URL . 'home');
 });
+
+Route::get('/help', function () {
+    return view('modules.help');
+});
 Route::get('/home', function (Request $request) {
     $query = '';
     if ($request->input('query')) {

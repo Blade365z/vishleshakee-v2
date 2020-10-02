@@ -172,11 +172,11 @@
                             </ul>
                         </div>
 
-                        <div class="tab-content" id="pills-tabContent">
+                        <div class="tab-content px-5" id="pills-tabContent">
 
-                            <div class="tab-pane fade show active uaTabTopRight" id="hashtagsContentTab" role="tabpanel"
+                            <div class="tab-pane fade show active uaTabTopRight px-1" id="hashtagsContentTab" role="tabpanel"
                                 aria-labelledby="hashtagsContentTab">hashtagsContentTab</div>
-                            <div class="tab-pane fade uaTabTopRight" id="mentionsContentUA" role="tabpanel"
+                            <div class="tab-pane fade uaTabTopRight px-1" id="mentionsContentUA" role="tabpanel"
                                 aria-labelledby="mentionsContentUA">Mentions Tab</div>
 
 

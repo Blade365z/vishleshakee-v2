@@ -136,6 +136,10 @@
 </div>
 <div class="mt-2" id="naPanel">
 
+    <div id="messagebox"> 
+
+    </div>
+
     <div  class=" d-flex justify-content-center font-weight-bold" id="msg_displayer"> </div>
 
     <div>
@@ -184,7 +188,7 @@
                 <div class="card-body">
                     <div>
                         <h4 class="m-0  font-weight-bold text-dark subject">  </h4>
-                        <p class="m-0 text-dark "> From: <span class="font-weight-bold from_date"> </span> &nbsp To: <span class="font-weight-bold to_date"> </span> </p>
+                        {{-- <p class="m-0 text-dark "> From: <span class="font-weight-bold from_date"> </span> &nbsp To: <span class="font-weight-bold to_date"> </span> </p> --}}
                         <p class="m-0  text-dark"> </p>
 
 
@@ -319,11 +323,11 @@
                                                     <option value="ShortestPath">
                                                         Shortest Path
                                                     </option>
-                                                    <option value="">
+                                                    {{-- <option value="">
 
                                                         K Possible Shortest Path/Depth
 
-                                                    </option>
+                                                    </option> --}}
                                                     <option value="AllPossibleShortestPath">All Possible Shortest Path</option>
                                                 </select>
                                             </div>
@@ -417,7 +421,7 @@
 
                     <div class=" ml-auto d-flex">
                             <Button class="btn smat-btn smat-rounded mx-2" id="usenetwork"><span>Use Network</span></Button> <br/> <br/>
-                            <Button class="btn smat-btn smat-rounded mx-2"><span>Expand Network</span></Button> <br/> <br/>
+                            {{-- <Button class="btn smat-btn smat-rounded mx-2"><span>Expand Network</span></Button> <br/> <br/> --}}
                             <Button class="btn smat-btn smat-rounded mx-2" id="export"><span>Export Network</span></Button> <br/> <br/>
                         </div>
                 </div>

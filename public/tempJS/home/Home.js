@@ -17,7 +17,7 @@ import { TweetsGenerator } from '../utilitiesJS/TweetGenerator.js';
 import { get_tweet_location_home,getCompleteMap } from '../utilitiesJS/getMap.js';
 import { makeSuggestionsRead, makeSmatReady } from '../utilitiesJS/smatExtras.js'
 import { getCurrentDate } from '../utilitiesJS/smatDate.js';
-import {forwardToHistoricalAnalysis, forwardToUserAnalysis} from '../utilitiesJS/redirectionScripts.js';
+import {forwardToHistoricalAnalysis, forwardToNetworkAnalysis, forwardToUserAnalysis} from '../utilitiesJS/redirectionScripts.js';
 
 //Global variables 
 var MODE = '000', interval = 900, query = '';
@@ -92,7 +92,7 @@ jQuery(function () {
 
 
   let mainPublicCardHeight = $('#main-public-dash').height();
-  $('#public-trending').css('height', mainPublicCardHeight - 56);
+  $('#public-trending').css('height', mainPublicCardHeight - 70);
 
 
 
@@ -156,6 +156,7 @@ jQuery(function () {
   $('body').on('click', 'div .username', function () {
     let queryCaptured = '$' + $(this).attr('value');
     forwardToUserAnalysis(queryCaptured,date,date);
+    console.log(queryCaptured);
   });
   $('body').on('click','#analyzeMoreBtn',function(){
     forwardToHistoricalAnalysis(query,date,date);
@@ -186,7 +187,12 @@ jQuery(function () {
     getTopData(interval).then(response => {
       TopTrendingData = response.data
       generatePublicHashtags(TopTrendingData, 'all');
-
+        if(!query){
+          query = incoming ? query = incoming : Object.keys(TopTrendingData)[0];
+          $('#publicCurrentQuery').text(query);
+          $('#' + publicAnalysisResultDiv).html('<div class="text-center smat-loader " ><i class="fa fa-circle-o-notch donutSpinner mt-5" aria-hidden="true"></i></div>')
+          frequencyPublic(query, interval,'freq-public-tab');
+        }
     })
     if (MODE == "000") {
       frequencyPublic(query, interval,'freq-public-tab');
@@ -208,7 +214,11 @@ jQuery(function () {
     } 
   });
 
-
+  $('body').on('click','div .analyzeNetworkButton',function(){
+    let args = $(this).attr('value');
+    args = args.split(/[|]/).filter(Boolean);
+    forwardToNetworkAnalysis(args);
+})
   //update public hahstag every 1 min 
 
   let updatePublicHashtagOneMinInt = setInterval(updatePublicTrendingHashtagsEveryOneMiute, 10000);
@@ -261,7 +271,11 @@ const coOccurPublic = (type,queryArg, intervalArg,btnClass) => {
   $('.'+btnClass).addClass('smat-active ');
   $('.public-analysis-result').html('');
   let analysisButton = '';
-  userID!=='' ? analysisButton = '<button class="btn btn-primary smat-rounded  ml-auto mr-3 mt-1 analyzeNetworkButton " > <span> Analyse network </span> </button>' : '';
+  if(localStorage.getItem('smat.me')){
+    analysisButton = '<button class="btn btn-primary smat-rounded  ml-auto mr-3 mt-1 analyzeNetworkButton "   value="'+queryArg+'|'+date+'|'+date+'|'+type+'|'+null+'|'+userID+'"> <span> Analyse network </span> </button>';
+  }else{
+    analysisButton = '';
+  }
   $('#'+publicAnalysisResultDiv).html('<div class="d-flex">'+analysisButton+'</div><div id="barChart"></div>')
   $('#barChart').html('<div class="text-center smat-loader " ><i class="fa fa-circle-o-notch donutSpinner" aria-hidden="true"></i></div>')
   getTopCooccurData(intervalArg, queryArg, type).then(response => {
@@ -344,7 +358,7 @@ const generatePublicLocations = (queryArg, intervalArg,btnClass) => {
   $('.public-analysis-tab').removeClass('smat-active ');
   $('.'+btnClass).addClass('smat-active ');
   $('.public-analysis-result').html('');
-  $('#result-div').html(`<div id="result-div-map" style="height:400px;"></div>
+  $('#result-div').html(`<div id="result-div-map" style="height:450px;"></div>
                           <div class="modal_lm">
                             <div class="modal-content">
                                 <span class="close-button">&times;</span>
