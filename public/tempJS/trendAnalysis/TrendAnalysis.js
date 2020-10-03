@@ -1,5 +1,8 @@
+import { getTweetIDsForHA } from '../historicalAnalysis/helper.js';
+import { forwardToUserAnalysis ,forwardToHistoricalAnalysis} from '../utilitiesJS/redirectionScripts.js';
 //imports 
 import { dateProcessor, getCurrentDate } from '../utilitiesJS/smatDate.js';
+import { TweetsGenerator } from '../utilitiesJS/TweetGenerator.js';
 import { getTrendingDataFromController } from './helper.js';
 
 //Global variable definitions 
@@ -24,11 +27,23 @@ jQuery(function () {
     fromDate = dateProcessor(toDate, '-', 0);
     $("#fromDateTA").datepicker({
         onSelect: function (dateCaptured) {
+            $("#toDateTA").val('');
             let minDateTemp = dateCaptured;
             let maxDateTemp = dateProcessor(dateCaptured, '+', 2);
             $('#toDateTA').datepicker({
                 minDate: new Date(minDateTemp),
                 maxDate: new Date(maxDateTemp)
+            });
+        }
+    });
+    $("#toDateTA").datepicker({
+        onSelect: function (dateCaptured) {
+            $("#fromDateTA").val('');
+            let minDateTemp = dateCaptured;
+            let maxDateTemp = dateProcessor(dateCaptured, '-', 2);
+            $('#fromDateTA').datepicker({
+                minDate: new Date(maxDateTemp),
+                maxDate: new Date(minDateTemp)
             });
         }
     });
@@ -38,10 +53,16 @@ jQuery(function () {
         maxDate: new Date(dateProcessor(fromDate, '+', 2)),
     }).val(fromDate);
 
-
-    generateTrendingTokensForTA(fromDate, toDate, 'top_hashtag', 'taResultsHashtags', 'all');
+    $('#trendTweets').html('<div class="text-center smat-loader " ><i class="fa fa-circle-o-notch donutSpinner mt-5" aria-hidden="true"></i></div>');
+    generateTrendingTokensForTA(fromDate, toDate, 'top_hashtag', 'taResultsHashtags', 'all').then(queryTemp => {
+        getTweetIDsForHA(queryTemp, fromDate, toDate).then(response => {
+            $('#trendTweets').html('');
+            $('#trendTweetsQuery').text(queryTemp);
+            TweetsGenerator(response.data, 6, 'trendTweets', fromDate, toDate, false);
+        });
+    });
     generateTrendingTokensForTA(fromDate, toDate, 'top_mention', 'taResultsMentions', 'all');
-    generateTrendingTokensForTA(fromDate, toDate, 'top_user', 'taResultsUsers', 'all');
+    // generateTrendingTokensForTA(fromDate, toDate, 'top_user', 'taResultsUsers', 'all');
 
 
 
@@ -49,13 +70,34 @@ jQuery(function () {
         e.preventDefault();
         fromDate = $('#fromDateTA').val();
         toDate = $('#toDateTA').val();
-        generateTrendingTokensForTA(fromDate, toDate, 'top_hashtag', 'taResultsHashtags', 'all');
+        generateTrendingTokensForTA(fromDate, toDate, 'top_hashtag', 'taResultsHashtags', 'all').then(queryTemp => {
+            getTweetIDsForHA(response, fromDate, toDate).then(response => {
+                $('#trendTweets').html('');
+                $('#trendTweetsQuery').text(queryTemp);
+                TweetsGenerator(response.data, 6, 'trendTweets', fromDate, toDate, false);
+            });
+        });
         generateTrendingTokensForTA(fromDate, toDate, 'top_mention', 'taResultsMentions', 'all');
-        generateTrendingTokensForTA(fromDate, toDate, 'top_user', 'taResultsUsers', 'all');
+        // generateTrendingTokensForTA(fromDate, toDate, 'top_user', 'taResultsUsers', 'all');
     })
-
-
-
+    $('body').on('click', 'div .username', function () {
+        let queryCaptured = '$' + $(this).attr('value');
+        forwardToUserAnalysis(queryCaptured,fromDate,toDate);
+        console.log(queryCaptured);
+      });
+      $('body').on('click','div .query ',function(){
+        let queryCaptured = $(this).text().trim();
+        forwardToHistoricalAnalysis(queryCaptured,fromDate,toDate); 
+    });
+    $('body').on('click', 'div .trendTweets', function () {
+        let queryCaptured = $(this).attr('value');
+        $('#trendTweets').html('<div class="text-center smat-loader " ><i class="fa fa-circle-o-notch donutSpinner mt-5" aria-hidden="true"></i></div>')
+        getTweetIDsForHA(queryCaptured, fromDate, toDate).then(response => {
+            $('#trendTweets').html('');
+            $('#trendTweetsQuery').text(queryCaptured);
+            TweetsGenerator(response.data, 6, 'trendTweets', fromDate, toDate, false);
+        })
+    })
 
 
 });
@@ -64,11 +106,12 @@ jQuery(function () {
 
 
 
-const generateTrendingTokensForTA = (from, to, option, div = null, filterArgument = null) => {
+const generateTrendingTokensForTA = async (from, to, option, div = null, filterArgument = null) => {
     console.log('Trending data from : ', fromDate + ' to ' + toDate);
     $('#' + div).html('');
     $('#' + div).html('<div class="text-center pt-5  m-auto" ><i class="  m-auto fa fa-circle-o-notch donutSpinner" aria-hidden="true"></i></div>')
-    getTrendingDataFromController(from, to, option, 50).then(response => {
+
+    let first = await getTrendingDataFromController(from, to, option, 50).then(response => {
 
         $('#' + div).html('');
 
@@ -82,13 +125,18 @@ const generateTrendingTokensForTA = (from, to, option, div = null, filterArgumen
                     }
                 }
                 let category = (value[1] == 'normal') ? 'Normal' : ((value[1] == 'sec') ? 'Security' : ((value[1] == 'com') ? 'Communal' : 'Communal & Security'));
-                $('#' + div).append('<div class="mb-1 publicHashtag-' + value[1] + '"><p class="hashtags"><a class="text-dark" href="historicalAnalysis?query=' + encodeURIComponent(key) + '&from=' + encodeURIComponent(from) + '&to=' + encodeURIComponent(to) + '" target="_blank"  >' + key + '</a></p><p class=" m-0 smat-dash-title  text-dark "> <span>' + value[0] + '</span><span class="mx-1">Tweets</span><span class="mx-1"   title ="' + category + '" ><i class="fa fa-circle ' + categoryColor[value[1]] + ' " aria-hidden="true"></i> </span></p></div>');
+                $('#' + div).append('<div class="mb-1  px-2 py-1 publicHashtag-' + value[1] + '"><button type="button" class="btn  bg-transparent  m-0 p-0  hashtags " data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">' + key + '</button><div class="dropdown-menu  dropdown-menu-right"> <li class="dropdown-item clickable filter-pos-tweets filterTweets p-0 d-flex trendTweets"  value="' + key + '"> <span class="ml-2 "> Show Posts</span></li><li class="dropdown-item clickable filter-pos-tweets filterTweets p-0 d-flex" ><a class="w-100 ml-2 " href="historicalAnalysis?query=' + encodeURIComponent(key) + '&from=' + encodeURIComponent(from) + '&to=' + encodeURIComponent(to) + '" target="_blank"  > Analyse More </a></li> </div><p class=" m-0 smat-dash-title  text-dark "> <span>' + value[0] + '</span><span class="mx-1">Tweets</span><span class="mx-1"   title ="' + category + '" ><i class="fa fa-circle ' + categoryColor[value[1]] + ' " aria-hidden="true"></i> </span></p></div>');
             }
         } else {
             arrayTemp.forEach(element => {
-                    $('#' + div).append('<div class="mb-1 "><p class="hashtags"><a class="text-dark" href="userAnalysis?query=' + encodeURIComponent(element.id) + '&from=' + encodeURIComponent(from) + '&to=' + encodeURIComponent(to) + '" target="_blank"  >' + element.author_name + '</a></p><p class=" m-0 smat-dash-title  text-dark "> <span>' + element.count + '</span><span class="mx-1">Tweets</span></p></div>');
-                });
+                $('#' + div).append('<div class="mb-1 "><p class="hashtags"><a class="text-dark" href="userAnalysis?query=' + encodeURIComponent(element.id) + '&from=' + encodeURIComponent(from) + '&to=' + encodeURIComponent(to) + '" target="_blank"  >' + element.author_name + '</a></p><p class=" m-0 smat-dash-title  text-dark "> <span>' + element.count + '</span><span class="mx-1">Tweets</span></p></div>');
+            });
             // 
         }
+        return Object.keys(arrayTemp)[0]
     })
+    return first;
 }
+
+
+// {/* <a class="text-dark" href="historicalAnalysis?query=' + encodeURIComponent(key) + '&from=' + encodeURIComponent(from) + '&to=' + encodeURIComponent(to) + '" target="_blank"  > */} </a>

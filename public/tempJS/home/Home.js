@@ -15,7 +15,7 @@ import { getFreqDistData, getTopCooccurData, getMe, getSentiDistData, getTopData
 import { generateFrequencyChart, generateSentimentChart, generateBarChart } from './chartHelper.js';
 import { TweetsGenerator } from '../utilitiesJS/TweetGenerator.js';
 import { get_tweet_location_home,getCompleteMap } from '../utilitiesJS/getMap.js';
-import { makeSuggestionsRead, makeSmatReady } from '../utilitiesJS/smatExtras.js'
+import { makeSuggestionsReady, makeSmatReady } from '../utilitiesJS/smatExtras.js'
 import { getCurrentDate } from '../utilitiesJS/smatDate.js';
 import {forwardToHistoricalAnalysis, forwardToNetworkAnalysis, forwardToUserAnalysis} from '../utilitiesJS/redirectionScripts.js';
 
@@ -45,17 +45,17 @@ jQuery(function () {
     let alreadyStoredTemp = JSON.parse(localStorage.getItem('smat-currentlyTrending'));
     for (let i = 0; i < alreadyStoredTemp.length; i++) {
       let offset = i + 1;
-      $('#alert-' + offset).text(alreadyStoredTemp[i]);
+      $('#alert-' + offset).html('<a  class="text-dark" href="?query=' + encodeURIComponent(alreadyStoredTemp[i]) + '" target="_blank"  >'+alreadyStoredTemp[i]+'</a>');
     }
   }
-  makeSuggestionsRead('homeSearchInput', 'top_hashtag', 50, true).then(response => {
+  makeSuggestionsReady('homeSearchInput' , 50, true).then(response => {
     var response = response.slice(0, 3);
     $('#alertBoxLoader').remove();
     if (!localStorage.getItem('smat-currentlyTrending')) {
       localStorage.setItem('smat-currentlyTrending', JSON.stringify(response));
       for (let i = 0; i < response.length; i++) {
         let offset = i + 1;
-        $('#alert-' + offset).text(response[i]);
+        $('#alert-' + offset).html('<a  class="text-dark" href="?query=' + encodeURIComponent(response[i]) + '" target="_blank"  >'+response[i]+'</a>');
       }
     } else {
       let alreadyStoredTemp = JSON.parse(localStorage.getItem('smat-currentlyTrending'));
@@ -72,7 +72,7 @@ jQuery(function () {
         localStorage.setItem('smat-currentlyTrending', JSON.stringify(response));
         for (let i = 0; i < response.length; i++) {
           let offset = i + 1;
-          $('#alert-' + offset).text(response[i]);
+          $('#alert-' + offset).html('<a  class="text-dark" href="?query=' + encodeURIComponent(response[i]) + '" target="_blank"  >'+response[i]+'</a>');
         }
       }
     }

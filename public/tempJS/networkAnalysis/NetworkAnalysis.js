@@ -7,7 +7,7 @@ import {
     render_graph_community, render_union_graph, render_graph_union, render_intersection_diff_graph, render_intersection_difference,
     networkGeneration, storeResultofSparkFromController,getDeletedNodes,node_highlighting,selected_graph_query
 } from './helper.js';
-import { makeSuggestionsRead } from '../utilitiesJS/smatExtras.js'
+import { makeSuggestionsReady } from '../utilitiesJS/smatExtras.js'
 import { formulateUserSearch } from '../utilitiesJS/userSearch.js';
 
 
@@ -15,6 +15,7 @@ import { formulateUserSearch } from '../utilitiesJS/userSearch.js';
 let totalQueries;
 let searchRecords = [];
 var cardIDdictionary = {};
+var queryDictionaryFilename = {};
 var currentNetworkEngine = 'networkx', currentlyShowing;
 var community_algo_option = "Async Fluidic";
 
@@ -57,7 +58,7 @@ jQuery(function () {
             
         })
     }
-    makeSuggestionsRead ('naQueryInputBox','top_hashtag',50);
+    makeSuggestionsReady ('naQueryInputBox',50);
     $('#networkEngineNA').on('change', function () {
         console.log('changed');
         let selected = $("#networkEngineNA").val();
@@ -166,8 +167,9 @@ jQuery(function () {
             console.log('Submitted');
             networkGeneration('na/genNetwork', queryTemp, fromDateTemp, toDateTemp, noOfNodesTemp, naTypeTemp, filename).then(response => {
                 generateCards(totalQueries, queryTemp, fromDateStripped, toDateStripped, noOfNodesTemp, naTypeTemp, naEngine, filename, 'naCards',"normal");
+                $("#messagebox").empty();
+                $("#messagebox").append('<div class="card text-black m-2" style="background: #BFFAC0" id="infopanel"><i id="deleteinfoCard" class="fa fa-window-close text-neg" aria-hidden="true"></i><div class="d-flex justify-content-center font-weight-bold card-body"> Network Generated Successfully </div></div>');
             })
-            $("#messagebox").append('<div class="card text-white m-2" style="background: white" id="infopanel"><i id="deleteinfoCard" class="fa fa-window-close text-neg" aria-hidden="true"></i><div class="d-flex justify-content-center font-weight-bold card-body"> Network Generated Successfully </div></div>');
         }else{
             formulateUserSearch(queryTemp, 'userContainerList');
         }
@@ -301,6 +303,8 @@ const generateCards = (id, query, fromDateTemp, toDateTemp, noOfNodesTemp, naTyp
     tempArr = { 'id': id, 'query': query, 'from': fromDateTemp, 'to': toDateTemp, 'nodesNo': noOfNodesTemp, 'naType': naTypeTemp, 'filename': filename, 'naEngine': naEngine };
     searchRecords.push(tempArr);
     cardIDdictionary[id] = filename;
+    queryDictionaryFilename[filename] = query;
+    console.log("Checker", queryDictionaryFilename);
     console.log(cardIDdictionary, filename);
     if(status == "normal"){
         $('#' + div).append('<div class="col-md-2" value="' + id + '"><div class="card shadow p-0"><div class="card-body p-0"><div class="d-flex px-3 pt-3"><span class="pull-left"><i id="deleteCard" class="fa fa-window-close text-neg" aria-hidden="true"></i></span><div class="naCardNum text-center ml-auto mr-auto">' + padNumber(id) + '</div><span class="pull-right ml-auto"><input class="form-check-input position-static" type="checkbox" id=' + filename + '></span></div><div class="text-left networkCardDetails px-3 pb-3" style="border-radius:10px;" value="' + id + '" ><p class="font-weight-bold m-0" style="font-size:16px;" cardquery="' + query + '"> ' + query + '</p><p class="  smat-dash-title " style="margin-top:-2px;margin-bottom:0px;"> From: ' + fromDateTemp + ' </p><p class="   smat-dash-title " style="margin-top:-2px;margin-bottom:0px;" > To:' + toDateTemp + ' </p><p class=" smat-dash-title " style="margin-top:-2px;margin-bottom:0px;"> Nodes: ' + noOfNodesTemp + '</p><p class="  smat-dash-title " style="margin-top:-2px;margin-bottom:0px;" > Type: ' + naTypeTemp + '</p><p class=" smat-dash-title " style="margin-top:-2px;margin-bottom:0px;"> Status: Ready</p></div></div></div></div>');
@@ -316,7 +320,6 @@ $("#naCards").on("click", "#deleteCard", function () {
 });
 
 $("#messagebox").on("click","#infopanel #deleteinfoCard", function () {
-    alert($(this).parent().parent());
     $(this).parent().remove();
 });
 
@@ -713,6 +716,19 @@ $("#union_exec").on('click', function () {
         $("#messagebox").append('<div class="card text-black m-2" style="background: white" id="infopanel"><i id="deleteinfoCard" class="fa fa-window-close text-neg" aria-hidden="true"></i><div class="d-flex justify-content-center text-black font-weight-bold card-body"> Please, select at least 2 Networks </div></div>');
         return;
     }
+
+    let wellformedquery; 
+    let selectedGraphs = selected_graph_ids();
+
+    for(let i=0; i<selected_graph_ids().length; i++){
+        if(i==0){
+            wellformedquery = queryDictionaryFilename[selectedGraphs[i]];
+        }else{
+            wellformedquery = wellformedquery + " U " + queryDictionaryFilename[selectedGraphs[i]];
+        }
+    }
+
+    console.log(wellformedquery);
    
     var url;
     var data = {};
@@ -884,7 +900,6 @@ $("#intersection_exec").on('click', function (NAType = "networkx") {
 });
 
 $("#expansionTabNA").on('click', function (NAType = "networkx") {
-    alert();
     var select_graph = selected_graph_ids();
     console.log(selected_graph_ids());
     let input = select_graph[0];

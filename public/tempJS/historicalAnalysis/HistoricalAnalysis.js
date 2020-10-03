@@ -6,7 +6,7 @@ import { generateFreqDistBarChart, generateFrequencyLineChart, generateSentiDist
 import { getCurrentDate, getRangeType, dateProcessor } from '../utilitiesJS/smatDate.js';
 import { TweetsGenerator } from '../utilitiesJS/TweetGenerator.js';
 import { generateUniqueID } from '../utilitiesJS/uniqueIDGenerator.js';
-import { makeSuggestionsRead, makeSmatReady, makeDropDownReady } from '../utilitiesJS/smatExtras.js'
+import { makeSuggestionsReady, makeSmatReady, makeDropDownReady } from '../utilitiesJS/smatExtras.js'
 import { getDateRange } from '../utilitiesJS/smatDate.js'
 import { requestToSpark, checkStatus, storeToMySqlAdvanceSearchData, getOuputFromSparkAndStoreAsJSON, getFreqDistDataForAdvanceHA, getSentiDistDataForAdvanceHA, getTweetIDsForAdvanceHA, getCooccurDataForAdvanceHA } from './Advancehelper.js'
 import { forwardToNetworkAnalysis } from '../utilitiesJS/redirectionScripts.js';
@@ -62,7 +62,7 @@ jQuery(function () {
 
     $("#fromDateHA").val(fromDate);
     $("#toDateHA").val(fromDate);
-    makeSuggestionsRead('haQueryInputBox', 'top_hashtag', 50).then(response => {
+    makeSuggestionsReady('haQueryInputBox', 50).then(response => {
         suggestionsGlobal = response;
         if (suggInputBoxBuffer.length > 0) {
             suggInputBoxBuffer.forEach(element => {
@@ -675,7 +675,7 @@ const plotDistributionGraphHA = (query, fromDate, toDate, option, uniqueID, user
     //Loader...
 
     let chartDivID = option + '-chart';
-    $('#' + div).html('<div class="d-flex " ><span class="ml-auto mr-3"><p class="m-0 smat-box-title-large font-weight-bold text-dark" id="'+option+'-total">886</p><p class="pull-text-top smat-dash-title m-0 ">Total Nodes</p></span><button class="btn btn-primary mt-1  mr-3 analyzeNetworkButton smat-rounded"   value="'+query+'|'+toDate+'|'+fromDate+'|'+option+'|'+uniqueID+'|'+userID+'" > <span> Analyse network </span> </button></div><div id="'+chartDivID+'"> Analyse Network</button></div><div class="px-5" id="' + chartDivID + '"></div>');
+    $('#' + div).html('<div class="d-flex " ><span class="ml-auto mr-3"><p class="m-0 smat-box-title-large font-weight-bold text-dark" id="'+option+'-total">0</p><p class="pull-text-top smat-dash-title m-0 ">Total Nodes</p></span><button class="btn btn-primary mt-1  mr-3 analyzeNetworkButton smat-rounded"   value="'+query+'|'+toDate+'|'+fromDate+'|'+option+'|'+uniqueID+'|'+userID+'" > <span> Analyse network </span> </button></div><div id="'+chartDivID+'"> Analyse Network</button></div><div class="px-5" id="' + chartDivID + '"></div>');
     $('#' + chartDivID).html('<div class="text-center pt-5 " ><i class="fa fa-circle-o-notch donutSpinner" aria-hidden="true"></i></div>');
     if (filename) {
         getCooccurDataForAdvanceHA(query, fromDate, toDate, option, uniqueID, userID, filename).then(response => {

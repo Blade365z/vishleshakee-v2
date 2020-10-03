@@ -1,0 +1,270 @@
+src,dst,count
+#COVID19,*hoax,58
+*hoax,*trump,1210
+*hoax,*virus,627
+*hoax,*positive,26
+*hoax,*people,24
+*hoax,*crowd,15
+*hoax,*goin…,10
+#COVID19,*trump,47
+*trump,*positive,72876
+*trump,*death,11676
+*trump,*people,7368
+*trump,*news,4116
+#COVID19,*cases,35
+*cases,*death,304
+*cases,*countries,28
+*cases,*warning,28
+*cases,*icu…,28
+*cases,*rise,28
+*cases,*great,28
+*cases,*ireland,12
+*cases,*people,9
+*cases,*scotland,9
+*cases,"*dangerous place",9
+*cases,"*welsh numb…",9
+#COVID19,"*tests times",32
+"*tests times",*shoot,64
+"*tests times","*epidemiologist messenger",64
+#COVID19,*shoot,32
+*shoot,"*tests times",64
+*shoot,"*epidemiologist messenger",64
+*shoot,*people,3
+#COVID19,"*epidemiologist messenger",32
+"*epidemiologist messenger","*tests times",64
+"*epidemiologist messenger",*shoot,64
+#COVID19,*wish,24
+*wish,*bitch,140
+*wish,*death,120
+*wish,*careful,84
+*wish,*trump,28
+*wish,*people,2
+#COVID19,*death,21
+*death,*people,14352
+*death,*trump,11676
+#COVID19,*virus,21
+*virus,*trump,1704
+*virus,*death,781
+*virus,*hoax,627
+*virus,*people,528
+*virus,*millions,198
+*virus,"*hope hicks",105
+#COVID19,*goin…,20
+*goin…,*hoax,20
+*goin…,*trump,1
+#COVID19,*infected,19
+*infected,*virus,17
+*infected,*100000,16
+*infected,*millions,16
+*infected,"*death toll",16
+*infected,*india,15
+*infected,*trump,4
+*infected,*people,3
+*infected,*crowd,1
+#COVID19,*careful,19
+*careful,*wish,84
+*careful,*bitch,76
+*careful,*people,3
+*careful,*death,2
+*careful,*trump,2
+#COVID19,*pandemic,19
+*pandemic,*trump,180
+*pandemic,*fight,88
+*pandemic,*death,22
+*pandemic,"*nation salute these…",20
+*pandemic,*sacrifice,20
+*pandemic,*people,16
+#COVID19,*bitch,19
+*bitch,*wish,140
+*bitch,*careful,76
+*bitch,*death,22
+*bitch,*money,3
+*bitch,*people,3
+#COVID19,*india,19
+*india,*people,90
+*india,"*death toll",34
+#COVID19,"*death toll",18
+"*death toll",*india,34
+"*death toll",*virus,17
+"*death toll",*100000,16
+"*death toll",*infected,16
+"*death toll",*millions,16
+"*death toll",*cases,2
+"*death toll",*trump,2
+#COVID19,*crowd,17
+*crowd,*trump,176
+*crowd,*hoax,15
+*crowd,*people,3
+#COVID19,*people,16
+*people,*death,14340
+*people,*trump,7392
+*people,*millions,2784
+#COVID19,*millions,16
+*millions,*people,2784
+*millions,*virus,176
+*millions,*trump,85
+*millions,*india,16
+*millions,*infected,16
+*millions,"*death toll",16
+*millions,*100000,16
+*millions,*death,5
+*millions,*pandemic,4
+#COVID19,*positive,16
+*positive,*trump,72888
+*positive,"*hope hicks",1030
+*positive,*death,440
+*positive,*people,204
+#COVID19,"*test backlog",16
+"*test backlog",*ontario,16
+#COVID19,*ontario,16
+*ontario,"*test backlog",16
+*ontario,*death,1
+*ontario,*cases,1
+*ontario,*millions,1
+#COVID19,*100000,16
+*100000,*virus,16
+*100000,*millions,16
+*100000,*infected,16
+*100000,"*death toll",16
+*100000,*india,15
+#COVID19,*great,15
+*great,*news,342
+*great,*icu…,28
+*great,*rise,28
+*great,*warning,28
+*great,*cases,28
+*great,*countries,28
+*great,*people,7
+*great,*trump,6
+*great,*positive,6
+*great,*death,6
+#COVID19,*countries,15
+*countries,*warning,28
+*countries,*great,28
+*countries,*cases,28
+*countries,*icu…,28
+*countries,*rise,28
+*countries,*scotland,9
+*countries,*people,7
+*countries,*money,4
+#COVID19,"*post-covid syndrome",15
+#COVID19,*icu…,14
+*icu…,*warning,28
+*icu…,*rise,28
+*icu…,*great,28
+*icu…,*countries,28
+*icu…,*cases,28
+#COVID19,*warning,14
+*warning,*icu…,28
+*warning,*great,28
+*warning,*rise,28
+*warning,*countries,28
+*warning,*cases,28
+*warning,*care,4
+#COVID19,*rise,14
+*rise,*cases,28
+*rise,*countries,28
+*rise,*icu…,28
+*rise,*great,28
+*rise,*warning,28
+#COVID19,*care,12
+*care,*people,48
+*care,*trump,30
+*care,*death,26
+*care,*virus,24
+*care,*warning,4
+#COVID19,"*hope hicks",11
+"*hope hicks",*trump,1740
+"*hope hicks",*positive,1133
+"*hope hicks",*virus,63
+"*hope hicks","*force wednes…",9
+"*hope hicks","*wednesday night",9
+"*hope hicks",*news,6
+"*hope hicks",*people,3
+"*hope hicks",*death,3
+#COVID19,*ireland,10
+*ireland,*cases,12
+*ireland,"*welsh numb…",9
+*ireland,*death,9
+*ireland,"*dangerous place",9
+*ireland,*scotland,9
+*ireland,*people,1
+#COVID19,*sacrifice,10
+*sacrifice,*fight,20
+*sacrifice,*pandemic,20
+*sacrifice,"*nation salute these…",20
+*sacrifice,*people,2
+#COVID19,"*death sentence rates",10
+"*death sentence rates",*potus,30
+"*death sentence rates",*ok!🇺🇸♥️,30
+#COVID19,*fight,10
+*fight,*pandemic,99
+*fight,"*nation salute these…",20
+*fight,*sacrifice,20
+*fight,*death,12
+#COVID19,*potus,10
+*potus,*death,115
+*potus,"*death sentence rates",30
+*potus,*ok!🇺🇸♥️,30
+*potus,*positive,10
+*potus,*people,5
+*potus,*trump,3
+*potus,*melania,2
+#COVID19,"*nation salute these…",10
+"*nation salute these…",*sacrifice,20
+"*nation salute these…",*pandemic,20
+"*nation salute these…",*fight,20
+#COVID19,*ok!🇺🇸♥️,10
+*ok!🇺🇸♥️,*potus,30
+*ok!🇺🇸♥️,"*death sentence rates",30
+#COVID19,"*welsh numb…",9
+"*welsh numb…",*scotland,9
+"*welsh numb…",*ireland,9
+"*welsh numb…","*dangerous place",9
+"*welsh numb…",*cases,9
+#COVID19,"*dangerous place",9
+"*dangerous place","*welsh numb…",9
+"*dangerous place",*scotland,9
+"*dangerous place",*ireland,9
+"*dangerous place",*cases,9
+#COVID19,*news,9
+*news,*trump,4128
+*news,*great,342
+*news,*death,52
+*news,*people,46
+*news,*positive,22
+#COVID19,"*force wednes…",9
+"*force wednes…","*wednesday night",9
+"*force wednes…",*positive,9
+"*force wednes…","*hope hicks",9
+#COVID19,*scotland,9
+*scotland,*countries,9
+*scotland,*ireland,9
+*scotland,"*welsh numb…",9
+*scotland,"*dangerous place",9
+*scotland,*cases,9
+#COVID19,"*wednesday night",9
+"*wednesday night",*positive,9
+"*wednesday night","*hope hicks",9
+"*wednesday night","*force wednes…",9
+#COVID19,"*nancy pelosi",8
+"*nancy pelosi",*national…,8
+"*nancy pelosi",*nuts,8
+"*nancy pelosi",*trump,3
+#COVID19,*nuts,8
+*nuts,"*nancy pelosi",8
+*nuts,*national…,8
+*nuts,*death,2
+*nuts,*people,1
+#COVID19,*melania,8
+*melania,*trump,1356
+*melania,*death,9
+#COVID19,*national…,8
+*national…,*nuts,8
+*national…,"*nancy pelosi",8
+#COVID19,*money,8
+*money,*death,450
+*money,*people,156
+*money,*trump,8
+#COVID19,"*subestimar virus",8
+"*subestimar virus",*trump,8

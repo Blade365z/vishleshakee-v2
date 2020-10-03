@@ -325,6 +325,11 @@ color:white;
     overflow-x: hidden;
     overflow-y: scroll;
 }
+#trendTweets{
+    height:387px;
+    overflow-y: auto;
+    overflow-x: hidden;
+}
 .TTtab{
     height:400px;
 }
@@ -493,7 +498,7 @@ select{
     height:250px;
 }
 .taResults{
-    height:400px;
+    height:465px;
     overflow-x: hidden;
     overflow-y: auto;
 }

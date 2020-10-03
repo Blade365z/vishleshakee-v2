@@ -23,7 +23,7 @@ export const TweetsGenerator = (data_list, max_per_page, chart_draw_div_id, from
   var tweet_div_page_selection = chart_draw_div_id + 'page-selection';
   let title = '';
   if (fromDate && toDate) {
-    title = '<div class="mx-1 mt-3 d-flex">Tweets from: ' + fromDate + ' to ' + toDate + ' &nbsp ' + '   </div>';
+    title = '<small class="  d-flex">Tweets from: ' + fromDate + ' to ' + toDate + ' &nbsp ' + '   </small>';
   }
 
   if (filterOptions) {

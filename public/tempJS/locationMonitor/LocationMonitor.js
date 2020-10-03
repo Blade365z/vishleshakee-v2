@@ -227,7 +227,7 @@ function trigger() {
         refresh_type = $("#lmTefreshType").val(),
         timeLimit = $("#lmInterval :selected").val(),
         place = "^" + $("#queryLM").val();
-
+        place = place.toLowerCase();
 
     currentPlace = place
     localStorage.setItem("lmTefreshType", "manual");
@@ -251,7 +251,7 @@ function trigger() {
         for (var i = 0; i < 10000; i++) {
             clearInterval(i);
         }
-        
+        $('#currentlyTrendingLocDiv').html('<div class="text-center smat-loader " ><i class="fa fa-circle-o-notch donutSpinner mt-5" aria-hidden="true"></i></div>');
         global_datetime = get_current_time(interval);
         to_datetime = global_datetime[1];
         from_datetime = global_datetime[0];
@@ -305,6 +305,7 @@ function trigger() {
 
                 timeLimit_ = $("#lmInterval :selected").val(),
                 place_ = "^" + $("#queryLM").val();
+                place_ = place_.toLowerCase();
 
 
 
