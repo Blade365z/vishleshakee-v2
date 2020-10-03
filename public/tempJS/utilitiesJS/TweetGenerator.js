@@ -54,7 +54,7 @@ export const TweetsGenerator = (data_list, max_per_page, chart_draw_div_id, from
     filterOptions = '';
   }
 
-  $('#' + chart_draw_div_id).html(title + '<div id="' + tweetDiv + '"> </div><div> <div class="float-center " id="' + tweet_div_page_selection + '"></div>  </div>')
+  $('#' + chart_draw_div_id).html(title + '<div id="' + tweetDiv + '"> </div><div> <div class="float-center mt-1" id="' + tweet_div_page_selection + '"></div>  </div>')
 
 
   $(tweet_div_page_selection).empty();

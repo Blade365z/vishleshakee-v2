@@ -314,6 +314,10 @@ const showing_results_for = (cardData) => {
 
 }
 
+export const getquerydictfilename = () =>{
+    return queryDictionaryFilename;
+}
+
 $("#centrality_exec").on('click', function (NAType, algo_option = $('#centrality_algo_choice').val()) {
 
     if(selected_graph_ids().length > 1){

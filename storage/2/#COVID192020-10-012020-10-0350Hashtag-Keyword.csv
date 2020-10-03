@@ -1,0 +1,330 @@
+src,dst,count
+#COVID19,*positive,517
+*positive,*trump,86191
+*positive,*death,520
+*positive,*people,510
+*positive,*president,399
+*positive,*test,254
+*positive,*potus,198
+*positive,*crazies,174
+#COVID19,*trump,514
+*trump,*positive,85663
+*trump,*death,21051
+*trump,*people,12077
+*trump,*president,10038
+*trump,*covid…,6572
+*trump,*virus,5714
+#COVID19,*care,258
+*care,*fine,390
+*care,*people,351
+*care,*trump,348
+*care,"*trump diagnosis",328
+*care,*remdesivir,326
+*care,*covid…,325
+*care,*disaster,325
+*care,"*early diagnosis",325
+*care,*death,268
+*care,*virus,254
+#COVID19,"*trump diagnosis",255
+"*trump diagnosis",*covid…,328
+"*trump diagnosis","*early diagnosis",328
+"*trump diagnosis",*fine,325
+"*trump diagnosis",*remdesivir,325
+"*trump diagnosis",*care,325
+"*trump diagnosis",*disaster,325
+"*trump diagnosis",*pandemic,18
+#COVID19,*fine,251
+*fine,*debate,442
+*fine,"*trump diagnosis",392
+*fine,*care,390
+*fine,*remdesivir,389
+*fine,"*early diagnosis",328
+*fine,*covid…,328
+*fine,*disaster,328
+*fine,*people,120
+*fine,*trump,106
+*fine,*death,48
+*fine,*president,42
+#COVID19,*remdesivir,250
+*remdesivir,"*trump diagnosis",328
+*remdesivir,*care,326
+*remdesivir,"*early diagnosis",325
+*remdesivir,*disaster,325
+*remdesivir,*covid…,325
+*remdesivir,*fine,325
+*remdesivir,*trump,118
+*remdesivir,*president,16
+*remdesivir,*people,7
+*remdesivir,*positive,5
+#COVID19,*potus,250
+*potus,*death,189
+*potus,*positive,177
+*potus,*crazies,158
+*potus,*trump,30
+*potus,*people,30
+#COVID19,*disaster,248
+*disaster,*care,392
+*disaster,"*trump diagnosis",328
+*disaster,*covid…,325
+*disaster,*fine,325
+*disaster,*remdesivir,325
+*disaster,"*early diagnosis",325
+*disaster,*trump,6
+*disaster,*virus,3
+#COVID19,*covid…,248
+*covid…,*trump,7729
+*covid…,*death,4147
+*covid…,*care,392
+*covid…,"*trump diagnosis",328
+*covid…,"*early diagnosis",328
+*covid…,*remdesivir,325
+*covid…,*disaster,325
+*covid…,*fine,325
+*covid…,*people,28
+*covid…,*positive,10
+*covid…,*wish,10
+*covid…,*president,6
+*covid…,*potus,3
+#COVID19,"*early diagnosis",247
+"*early diagnosis","*trump diagnosis",328
+"*early diagnosis",*remdesivir,328
+"*early diagnosis",*fine,328
+"*early diagnosis",*disaster,328
+"*early diagnosis",*covid…,328
+"*early diagnosis",*care,325
+#COVID19,"*donald trump",235
+"*donald trump",*death,1556
+"*donald trump",*people,1386
+"*donald trump",*virus,351
+"*donald trump",*pandemic,294
+"*donald trump","*american people",204
+"*donald trump",*truth,197
+"*donald trump","*extremely careless",185
+"*donald trump",*hel…,179
+#COVID19,*india,206
+*india,*people,272
+*india,*pakistan,242
+*india,*china,229
+#COVID19,"*american people",191
+"*american people","*extremely careless",216
+"*american people","*donald trump",204
+"*american people",*hel…,185
+"*american people",*truth,183
+"*american people",*trump,69
+"*american people",*president,9
+"*american people",*death,8
+#COVID19,*people,187
+*people,*death,38329
+*people,*trump,12378
+*people,*deaths,2935
+#COVID19,*truth,179
+*truth,*trump,747
+*truth,*test,654
+*truth,*suppression,463
+*truth,"*american people",225
+*truth,"*donald trump",197
+*truth,"*extremely careless",197
+*truth,*hel…,164
+#COVID19,"*extremely careless",174
+"*extremely careless","*donald trump",206
+"*extremely careless",*truth,189
+"*extremely careless","*american people",189
+"*extremely careless",*hel…,173
+"*extremely careless",*trump,1
+#COVID19,*able,147
+*able,*trump,196
+*able,"*grandma agai…",158
+*able,"*gt;208,000 people",153
+*able,*people,111
+#COVID19,*hel…,144
+*hel…,"*donald trump",185
+*hel…,"*american people",185
+*hel…,*truth,185
+*hel…,"*extremely careless",173
+*hel…,*death,3
+*hel…,*people,2
+*hel…,*trump,1
+#COVID19,"*gt;208,000 people",143
+"*gt;208,000 people",*trump,153
+"*gt;208,000 people",*able,153
+"*gt;208,000 people","*grandma agai…",152
+#COVID19,*crazies,142
+*crazies,*potus,160
+*crazies,*positive,158
+*crazies,*death,3
+*crazies,*trump,2
+*crazies,*president,1
+#COVID19,"*grandma agai…",142
+"*grandma agai…",*trump,152
+"*grandma agai…","*gt;208,000 people",152
+"*grandma agai…",*able,152
+#COVID19,*deaths,137
+*deaths,*people,2948
+*deaths,*death,165
+*deaths,*india,74
+*deaths,*cases,66
+*deaths,*china,62
+*deaths,*pakistan,60
+*deaths,"*100,000 today",59
+*deaths,*bangladesh,59
+*deaths,*trump,43
+*deaths,*virus,26
+*deaths,*president,16
+#COVID19,*china,135
+*china,*death,621
+*china,*people,328
+*china,*india,269
+*china,*virus,161
+*china,*trump,150
+*china,*pakistan,74
+#COVID19,*cases,135
+*cases,*death,397
+*cases,*people,83
+*cases,*trump,75
+*cases,*deaths,66
+#COVID19,*bangladesh,118
+*bangladesh,*pakistan,63
+*bangladesh,*india,62
+*bangladesh,*china,61
+*bangladesh,"*100,000 today",59
+*bangladesh,*deaths,59
+#COVID19,*pakistan,118
+*pakistan,*people,350
+*pakistan,*india,236
+*pakistan,*china,75
+*pakistan,*bangladesh,63
+*pakistan,*deaths,60
+*pakistan,"*100,000 today",59
+#COVID19,"*100,000 today",118
+"*100,000 today",*india,62
+"*100,000 today",*pakistan,59
+"*100,000 today",*deaths,59
+"*100,000 today",*china,59
+"*100,000 today",*bangladesh,59
+#COVID19,"*death toll",111
+"*death toll",*india,186
+"*death toll",*virus,42
+"*death toll",*cases,19
+"*death toll",*trump,18
+"*death toll",*able,7
+"*death toll",*death,7
+#COVID19,*hoax,102
+*hoax,*trump,1558
+*hoax,*virus,715
+*hoax,*people,63
+*hoax,*positive,43
+*hoax,*president,31
+*hoax,"*donald trump",30
+*hoax,*pandemic,19
+#COVID19,*pandemic,100
+*pandemic,*death,11352
+*pandemic,*trump,790
+*pandemic,*people,328
+*pandemic,"*donald trump",295
+#COVID19,*stephen,97
+*stephen,*positive,97
+*stephen,*breaking—trump,97
+*stephen,"*brand campaign manager stepien",97
+*stephen,*bill…,97
+*stephen,*death,1
+#COVID19,*bill…,97
+*bill…,"*brand campaign manager stepien",97
+*bill…,*breaking—trump,97
+*bill…,*positive,97
+*bill…,*stephen,97
+*bill…,*trump,2
+#COVID19,*breaking—trump,97
+*breaking—trump,*stephen,97
+*breaking—trump,*positive,97
+*breaking—trump,"*brand campaign manager stepien",97
+*breaking—trump,*bill…,97
+#COVID19,"*brand campaign manager stepien",97
+"*brand campaign manager stepien",*stephen,97
+"*brand campaign manager stepien",*positive,97
+"*brand campaign manager stepien",*breaking—trump,97
+"*brand campaign manager stepien",*bill…,97
+#COVID19,*death,91
+*death,*people,39149
+*death,*trump,20581
+*death,*president,11844
+*death,*pandemic,11531
+*death,*covid…,4689
+#COVID19,"*pendant quelques jours cause",86
+"*pendant quelques jours cause","*être hospitalisé",128
+#COVID19,"*être hospitalisé",86
+"*être hospitalisé","*pendant quelques jours cause",127
+#COVID19,*president,82
+*president,*death,11159
+*president,*trump,10187
+*president,*people,1731
+#COVID19,*suppression,75
+*suppression,*truth,573
+*suppression,*lits,559
+*suppression,*virus,5
+#COVID19,*lits,75
+*lits,*suppression,564
+#COVID19,*flash,75
+*flash,"*cocktail expérimental",79
+*flash,"*très peu…",79
+*flash,*médicament,71
+*flash,*death,7
+*flash,*cases,4
+*flash,*china,3
+#COVID19,*virus,72
+*virus,*trump,5324
+*virus,*people,1202
+*virus,*death,1010
+*virus,*hoax,721
+*virus,*president,540
+*virus,"*donald trump",364
+*virus,*care,285
+*virus,*china,166
+#COVID19,"*très peu…",71
+"*très peu…",*médicament,71
+"*très peu…",*flash,71
+"*très peu…","*cocktail expérimental",71
+#COVID19,*médicament,71
+*médicament,"*cocktail expérimental",79
+*médicament,"*très peu…",71
+*médicament,*flash,71
+#COVID19,"*cocktail expérimental",71
+"*cocktail expérimental","*très peu…",71
+"*cocktail expérimental",*médicament,71
+"*cocktail expérimental",*flash,71
+#COVID19,*wish,71
+*wish,*death,520
+*wish,*trump,187
+*wish,*bitch,182
+*wish,*careful,140
+*wish,*people,63
+*wish,"*donald trump",41
+*wish,*president,32
+*wish,*covid…,12
+*wish,*virus,11
+#COVID19,*debate,69
+*debate,*trump,1231
+*debate,*fine,442
+*debate,*people,79
+*debate,*test,67
+*debate,*president,44
+*debate,*positive,35
+*debate,*death,25
+#COVID19,*test,63
+*test,*truth,593
+*test,*positive,234
+*test,*debate,67
+*test,*trump,64
+*test,*virus,25
+*test,*people,23
+#COVID19,*bitch,62
+*bitch,*wish,182
+*bitch,*careful,118
+*bitch,*death,65
+*bitch,*people,26
+*bitch,*trump,24
+#COVID19,*careful,62
+*careful,*wish,140
+*careful,*bitch,118
+*careful,*people,34
+*careful,*death,34
+*careful,*trump,6

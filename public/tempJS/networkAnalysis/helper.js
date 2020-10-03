@@ -5,6 +5,9 @@ var HeadersForApi = {
     "Accept": "application/json",
     'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
 };
+
+import { getquerydictfilename } from './NetworkAnalysis.js';
+
 // Render Graph  for view
 var network_global;
 var global_edges;
@@ -628,13 +631,17 @@ export const render_graph_union = (res) => {
     $(".nos_of_edges").text(edges_arr.length);
 
 
+    let wellformedquery; 
+    let selectedGraphs = selected_graph_ids();
+    let querydictfilename = getquerydictfilename();
+
     $('.analysis_summary_div').empty();
-    $('.analysis_summary_div').append('<table> <tr><th>Network Size</th><th>Color Code</th></tr>');
+    $('.analysis_summary_div').append('<table> <tr><th>Network Name</th><th>Network Size</th><th>Color Code</th></tr>');
     for(var i=0; i<querynodeinfo.length;i++){
         let color_code = querynodeinfo[i]["color"];
         let count = i + 1;
         let size_of_each_network = major_array[i].length - 2;
-        $('.analysis_summary_div').append('<tr><td>'+size_of_each_network+'</td><td style="background-color:'+querynodeinfo[i]["color"]+';width:100%"></td></tr>');
+        $('.analysis_summary_div').append('<tr><td>'+ querydictfilename[selectedGraphs[i]] +'</td><td>'+size_of_each_network+'</td><td style="background-color:'+querynodeinfo[i]["color"]+';width:100%"></td></tr>');
     }
     $('.analysis_summary_div').append('</table>');
 

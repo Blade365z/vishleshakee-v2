@@ -33,6 +33,7 @@ var TopTrendingData;
 var userID='';
 
 jQuery(function () {
+  $('[data-toggle="popover"]').popover(); //Initalizing popovers
   if (localStorage.getItem('smat.me')) {
     let userInfoTemp = JSON.parse(localStorage.getItem('smat.me'));
     userID = userInfoTemp['id'];

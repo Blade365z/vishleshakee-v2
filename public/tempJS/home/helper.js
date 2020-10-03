@@ -67,7 +67,7 @@ export const getTopCooccurData = async (interval = null, query, option, isRealTi
     } else {
         dataArgs = JSON.stringify({ fromTime, query, option });
     }
-    console.log(dataArgs);
+
     let response = await fetch('smat/topCooccurDataPublic', {
         method: 'post',
         headers: HeadersForApi,

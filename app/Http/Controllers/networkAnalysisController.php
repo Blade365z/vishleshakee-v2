@@ -96,6 +96,8 @@ class networkAnalysisController extends Controller
         echo json_encode(array('res' => 'success'));
     }
 
+
+
     public function getdirname(Request $request)
     {
         if($request->input('userID')){
@@ -109,6 +111,8 @@ class networkAnalysisController extends Controller
         return $user_id;
     }
 
+
+    
     public function graph_view_data_formator_for_rendering_in_visjs(Request $request)
     {
         $network_arr = json_decode($this->read_csv_file($request));
