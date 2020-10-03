@@ -35,6 +35,9 @@ export const render_graph = async (url,input) => {
 
 
 export const networkGeneration = async (url,queryTemp,fromDateTemp,toDateTemp,noOfNodesTemp,naTypeTemp,filename) => {
+
+    $("#messagebox").empty();
+    $("#messagebox").append('<div class="card text-black m-2" style="background: #f8fa75" id="infopanel"><i id="deleteinfoCard" class="fa fa-window-close text-neg" aria-hidden="true"></i><div class="d-flex justify-content-center text-black font-weight-bold card-body"> Generating your requested network. Please, wait! </div></div>');
     let dir_name = getmystoragedir();
     let data = {
         token : queryTemp,
@@ -442,7 +445,11 @@ export const draw_graph = (res,id_value) => {
     $(".nos_of_edges").empty();
     $(".nos_of_edges").text(edges_arr.length);
 
-    
+    $('.analysis_summary_div').html('');
+    $('.analysis_summary_div').append('<table class="table">  <thead> <tr><th>Node</th></tr>  </thead> <tbody id="tableBody"> </tbody></table>');
+    for (var i = 0; i < nodes_arr.length; i++) {
+        $('#tableBody').append('<tr><td>'+'<a href="#target" class="click_events">'+ nodes_arr[i].id +'</a>'+ '</td></tr>');
+    }
 
 
     var nodes = new vis.DataSet();
@@ -615,8 +622,10 @@ export const render_graph_union = (res) => {
     var major_array = res["major"];
     var opr_type = res["operation"];
 
-    console.log("Render Graph");
-    console.log(querynodeinfo);
+    $(".nos_of_nodes").empty();
+    $(".nos_of_nodes").text(nodes_arr.length);
+    $(".nos_of_edges").empty();
+    $(".nos_of_edges").text(edges_arr.length);
 
 
     $('.analysis_summary_div').empty();
@@ -858,6 +867,11 @@ export const render_intersection_difference = (res,id_value,option) => {
         var info = res["info"];
         var option = res["option"];
         var edges_to_be_used_while_saving = res["edges_to_be_used_while_saving"];  
+
+        $(".nos_of_nodes").empty();
+        $(".nos_of_nodes").text(nodes_arr.length);
+        $(".nos_of_edges").empty();
+        $(".nos_of_edges").text(edges_arr.length);
   
         console.log("I am printing result");
         console.log(res);

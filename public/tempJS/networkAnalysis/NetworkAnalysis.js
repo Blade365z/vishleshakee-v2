@@ -12,7 +12,7 @@ import { formulateUserSearch } from '../utilitiesJS/userSearch.js';
 
 
 
-let totalQueries;
+let totalQueries = 0;
 let searchRecords = [];
 var cardIDdictionary = {};
 var queryDictionaryFilename = {};
@@ -33,29 +33,14 @@ if (localStorage.getItem('smat.me')) {
 } else {
     window.location.href = 'login';
 }
+
 jQuery(function () {
-    // networkGeneration('na/genNetwork', queryTemp, fromDateTemp, toDateTemp, noOfNodesTemp, naTypeTemp, filename).then(response => {
-    //     generateCards(totalQueries, queryTemp, fromDateStripped, toDateStripped, noOfNodesTemp, naTypeTemp, naEngine, filename, 'naCards',"normal");
-    //     $("#msg_displayer").empty();
-    // })
-
     if(incoming){
-        console.log("Incoming");
-        console.log(incoming);
-        console.log("fromDate");
-        console.log(fromDateReceived);
-        console.log("toDate");
-        console.log(toDateReceived);
-        console.log("CRR NET ENGINE");
-        console.log(currentNetworkEngine);
-        console.log("Unique ID");
         //TODO::Redirection 
+        totalQueries = totalQueries + 1;
         let filename = incoming + fromDateReceived + toDateReceived + 50 + 'Hashtag-Hashtag';
-        networkGeneration('na/genNetwork', incoming, fromDateReceived, toDateReceived, 50 , 'Hashtag-Hashtag', filename).then(response => {
-            // generateCards(totalQueries, queryTemp, fromDateStripped, toDateStripped, noOfNodesTemp, naTypeTemp, naEngine, filename, 'naCards',"normal");
-
-            generateCards(totalQueries+2, incoming, fromDateReceived, toDateReceived, 50, 'Hashtag-Hashtag', currentNetworkEngine, filename, 'naCards',"normal");
-            
+        networkGeneration('na/genNetwork', incoming, fromDateReceived+" 00:00:00", toDateReceived+" 00:00:00", 50 , 'Hashtag-Hashtag', filename).then(response => {
+            generateCards(totalQueries, incoming, fromDateReceived, toDateReceived, 50, 'Hashtag-Hashtag', currentNetworkEngine, filename, 'naCards',"normal");    
         })
     }
     makeSuggestionsReady ('naQueryInputBox',50);
@@ -70,7 +55,6 @@ jQuery(function () {
             $("#grivan").show();
             $("#btwncen").show();
             $("#evcen").show();
-
         } else if (selected == "spark") {
             currentNetworkEngine = selected;
             $("#resourceallocation").show();
@@ -80,7 +64,6 @@ jQuery(function () {
             $("#btwncen").hide();
             $("#evcen").hide();
         }
-
     });
 
 
@@ -139,13 +122,10 @@ jQuery(function () {
 
     /*
     TEMP AMITABH 
-
-
     */
+
     $('.nav-item ').removeClass('smat-nav-active');
     $('#nav-NA').addClass('smat-nav-active');
-    totalQueries = 0;
-    roshan(6, 5);
     $('#naInputInputs').on('submit', function (e) {
         e.preventDefault();
         totalQueries += 1;
@@ -728,6 +708,10 @@ $("#union_exec").on('click', function () {
         }
     }
 
+    $(".subject").empty();
+    $(".subject").append(wellformedquery);
+
+
     console.log(wellformedquery);
    
     var url;
@@ -815,6 +799,21 @@ $("#intersection_exec").on('click', function (NAType = "networkx") {
         $("#messagebox").append('<div class="card text-black m-2" style="background: white" id="infopanel"><i id="deleteinfoCard" class="fa fa-window-close text-neg" aria-hidden="true"></i><div class="d-flex justify-content-center text-black font-weight-bold card-body"> Please, select at least 2 Networks </div></div>');
         return;
     }
+
+    
+    let wellformedquery; 
+    let selectedGraphs = selected_graph_ids();
+
+    for(let i=0; i<selected_graph_ids().length; i++){
+        if(i==0){
+            wellformedquery = queryDictionaryFilename[selectedGraphs[i]];
+        }else{
+            wellformedquery = wellformedquery + "<span>&#8745;</span>" + queryDictionaryFilename[selectedGraphs[i]];
+        }
+    }
+
+    $(".subject").empty();
+    $(".subject").append(wellformedquery);
 
     NAType = $("#networkEngineNA").val();
     var url;
@@ -923,6 +922,20 @@ $("#difference_exec").on('click', function (NAType = "networkx") {
         $("#messagebox").append('<div class="card text-black m-2" style="background: white" id="infopanel"><i id="deleteinfoCard" class="fa fa-window-close text-neg" aria-hidden="true"></i><div class="d-flex justify-content-center text-black font-weight-bold card-body"> Please, select at least 2 Networks </div></div>');
         return;
     }
+
+    let wellformedquery; 
+    let selectedGraphs = selected_graph_ids();
+
+    for(let i=0; i<selected_graph_ids().length; i++){
+        if(i==0){
+            wellformedquery = queryDictionaryFilename[selectedGraphs[i]];
+        }else{
+            wellformedquery = wellformedquery + " - " + queryDictionaryFilename[selectedGraphs[i]];
+        }
+    }
+
+    $(".subject").empty();
+    $(".subject").append(wellformedquery);
 
     var NAType = $("#networkEngineNA").val();
     var url;

@@ -15,7 +15,7 @@
             <div id="naInputPanel">
                 <div class="form-group  text-normal  border smat-rounded d-flex  mr-2 px-2 py-1  bg-white mb-0" id="homeSearchInput">
                     <i class="fa fa-search px-1 pt-2" aria-hidden="true" style="margin-top:5px"></i>
-                    <input type="text" class="form-control typeahead" name="query" id="queryLM" placeholder="Search a Hashtag or Mention" style="border:0px;" autocomplete="OFF" required>
+                    <input type="text" class="form-control typeahead" name="query" id="queryLM" placeholder="Search a Hashtag or Mention" style="border:0px;" autocomplete="OFF"  data-container="body" data-toggle="popover" data-placement="right" data-content="Vivamus sagittis lacus vel augue laoreet rutrum faucibus."     required>
                     
                 </div>
                 <div class="d-flex">

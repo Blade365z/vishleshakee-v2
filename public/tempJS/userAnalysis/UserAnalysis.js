@@ -10,7 +10,7 @@
 import { formulateUserSearch } from '../utilitiesJS/userSearch.js';
 import { get_tweet_location, getCompleteMap } from '../utilitiesJS/getMap.js';
 import { getSuggestionsForUA, getUserDetails, getFreqDistDataForUA, getTweetIDsForUA, getSentiDistDataForUA, getCooccurDataForUA } from './helper.js';
-import { getCurrentDate, getRangeType, dateProcessor } from '../utilitiesJS/smatDate.js';
+import { getCurrentDate, getRangeType, dateProcessor, getDateInFormat } from '../utilitiesJS/smatDate.js';
 import { TweetsGenerator } from '../utilitiesJS/TweetGenerator.js';
 import { generateUniqueID } from '../utilitiesJS/uniqueIDGenerator.js';
 import { generateFreqDistBarChart, generateFrequencyLineChart, generateSentiDistBarChart, generateSentiDistLineChart, generateBarChartForCooccur } from './chartHelper.js';
@@ -186,7 +186,8 @@ const makePageReady = (userDetails) => {
 
     $('#currentUAUserHandle').text('@' + userDetails.author_screen_name);
     $('#userDetailsID').text(SearchID.replace('$', ''));
-    $('#userDetailsJOINEDON').text(userDetails.created_at.seconds);
+    let createdOn = new Date(userDetails.created_at.seconds*1000);
+    $('#userDetailsJOINEDON').text(createdOn);
     $('#userDetailsLOCATION').text(userDetails.location == null ? 'Location not shared by user' : userDetails.location);
     $('#userDetailsBIO').text(userDetails.description == null ? 'Bio not available' : userDetails.description);
     $('#userDetailsURL').html(userDetails.url == null ? 'URL not available' : '<a href=' + userDetails.url + ' target="_blank">' + userDetails.url + '</a>');

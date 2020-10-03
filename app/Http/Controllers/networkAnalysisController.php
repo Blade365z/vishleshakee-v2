@@ -26,31 +26,31 @@ class networkAnalysisController extends Controller
         $nodes = array();
         $edges = array();
 
-        
-        if ($request->input('nettype') == "Hashtag-Hashtag") {
+        $netType = $request->input('nettype');
+        if ($netType == "Hashtag-Hashtag") {
             $co_occur_option = "hashtag";
-        } else if ($request->input('nettype') == "Hashtag-Mention") {
+        } else if ($netType == "Hashtag-Mention") {
             $co_occur_option = "mention";
-        } else if ($request->input('nettype') == "Mention-Hashtag") {
+        } else if ($netType == "Mention-Hashtag") {
             $co_occur_option = "hashtag";
-        } else if ($request->input('nettype') == "Hashtag-Keyword") {
+        } else if ($netType == "Hashtag-Keyword") {
             $co_occur_option = "keyword";
-        }else if ($request->input('nettype') == "Mention-Mention"){
+        }else if ($netType == "Mention-Mention"){
             $co_occur_option = "mention";
-        }else if ($request->input('nettype') == "Mention-Keyword"){
+        }else if ($netType == "Mention-Keyword"){
             $co_occur_option = "keyword";
-        }else if ($request->input('nettype') == "Keyword-Hashtag"){
+        }else if ($netType == "Keyword-Hashtag"){
             $co_occur_option = "hashtag";
-        }else if ($request->input('nettype') == "Keyword-Mention"){
+        }else if ($netType == "Keyword-Mention"){
             $co_occur_option = "mention";
-        }else if ($request->input('nettype') == "User-Mention"){
+        }else if ($netType == "User-Mention"){
             $co_occur_option = "mention";
-        }else if ($request->input('nettype') == "User-Hashtag"){
+        }else if ($netType == "User-Hashtag"){
             $co_occur_option = "hashtag";
-        }else if ($request->input('nettype') == "Hashtag-User"){
+        }else if ($netType == "Hashtag-User"){
             // only one level
             $co_occur_option = "user";
-        }else if ($request->input('nettype') == "Mention-User"){
+        }else if ($netType == "Mention-User"){
              // only one level
             $co_occur_option = "user";
         }
@@ -68,17 +68,23 @@ class networkAnalysisController extends Controller
         }
 
         // 2nd level
-        foreach ($co_occur_result as $key => $count) {
-            $edges[] = [$token, $key, (string) $count];
-            $co_occur_result_2nd_level = $CC_obj->get_co_occur_data($to_datetime, $from_datetime, $key, $range_type = null, $co_occur_option);
-            if ($no_of_nodes) {
-                $co_occur_result_2nd_level = array_slice($co_occur_result_2nd_level['data'], 0, $no_of_nodes);
+        if( ($netType == "Hashtag-User") or ($netType == "Hashtag-User")){
+            foreach ($co_occur_result as $key => $count) {
+                $edges[] = [$token, $key, (string) $count];
             }
+        }else{
+            foreach ($co_occur_result as $key => $count) {
+                $edges[] = [$token, $key, (string) $count];
+                $co_occur_result_2nd_level = $CC_obj->get_co_occur_data($to_datetime, $from_datetime, $key, $range_type = null, $co_occur_option);
+                if ($no_of_nodes) {
+                    $co_occur_result_2nd_level = array_slice($co_occur_result_2nd_level['data'], 0, $no_of_nodes);
+                }
 
-            foreach ($co_occur_result_2nd_level as $k => $c) {
-                // creating among connection
-                if (in_array($k, $nodes)) {
-                    $edges[] = [$key, $k, (string) $c];
+                foreach ($co_occur_result_2nd_level as $k => $c) {
+                    // creating among connection
+                    if (in_array($k, $nodes)) {
+                        $edges[] = [$key, $k, (string) $c];
+                    }
                 }
             }
         }

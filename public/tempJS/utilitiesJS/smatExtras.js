@@ -26,13 +26,13 @@ export const makeSuggestionsReady = async (div, limit) => {
         }
         return suggestionsArr;
     });
-    gloabalArr = await getTopDataHA(date, date, 'top_mention', limit).then(response => {
-        response = response.data;
-      for (const [key, value] of Object.entries(response)) {
-            suggestionsArr.push(key);
-        }
-        return suggestionsArr;
-    });
+    // gloabalArr = await getTopDataHA(date, date, 'top_mention', limit).then(response => {
+    //     response = response.data;
+    //   for (const [key, value] of Object.entries(response)) {
+    //         suggestionsArr.push(key);
+    //     }
+    //     return suggestionsArr;
+    // });
     makeDropDownReady(gloabalArr, div, 'suggestions');
     return gloabalArr;
 }

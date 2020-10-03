@@ -1,0 +1,32 @@
+src,dst,count
+#SSR,*firm,5
+*firm,"*bhatakana chhate",5
+#SSR,"*bhatakana chhate",5
+"*bhatakana chhate",*firm,5
+#SSR,*case,4
+#SSR,"*similar narco",4
+"*similar narco","*mumbai police officials",4
+"*similar narco",*case,4
+#SSR,"*mumbai police officials",4
+"*mumbai police officials","*similar narco",4
+"*mumbai police officials",*case,4
+#SSR,*murder,4
+#SSR,"*ssrians🤝 tweet",3
+"*ssrians🤝 tweet",*retweet,10
+"*ssrians🤝 tweet","*day:111🔱immortal ssr💥 🕉🔥revolution",10
+"*ssrians🤝 tweet",*dear…,3
+#SSR,"*day:111🔱immortal ssr💥 🕉🔥revolution",3
+"*day:111🔱immortal ssr💥 🕉🔥revolution","*ssrians🤝 tweet",10
+"*day:111🔱immortal ssr💥 🕉🔥revolution",*retweet,10
+"*day:111🔱immortal ssr💥 🕉🔥revolution",*dear…,3
+#SSR,*dear…,3
+*dear…,"*ssrians🤝 tweet",3
+*dear…,*retweet,3
+*dear…,"*day:111🔱immortal ssr💥 🕉🔥revolution",3
+#SSR,"*solid evidence",3
+"*solid evidence",*scrutiny,3
+"*solid evidence",*murder,3
+#SSR,*scrutiny,3
+*scrutiny,"*solid evidence",3
+*scrutiny,*murder,3
+#SSR,*retweet,3
