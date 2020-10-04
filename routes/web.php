@@ -37,9 +37,7 @@ Route::get('/userAnalysis', function (Request $request) {
     $query = '';
     $from = '';
     $to = '';
-    if ($request->input('query')) {
-        $query = $request->input('query');
-    } elseif ($request->input('query') && $request->input('from') && $request->input('to')) {
+    if ($request->input('query') && $request->input('from') && $request->input('to')) {
         $query = $request->input('query');
         $from = $request->input('from');
         $to = $request->input('to');

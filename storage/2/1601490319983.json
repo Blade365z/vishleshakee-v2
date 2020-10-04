@@ -1782,7 +1782,7 @@
                 "$1305976276377763840": 13,
                 "$1301758915655368705": 1
             },
-            "mentions": {
+            "mention": {
                 "@BBCNews": 1,
                 "@fox13": 1,
                 "@VanderCristian": 1,
@@ -1900,7 +1900,7 @@
                 "@ForeverbyF": 1,
                 "@Rumplepimple1": 1
             },
-            "hashtags": {
+            "hashtag": {
                 "#TakeDownTheCCP": 1,
                 "#physicsprofessor": 1,
                 "#WednesdayThoughts": 2,
@@ -4248,7 +4248,7 @@
                 "$25401895": 2,
                 "$197922119": 2
             },
-            "mentions": {
+            "mention": {
                 "@BBCNews": 2,
                 "@Annie17122": 2,
                 "@jorajetley": 4,
@@ -4379,7 +4379,7 @@
                 "@republic": 10,
                 "@aishugyanu": 2
             },
-            "hashtags": {
+            "hashtag": {
                 "#Depression": 2,
                 "#ClimateChange": 2,
                 "#Ontario": 2,
@@ -6408,7 +6408,7 @@
                 "$180264636": 1,
                 "$4390238534": 1
             },
-            "mentions": {
+            "mention": {
                 "@flhcnews": 1,
                 "@jorajetley": 1,
                 "@nilotpalmrinal": 1,
@@ -6586,7 +6586,7 @@
                 "@republic": 4,
                 "@cartagotv": 1
             },
-            "hashtags": {
+            "hashtag": {
                 "#2020Census": 1,
                 "#BollywoodDarkSecrets": 1,
                 "#opinas": 1,
@@ -8157,7 +8157,7 @@
                 "$1293504312811778049": 1,
                 "$369329694": 1
             },
-            "mentions": {
+            "mention": {
                 "@BorisNMoellers": 1,
                 "@OfficeofVa": 1,
                 "@218njrs": 1,
@@ -8280,7 +8280,7 @@
                 "@Imforssrjustice": 1,
                 "@GirlForJustice": 1
             },
-            "hashtags": {
+            "hashtag": {
                 "#TakeDownTheCCP": 1,
                 "#ECMO": 1,
                 "#Florida": 2,
@@ -10498,7 +10498,7 @@
                 "$1067995648857788416": 2,
                 "$3246355234": 2
             },
-            "mentions": {
+            "mention": {
                 "@SaraSushant2020": 1,
                 "@SMDhealthunit": 2,
                 "@nilotpalmrinal": 1,
@@ -10645,7 +10645,7 @@
                 "@republic": 2,
                 "@mahshidtavakoli": 2
             },
-            "hashtags": {
+            "hashtag": {
                 "#Corning": 2,
                 "#gel": 2,
                 "#ClimateChange": 2,
@@ -12800,7 +12800,7 @@
                 "$1302192695235022849": 1,
                 "$804250604": 1
             },
-            "mentions": {
+            "mention": {
                 "@Bluebash1": 1,
                 "@SaraSushant2020": 3,
                 "@jorajetley": 1,
@@ -12968,7 +12968,7 @@
                 "@jpitney": 1,
                 "@yugankika": 1
             },
-            "hashtags": {
+            "hashtag": {
                 "#germany": 1,
                 "#ShitShowPresidency": 1,
                 "#Warpspeed": 1,
@@ -15625,7 +15625,7 @@
                 "$1295061172496957440": 2,
                 "$1152873616436015104": 1
             },
-            "mentions": {
+            "mention": {
                 "@uweplus": 1,
                 "@anjanaomkashyap": 2,
                 "@Velofisch": 1,
@@ -15803,7 +15803,7 @@
                 "@awasthivani23": 2,
                 "@republic": 4
             },
-            "hashtags": {
+            "hashtag": {
                 "#r4today": 1,
                 "#Corning": 1,
                 "#Generaldebatte": 1,
@@ -18132,7 +18132,7 @@
                 "$1116451309685751808": 4,
                 "$269247554": 2
             },
-            "mentions": {
+            "mention": {
                 "@SteveDaines": 2,
                 "@ReseauHetGHT": 2,
                 "@iampcforpeace": 2,
@@ -18398,7 +18398,7 @@
                 "@ULPresident": 2,
                 "@CoryGardner": 2
             },
-            "hashtags": {
+            "hashtag": {
                 "#truth": 4,
                 "#Love": 4,
                 "#Terrorists": 2,
@@ -20696,7 +20696,7 @@
                 "$1033607336751849472": 1,
                 "$1290338760010301441": 1
             },
-            "mentions": {
+            "mention": {
                 "@UNHumanRights": 1,
                 "@nilotpalmrinal": 1,
                 "@divinemitz": 1,
@@ -20825,7 +20825,7 @@
                 "@LeeD67696494": 1,
                 "@republic": 4
             },
-            "hashtags": {
+            "hashtag": {
                 "#Berlin": 2,
                 "#BeThe1To": 2,
                 "#okboomer": 2,
@@ -23391,7 +23391,7 @@
                 "$1301886454168195073": 1,
                 "$1289634688823250944": 4
             },
-            "mentions": {
+            "mention": {
                 "@bcarabante": 1,
                 "@tapeshkumar": 1,
                 "@KrishnaKiDivya": 4,
@@ -23583,7 +23583,7 @@
                 "@republic": 1,
                 "@BundestagLive": 1
             },
-            "hashtags": {
+            "hashtag": {
                 "#TikTok": 1,
                 "#SARS_CoV_2": 1,
                 "#IndiaFliesHigh": 1,

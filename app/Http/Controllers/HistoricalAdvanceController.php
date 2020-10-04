@@ -352,7 +352,6 @@ class HistoricalAdvanceController extends Controller
                     // $keys_arr = array_keys($re_for_given_date); 
                     // sort($keys_arr); //date key array getting from json file should be sorted;
                     // foreach ($keys_arr as $k_hr) {
-                    //     // echo json_encode($v_hr["hours"]);
                     //     $v_hr = $re_for_given_date[$k_hr];
                     //     if($v_hr){
                     //         $hr_arr = $v_hr["hours"];
@@ -645,29 +644,29 @@ class HistoricalAdvanceController extends Controller
         $file_path = "$userid/$json_filename_to_get_data.json";
         $json_result_array = $ut_obj->read_file($file_type='json', $file_path);
         $temp_arr = array();
-        $current_date = $ut_obj->get_current_date_time('datetime000');
-        if($co_occur_option == 'mention')
-            $co_occur_option = 'mentions';
-        else  if($co_occur_option == 'hashtag')
-            $co_occur_option = 'hashtags';
+        $current_date = $ut_obj->get_current_date_time('date');
+        // if($co_occur_option == 'mention')
+        //     $co_occur_option = 'mentions';
+        // else  if($co_occur_option == 'hashtag')
+        //     $co_occur_option = 'hashtags';
 
         foreach ($json_result_array as $key => $value) {
-            if ($value) {
-                if($key == $current_date){
-                    // foreach ($value as $k => $v) {
-                    //     if($v){
-                    //         if (array_key_exists($co_occur_option, $v)) {
-                    //             $mentions_array = $v[$co_occur_option];
-                    //             foreach ($mentions_array as $k1 => $v1) {
-                    //                 if (array_key_exists($k1, $temp_arr)) {
-                    //                     $temp_arr[$k1] =  $v[$k1] + $v1;
-                    //                 } else {
-                    //                     $temp_arr[$k1] = $v1;
-                    //                 }
-                    //             }
-                    //         }
-                    //     }
-                    // }
+            if ($value) {                             
+                if($key == $current_date){   
+                    foreach ($value as $k => $v) {
+                        if($v){
+                            if (array_key_exists($co_occur_option, $v)) {
+                                $co_array = $v[$co_occur_option];
+                                foreach ($co_array as $k1 => $v1) {
+                                    if (array_key_exists($k1, $temp_arr)) {
+                                        $temp_arr[$k1] =  $temp_arr[$k1] + $v1;
+                                    } else {
+                                        $temp_arr[$k1] = $v1;
+                                    }
+                                }
+                            }
+                        }
+                    }
                 }else{
                     if (array_key_exists($co_occur_option, $value)) {
                         $co_array = $value[$co_occur_option];
@@ -683,7 +682,6 @@ class HistoricalAdvanceController extends Controller
             }
         }
         arsort($temp_arr);
-
         if (sizeof($temp_arr) == 0) {
             return (array('status' => 'success', 'nodes' => sizeof($temp_arr)));
         }else{
@@ -710,7 +708,7 @@ class HistoricalAdvanceController extends Controller
         $file_path = "$userid/$json_filename_to_get_data.json";
         $json_result_array = $ut_obj->read_file($file_type='json', $file_path);
         $temp_arr = array();
-        $current_date = $ut_obj->get_current_date_time('datetime000');
+        $current_date = $ut_obj->get_current_date_time('date');
         $tweet_id_list = array();
 
         
@@ -718,8 +716,16 @@ class HistoricalAdvanceController extends Controller
             foreach ($json_result_array as $key => $value) {
                 if ($value) {
                     // if date is cuurent date
-                    if($key == $current_date){
-                       
+                    if($key == '2020-09-30'){                       
+                        foreach ($value as $k1 => $v1) {
+                            if($v1){
+                                $category_arr = $v1["category"];
+                                // echo json_encode($category_arr);
+                                foreach ($category_arr as $k => $v) {
+                                    $tweet_id_list = array_merge($tweet_id_list, $v["tid"]);
+                                }
+                            }
+                        }
                     }else{
                         $category_arr = $value["category"];
                         foreach ($category_arr as $k => $v) {

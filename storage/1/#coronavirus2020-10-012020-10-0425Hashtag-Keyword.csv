@@ -1,0 +1,95 @@
+src,dst,count
+#coronavirus,*operatio…,333
+*operatio…,*exclusive,857
+*operatio…,"*president fights",846
+*operatio…,*speed,639
+#coronavirus,"*president fights",333
+"*president fights",*exclusive,941
+"*president fights",*speed,570
+"*president fights",*operatio…,570
+#coronavirus,*speed,333
+*speed,*exclusive,926
+*speed,*operatio…,857
+*speed,"*president fights",639
+#coronavirus,*exclusive,333
+*exclusive,*speed,759
+*exclusive,"*president fights",739
+*exclusive,*operatio…,681
+#coronavirus,*positive,186
+*positive,*sympathy,48943
+*positive,*mask,4557
+#coronavirus,*president,119
+#coronavirus,"*radical newsrooms",115
+"*radical newsrooms",*president,115
+"*radical newsrooms",*glo…,115
+#coronavirus,*glo…,115
+*glo…,*president,115
+*glo…,"*radical newsrooms",115
+#coronavirus,"*busted biden",94
+#coronavirus,*hours,84
+#coronavirus,"*exposed people",79
+"*exposed people","*deadly virus",115
+"*exposed people","*🚨🚨if trump",97
+"*exposed people",*positive,97
+"*exposed people",*hours,97
+#coronavirus,"*🚨🚨if trump",79
+"*🚨🚨if trump","*deadly virus",148
+"*🚨🚨if trump",*positive,97
+"*🚨🚨if trump",*hours,97
+"*🚨🚨if trump","*exposed people",97
+#coronavirus,"*deadly virus",79
+"*deadly virus",*hours,130
+"*deadly virus","*exposed people",115
+"*deadly virus",*positive,99
+"*deadly virus","*🚨🚨if trump",97
+"*deadly virus",*president,8
+#coronavirus,*travelled,71
+*travelled,*miles,107
+*travelled,*train,107
+*travelled,"*conservative peter gibson darlington",106
+*travelled,*con…,106
+#coronavirus,*con…,71
+*con…,"*conservative peter gibson darlington",120
+*con…,*train,120
+*con…,*miles,106
+*con…,*travelled,106
+#coronavirus,"*conservative peter gibson darlington",71
+"*conservative peter gibson darlington",*travelled,106
+"*conservative peter gibson darlington",*train,106
+"*conservative peter gibson darlington",*miles,106
+"*conservative peter gibson darlington",*con…,106
+#coronavirus,*train,71
+*train,"*conservative peter gibson darlington",120
+*train,*miles,120
+*train,*con…,120
+*train,*travelled,107
+#coronavirus,*miles,71
+*miles,*travelled,107
+*miles,*train,106
+*miles,"*conservative peter gibson darlington",106
+*miles,*con…,106
+#coronavirus,*mask,62
+*mask,*positive,4902
+#coronavirus,"*president trump",59
+#coronavirus,*precautions,57
+*precautions,*positive,90
+*precautions,"*president trump",90
+*precautions,"*multiple events",90
+*precautions,*mask,4
+#coronavirus,"*multiple events",57
+"*multiple events",*precautions,82
+"*multiple events","*president trump",82
+"*multiple events",*positive,82
+#coronavirus,"*administration testing",47
+"*administration testing",*whe…,55
+"*administration testing",*sympathy,55
+"*administration testing",*positive,55
+#coronavirus,*whe…,47
+*whe…,*positive,65
+*whe…,"*administration testing",55
+*whe…,*sympathy,55
+#coronavirus,*sympathy,47
+*sympathy,*positive,49117
+*sympathy,*president,715
+*sympathy,*whe…,63
+*sympathy,"*administration testing",63

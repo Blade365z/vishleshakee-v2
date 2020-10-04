@@ -34,6 +34,7 @@ var userID='';
 
 jQuery(function () {
   $('[data-toggle="popover"]').popover(); //Initalizing popovers
+  
   if (localStorage.getItem('smat.me')) {
     let userInfoTemp = JSON.parse(localStorage.getItem('smat.me'));
     userID = userInfoTemp['id'];
@@ -207,6 +208,8 @@ jQuery(function () {
     }
     else if (MODE == "003") {
       coOccurPublic('user',query, interval,'topusers-public-tab');
+    }else if(MODE=="004"){
+      generatePublicLocations (query, interval,'locations-public-tab');
     }
     else if (MODE == "005") {
       tweetPublic(query, interval,'tweets-public-tab');
@@ -356,6 +359,7 @@ const generatePublicHashtags = (data, filterArgument = null) => {
 
 const generatePublicLocations = (queryArg, intervalArg,btnClass) => {
   //TODO::Rajdeep
+  $('#result-div').html('<div class="text-center smat-loader " ><i class="fa fa-circle-o-notch donutSpinner" aria-hidden="true"></i></div>')
   $('.public-analysis-tab').removeClass('smat-active ');
   $('.'+btnClass).addClass('smat-active ');
   $('.public-analysis-result').html('');

@@ -240,13 +240,13 @@ class QueryBuilder{
             } else  if (strpos($token, '*') !== false) {
                 switch ($co_occur_option) {
                     case 'mention':
-                        $class = 111;
+                        $class = 7;
                         break;
                     case 'hashtag':
-                        $class = 111;
+                        $class = 5;
                         break;
                     case 'user':
-                        $class = 111;
+                        $class = 12;
                         break;
                     case 'keyword':
                         $class = 22;

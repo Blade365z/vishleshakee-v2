@@ -19,6 +19,7 @@ Script written by : Mala Das(maladas601@gmail.com), Amitabh Boruah(amitabhyo@gma
 // Imports from external source
 import { getDateInFormat } from '../utilitiesJS/smatDate.js';
 import { frequencyDistributionHA, sentimentDistributionHA } from '../historicalAnalysis/HistoricalAnalysis.js';
+import { forwardToHistoricalAnalysis, forwardToUserAnalysis } from '../utilitiesJS/redirectionScripts.js';
 //Global Declaration
 
 
@@ -432,7 +433,7 @@ export const generateSentiDistLineChart = (query, data = null, rangeType, div, f
 };
 
 
-export const generateBarChartForCooccur = (query, data = null, div, option) => {
+export const generateBarChartForCooccur = (query, data = null, div, option,from,to) => {
     var chart = am4core.create(div, am4charts.XYChart);
     am4core.useTheme(am4themes_animated);
     chart.padding(0, 0, 0, 0); 
@@ -515,5 +516,17 @@ export const generateBarChartForCooccur = (query, data = null, div, option) => {
 
     categoryAxis.sortBySeries = series;
     chart.cursor = new am4charts.XYCursor();
+    series.columns.template.events.on("hit", function (ev) {
+        if(option==='hashtag' || option==='mention'){
+            var item = ev.target.dataItem.component.tooltipDataItem.dataContext;
+            let queryTemp  = '('+query+'&'+String(item.token)+')';
+            forwardToHistoricalAnalysis(queryTemp, from, to);
+        }else{
+                    var item = ev.target.dataItem.dataContext.id;
+                    forwardToUserAnalysis(item,from,to);
+        }
+       
+    });
+
 
 }

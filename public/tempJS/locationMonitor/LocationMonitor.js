@@ -126,6 +126,26 @@ legend.onAdd = function (LM_Map) {
 
 legend.addTo(LM_Map);
 
+
+var showLegend = true;  // default value showing the legend
+$('.legend').hide(); 
+
+
+var button = L.control({
+    position: "topright"
+});
+
+button.onAdd = function (LM_Map) {
+    var div = L.DomUtil.create("div", "submitButton");
+    div.innerHTML += '</button><button class="legend_show"  style="border:none;outline: none;margin-right: -35px !important;width: 80px;height: 70px;background-size: 40px;"></button>';
+
+    return div;
+};
+
+button.addTo(LM_Map);
+
+
+
 jQuery(function () {
     /*
      Below is the code writtn to filter out the hashtags from the word cloud.
@@ -211,6 +231,18 @@ jQuery(function () {
     $('body').on('click', 'div .username', function () {
         let queryCaptured = '$' + $(this).attr('value'); //Here query is userID
         forwardToUserAnalysis(queryCaptured,global_datetime[0],global_datetime[1]);
+    });
+    $('#lmMap').on('click', '.legend_show', function() {
+        
+            if(showLegend === true){
+            /* use jquery to select your DOM elements that has the class 'legend' */
+                $('.legend').hide(); 
+                showLegend = false; 
+            }else{
+                $('.legend').show();
+                showLegend = true; 
+            }
+        
     });
 
 });
@@ -648,7 +680,7 @@ const generateCurrentlyTrending = (data, data_hashtag_latlng, div, filterArgumen
     $('#' + div).html('');
     query = query.includes('^') ? query.replace('^', '') : query;
     query = query[0] === query[0].toUpperCase() ? query : query[0].toUpperCase() + query.slice(1,);
-    $('#currentlyTrendingLocTitle').html('<div class="text-center m-0 " > <p class="m-0 smat-box-title-large  " >Trending from <b>  ' + query + ' </b> </p><p class="pull-text-top mb-1"><small class="text-muted pull-text-top "> Updates every ' + interval + ' seconds</small> </p>')
+    $('#currentlyTrendingLocTitle').html('<div class="text-center m-0 " > <p class="m-0 smat-box-title-large  " >Trending from <b>  ' + query + ' </b> </p><p class="pull-text-top mb-1"><small class="text-muted pull-text-top "> </small> </p>')
 
     const arrayTemp = data;
     let arrayT = [];
@@ -669,7 +701,7 @@ const generateCurrentlyTrending = (data, data_hashtag_latlng, div, filterArgumen
 
         })
     }
-    let minFontSize = 12, maxFontSize = 55;
+    let minFontSize = 12, maxFontSize = 45;
     let padding = 5;
     if (arrayT.length > 10) {
         padding = 0;

@@ -91,6 +91,13 @@ export const render_linkprediction_graph = async (input,src) => {
 }
 
 export const update_view_graph_for_link_prediction = (res,src,k_value) => {
+
+    console.log("RES");
+    console.log(res);;
+
+    console.log("NG");
+    console.log(network_global.body.data.nodes._data);
+
     var query_index_label;
     for (var i = 0; (i < res.length); i++) {
         if (res[i].id == src) {
@@ -118,15 +125,17 @@ export const update_view_graph_for_link_prediction = (res,src,k_value) => {
 
 
     for (var i = 0;((i < res.length)); i++) {
-        if( i < 3){
+        let j = 0;
+        if( j < k_value){
             if (res[i].id != res[query_index_label].id) {
                 ed.push({
                     from: res[query_index_label].id,
                     to: res[i].id,
                     width: 10,
                     dashes: true,
-                    color: "red"
+                    color: "black"
                 });
+                j++;
             }
         }
     }
@@ -451,7 +460,7 @@ export const draw_graph = (res,id_value) => {
     $('.analysis_summary_div').html('');
     $('.analysis_summary_div').append('<table class="table">  <thead> <tr><th>Node</th></tr>  </thead> <tbody id="tableBody"> </tbody></table>');
     for (var i = 0; i < nodes_arr.length; i++) {
-        $('#tableBody').append('<tr><td>'+'<a href="#target" class="click_events">'+ nodes_arr[i].id +'</a>'+ '</td></tr>');
+        $('#tableBody').append('<tr><td>'+'<a href="#target" class="click_events">'+ nodes_arr[i].label +'</a>'+ '</td></tr>');
     }
 
 
@@ -718,6 +727,18 @@ export const intersection = async (url,data,NAType) => {
     });
     let output = await response.json();
     return output;
+}
+
+export const getUserDetailsNA = async (id) => {
+    let response = await fetch('UA/getUserDetailsTemp', {
+        method: 'post',
+        headers: HeadersForApi,
+        body: JSON.stringify({
+            userID: id
+        })
+    });
+    let data = await response.json()
+    return data;
 }
 
 export const difference = async (url,data,NAType) => {

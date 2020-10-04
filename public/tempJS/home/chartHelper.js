@@ -443,7 +443,7 @@ export const generateBarChart = (data = null, query, div, type) => {
     if (type === 'mention' || type === 'hashtag') {
       var item = ev.target.dataItem.dataContext.token;
       if (localStorage.getItem('smat.me')) {
-        let queryFinal = query + '&' + item;
+        let queryFinal ='(' +query + '&' + item+')';
         let date = getCurrentDate();
         forwardToHistoricalAnalysis(queryFinal, date, date);
       } else {

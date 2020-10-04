@@ -74,12 +74,12 @@
                         <div class="d-flex">
                             <h4> <i class="fas fa-fire-alt mr-4 mt-3  text-muted"></i></h4>
                                 <div >
-                                    <h2 class=" m-0 text-dark">3240 </h2>
+                                    <h2 class=" m-0 text-dark" id="totalHashtags">0 </h2>
                                     <p class=" m-0 pull-text-top  text-muted">Hashtags trending</p>
                                 </div>
                                 <div  class="ml-3">
-                                    <h2 class=" m-0 text-dark">1140 </h2>
-                                    <p class=" m-0 pull-text-top text-muted">Mentions trending</p>
+                                    <h2 class=" m-0 text-dark" id="totalMentions">0 </h2>
+                                    <p class=" m-0 pull-text-top text-muted" >Mentions trending</p>
                                 </div>
         
                         </div>

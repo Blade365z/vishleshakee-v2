@@ -530,9 +530,13 @@ select{
     overflow-y: hidden;
 }
 .barGraphTab{
+    min-height:30%;
     height:360px;
     overflow-y: auto;
     overflow-x:hidden;
+}
+.co_occur_plot{
+    min-height:26%;
 }
 #alertsDiv{
     height:60px;

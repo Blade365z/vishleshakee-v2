@@ -1,0 +1,113 @@
+src,dst,count
+#COVID19,*hoax,58
+*hoax,*trump,1210
+*hoax,*virus,627
+*hoax,*positive,26
+*hoax,*people,24
+*hoax,*crowd,15
+*hoax,*goin…,10
+#COVID19,*trump,47
+*trump,*positive,72876
+*trump,*death,11676
+*trump,*people,7368
+#COVID19,*cases,35
+*cases,*death,304
+*cases,*countries,28
+*cases,*great,28
+*cases,*people,9
+#COVID19,"*tests times",32
+"*tests times",*shoot,64
+"*tests times","*epidemiologist messenger",64
+#COVID19,*shoot,32
+*shoot,"*tests times",64
+*shoot,"*epidemiologist messenger",64
+*shoot,*people,3
+#COVID19,"*epidemiologist messenger",32
+"*epidemiologist messenger","*tests times",64
+"*epidemiologist messenger",*shoot,64
+#COVID19,*wish,24
+*wish,*bitch,140
+*wish,*death,120
+*wish,*careful,84
+*wish,*trump,28
+*wish,*people,2
+#COVID19,*death,21
+*death,*people,14352
+*death,*trump,11676
+#COVID19,*virus,21
+*virus,*trump,1704
+*virus,*death,781
+*virus,*hoax,627
+*virus,*people,528
+*virus,*millions,198
+#COVID19,*goin…,20
+*goin…,*hoax,20
+*goin…,*trump,1
+#COVID19,*infected,19
+*infected,*virus,17
+*infected,*100000,16
+*infected,*millions,16
+*infected,"*death toll",16
+*infected,*india,15
+*infected,*trump,4
+*infected,*people,3
+#COVID19,*careful,19
+*careful,*wish,84
+*careful,*bitch,76
+*careful,*people,3
+*careful,*death,2
+#COVID19,*pandemic,19
+*pandemic,*trump,180
+*pandemic,*death,22
+#COVID19,*bitch,19
+*bitch,*wish,140
+*bitch,*careful,76
+*bitch,*death,22
+*bitch,*people,3
+#COVID19,*india,19
+*india,*people,90
+#COVID19,"*death toll",18
+"*death toll",*india,34
+"*death toll",*virus,17
+"*death toll",*100000,16
+"*death toll",*infected,16
+"*death toll",*millions,16
+"*death toll",*cases,2
+"*death toll",*trump,2
+#COVID19,*crowd,17
+*crowd,*trump,176
+*crowd,*hoax,15
+#COVID19,*people,16
+*people,*death,14340
+*people,*trump,7392
+*people,*millions,2784
+#COVID19,*millions,16
+*millions,*people,2784
+*millions,*virus,176
+*millions,*trump,85
+*millions,*india,16
+*millions,*infected,16
+*millions,"*death toll",16
+*millions,*100000,16
+#COVID19,*positive,16
+*positive,*trump,72888
+*positive,*death,440
+*positive,*people,204
+#COVID19,"*test backlog",16
+"*test backlog",*ontario,16
+#COVID19,*ontario,16
+*ontario,"*test backlog",16
+*ontario,*death,1
+*ontario,*cases,1
+#COVID19,*100000,16
+*100000,*virus,16
+*100000,*millions,16
+*100000,*infected,16
+*100000,"*death toll",16
+*100000,*india,15
+#COVID19,*great,15
+*great,*cases,28
+*great,*countries,28
+#COVID19,*countries,15
+*countries,*great,28
+*countries,*cases,28

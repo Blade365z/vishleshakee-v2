@@ -12,7 +12,7 @@
         <div id="queryinputDivParent">
             <div id="queryInputDiv">
                 <div class="form-group   border smat-rounded d-flex px-2 py-1  bg-white" id="haQueryInputBox">
-                    <input type="text" class="form-control typeahead " id="queryToken" placeholder="Query" style="border:0px;" autocomplete="OFF" required>
+                    <input type="text" class="form-control typeahead " id="queryToken" placeholder="Query" style="border:0px;" autocomplete="OFF"  placeholder="Search a Hashtag or Mention" style="border:0px;" autocomplete="OFF"  data-container="body" data-trigger="focus"    data-html="true"   data-toggle="popover" data-placement="right" data-content="Query by :- <b>Hashtag</b> ( use'#',example: #COVID19 ) or <b> Mention</b> ( use'@',example: @narendramodi ) "   required>
                 </div>
             </div>
 
@@ -36,6 +36,7 @@
             </div>
             <button class="btn smat-btn  smat-rounded  mx-1" id="submit-btn" type="submit"> <span> Search Result </span> </button>
             <button class="btn  text-normal smat-rounded  mx-1" id="showTableBtn" onclick="return false"> <span> Show Search History </span> </button>
+            <button class="btn  text-normal smat-rounded  mx-1" id="helpBtnHA" onclick="return false"> <span> Need help? </span> </button>
         </div>
     </form>
 </div>

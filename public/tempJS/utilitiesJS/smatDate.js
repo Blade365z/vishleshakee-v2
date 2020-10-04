@@ -56,6 +56,7 @@ export const getDateRange = (startDate, stopDate) => {
 }
 
 export const getRangeType = (from_date, to_date, to_time = null) => {
+    console.log(from_date, to_date, to_time);
     var diff = (Date.parse(to_date) - Date.parse(from_date)) / 86400000;
     var range_type;
     if (diff < 0) {
@@ -67,6 +68,8 @@ export const getRangeType = (from_date, to_date, to_time = null) => {
             range_type = "10sec";
         else
             range_type = "hour";
+    }else if ((diff >= 0) && (diff < 1)) {
+        range_type = "10sec";
     }
     else if (diff >= 1) {
         range_type = "day";

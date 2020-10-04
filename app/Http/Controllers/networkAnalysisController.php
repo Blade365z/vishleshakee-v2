@@ -115,6 +115,7 @@ class networkAnalysisController extends Controller
     
     public function graph_view_data_formator_for_rendering_in_visjs(Request $request)
     {
+        $commonController_obj = new CommonController;
         $network_arr = json_decode($this->read_csv_file($request));
         if (isset($_GET['limit'])) {
             $limit = $_GET['limit'];
@@ -137,24 +138,12 @@ class networkAnalysisController extends Controller
                             if ($i == 0) {
                                 array_push($final_node_arr, array("id" => $connection[$i], "label" => $connection[$i]));
                             }
-                            //Commented for user ID mapping
-                            //else{
-                            // $output = $GraphData_obj->id_user_mapping($connection[$i]); // get user_name of user_id
-                            // $author_name = null;
-                            // foreach ($output as $op) {
-                            //   $author_name = '@'.$op["author_screen_name"];
-                            // if ($author_name) {
-                            //   array_push($final_node_arr, array("id" => $connection[$i], "label" =>  $author_name));
-                            //}
-                            // else {
-                            //   array_push($final_node_arr, array("id" => $connection[$i], "label" => $connection[$i]));
-                            // }
-                            //  }
                         }
                     }
                 }
             }
         } else {
+            $commonController_obj = new CommonController;
             // unique node generation
             $network_arr = array_slice($network_arr, 1, sizeof($network_arr));
             foreach ($network_arr as $connection) {
@@ -162,20 +151,17 @@ class networkAnalysisController extends Controller
                     if (!(in_array($connection[$i], $unique_node_temp_arr))) {
                         array_push($unique_node_temp_arr, $connection[$i]);
                         if (substr($connection[$i], 0, 1) == "#") {
-                            //array_push($final_node_arr, array("id" => $connection[$i], "label" => $connection[$i], "shape" => 'dot', "icon" => '{ face: "FontAwesome", code: "\uf198", size: 150, color: "#57169a"}', "group" => 'castle' ));
                             array_push($final_node_arr, array("id" => $connection[$i], "label" => $connection[$i], "shape" => 'circularImage', "image" => 'public/icons/hashtag.svg', "size" => 50, "borderwidth" => 5, "border" => "#EA9999"));
                         } else if (substr($connection[$i], 0, 1) == "@") {
-                            //$GraphData_obj->handle_user_mapping($connection[$i]);
                             array_push($final_node_arr, array("id" => $connection[$i], "label" => $connection[$i], "shape" => 'circularImage', "image" => 'public/icons/roshanmention.jpg', "size" => 50, "borderwidth" => 5, "border" => "#EA9999"));
                         } else if (substr($connection[$i], 0, 1) == "*") {
-                            //$GraphData_obj->handle_user_mapping($connection[$i]);
                             $trimmed_string = ltrim($connection[$i], $connection[$i][0]);
                             array_push($final_node_arr, array("id" => $connection[$i], "label" => $trimmed_string, "shape" => 'circularImage', "image" => 'public/icons/keyword.svg', "size" => 50, "borderwidth" => 5, "border" => "#EA9999"));
                         } else if (substr($connection[$i], 0, 1) == "$") {
-                            // $output = $GraphData_obj->id_user_mapping($connection[$i]);
-                            foreach ($output as $op) {
-                                $user_name = $op["author_screen_name"];
-                                $profile_image_link = $op["profile_image_url_https"];
+                            $uid_info_arr = json_decode($commonController_obj->get_user_info($connection[$i], false)); //converted string StdClass() object to StdClass() object;
+                            if($uid_info_arr){                              
+                                $user_name = $uid_info_arr->{"author_screen_name"};
+                                $profile_image_link = $uid_info_arr->{"profile_image_url_https"};
                             }
                             array_push($final_node_arr, array("id" => $connection[$i], "label" => $user_name, "shape" => 'circularImage', "image" => $profile_image_link, "size" => 50, "borderwidth" => 7, "border" => "#EA9999"));
                         } else {
@@ -192,8 +178,6 @@ class networkAnalysisController extends Controller
                             }
 
                         }
-
-                        // array_push($final_node_arr, array("id" => $connection[$i], "label" => $connection[$i]));
                     }
                 }
             }
@@ -292,7 +276,7 @@ class networkAnalysisController extends Controller
 
         }
 
-        $csvFile = file("storage/2/$input.csv");
+        $csvFile = file("storage/$dir_name/$input.csv");
         $final_arr = [];
         foreach ($csvFile as $line) {
             $final_arr[] = str_getcsv($line);
@@ -312,26 +296,25 @@ class networkAnalysisController extends Controller
         if ($request->input('algo_option') == "pgcen") {
             $multiplier = 80;
         } else {
-            $multiplier = 1;
+            $multiplier = 20;
         }
         // unique edges generation
+        $commonController_obj = new CommonController;
         foreach ($network_centrality_arr as $one_list) {
             if (substr($one_list[0], 0, 1) == "$") {
-                //   $output = $GraphData_obj->id_user_mapping($one_list[0]);
-                //   foreach($output as $op){
-                //   $user_name = $op["author_screen_name"];
-                //  $profile_image_link = $op["profile_image_url_https"];
-                // }
-                //  array_push($final_node_arr, array("id" => $one_list[0], "label" =>  $user_name, "shape" => 'circularImage', "image" => $profile_image_link, "size" => (220 * $one_list[1]), "borderwidth" => 7, "border" => "#EA9999" ));
-            } else if (substr($one_list[0], 0, 1) == "#") {
+                $uid_info_arr = json_decode($commonController_obj->get_user_info($one_list[0], false)); //converted string StdClass() object to StdClass() object;
+                if($uid_info_arr){                              
+                    $user_name = $uid_info_arr->{"author_screen_name"};
+                    $profile_image_link = $uid_info_arr->{"profile_image_url_https"};
+                }
+                array_push($final_node_arr, array("id" => $one_list[0], "label" => $user_name, "shape" => 'circularImage', "image" => $profile_image_link, "size" =>($multiplier * $one_list[1]), "borderwidth" => 7, "border" => "#EA9999"));
+               } else if (substr($one_list[0], 0, 1) == "#") {
                 array_push($final_node_arr, array("id" => $one_list[0], "label" => $one_list[0], "shape" => 'circularImage', "image" => 'public/icons/hashtag.svg', "size" => ($multiplier * $one_list[1]), "borderwidth" => 7, "border" => "#EA9999"));
             } else if (substr($one_list[0], 0, 1) == "@") {
                 array_push($final_node_arr, array("id" => $one_list[0], "label" => $one_list[0], "shape" => 'circularImage', "image" => 'public/icons/roshanmention.jpg', "size" => ($multiplier * $one_list[1]), "borderwidth" => 7, "border" => "#EA9999"));
             } else if (substr($one_list[0], 0, 1) == "*") {
                 array_push($final_node_arr, array("id" => $one_list[0], "label" => $one_list[0], "shape" => 'circularImage', "image" => 'public/icons/keyword.svg', "size" => ($multiplier * $one_list[1]), "borderwidth" => 7, "border" => "#EA9999"));
             }
-
-            //array_push($final_node_arr, array("id" => $one_list[0], "label" => $one_list[0], "size" => (220 * $one_list[1])));
         }
         // unique edges generation
         $network_arr = array_slice($network_arr, 1, sizeof($network_arr));
@@ -558,6 +541,7 @@ class networkAnalysisController extends Controller
 
         $grp_no = 0;
         //unique node generation
+        $commonController_obj = new CommonController;
         foreach ($network_community_arr as $one_community) {
 
             $community_index = $community_index + 1;
@@ -568,12 +552,12 @@ class networkAnalysisController extends Controller
                     $unique_node_temp_arr[$one_hash] = 1;
 
                     if (substr($one_hash, 0, 1) == "$") {
-                        // $output = $GraphData_obj->id_user_mapping($one_hash);
-                        //     foreach($output as $op){
-                        //     $user_name = $op["author_screen_name"];
-                        //     $profile_image_link = $op["profile_image_url_https"];
-                        // }
-                        // array_push($final_node_arr, array("id" => $one_hash, "label" => $user_name, "group" => $grp_no));
+                        $uid_info_arr = json_decode($commonController_obj->get_user_info($one_hash, false)); //converted string StdClass() object to StdClass() object;
+                        if($uid_info_arr){                              
+                            $user_name = $uid_info_arr->{"author_screen_name"};
+                            $profile_image_link = $uid_info_arr->{"profile_image_url_https"};
+                        }
+                        array_push($final_node_arr, array("id" => $one_hash, "label" => $user_name, "group" => $grp_no));
                     } else {
                         array_push($final_node_arr, array("id" => $one_hash, "label" => $one_hash, "group" => $grp_no));
                     }
@@ -653,10 +637,6 @@ class networkAnalysisController extends Controller
         $unique_nodes = array();
         $color_code_list = array("#00ff00", "#964B00", "#1abc9c", "#5b2c6f", "#ED5565", " #5f6a6a", "#000000", "#FF0000");
         $color_code = "#00ff00";
-        // $GraphData_obj = new GraphData;
-
-        // $color_code_list = array("red", "green", "#1abc9c", "#5b2c6f", "#ED5565", " #5f6a6a", "#000000", "orange");
-        // $color_code = "red";
 
         foreach ($link as $connection) {
             // nodes
@@ -688,33 +668,17 @@ class networkAnalysisController extends Controller
                     ##############################################################################################################################
 
                     // Earlier only this below commented line was there till 25th of April 2020
-
+                    $commonController_obj = new CommonController;
                     if (substr($connection[$i], 0, 1) == "$") {
-                        //         $output = $GraphData_obj->id_user_mapping($connection[$i]);
-                        //         foreach($output as $op){
-                        //              $user_name = $op["author_screen_name"];
-                        //              $profile_image_link = $op["profile_image_url_https"];
-                        //         }
-                        //  array_push($final_node_arr, array("id" => $connection[$i], "label" =>  $user_name,  "color" => $color_code));
+                        $uid_info_arr = json_decode($commonController_obj->get_user_info($connection[$i], false)); //converted string StdClass() object to StdClass() object;
+                        if($uid_info_arr){                              
+                            $user_name = $uid_info_arr->{"author_screen_name"};
+                            $profile_image_link = $uid_info_arr->{"profile_image_url_https"};
+                        }
+                        array_push($final_node_arr, array("id" =>$connection[$i], "label" => $user_name, "color" => $color_code));
                     } else {
                         array_push($final_node_arr, array("id" => $connection[$i], "label" => $connection[$i], "color" => $color_code));
                     }
-
-                    // if(substr($connection[$i],0,1) == "$"){
-                    //             $output = $GraphData_obj->id_user_mapping($connection[$i]);
-                    //             foreach($output as $op){
-                    //                  $user_name = $op["author_screen_name"];
-                    //                  $profile_image_link = $op["profile_image_url_https"];
-                    //             }
-                    //      array_push($final_node_arr, array("id" => $connection[$i], "label" =>  $user_name, "shape" => 'circularImage', "image" => $profile_image_link, "size" => 50, "borderwidth" => 10, "border" => $color_code ));
-                    // }else if(substr($connection[$i],0,1) == "#"){
-                    //              array_push($final_node_arr, array("id" => $connection[$i], "label" => $connection[$i], "shape" => 'circularImage', "image" => 'https://image.flaticon.com/icons/svg/1335/1335864.svg' , "size" => 50, "borderwidth" => 5, "border" => $color_code ));
-                    // }else if(substr($connection[$i],0,1) == "@"){
-                    //              array_push($final_node_arr, array("id" => $connection[$i], "label" => $connection[$i], "shape" => 'circularImage', "image" => 'app/Http/Controllers/graph/roshanmention.jpg' , "size" => 50, "borderwidth" => 5, "border" => $color_code ));
-                    // }else if(substr($connection[$i],0,1) == "*"){
-                    //              array_push($final_node_arr, array("id" => $connection[$i], "label" => $connection[$i], "shape" => 'circularImage', "image" => 'app/Http/Controllers/graph/keyword.svg' , "size" => 50, "borderwidth" => 5, "border" => $color_code ));
-                    // }
-
                     //Recently commented by Roshan
 
                     for ($i = 0; $i < sizeof($input_arr_net); $i++) {
@@ -723,23 +687,6 @@ class networkAnalysisController extends Controller
                             array_push($query_nodes_with_color, array("query" => $input_arr_net[$i], "color" => $color_code_list[$i]));
                         }
                     }
-
-                    // Uncomment to rollback
-
-                    // if (in_array($connection[$i], $query_nodes)) {
-                    //     if(substr($connection[$i],0,1) == "$"){
-                    //             $output = $GraphData_obj->id_user_mapping($connection[$i]);
-                    //             foreach($output as $op){
-                    //                  $user_name = $op["author_screen_name"];
-                    //                  $profile_image_link = $op["profile_image_url_https"];
-                    //             }
-                    //             array_push($query_nodes_with_color, array("query" => $user_name, "color" => $color_code_list[$color_counter]));
-                    //             $color_counter = $color_counter + 1;
-                    //     }else{
-                    //             array_push($query_nodes_with_color, array("query" => $connection[$i], "color" => $color_code_list[$color_counter]));
-                    //             $color_counter = $color_counter + 1;
-                    //     }
-                    // }
                 }
             }
 
@@ -829,6 +776,9 @@ class networkAnalysisController extends Controller
 
             $major_array[$major_array_index] = array();
             $ignore_two_rows = 0;
+
+            $commonController_obj = new CommonController;
+
             foreach ($x as $connection) {
                 if ($ignore_two_rows >= 2) {
                     for ($i = 0; $i < sizeof($connection) - 1; $i++) {
@@ -841,30 +791,15 @@ class networkAnalysisController extends Controller
 
                             // Earlier only the following line was there before 26th of April 2020
                             if (substr($connection[$i], 0, 1) == "$") {
-                                //         $output = $GraphData_obj->id_user_mapping($connection[$i]);
-                                //         foreach($output as $op){
-                                //              $user_name = $op["author_screen_name"];
-                                //              $profile_image_link = $op["profile_image_url_https"];
-                                //         }
-                                //    array_push($final_node_arr, array("id" => $connection[$i], "label" => $user_name, "color" => $faded_color_code_list[$counter]));
+                                $uid_info_arr = json_decode($commonController_obj->get_user_info($connection[$i], false)); //converted string StdClass() object to StdClass() object;
+                                if($uid_info_arr){                              
+                                    $user_name = $uid_info_arr->{"author_screen_name"};
+                                    $profile_image_link = $uid_info_arr->{"profile_image_url_https"};
+                                }
+                                array_push($final_node_arr, array("id" =>$connection[$i], "label" => $user_name, "color" => $faded_color_code_list[$counter]));
                             } else {
                                 array_push($final_node_arr, array("id" => $connection[$i], "label" => $connection[$i], "color" => $faded_color_code_list[$counter]));
                             }
-
-                            // if(substr($connection[$i],0,1) == "$"){
-                            //      $output = $GraphData_obj->id_user_mapping($connection[$i]);
-                            //      foreach($output as $op){
-                            //         $user_name = $op["author_screen_name"];
-                            //         $profile_image_link = $op["profile_image_url_https"];
-                            //     }
-                            //     array_push($final_node_arr, array("id" => $connection[$i], "label" =>  $user_name, "shape" => 'circularImage', "image" => $profile_image_link, "size" => 50, "borderwidth" => 10, "border" =>  $faded_color_code_list[$counter] ));
-                            // }else if(substr($connection[$i],0,1) == "#"){
-                            //     array_push($final_node_arr, array("id" => $connection[$i], "label" => $connection[$i], "shape" => 'circularImage', "image" => 'https://image.flaticon.com/icons/svg/1335/1335864.svg' , "size" => 50, "borderwidth" => 5, "border" =>  $faded_color_code_list[$counter] ));
-                            // }else if(substr($connection[$i],0,1) == "@"){
-                            //     array_push($final_node_arr, array("id" => $connection[$i], "label" => $connection[$i], "shape" => 'circularImage', "image" => 'app/Http/Controllers/graph/roshanmention.jpg' , "size" => 50, "borderwidth" => 5, "border" =>  $faded_color_code_list[$counter] ));
-                            // }else if(substr($connection[$i],0,1) == "*"){
-                            //     array_push($final_node_arr, array("id" => $connection[$i], "label" => $connection[$i], "shape" => 'circularImage', "image" => 'app/Http/Controllers/graph/keyword.svg' , "size" => 50, "borderwidth" => 5, "border" => $faded_color_code_list[$counter] ));
-                            // }
                         }
                     }
 
@@ -893,6 +828,7 @@ class networkAnalysisController extends Controller
         // A temporary array for maintaining the intersecting node for color change of the connected nodes with the intersecting nodes
         $intersecting_nodes = array();
 
+        $commonController_obj = new CommonController;
         for ($i = 0; $i < sizeof($link[0]); $i++) {
             for ($j = 0; $j < sizeof($final_node_arr); $j++) {
                 if ($link[0][$i] == $final_node_arr[$j]["id"]) {
@@ -915,6 +851,7 @@ class networkAnalysisController extends Controller
                     }
 
                     if (substr($final_node_arr[$j]["id"], 0, 1) == "$") {
+                        
                         //         $output = $GraphData_obj->id_user_mapping($final_node_arr[$j]["id"]);
                         //         foreach($output as $op){
                         //              $user_name = $op["author_screen_name"];

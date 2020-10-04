@@ -67,21 +67,21 @@
             </div>
             <div class="form-group  my-0  mr-2 border smat-rounded d-flex px-2 py-1  bg-white">
                 <select class="form-control" name="NAType" id="typeNA">
-                    <option>Hashtag-Hashtag</option>
-                    <option>Hashtag-Mention</option>
-                    <option>Hashtag-Keyword</option>
-                    <option>Hashtag-User</option>
-                    <option>Mention-Mention </option>
-                    <option>Mention-Hashtag </option>
-                    <option>Mention-Keyword </option>
-                    <option>User-Hashtag</option>
-                    <option>User-Mention</option>
-                    <option>Keyword-Hashtag</option>
-                    <option>Keyword-Mention</option>
+                    <option value="Hashtag-Hashtag">Hashtag-Hashtag</option>
+                    <option value="Hashtag-Mention">Hashtag-Mention</option>
+                    <option value="Hashtag-Keyword">Hashtag-Keyword</option>
+                    <option value="Hashtag-User">Hashtag-User</option>
+                    <option value="Mention-Mention">Mention-Mention </option>
+                    <option value="Mention-Hashtag">Mention-Hashtag </option>
+                    <option value="Mention-Keyword">Mention-Keyword </option>
+                    <option value="User-Hashtag">User-Hashtag</option>
+                    <option value="User-Mention">User-Mention</option>
+                    <option value="Keyword-Hashtag">Keyword-Hashtag</option>
+                    <option value="Keyword-Mention">Keyword-Mention</option>
 
                 </select>
             </div>
-            <div class="form-group  my-0  mr-2 border smat-rounded d-flex px-2 py-1  bg-white">
+            {{-- <div class="form-group  my-0  mr-2 border smat-rounded d-flex px-2 py-1  bg-white">
                 <select class="form-control" name="net_category" id="net_category">
                     <option>All</option>
                     <option>Sensitive</option>
@@ -89,7 +89,7 @@
                     <option>Security</option>
                     <option>Normal</option>
                 </select>
-            </div>
+            </div> --}}
     
             <div class="d-flex">
                 <button class="btn smat-btn  smat-rounded  mx-1" id="submit-btn" type="submit"> <span>Search</span> </button>
@@ -161,7 +161,7 @@
             <li class="nav-item naTabs ">
                 <a class="nav-link smat-rounded " id="diffTabNA" data-toggle="pill" href="#diffContentNA" role="tab" aria-controls="diffContentNA" aria-selected="false">Difference</a>
             </li>
-            <li class="ml-auto">
+            {{-- <li class="ml-auto">
                 <div class=" my-0  mr-2 border smat-rounded d-flex px-2   bg-white" style="display:none">
                     <select class="form-control" name="NAEngine" id="binaryopsnetworkselector">
                         <i class="fas fa-cog ml-2 text-normal" style="margin-top:11px;"></i>
@@ -169,7 +169,7 @@
                         <option  class="engineSelectorOption" value="spark">Spark</option>
                     </select>
                 </div>
-            </li>
+            </li> --}}
             <li class="nav-item naTabs ">
                 {{-- <a class="nav-link smat-rounded " id="expansionTabNA" data-toggle="pill" href="#expansionContentNA" role="tab" aria-controls="expansionContentNA" aria-selected="false">Network Expansion</a> --}}
             </li>

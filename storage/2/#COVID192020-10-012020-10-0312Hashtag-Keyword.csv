@@ -1,0 +1,33 @@
+src,dst,count
+#COVID19,*hoax,58
+*hoax,*trump,1210
+*hoax,*virus,627
+#COVID19,*trump,47
+*trump,*death,11676
+#COVID19,*cases,35
+*cases,*death,304
+#COVID19,"*tests times",32
+"*tests times",*shoot,64
+"*tests times","*epidemiologist messenger",64
+#COVID19,*shoot,32
+*shoot,"*tests times",64
+*shoot,"*epidemiologist messenger",64
+#COVID19,"*epidemiologist messenger",32
+"*epidemiologist messenger","*tests times",64
+"*epidemiologist messenger",*shoot,64
+#COVID19,*wish,24
+*wish,*death,120
+*wish,*careful,84
+*wish,*trump,28
+#COVID19,*death,21
+*death,*trump,11676
+#COVID19,*virus,21
+*virus,*trump,1704
+*virus,*death,781
+*virus,*hoax,627
+#COVID19,*goin…,20
+*goin…,*hoax,20
+#COVID19,*infected,19
+*infected,*virus,17
+#COVID19,*careful,19
+*careful,*wish,84

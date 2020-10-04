@@ -1,0 +1,26 @@
+src,dst,count
+#coronavirus,*trump,9
+*trump,*death,11676
+#coronavirus,*podemos,8
+*podemos,"*subestimar virus",8
+*podemos,*trump,8
+#coronavirus,"*subestimar virus",8
+"*subestimar virus",*trump,8
+"*subestimar virus",*podemos,8
+#coronavirus,*death,6
+*death,*trump,11676
+#coronavirus,*victims,5
+#coronavirus,*virus,4
+*virus,*trump,1704
+*virus,*death,781
+#coronavirus,*families,4
+*families,*victims,7
+#coronavirus,*symptoms,3
+#coronavirus,*cases,3
+*cases,*death,304
+#coronavirus,"*democrats intentionally infected team trump",3
+"*democrats intentionally infected team trump","*plausible claim",3
+#coronavirus,"*plausible claim",3
+"*plausible claim","*democrats intentionally infected team trump",6
+#coronavirus,"*false positives",3
+"*false positives",*symptoms,3

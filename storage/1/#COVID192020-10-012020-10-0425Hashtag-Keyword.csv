@@ -1,0 +1,89 @@
+src,dst,count
+#COVID19,*monster,1442
+*monster,"*fundraising event knowing",2210
+*monster,*children…,2210
+*monster,*people,15
+*monster,*trump,8
+#COVID19,*children…,722
+*children…,*monster,2832
+*children…,"*fundraising event knowing",1431
+#COVID19,"*fundraising event knowing",721
+"*fundraising event knowing",*monster,2210
+"*fundraising event knowing",*children…,1120
+#COVID19,*trump,345
+*trump,*positive,75555
+*trump,*biden,16642
+*trump,*people,13807
+*trump,*days,6383
+#COVID19,*mismanagement,285
+*mismanagement,*americans…,737
+*mismanagement,*trump,1
+#COVID19,*americans…,285
+*americans…,*mismanagement,703
+*americans…,*hospital,27
+*americans…,*trump,3
+*americans…,*people,2
+#COVID19,"*trump diagnosticado hace horas",184
+"*trump diagnosticado hace horas",*campaña…,351
+"*trump diagnosticado hace horas","*médico significa",306
+#COVID19,"*médico significa",184
+"*médico significa",*campaña…,327
+"*médico significa","*trump diagnosticado hace horas",281
+#COVID19,*campaña…,184
+*campaña…,"*médico significa",354
+*campaña…,"*trump diagnosticado hace horas",303
+#COVID19,*people,166
+*people,*trump,14181
+*people,*positive,6307
+#COVID19,*biden,163
+*biden,*trump,16747
+#COVID19,*positive,150
+*positive,*trump,76190
+*positive,*people,8065
+#COVID19,*cases,111
+*cases,*people,66
+#COVID19,"*death toll",107
+"*death toll",*official,72
+"*death toll",*nation,68
+"*death toll",*days,68
+"*death toll",*trump,15
+#COVID19,*days,84
+*days,*trump,6005
+#COVID19,"*trump loyalists march",77
+"*trump loyalists march",*acts,135
+"*trump loyalists march",*support,113
+"*trump loyalists march","*super spreader curr…",113
+"*trump loyalists march",*auto-genocide,113
+#COVID19,*support,77
+*support,*people,1027
+*support,*auto-genocide,529
+#COVID19,"*super spreader curr…",77
+"*super spreader curr…","*trump loyalists march",113
+"*super spreader curr…",*support,113
+"*super spreader curr…",*auto-genocide,113
+"*super spreader curr…",*acts,113
+#COVID19,*auto-genocide,77
+*auto-genocide,*support,391
+*auto-genocide,*acts,135
+*auto-genocide,"*trump loyalists march",113
+*auto-genocide,"*super spreader curr…",113
+#COVID19,*acts,77
+*acts,"*trump loyalists march",157
+*acts,"*super spreader curr…",157
+*acts,*auto-genocide,113
+*acts,*support,113
+#COVID19,*hospital,73
+*hospital,*trump,1082
+*hospital,*biden,980
+*hospital,*people,535
+#COVID19,*official,72
+*official,"*death toll",72
+*official,*days,70
+*official,*nation,68
+#COVID19,*nation,71
+*nation,*people,745
+#COVID19,*minutes,69
+*minutes,*trump,322
+#COVID19,"*2020 america",69
+"*2020 america",*people,144
+"*2020 america",*minutes,144

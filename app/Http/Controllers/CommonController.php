@@ -39,7 +39,6 @@ class CommonController extends Controller
         if($range_type == "10sec"){
             $stm_list = $qb_obj->get_statement($to_datetime, $from_datetime, $token, $range_type, 'freq');
             $result_async_from_db = $db_object->executeAsync_query($stm_list[1], $stm_list[0]);
-
             foreach ($result_async_from_db as $rows) {
                 $com = 0;
                 $sec = 0;
@@ -50,18 +49,20 @@ class CommonController extends Controller
                     $datetime1 = $ut_obj->get_date_time_from_cass_date_obj($t, "Y-m-d") . ' ' . $row['created_time'];
                     $count_list = $row['count_list']->values();
                     $ar_sum = array_sum($count_list);
-                    if ($category_info_details or $category_info_total) {
-                        $com += $count_list[3] + $count_list[4] + $count_list[5];
-                        $sec += $count_list[6] + $count_list[7] + $count_list[8];
-                        $com_sec += $count_list[9] + $count_list[10] + $count_list[11];
-                        $non_com_sec += $count_list[0] + $count_list[1] + $count_list[2];
-                        array_push($temp_arr, array($datetime1, $ar_sum, $com, $sec, $com_sec, $non_com_sec));
-                        $total_com += $com;
-                        $total_sec += $sec;
-                        $total_com_sec += $com_sec;
-                        $total_non_com_sec += $non_com_sec;
-                    } else {
-                        array_push($temp_arr, array($datetime1, $ar_sum));
+                    if($ar_sum){
+                        if ($category_info_details or $category_info_total) {
+                            $com += $count_list[3] + $count_list[4] + $count_list[5];
+                            $sec += $count_list[6] + $count_list[7] + $count_list[8];
+                            $com_sec += $count_list[9] + $count_list[10] + $count_list[11];
+                            $non_com_sec += $count_list[0] + $count_list[1] + $count_list[2];
+                            array_push($temp_arr, array($datetime1, $ar_sum, $com, $sec, $com_sec, $non_com_sec));
+                            $total_com += $com;
+                            $total_sec += $sec;
+                            $total_com_sec += $com_sec;
+                            $total_non_com_sec += $non_com_sec;
+                        } else {
+                            array_push($temp_arr, array($datetime1, $ar_sum));
+                        }
                     }
                 }
             }
@@ -128,15 +129,17 @@ class CommonController extends Controller
                         }
                     }
                 }
-                if ($category_info_details or $category_info_total) {
-                    $total_com += $com;
-                    $total_sec += $sec;
-                    $total_com_sec += $com_sec;
-                    $total_non_com_sec += $non_com_sec;
-                    array_push($temp_arr, array($datetime1, $ar_sum, $com, $sec, $com_sec, $non_com_sec));
+                if($ar_sum){
+                    if ($category_info_details or $category_info_total) {
+                        $total_com += $com;
+                        $total_sec += $sec;
+                        $total_com_sec += $com_sec;
+                        $total_non_com_sec += $non_com_sec;
+                        array_push($temp_arr, array($datetime1, $ar_sum, $com, $sec, $com_sec, $non_com_sec));
+                    }
+                    else
+                        array_push($temp_arr, array($datetime1, $ar_sum));
                 }
-                else
-                    array_push($temp_arr, array($datetime1, $ar_sum));
             }
         }else if ($range_type == "day") {
             // past days
@@ -204,14 +207,16 @@ class CommonController extends Controller
                     }
                 }
 
-                if ($category_info_details or $category_info_total) {
-                    $total_com += $com;
-                    $total_sec += $sec;
-                    $total_com_sec += $com_sec;
-                    $total_non_com_sec += $non_com_sec;
-                    array_push($temp_arr, array($datetime1, $ar_sum, $com, $sec, $com_sec, $non_com_sec));
-                }else{
-                    array_push($temp_arr, array($datetime1, $ar_sum));
+                if($ar_sum){
+                    if ($category_info_details or $category_info_total) {
+                        $total_com += $com;
+                        $total_sec += $sec;
+                        $total_com_sec += $com_sec;
+                        $total_non_com_sec += $non_com_sec;
+                        array_push($temp_arr, array($datetime1, $ar_sum, $com, $sec, $com_sec, $non_com_sec));
+                    }else{
+                        array_push($temp_arr, array($datetime1, $ar_sum));
+                    }
                 }
             }
         }
@@ -343,7 +348,9 @@ class CommonController extends Controller
                         }
                     }
                 }
-                array_push($temp_arr, array($datetime1, $pos, $neg, $neu));
+                if($pos or $neg or $neu){
+                    array_push($temp_arr, array($datetime1, $pos, $neg, $neu));
+                }
             }
         }else if($range_type == "day"){
             $stm_list = $qb_obj->get_statement($to_datetime, $from_datetime, $token, $range_type, 'sent');
@@ -415,7 +422,9 @@ class CommonController extends Controller
                         }
                     }
                 }
-                array_push($temp_arr, array($datetime1, $pos, $neg, $neu));
+                if($pos or $neg or $neu){
+                    array_push($temp_arr, array($datetime1, $pos, $neg, $neu));
+                }
             }
         }
         
@@ -681,8 +690,10 @@ class CommonController extends Controller
                     array_push($hash_arr_tmp, array("id"=>$key, "count"=>intval($value), "author_name"=> $uid_info_arr->{'author'}, "handle" =>  $uid_info_arr->{'author_screen_name'}));
             }
             $final_result["data"] = $hash_arr_tmp;
-        }else
-        $final_result["data"] = array_slice($hash_arr, 0, $limit);
+        }else{
+            $final_result["data"] = array_slice($hash_arr, 0, $limit);            
+        }
+        $final_result["nodes"] = sizeof($hash_arr);
         return ($final_result);
     }
 

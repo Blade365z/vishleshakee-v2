@@ -18,6 +18,7 @@
 <div class="container" id="main-wrapper">
         @include("inc.navbar")
         @include('inc.publicTweets')
+        @include('inc.helpHA')
         @include('inc.feedbackmodal')
         @include('inc.userSearchModal')
         @yield('content')

@@ -1,0 +1,57 @@
+src,dst,count
+#COVID19,*trump,7600
+*trump,*positive,170419
+*trump,*people,61714
+#COVID19,*positive,6807
+*positive,*trump,170970
+*positive,*people,11701
+#COVID19,*care,3137
+*care,*trump,10805
+*care,*people,4960
+*care,*fine,3022
+*care,*remdesivir,3006
+*care,"*early diagnosis",2994
+#COVID19,"*trump diagnosis",3078
+"*trump diagnosis",*remdesivir,2994
+"*trump diagnosis",*covid…,2994
+"*trump diagnosis",*disaster,2994
+"*trump diagnosis","*early diagnosis",2994
+"*trump diagnosis",*fine,2994
+"*trump diagnosis",*care,2994
+#COVID19,*remdesivir,3032
+*remdesivir,*care,3006
+*remdesivir,"*trump diagnosis",2994
+*remdesivir,*covid…,2994
+*remdesivir,*fine,2994
+*remdesivir,*disaster,2994
+*remdesivir,"*early diagnosis",2994
+*remdesivir,*trump,1449
+#COVID19,*disaster,3014
+*disaster,*fine,2994
+*disaster,*care,2994
+*disaster,*remdesivir,2994
+*disaster,"*early diagnosis",2994
+*disaster,*covid…,2994
+*disaster,"*trump diagnosis",2994
+#COVID19,*fine,3008
+#COVID19,*covid…,3006
+*covid…,*trump,24021
+*covid…,"*early diagnosis",2994
+*covid…,*fine,2994
+*covid…,*remdesivir,2994
+*covid…,*disaster,2994
+*covid…,*care,2994
+*covid…,"*trump diagnosis",2994
+*covid…,*people,344
+#COVID19,"*early diagnosis",2994
+"*early diagnosis","*trump diagnosis",2994
+"*early diagnosis",*remdesivir,2994
+"*early diagnosis",*fine,2994
+"*early diagnosis",*disaster,2994
+"*early diagnosis",*covid…,2994
+"*early diagnosis",*care,2994
+#COVID19,*potus,2957
+*potus,*positive,1943
+#COVID19,"*donald trump",2893
+#COVID19,*people,2483
+*people,*trump,62110
