@@ -832,7 +832,10 @@ class CommonController extends Controller
                 foreach ($rows as $row) {
                     $media_list_temp = array();
                     $media_list = $row["media_list"];
-                    $c = $row["category"];
+                    if($row["category"] != null)
+                        $c = $row["category"];
+                    else
+                        $c = 1;
                     // for category                
                     if(($c == 11) or ($c == 12) or ($c == 13))
                         $category = 'com';

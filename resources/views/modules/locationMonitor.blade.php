@@ -47,7 +47,7 @@
                     <i class="far fa-clock text-normal ml-1" style="margin-top:11px;"></i>
                     <select class="form-control" name="LMinterval" id="lmInterval">
                         <option>1 Minute </option>
-                        <option>15 Minutes </option>
+                        <option selected>15 Minutes </option>
                         <option>1 Hour</option>
                     </select>
                 </div>
@@ -69,8 +69,7 @@
                     <h5>
                         <span class="mx-3 clickable text-dark" id="locationTweets"><i class="fab fa-twitter locationOptions"
                                 title="See Tweets"></i></span>
-                        <span class="mx-3 clickable text-dark "><i class="fas fa-redo-alt locationOptions "
-                                title="Refresh"></i></span>
+                        
 
                         <span class="mx-3 clickable text-dark">
                             <div class="btn-group"> <i class="fas fa-filter locationOptions"  class="smat-rounded text-normal" data-toggle="dropdown"

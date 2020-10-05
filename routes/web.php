@@ -70,13 +70,10 @@ Route::get('/networkAnalysis', function (Request $request) {
         $from = $request->input('from');
         $to = $request->input('to');
         $uniqueID = $request->input('uniqueID');
-        $relation = $request->input('realtion');
+        $relation = $request->input('relation');
         $user = $request->input('user');
-        return view('modules.networkAnalysis', compact('query', 'from', 'to','uniqueID','relation','user'));
-    } else {
-        return view('modules.networkAnalysis');
-    }
-
+    } 
+    return view('modules.networkAnalysis', compact('query', 'from', 'to','uniqueID','relation','user'));
 })->middleware('auth');
 
 Route::get('/locationMonitor', function () {

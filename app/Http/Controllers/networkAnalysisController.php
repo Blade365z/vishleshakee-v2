@@ -212,7 +212,7 @@ class networkAnalysisController extends Controller
     {
         $x = $request->input('name');
         // $dir_name = strval($this->get_session_uid($request));
-        $dir_name = "2";
+        $dir_name = $request->input('dir_name');
 
         $validation = Validator::make($request->all(), [
             'select_file' => 'required|max:1520480',

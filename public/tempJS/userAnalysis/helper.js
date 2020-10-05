@@ -117,12 +117,12 @@ export const getTweetIDsForUA = async (query, from = null, to = null, rangeType,
 }
 export const getCooccurDataForUA = async (query, from, to, option, uniqueID, userID) => {
     //TODO::REMOVE THE HARDCODE!!
-
+    let dataArrayTemp=[],noOfNodes=0;
     let dataArgs = JSON.stringify({
-        query, from, to, option, uniqueID, userID,mode:'write'
+        query, from, to, option, uniqueID, userID, mode: 'write'
     });
-    let dataArgsForRead=JSON.stringify({
-        option, uniqueID, userID,limit:50,mode:'read'
+    let dataArgsForRead = JSON.stringify({
+        option, uniqueID, userID, limit: 50, mode: 'read'
     });
     let response = await fetch('UA/getCooccurDataForUser', {
         method: 'post',
@@ -131,12 +131,15 @@ export const getCooccurDataForUA = async (query, from, to, option, uniqueID, use
     })
     let data = await response.json();
     if (data.status == "success") {
+        noOfNodes = data['nodes'];
         let readResponse = await fetch('UA/getCooccurDataForUser', {
             method: 'post',
             headers: HeadersForApi,
             body: dataArgsForRead
         })
         let readData = await readResponse.json();
-        return readData;
+        dataArrayTemp.push({ 'data': readData, 'nodes': noOfNodes});
+        // console.log(dataArrayTemp)
+        return dataArrayTemp;
     }
 } 

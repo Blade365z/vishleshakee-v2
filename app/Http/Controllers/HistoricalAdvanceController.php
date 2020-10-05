@@ -44,7 +44,7 @@ class HistoricalAdvanceController extends Controller
         $data['args'] = $query_list;
         $data['name'] = strval($rname) . 'a77';
         $data['executorCores'] = 4;
-        $data['numExecutors'] = 2;
+        $data['numExecutors'] = 3;
         $data['executorMemory'] = '6G';
         $data = json_encode($data);
         curl_setopt($curl, CURLOPT_HTTPHEADER, array(
@@ -645,10 +645,10 @@ class HistoricalAdvanceController extends Controller
         $json_result_array = $ut_obj->read_file($file_type='json', $file_path);
         $temp_arr = array();
         $current_date = $ut_obj->get_current_date_time('date');
-        // if($co_occur_option == 'mention')
-        //     $co_occur_option = 'mentions';
-        // else  if($co_occur_option == 'hashtag')
-        //     $co_occur_option = 'hashtags';
+        if($co_occur_option == 'mention')
+            $co_occur_option = 'mentions';
+        else  if($co_occur_option == 'hashtag')
+            $co_occur_option = 'hashtags';
 
         foreach ($json_result_array as $key => $value) {
             if ($value) {                             

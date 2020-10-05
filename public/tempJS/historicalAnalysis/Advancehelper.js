@@ -99,6 +99,8 @@ export const getSentiDistDataForAdvanceHA = async (query, from, to, rangeType, f
 
 export const getCooccurDataForAdvanceHA = async (query, from, to, option, uniqueID, userID, filename) => {
     let dataArg;
+    let dataArrayTemp = [];
+    let noOfNodes = 0;
     dataArg = JSON.stringify({ query, from, to, option, uniqueID, userID, mode:'write', filename});
 
     let dataArgsForRead=JSON.stringify({
@@ -111,19 +113,19 @@ export const getCooccurDataForAdvanceHA = async (query, from, to, option, unique
         body: dataArg
     }); 
     let data = await response.json()
-    // return data;
 
 
-    // let data = await response.json();
     if (data.status == "success") {
+        noOfNodes = data['nodes'];
         let readResponse = await fetch('HA/getCooccurDataForHA', {
             method: 'post',
             headers: HeadersForApi,
             body: dataArgsForRead
         })
         let readData = await readResponse.json();
-        
-        return readData;
+        dataArrayTemp.push({ 'data': readData, 'nodes': noOfNodes});
+        // console.log(dataArrayTemp)
+        return dataArrayTemp;
     }
 }
 

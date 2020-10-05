@@ -1,0 +1,30 @@
+src,dst,count
+@narendramodi,*spectacular,34344
+*spectacular,"*prime minister",120
+@narendramodi,"*himachal pradesh",30444
+"*himachal pradesh",*live,14124
+"*himachal pradesh","*prime minister",12480
+"*himachal pradesh",*sasse,10620
+@narendramodi,"*प्रधानमंत्री श्री",28140
+"*प्रधानमंत्री श्री","*रोहतांग समर्पित किया।",23004
+@narendramodi,"*रोहतांग समर्पित किया।",27504
+"*रोहतांग समर्पित किया।","*प्रधानमंत्री श्री",23004
+@narendramodi,"*prime minister",20892
+"*prime minister","*himachal pradesh",12492
+"*prime minister",*live,10020
+"*prime minister",*world,1586
+@narendramodi,*india,19832
+*india,*infrastructure,16704
+*india,*world,3404
+@narendramodi,*infrastructure,16704
+*infrastructure,*india,16704
+@narendramodi,*live,16060
+*live,"*himachal pradesh",14100
+*live,"*prime minister",10020
+@narendramodi,"*आदरणीय प्रधानमंत्री श्री नेतृत्व लोकार्पित",11604
+"*आदरणीय प्रधानमंत्री श्री नेतृत्व लोकार्पित","*रोहतांग भारत श्रेष्ठ प्रौ…",11568
+@narendramodi,"*रोहतांग भारत श्रेष्ठ प्रौ…",11568
+"*रोहतांग भारत श्रेष्ठ प्रौ…","*आदरणीय प्रधानमंत्री श्री नेतृत्व लोकार्पित",11568
+@narendramodi,*sasse,10584
+*sasse,"*himachal pradesh",10620
+@narendramodi,*world,10213

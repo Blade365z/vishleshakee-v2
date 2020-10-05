@@ -1,0 +1,141 @@
+src,dst,count
+#india,"*biggest scam",6
+"*biggest scam",*india,580
+"*biggest scam",*thugs,6
+"*biggest scam",*future,6
+"*biggest scam",*daughter,6
+#india,*daughter,6
+*daughter,*india,401
+#india,*future,6
+*future,*india,154
+*future,*hero,27
+#india,*india,6
+*india,*version,4800
+*india,*world,3404
+*india,*murder,2080
+#india,*thugs,6
+*thugs,"*biggest scam",6
+*thugs,*daughter,6
+*thugs,*future,6
+*thugs,*murder,4
+#india,"*jaisi madhushala",3
+"*jaisi madhushala","*raag baatein",4
+"*jaisi madhushala","*vaisa madhushala kavi poetic introduction…",3
+#india,"*raag baatein",3
+"*raag baatein","*jaisi madhushala",4
+"*raag baatein","*vaisa madhushala kavi poetic introduction…",3
+#india,"*vaisa madhushala kavi poetic introduction…",3
+"*vaisa madhushala kavi poetic introduction…","*raag baatein",3
+"*vaisa madhushala kavi poetic introduction…","*jaisi madhushala",3
+#india,*price,2
+*price,*company,764
+*price,*world,8
+#india,*company,2
+*company,*price,704
+#india,*request,2
+*request,*murder,39
+*request,*india,36
+#india,"*દેશમાં કોરોનાથી 1,00,000 લોકોનાં",2
+"*દેશમાં કોરોનાથી 1,00,000 લોકોનાં",*છેલ્લા,2
+#india,*છેલ્લા,2
+*છેલ્લા,"*દેશમાં કોરોનાથી 1,00,000 લોકોનાં",2
+#india,*rohtang,2
+*rohtang,"*atal tunnel",3723
+*rohtang,"*himachal pradesh",2233
+*rohtang,*world,1200
+*rohtang,*modi,396
+*rohtang,"*strategically important",8
+#india,*share,2
+*share,*members,1200
+#india,*deterrence,2
+*deterrence,*development,2
+*deterrence,*milestone,2
+*deterrence,*future,1
+#india,*development,2
+*development,*india,8
+#india,"*strategically important",2
+"*strategically important",*rohtang,8
+"*strategically important",*modi,7
+"*strategically important","*atal tunnel",3
+"*strategically important","*himachal pradesh",1
+"*strategically important",*india,1
+"*strategically important",*world,1
+#india,"*funny videos",2
+"*funny videos",*memes,2
+#india,*world,2
+*world,*india,3387
+*world,"*atal tunnel",2964
+#india,*version,2
+*version,*india,4800
+#india,*best,2
+*best,*india,1046
+*best,*world,860
+#india,*police,2
+#india,"*blue colors",2
+"*blue colors",*money,2
+"*blue colors",*loans,2
+#india,*milestone,2
+*milestone,*india,693
+#india,*5750.00,2
+*5750.00,*price,2
+*5750.00,*company,2
+#india,*october,2
+#india,*modi,2
+*modi,"*himachal pradesh",759
+*modi,*india,528
+*modi,*rohtang,484
+*modi,*police,333
+#india,*money,2
+#india,"*atal tunnel",2
+"*atal tunnel",*rohtang,3723
+"*atal tunnel",*world,2964
+"*atal tunnel","*himachal pradesh",1633
+"*atal tunnel",*modi,176
+"*atal tunnel",*india,144
+#india,*loans,2
+*loans,*money,3
+*loans,"*blue colors",2
+#india,*update,2
+*update,*october,440
+#india,*memes,2
+*memes,"*funny videos",2
+*memes,*best,2
+#india,"*lakh mark",1
+"*lakh mark",*india,13
+#india,"*hexagonal inserts",1
+#india,"*hunger str…",1
+"*hunger str…",*hunger,1
+#india,*murder,1
+*murder,*india,2080
+*murder,*police,1605
+#india,*hunger,1
+#india,"*huge turnove…",1
+"*huge turnove…",*request,1
+#india,*hindus,1
+*hindus,*murder,705
+*hindus,*india,20
+#india,*hind,1
+*hind,"*happy gandhi jayanti",2
+*hind,*daughter,1
+*hind,*india,1
+*hind,*best,1
+#india,"*himachal pradesh",1
+"*himachal pradesh",*rohtang,2233
+"*himachal pradesh","*atal tunnel",1633
+"*himachal pradesh",*modi,828
+"*himachal pradesh",*world,792
+#india,*hero,1
+*hero,*future,27
+*hero,*world,13
+#india,"*india appreciate dedication",1
+#india,"*mapr team)💯 myex=0.5 🏁join telegram channel=1,5 myex 🏁join telegram group=1,5 myex 🚩dail…",1
+#india,"*hathras incident",1
+"*hathras incident",*world,1419
+#india,"*hathras case",1
+#india,"*happy gandhi jayanti",1
+"*happy gandhi jayanti",*world,5
+"*happy gandhi jayanti",*hind,2
+#india,*members,1
+*members,*share,1200
+*members,*police,277
+#india,"*happy gandhi jayanthi",1

@@ -2,6 +2,7 @@ import { getTweetIDsForHA } from '../historicalAnalysis/helper.js';
 import { forwardToUserAnalysis ,forwardToHistoricalAnalysis} from '../utilitiesJS/redirectionScripts.js';
 //imports 
 import { dateProcessor, getCurrentDate } from '../utilitiesJS/smatDate.js';
+import { makeSmatReady } from '../utilitiesJS/smatExtras.js';
 import { TweetsGenerator } from '../utilitiesJS/TweetGenerator.js';
 import { getTrendingDataFromController } from './helper.js';
 
@@ -23,6 +24,9 @@ jQuery(function () {
     //         console.log(dateCaptured);
     //     }
     // }); 
+    makeSmatReady();
+    $('.nav-item ').removeClass('smat-nav-active');
+    $('#nav-TA').addClass('smat-nav-active');
     toDate = getCurrentDate()
     fromDate = dateProcessor(toDate, '-', 0);
     $("#fromDateTA").datepicker({
@@ -96,6 +100,8 @@ jQuery(function () {
 const generateTrendingTokensForTA = async (from, to, option, div = null, filterArgument = null) => {
     console.log('Trending data from : ', fromDate + ' to ' + toDate);
     $('#' + div).html('');
+    $('#totalHashtags').html('<div class="text-center p-0 " ><i class="fa fa-circle-o-notch donutSpinner " aria-hidden="true"></i></div>')
+    $('#totalMentions').html('<div class="text-center  p-0 " ><i class="fa fa-circle-o-notch donutSpinner " aria-hidden="true"></i></div>')
     $('#' + div).html('<div class="text-center pt-5  m-auto" ><i class="  m-auto fa fa-circle-o-notch donutSpinner" aria-hidden="true"></i></div>')
 
     let first = await getTrendingDataFromController(from, to, option, 50).then(response => {

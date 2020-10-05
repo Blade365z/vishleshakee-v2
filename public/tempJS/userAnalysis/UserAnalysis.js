@@ -14,7 +14,7 @@ import { getCurrentDate, getRangeType, dateProcessor, getDateInFormat } from '..
 import { TweetsGenerator } from '../utilitiesJS/TweetGenerator.js';
 import { generateUniqueID } from '../utilitiesJS/uniqueIDGenerator.js';
 import { generateFreqDistBarChart, generateFrequencyLineChart, generateSentiDistBarChart, generateSentiDistLineChart, generateBarChartForCooccur } from './chartHelper.js';
-import { makeSmatReady } from '../utilitiesJS/smatExtras.js'
+import { getRelationType, makeSmatReady } from '../utilitiesJS/smatExtras.js'
 import { forwardToNetworkAnalysis, forwardToHistoricalAnalysis } from '../utilitiesJS/redirectionScripts.js';
 
 
@@ -87,6 +87,10 @@ jQuery(function () {
     let tweetDivHeight = $('#userInfoDiv').height();
     $('#uaTweetsDiv').css('max-height', tweetDivHeight - 10 + 'px');
 
+    $('body').on('click','div .closeGraph',function(){
+        let valueCapt = $(this).attr('value');
+        $('.'+valueCapt).remove();
+    });
 
     $('#showUAsugg').on('click', function () {
         suggestionToggle();
@@ -218,7 +222,7 @@ export const frequencyDistributionUA = (query = null, rangeType, fromDate = null
         $('.10sec-' + chartType).remove();
     }
     if (appendArg) {
-        $('#' + freqParentDiv).append('<div class=" mt-2   appendedChart ' + appendedChartParentID + '"><div class="d-flex"> <div class="mr-auto closeGraph"    value="' + rangeType + '-charts" title="close" >  <i class="fas fa-times"></i> </div> </div> <div class="row"><div class="col-sm-8"><div class="uaTab freqDistChart resultDiv  chartDiv border" id="' + chartDivID + '" ></div></div><div class="col-sm-4"><div class="freqDistTweets border resultDiv " id="' + chartTweetDivID + '"></div><div class="freqDistSummary border d-flex pt-2 resultDiv "  id="' + summaryDivID + '" ></div></div></div></div>');
+        $('#' + freqParentDiv).append('<div class=" mt-2   appendedChart ' + appendedChartParentID + '"><div class="d-flex"> <div class="mr-auto closeGraph"    value="' + rangeType + '-freq-chart" title="close" >  <i class="fas fa-times"></i> </div> </div> <div class="row"><div class="col-sm-8"><div class="uaTab freqDistChart resultDiv  chartDiv border" id="' + chartDivID + '" ></div></div><div class="col-sm-4"><div class="freqDistTweets border resultDiv " id="' + chartTweetDivID + '"></div><div class="freqDistSummary border d-flex pt-2 resultDiv "  id="' + summaryDivID + '" ></div></div></div></div>');
     } else {
         $('#' + div).html('<div><div class="row"><div class="col-sm-8"><div class="uaTab freqDistChart border resultDiv  chartDiv" id="' + chartDivID + '" ></div></div><div class="col-sm-4"><div class="freqDistTweets resultDiv   border" id="' + chartTweetDivID + '"></div><div class="freqDistSummary border d-flex pt-2 resultDiv "  id="' + summaryDivID + '" ></div></div></div></div>');
     }
@@ -282,7 +286,7 @@ export const sentimentDistributionUA = (query = null, rangeType, fromDate = null
         $('.10sec-' + chartType).remove();
     }
     if (appendArg) {
-        $('#' + sentiParentDiv).append('<div class=" mt-2 ' + appendedChartParentID + '"><div class="d-flex"> <div class="mr-auto closeGraph"    value="' + rangeType + '-charts" title="close" >  <i class="fas fa-times"></i> </div> </div> <div class="row"><div class="col-sm-8"><div class="uaTab sentiDistChart chartDiv resultDiv  border" id="' + chartDivID + '" ></div></div><div class="col-sm-4"><div class="sentiDistTweets  resultDiv border" id="' + chartTweetDivID + '"></div><div class="sentiDistSummary border  resultDiv d-flex pt-2"  id="' + summaryDivID + '" ></div></div></div></div>');
+        $('#' + sentiParentDiv).append('<div class=" mt-2 ' + appendedChartParentID + '"><div class="d-flex"> <div class="mr-auto closeGraph"    value="' + rangeType + '-senti-chart" title="close" >  <i class="fas fa-times"></i> </div> </div> <div class="row"><div class="col-sm-8"><div class="uaTab sentiDistChart chartDiv resultDiv  border" id="' + chartDivID + '" ></div></div><div class="col-sm-4"><div class="sentiDistTweets  resultDiv border" id="' + chartTweetDivID + '"></div><div class="sentiDistSummary border  resultDiv d-flex pt-2"  id="' + summaryDivID + '" ></div></div></div></div>');
     } else {
         $('#' + div).html('<div><div class="row"><div class="col-sm-8"><div class="uaTab resultDiv  sentiDistChart  chartDiv border"  id="' + chartDivID + '" ></div></div><div class="col-sm-4"><div class="sentiDistTweets  resultDiv border" id="' + chartTweetDivID + '"></div><div class="sentiDistSummary resultDiv  border d-flex pt-2"  id="' + summaryDivID + '" ></div></div></div></div>');
     }
@@ -340,8 +344,10 @@ const plotDistributionGraphUA = (query, fromDate, toDate, option, uniqueID, user
     let chartDivID = option + '-chart';
     $('#' + div).html('<div class="text-center pt-5 " ><i class="fa fa-circle-o-notch donutSpinner" aria-hidden="true"></i></div>');
     getCooccurDataForUA(query, fromDate, toDate, option, uniqueID, userID).then(response => {
-        $('#' + div).html('<div class="d-flex"><button class="btn btn-primary  smat-rounded  ml-auto mr-1  mt-1 analyzeNetworkButton "   value="' + query + '|' + toDate + '|' + fromDate + '|' + option + '|' + uniqueID + '|' + userID + '" > <span> Analyse network </span> </button></div><div class="px-3" id="' + chartDivID + '" style="min-height:30%;"></div>');
-        response.length < 1 ? $('#' + div).html('<div class="alert-danger text-center m-3 p-2 smat-rounded"> No Data Found </div>') : generateBarChartForCooccur(query, response, chartDivID, option, fromDate, toDate);
+        let relType= getRelationType(query,option);  
+        $('#' + div).html('<div class="d-flex"> <span class="ml-auto mr-3"><p class="m-0 smat-box-title-large font-weight-bold text-dark" id="' + option + '-total">0</p><p class="pull-text-top smat-dash-title m-0 ">Total Nodes</p></span> <button class="btn btn-primary  smat-rounded  mr-1  mt-1 analyzeNetworkButton "   value="' + query + '|' + toDate + '|' + fromDate + '|' + relType + '|' + uniqueID + '|' + userID + '" > <span> Analyse network </span> </button></div><div class="px-3" id="' + chartDivID + '" style="min-height:30%;"></div>');
+        response.length < 1 ? $('#' + div).html('<div class="alert-danger text-center m-3 p-2 smat-rounded"> No Data Found </div>') : generateBarChartForCooccur(query, response[0]['data'], chartDivID, option, fromDate, toDate);
+        $('#' + option + '-total').text(response[0]['nodes']);
     });
     0.
 }

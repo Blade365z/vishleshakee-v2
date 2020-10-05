@@ -15,7 +15,7 @@ import { getFreqDistData, getTopCooccurData, getMe, getSentiDistData, getTopData
 import { generateFrequencyChart, generateSentimentChart, generateBarChart } from './chartHelper.js';
 import { TweetsGenerator } from '../utilitiesJS/TweetGenerator.js';
 import { get_tweet_location_home,getCompleteMap } from '../utilitiesJS/getMap.js';
-import { makeSuggestionsReady, makeSmatReady } from '../utilitiesJS/smatExtras.js'
+import { makeSuggestionsReady, makeSmatReady, getRelationType } from '../utilitiesJS/smatExtras.js'
 import { getCurrentDate } from '../utilitiesJS/smatDate.js';
 import {forwardToHistoricalAnalysis, forwardToNetworkAnalysis, forwardToUserAnalysis} from '../utilitiesJS/redirectionScripts.js';
 
@@ -152,13 +152,13 @@ jQuery(function () {
 
   $('.publicHashtagsFilter').on('click', function () {
     let typeTemp = $(this).attr('value');
-    console.log(typeTemp)
+
     generatePublicHashtags(TopTrendingData, typeTemp);
   });
   $('body').on('click', 'div .username', function () {
     let queryCaptured = '$' + $(this).attr('value');
     forwardToUserAnalysis(queryCaptured,date,date);
-    console.log(queryCaptured);
+
   });
   $('body').on('click','#analyzeMoreBtn',function(){
     forwardToHistoricalAnalysis(query,date,date);
@@ -220,6 +220,7 @@ jQuery(function () {
 
   $('body').on('click','div .analyzeNetworkButton',function(){
     let args = $(this).attr('value');
+    console.log(args);
     args = args.split(/[|]/).filter(Boolean);
     forwardToNetworkAnalysis(args);
 })
@@ -274,9 +275,10 @@ const coOccurPublic = (type,queryArg, intervalArg,btnClass) => {
   $('.public-analysis-tab').removeClass('smat-active ');
   $('.'+btnClass).addClass('smat-active ');
   $('.public-analysis-result').html('');
-  let analysisButton = '';
+  let analysisButton = '';  
+  let relType= getRelationType(queryArg,type);  
   if(localStorage.getItem('smat.me')){
-    analysisButton = '<button class="btn btn-primary smat-rounded  ml-auto mr-3 mt-1 analyzeNetworkButton "   value="'+queryArg+'|'+date+'|'+date+'|'+type+'|'+null+'|'+userID+'"> <span> Analyse network </span> </button>';
+    analysisButton = '<button class="btn btn-primary smat-rounded  ml-auto mr-3 mt-1 analyzeNetworkButton "   value="'+queryArg+'|'+date+'|'+date+'|'+relType+'|'+null+'|'+userID+'"> <span> Analyse network </span> </button>';
   }else{
     analysisButton = '';
   }

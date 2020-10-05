@@ -27,6 +27,7 @@ var currentOperation;
 //globals for sparkStatus 
 var checkSpartStatusInterval_centrality;
 var userID;
+var k_value;
 if (localStorage.getItem('smat.me')) {
     let userInfoTemp = JSON.parse(localStorage.getItem('smat.me'));
     userID = userInfoTemp['id'];
@@ -37,17 +38,33 @@ if (localStorage.getItem('smat.me')) {
 jQuery(function () {
     if(incoming){
         //TODO::Redirection 
-        var networkType;
-        if(incoming.charAt(0) == "$"){
-            networkType = "User-Hashtag";
+        var networkType;        
+        if(!(uniqueIDReceived == "null")){
+            console.log(uniqueIDReceived);
+            totalQueries = totalQueries + 1;
+
+            let author_details;
+            if(incoming.charAt(0) == "$"){
+                getUserDetailsNA(incoming).then(response =>{author_name = response});
+                incoming = author_details.author;
+            }
+
+            generateCards(totalQueries, incoming, fromDateReceived, toDateReceived, 50, relationReceived, currentNetworkEngine, uniqueIDReceived, 'naCards',"normal");    
         }else{
-            networkType = "Hashtag-Hashtag";
+            if(incoming.charAt(0) == "$"){
+                networkType = relationReceived;
+            }else if((incoming.charAt(0) == "#")){
+                networkType = relationReceived;
+            }
+            totalQueries = totalQueries + 1;
+            let filename = incoming + fromDateReceived + toDateReceived + 50 + networkType;
+            networkGeneration('na/genNetwork', incoming, fromDateReceived+" 00:00:00", toDateReceived+" 00:00:00", 50 , relationReceived, filename).then(response => {
+                generateCards(totalQueries, incoming, fromDateReceived, toDateReceived, 50, relationReceived, currentNetworkEngine, filename, 'naCards',"normal");    
+            
+                $("#messagebox").empty();
+                $("#messagebox").append('<div class="card text-black m-2" style="background: #BFFAC0" id="infopanel"><i id="deleteinfoCard" class="fa fa-window-close text-neg" aria-hidden="true"></i><div class="d-flex justify-content-center font-weight-bold card-body"> Network Generated Successfully </div></div>');        
+            })
         }
-        totalQueries = totalQueries + 1;
-        let filename = incoming + fromDateReceived + toDateReceived + 50 + networkType;
-        networkGeneration('na/genNetwork', incoming, fromDateReceived+" 00:00:00", toDateReceived+" 00:00:00", 50 , 'Hashtag-Hashtag', filename).then(response => {
-            generateCards(totalQueries, incoming, fromDateReceived, toDateReceived, 50, 'Hashtag-Hashtag', currentNetworkEngine, filename, 'naCards',"normal");    
-        })
     }
     makeSuggestionsReady ('naQueryInputBox',50);
 
@@ -109,8 +126,9 @@ jQuery(function () {
                 render_intersection_difference(response, "difference_displayer", "difference");
             });
         }else if(args[4] == "linkprediction"){
+            console.log(args);
             render_linkprediction_graph(args[6],args[7]).then(response => {
-                update_view_graph_for_link_prediction(response,args[7]);
+                update_view_graph_for_link_prediction(response,args[7],args[9]);
             })
         }else{
             render_centrality_graph(args[6], args[2], args[5]).then(response => {
@@ -133,7 +151,6 @@ jQuery(function () {
     $('#nav-NA').addClass('smat-nav-active');
     $('#naInputInputs').on('submit', function (e) {
         e.preventDefault();
-        totalQueries += 1;
         let queryTemp = $('#queryNA').val().trim();
 
         if(queryTemp.includes('#')&&(($('#typeNA').val()=="Mention-Mention")||($('#typeNA').val()=="Mention-Hashtag")||($('#typeNA').val()=="Mention-Keyword")||(($('#typeNA').val()=="User-Hashtag")||(($('#typeNA').val()=="User-Mention"))||(($('#typeNA').val()=="Keyword-Hashtag"))||(($('#typeNA').val()=="Keyword-Mention"))))){
@@ -144,9 +161,18 @@ jQuery(function () {
             $("#messagebox").empty();
             $("#messagebox").append('<div class="card text-black m-2" style="background: #F7A394" id="infopanel"><i id="deleteinfoCard" class="fa fa-window-close text-neg" aria-hidden="true"></i><div class="d-flex justify-content-center font-weight-bold card-body"> Invalid Network Type Selected </div></div>');
             return;
+        }else if((!(queryTemp.includes('#')))&&(($('#typeNA').val()=="Hashtag-Mention")||($('#typeNA').val()=="Hashtag-Hashtag")||($('#typeNA').val()=="Hashtag-Keyword"))){
+            $("#messagebox").empty();
+            $("#messagebox").append('<div class="card text-black m-2" style="background: #F7A394" id="infopanel"><i id="deleteinfoCard" class="fa fa-window-close text-neg" aria-hidden="true"></i><div class="d-flex justify-content-center font-weight-bold card-body"> Invalid Network Type Selected </div></div>');
+            return;
+        }else if((!(queryTemp.includes('@')))&&(($('#typeNA').val()=="Mention-Mention")||($('#typeNA').val()=="Mention-Hashtag")||($('#typeNA').val()=="Mention-Keyword"))){
+            $("#messagebox").empty();
+            $("#messagebox").append('<div class="card text-black m-2" style="background: #F7A394" id="infopanel"><i id="deleteinfoCard" class="fa fa-window-close text-neg" aria-hidden="true"></i><div class="d-flex justify-content-center font-weight-bold card-body"> Invalid Network Type Selected </div></div>');
+            return;
         }
 
         if(($('#typeNA').val() != "User-Hashtag")&&($('#typeNA').val() != "User-Mention")){
+            totalQueries += 1;
             let fromDateTemp = $('#fromDateNA').val();
             let fromDateStripped = fromDateTemp;
             fromDateTemp = fromDateTemp + " 00:00:00";
@@ -172,7 +198,8 @@ jQuery(function () {
                 $("#messagebox").empty();
                 $("#messagebox").append('<div class="card text-black m-2" style="background: #BFFAC0" id="infopanel"><i id="deleteinfoCard" class="fa fa-window-close text-neg" aria-hidden="true"></i><div class="d-flex justify-content-center font-weight-bold card-body"> Network Generated Successfully </div></div>');
             })
-        }else if(($('#typeNA').val()=="User-Hashtag")||($('#typeNA').val()=="Keyword-Mention")){
+        }else if(($('#typeNA').val()=="User-Hashtag")||($('#typeNA').val()=="User-Mention")){
+            totalQueries += 1;
             formulateUserSearch(queryTemp, 'userContainerList');
         }
         // $("#messagebox").append('');
@@ -207,7 +234,6 @@ jQuery(function () {
 
 
 $("body").on('click', ".authorName",function(){
-    alert("OK");
     let name_text = $(this);
     name_text = name_text[0].innerText;
     let user_id = $(this).attr('value');
@@ -240,6 +266,7 @@ $("#unionTabNA").on('click', function(){
 });
 
 $("#interSecTabNA").on('click',function(){
+    currentOperation = "intersection";
     $("#binaryopsnetworkselector").show();
 });
 
@@ -321,12 +348,18 @@ $('#upload_form').on('submit', function (event) {
 });
 
 
-const generateCards = (id, query, fromDateTemp, toDateTemp, noOfNodesTemp, naTypeTemp, naEngine, filename, div,status) => {
+const generateCards = (id, query, fromDateTemp, toDateTemp, noOfNodesTemp, naTypeTemp, naEngine, filename, div, status) => {
+    console.log(filename);
     let tempArr = [];
     tempArr = { 'id': id, 'query': query, 'from': fromDateTemp, 'to': toDateTemp, 'nodesNo': noOfNodesTemp, 'naType': naTypeTemp, 'filename': filename, 'naEngine': naEngine };
     searchRecords.push(tempArr);
     cardIDdictionary[id] = filename;
     queryDictionaryFilename[filename] = query;
+
+    console.log("Search Dict",searchRecords);
+    console.log("cardDict",cardIDdictionary);
+
+
     if(status == "normal"){
         $('#' + div).append('<div class="col-md-2" value="' + id + '"><div class="card shadow p-0"><div class="card-body p-0"><div class="d-flex px-3 pt-3"><span class="pull-left"><i id="deleteCard" class="fa fa-window-close text-neg" aria-hidden="true"></i></span><div class="naCardNum text-center ml-auto mr-auto">' + padNumber(id) + '</div><span class="pull-right ml-auto"><input class="form-check-input position-static" type="checkbox" id=' + filename + '></span></div><div class="text-left networkCardDetails px-3 pb-3" style="border-radius:10px;" value="' + id + '" ><p class="font-weight-bold m-0" style="font-size:16px;" cardquery="' + query + '"> ' + query + '</p><p class="  smat-dash-title " style="margin-top:-2px;margin-bottom:0px;"> From: ' + fromDateTemp + ' </p><p class="   smat-dash-title " style="margin-top:-2px;margin-bottom:0px;" > To:' + toDateTemp + ' </p><p class=" smat-dash-title " style="margin-top:-2px;margin-bottom:0px;"> Nodes: ' + noOfNodesTemp + '</p><p class="  smat-dash-title " style="margin-top:-2px;margin-bottom:0px;" > Type: ' + naTypeTemp + '</p><p class=" smat-dash-title " style="margin-top:-2px;margin-bottom:0px;"> Status: Ready</p></div></div></div></div>');
     }else if(status == "afterdeletion"){
@@ -458,6 +491,7 @@ $("#link_prediction_exec").on('click', function (NAType = $("#networkEngineNA").
     let userInfoTemp = JSON.parse(localStorage.getItem('smat.me'));
     let dir_name = userInfoTemp['id'];
 
+    k_value = $("#nos_links_to_be_predicted").val();
     if (currentNetworkEngine == 'networkx') {
         url = 'na/link_prediction';
         data = {
@@ -485,7 +519,8 @@ $("#link_prediction_exec").on('click', function (NAType = $("#networkEngineNA").
         if (currentNetworkEngine == "networkx") {
             render_linkprediction_graph(data["input"], data["src"],$("#nos_links_to_be_predicted").val()).then(response => {
                 $('.analysis_summary_div').empty();
-                for (var i = 0; i < response.length; i++) {
+                let j = 0;
+                for (var i = 0; ((i < response.length) && (j < k_value)); i++) {
                     if (data["src"] == response[i].id) {
                         continue;
                     }
@@ -498,7 +533,7 @@ $("#link_prediction_exec").on('click', function (NAType = $("#networkEngineNA").
                         response[i].id =  response[i].id.substring(1);
                     }
 
-
+                    j++;
                     $('.analysis_summary_div').append('<tr><td>'+'<a href="#target" class="click_events">'+ data["src"] +'</a>'+'</td><td>' + response[i].id + '</td></tr>');
                 }
                 $('.analysis_summary_div').append('</table>');
@@ -648,7 +683,7 @@ $("#comm_exec").on('click', function (NAType = $("#NAEngine").val(), algo_option
     }
     var select_graph = selected_graph_ids();
     var input = select_graph[0];
-    var k_value = $("#noOfCommunities").val();
+    k_value = $("#noOfCommunities").val();
     var url;
     var data = {};
 
@@ -1055,8 +1090,13 @@ $("#usenetwork").on('click', function () {
 
     if(currentOperation == "union"){
         writedelete(unique_id);
-        generateCards(totalQueries, "Network  after deleting"+ +"", "", "", "", "", "", unique_id, 'naCards',"afterdeletion");
+        totalQueries = totalQueries + 1;
+        generateCards(totalQueries, "Network  after performing union"+ +"", "", "", "", "", "", unique_id, 'naCards',"afterdeletion");
 
+    }else if(currentOperation == "intersection"){
+        writedelete(unique_id);
+        totalQueries = totalQueries + 1;
+        generateCards(totalQueries, "Network  after performing union"+ +"", "", "", "", "", "", unique_id, 'naCards',"afterdeletion");        
     }else if(currentOperation == "deletion"){
         writedelete(unique_id);
         let sentence;
@@ -1099,7 +1139,7 @@ const makeShowBtnReadyAfterSuccess = (sparkID, filename, mode, algo = null, orig
     $('#' + sparkID + 'Btn').removeClass('btn-secondary');
     $('#' + sparkID + 'Btn').addClass('btn-primary');
     algo = algo == null ? '' : algo;
-    btnValue = btnValue + '|' + filename + '|' + mode + '|' + algo + '|' + originalFile + '|' + SourceNode + '|' + DestinationNode;
+    btnValue = btnValue + '|' + filename + '|' + mode + '|' + algo + '|' + originalFile + '|' + SourceNode + '|' + DestinationNode + '|' + k_value;
     $('#' + sparkID + 'Btn').attr('value', btnValue);
     $('#' + sparkID + 'Status').text('Success');
 }

@@ -92,12 +92,10 @@ export const render_linkprediction_graph = async (input,src) => {
 
 export const update_view_graph_for_link_prediction = (res,src,k_value) => {
 
-    console.log("RES");
-    console.log(res);;
-
-    console.log("NG");
-    console.log(network_global.body.data.nodes._data);
-
+    console.log("LP");
+    console.log(res);
+    console.log(k_value);
+    
     var query_index_label;
     for (var i = 0; (i < res.length); i++) {
         if (res[i].id == src) {
@@ -124,28 +122,48 @@ export const update_view_graph_for_link_prediction = (res,src,k_value) => {
     var edges = [];
 
 
+    let linkcutoff = 0;
     for (var i = 0;((i < res.length)); i++) {
-        let j = 0;
-        if( j < k_value){
+        if( linkcutoff < k_value){
             if (res[i].id != res[query_index_label].id) {
                 ed.push({
                     from: res[query_index_label].id,
                     to: res[i].id,
                     width: 10,
                     dashes: true,
-                    color: "black"
+                    color: "red"
                 });
-                j++;
+                linkcutoff++;
             }
         }
     }
+
+
+    $('.analysis_summary_div').empty();
+    let j = 0;
+    for (var i = 0; ((i < res.length) && (j < k_value)); i++) {
+        if (src == res[i].id) {
+            continue;
+        }
+
+        if(src.charAt(0) == "*"){
+            src = src.substring(1); 
+        }
+
+        if(res[i].id.charAt(0) == "*"){
+            res[i].id =  res[i].id.substring(1);
+        }
+
+        j++;
+        $('.analysis_summary_div').append('<tr><td>'+'<a href="#target" class="click_events">'+ src +'</a>'+'</td><td>' + res[i].id + '</td></tr>');
+    }
+    $('.analysis_summary_div').append('</table>');
+
     network_global.body.data.nodes.update(new_array);
     network_global.body.data.edges.update(ed);
 }
 
 export const centrality = async (url,data,NAType) =>{
-    console.log("Printer");
-    console.log(JSON.stringify(data));
     let response = await fetch(url,{
         method : 'post',
         headers: HeadersForApi,
@@ -159,7 +177,6 @@ export const centrality = async (url,data,NAType) =>{
 export const render_centrality_graph = async (input,id_value,algo_option) =>{
     let dir_name = getmystoragedir();
     let data = {input : input, algo_option : algo_option, dir_name: dir_name};
-    console.log('QUERIES',data);
     let response = await fetch('na/centrality_data_formator',{
         method : 'post',
         headers : HeadersForApi,
@@ -171,7 +188,6 @@ export const render_centrality_graph = async (input,id_value,algo_option) =>{
 }
 
 export const community_detection = async (url,data,NAType) =>{
-    console.log(JSON.stringify(data));
     let response = await fetch(url,{
         method : 'post',
         headers: HeadersForApi,
@@ -183,7 +199,6 @@ export const community_detection = async (url,data,NAType) =>{
 }
 
 export const render_community_graph1 = async (input) => {
-    console.log(input);
     let dir_name = getmystoragedir();
     let data = {
         input : input,
@@ -207,7 +222,6 @@ export const render_graph_community = (res,id_value) =>{
     $('.analysis_summary_div').empty();
     // $('.analysis_summary_div').append('<table> <tr><th>Node</th><th>Score</th></tr>');
     for(var i=0; i<res["groups"].length;i++){
-        console.log("Iterating");
         $('.analysis_summary_div').append('<tr><td>'+(i+1)+'</td><td>'+res["groups"][i]+'</td></tr>');
     }
     $('.analysis_summary_div').append('</table>');
@@ -234,12 +248,9 @@ export const render_graph_community = (res,id_value) =>{
         });
     });
     
-    console.log("Printing the nodes array of COMMUNITY");
-    console.log(nodes);
 
     // to add edges dynamically
     setTimeout(function() {
-        console.log("Generating Edges Now");
         $.each(edges_arr, function(index, value) {
             setTimeout(function() {
                 edges.add({
@@ -247,7 +258,6 @@ export const render_graph_community = (res,id_value) =>{
                     "to": value.to,
                     "label": value.label
                 });
-                console.log("Making an edge");
             }, 10);
         });
     }, 10000);
@@ -259,17 +269,9 @@ network_global.moveTo(scaleOption);
 
 export const node_highlighting = async(input) =>{
     
-    console.log("I am printing your input");
-    console.log(input);
     network_global.body.data.nodes._data[input].size = 100;
-
-    console.log(input);
-
-    console.log(network_global.body.data.nodes);
-
     $.each(network_global.body.data.nodes._data, function(index, value) {
         if (value.id == input) {
-            console.log("Yes I got it");
             network_global.body.data.nodes._data[input].size = 100;
             network_global.body.data.nodes._data[input].font.size = 150;
         } else {
@@ -283,10 +285,6 @@ export const node_highlighting = async(input) =>{
     $.each(network_global.body.data.nodes._data, function(index, value) {
         new_array.push(value);
     });
-
-    console.log(network_global.body.data.nodes._data[input].color);
-    console.log(network_global.body.data.nodes._data[input].size);
-
     network_global.body.data.nodes.update(new_array);
 }
 
@@ -316,18 +314,15 @@ export const render_shortestpath_graph = (input, src_id, dst_id) => {
             }
         })
         .done(function(res) {
-            console.log("I am printing from update_view_graph");
             update_sp_graph(res);
         })
         .fail(function(res) {
-            console.log(res);
             console.log("error");
         })
     }
 
     export const update_sp_graph = (res) =>  {
 
-        console.log(res);
         $('.analysis_summary_div').empty();
         for(var i=0; i<res["paths"].length;i++){
             $('.analysis_summary_div').append('<tr><td>'+(i+1)+'</td><td>'+res["paths"]+'</td></tr>');
@@ -335,7 +330,6 @@ export const render_shortestpath_graph = (input, src_id, dst_id) => {
         $('.analysis_summary_div').append('</table>');
 
 
-        console.log(network_global.body.data.nodes._data)
 
 
         // Bug exists in shortest path NEED to BE CHECKED 
@@ -437,19 +431,14 @@ export const expansion = (node,hops) => {
        }
     })
     .fail(function(res) {
-        console.log(res);
-        console.log("error");
     })
 }
 
 export const draw_graph = (res,id_value) => {
-    console.log(id_value);
     var nodes_arr = res["nodes"];
     var edges_arr = res["edges"];
 
 
-    console.log(nodes_arr.length);
-    console.log(edges_arr.length);
 
     // update in network information division
     $(".nos_of_nodes").empty();
@@ -471,15 +460,12 @@ export const draw_graph = (res,id_value) => {
     //var container = document.getElementsByClassName(id_value);
     var container = document.getElementById(id_value);
 
-    console.log(container);
     var data = {
         nodes: nodes,
         edges: edges
     };
 
     network_global = new vis.Network(container, data, global_options);
-
-    console.log(network_global);
     
 
     network_global.focus(1, {
@@ -487,9 +473,6 @@ export const draw_graph = (res,id_value) => {
     });
 
     // number of nodes
-    console.log(nodes_arr.length);
-    console.log("Generating Nodes Now LOL");
-
 
     // to add node dynamically
     $.each(nodes_arr, function(index, value) {
@@ -521,7 +504,6 @@ export const draw_graph = (res,id_value) => {
             });
 
         }, 10);
-        console.log("Making an edge");
     });
 
     network_global.on('doubleClick', function(properties) {
@@ -584,9 +566,6 @@ export const selected_graph_query = () => {
 }
 
 export const union = async (url,data,NAType) => {
-    console.log("Printing dependents");
-    console.log(url);
-    console.log(data);
     let response = await fetch(url,{
         method : 'post',
         headers : HeadersForApi,
@@ -708,7 +687,6 @@ export const render_graph_union = (res) => {
             });
 
         }, 10);
-        console.log("Making an edge");
     });
 
     global_edges = edges_arr;
@@ -774,7 +752,6 @@ export const getEdges = () => {
     $.each(network_global.body.data.edges._data, function(key, val) {
         edgesArray.push(val);
     });
-    console.log(edgesArray);
     return edgesArray;
 }
 
@@ -798,12 +775,9 @@ export const exportnetwork = () => {
     
         var encodedUri = 'data:text/csv;charset=utf-8,' + encodeURIComponent(universalBOM + csv_file);
         window.open(encodedUri);
-        console.log(csv_file);
     }
 
 export const writedelete = (unique_id) => {
-    console.log("Printing Global Edges from Write Delete");
-    console.log(global_edges);
     let dir_name = getmystoragedir();
     $.ajax({
         url: 'na/writedelete',
@@ -823,7 +797,6 @@ export const writedelete = (unique_id) => {
     })
     .fail(function(res) {
         console.log(res);
-        console.log("error");
     })
 
 }
@@ -840,7 +813,6 @@ export const sparkUpload = (filename_arr) =>{
                 }
             })
             .done(function(res) {
-                // console.log(res);
             })
 }
 
@@ -856,15 +828,12 @@ export const checkStatus = (id,unique_name_timestamp) =>{
                 dataType: 'json'
             })
             .done(function(res) {
-                console.log(res);
                 // when the status is not "success" or "dead" , check status until it would become "success", when it success write the json file
                 if ((res['status'] != 'success') && (res['status'] != 'dead')) {
                     setTimeout(function() {
                         checkStatus(res['id'], unique_name_timestamp);
                     }, 30000);
                 } else if (res['status'] == 'success') {
-                    console.log(unique_name_timestamp);
-                    console.log("Status found to be success");
                     getOuputFromSparkAndStoreAsJSON(res['id'], unique_name_timestamp);
                 }
             });
@@ -883,7 +852,6 @@ export const getOuputFromSparkAndStoreAsJSON = (id,unique_name_timestamp) =>{
         dataType: 'json'
     })
     .done(function(res) {
-        console.log(res);
     });
 }
 
@@ -896,20 +864,43 @@ export const render_intersection_difference = (res,id_value,option) => {
         var option = res["option"];
         var edges_to_be_used_while_saving = res["edges_to_be_used_while_saving"];  
 
+        console.log(edges_arr);
+
+        var filteredEdges = [];
+
+        let informationARR = [];
+        $.each(info, function(index,value){
+            informationARR.push(value.nodes);
+        })
+
+        $.each(edges_arr, function(index, value) {
+            if(informationARR.includes(value.from) && informationARR.includes(value.to)){
+                filteredEdges.push({
+                    "from": value.from,
+                    "to": value.to,
+                    "label": value.label
+                })
+            }
+        });
+
+        global_edges = filteredEdges;
+        console.log("INFO");
+        console.log(info);
+
+        console.log("GLOBAL");
+        console.log(global_edges);
+        
+
         $(".nos_of_nodes").empty();
         $(".nos_of_nodes").text(nodes_arr.length);
         $(".nos_of_edges").empty();
         $(".nos_of_edges").text(edges_arr.length);
   
-        console.log("I am printing result");
-        console.log(res);
-
         $('.analysis_summary_div').empty();
         if(info.length == 0){
             $('.analysis_summary_div').append('<b>No intersecting nodes.</b>');
         }else{
             $('.analysis_summary_div').append('<table> <tr><th>Node Name</th><th>Color Code</th></tr>');
-            console.log(info);
             if(option == "difference"){
                 var color_code = "#5c2480";
             }else{
@@ -951,9 +942,6 @@ export const render_intersection_difference = (res,id_value,option) => {
                 });
         });
     
-        // to add edges dynamically
-        // console.log("Generating Edges Now");
-
         $.each(edges_arr, function(index, value) {
             setTimeout(function() {
                 edges.add({
@@ -963,7 +951,6 @@ export const render_intersection_difference = (res,id_value,option) => {
                 });
     
             }, 10);
-            // console.log("Making an edge");
         });
     
     
@@ -1233,9 +1220,6 @@ export const storeResultofSparkFromController = async (sparkID, query_list ,user
         query_list,
         userID
     });
-
-    console.log("I am Printing inside");
-    console.log(dataArgs);
 
     let response = await fetch('na/getFromSparkAndStore', {
         method: 'post',

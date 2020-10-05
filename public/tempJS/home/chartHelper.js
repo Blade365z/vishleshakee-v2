@@ -327,14 +327,13 @@ export const generateBarChart = (data = null, query, div, type) => {
   let finalTime = data[0]['finalTime'];
   console.log(finalTime);
   const updateBarChart = () => {
-    console.log(query, '------', type);
     // getTopCooccurData async (interval = null, query, option, isRealTime = false, fromTime = null)
     getTopCooccurData(null, query, type, true, finalTime).then(response => {
       finalTime = response[0]['finalTime'];
       response = response[0]['data'];
 
       let dataTemp = response;
-      console.log(dataTemp);
+
       if (dataTemp.length > 1) {
         let lenofTempData = Object.keys(dataTemp).length - 1;
         if (lenofTempData > 1) {

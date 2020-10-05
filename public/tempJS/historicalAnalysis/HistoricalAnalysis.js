@@ -6,7 +6,7 @@ import { generateFreqDistBarChart, generateFrequencyLineChart, generateSentiDist
 import { getCurrentDate, getRangeType, dateProcessor } from '../utilitiesJS/smatDate.js';
 import { TweetsGenerator } from '../utilitiesJS/TweetGenerator.js';
 import { generateUniqueID } from '../utilitiesJS/uniqueIDGenerator.js';
-import { makeSuggestionsReady, makeSmatReady, makeDropDownReady } from '../utilitiesJS/smatExtras.js'
+import { makeSuggestionsReady, makeSmatReady, makeDropDownReady, getRelationType } from '../utilitiesJS/smatExtras.js'
 import { getDateRange } from '../utilitiesJS/smatDate.js'
 import { requestToSpark, checkStatus, storeToMySqlAdvanceSearchData, getOuputFromSparkAndStoreAsJSON, getFreqDistDataForAdvanceHA, getSentiDistDataForAdvanceHA, getTweetIDsForAdvanceHA, getCooccurDataForAdvanceHA } from './Advancehelper.js'
 import { forwardToNetworkAnalysis } from '../utilitiesJS/redirectionScripts.js';
@@ -81,7 +81,10 @@ jQuery(function () {
     $('.nav-item ').removeClass('smat-nav-active');
     $('#nav-HA').addClass('smat-nav-active');
 
-
+    $('body').on('click','div .closeGraph',function(){
+        let valueCapt = $(this).attr('value');
+        $('.'+valueCapt).remove();
+    });
     $('#helpBtnHA').on('click', function () {
         $('#haHelpModal').modal('show');
     });
@@ -134,9 +137,10 @@ jQuery(function () {
             $('#addQueryButton').css('display', 'block');
         }
     });
+    
     $('body').on('click', 'div .analyzeNetworkButton', function () {
         let args = $(this).attr('value');
-        args = args.split(/[|]/).filter(Boolean);
+        args = args.split(/[?]/).filter(Boolean);
         forwardToNetworkAnalysis(args);
     })
 
@@ -293,7 +297,9 @@ const updateStatusTable = (query, fromDate, toDate, searchType, fromStatusTable 
     console.log(highlightTag)
     //normal search ....add to Status Tabl
     if (searchType == 0) {
-        $('#haStatusTable').append('<tr class="statusTableRow ' + highlightTag + '"><th scope="row">' + currentTimestamp + '</th><td>' + queryElement + '</td><td>' + fromDate + '</td><td>' + toDate + '</td><td >Ready</td><td><button class="btn btn-primary smat-rounded mx-1 showBtn" value="' + currentTimestamp + '"> Show </button><button class="btn btn-danger mx-1  smat-rounded deleteBtn" type="0"> Delete </button></td></tr>');
+        $('<tr class="statusTableRow ' + highlightTag + '"><th scope="row">' + currentTimestamp + '</th><td>' + queryElement + '</td><td>' + fromDate + '</td><td>' + toDate + '</td><td >Success</td><td><button class="btn btn-primary smat-rounded mx-1 showBtn" value="' + currentTimestamp + '"> Show </button><button class="btn btn-danger mx-1  smat-rounded deleteBtn" type="0"> Delete </button></td></tr>').prependTo("#haStatusTable");
+
+        // $('#haStatusTable').append('<tr class="statusTableRow ' + highlightTag + '"><th scope="row">' + currentTimestamp + '</th><td>' + queryElement + '</td><td>' + fromDate + '</td><td>' + toDate + '</td><td >Ready</td><td><button class="btn btn-primary smat-rounded mx-1 showBtn" value="' + currentTimestamp + '"> Show </button><button class="btn btn-danger mx-1  smat-rounded deleteBtn" type="0"> Delete </button></td></tr>');
 
         //TODO::status read--.
         let recordTemp = [{ 'query': query, 'from': fromDate, 'to': toDate, 'mentionUniqueID': mentionUniqueID, 'hashtagUniqueID': hashtagUniqueID, 'userUniqueID': userUniqueID, 'searchType': searchType }];
@@ -522,7 +528,7 @@ export const frequencyDistributionHA = (query = null, rangeType, fromDate = null
         $('.10sec-' + chartType).remove();
     }
     if (appendArg) {
-        $('#' + freqParentDiv).append('<div class=" mt-2   appendedChart ' + appendedChartParentID + '"   ><div class="d-flex"> <div class="mr-auto closeGraph"    value="' + rangeType + '-charts" title="close" >  <i class="fas fa-times"></i> </div> </div> <div class="row"><div class="col-sm-8"><div class="haTab freqDistChart resultDiv chartDiv border" id="' + chartDivID + '" ></div></div><div class="col-sm-4"><div class="freqDistTweets resultDiv border" id="' + chartTweetDivID + '"></div><div class="freqDistSummary resultDiv border d-flex pt-2"  id="' + summaryDivID + '" ></div></div></div></div>');
+        $('#' + freqParentDiv).append('<div class=" mt-2   appendedChart ' + appendedChartParentID + '"   ><div class="d-flex"> <div class="mr-auto closeGraph"    value="' + rangeType + '-freq-chart" title="close" >  <i class="fas fa-times"></i> </div> </div> <div class="row"><div class="col-sm-8"><div class="haTab freqDistChart resultDiv chartDiv border" id="' + chartDivID + '" ></div></div><div class="col-sm-4"><div class="freqDistTweets resultDiv border" id="' + chartTweetDivID + '"></div><div class="freqDistSummary resultDiv border d-flex pt-2"  id="' + summaryDivID + '" ></div></div></div></div>');
     } else {
         $('#' + div).html('<div><div class="row"><div class="col-sm-8"><div class="haTab freqDistChart resultDiv chartDiv border" id="' + chartDivID + '" ></div></div><div class="col-sm-4"><div class="freqDistTweets resultDiv border" id="' + chartTweetDivID + '"></div><div class="freqDistSummary resultDiv border d-flex pt-2"  id="' + summaryDivID + '" ></div></div></div></div>');
     }
@@ -621,7 +627,7 @@ export const sentimentDistributionHA = (query = null, rangeType, fromDate = null
         $('.10sec-' + chartType).remove();
     }
     if (appendArg) {
-        $('#' + sentiParentDiv).append('<div class=" mt-2 ' + appendedChartParentID + '"><div class="d-flex"> <div class="mr-auto closeGraph"    value="' + rangeType + '-charts" title="close" >  <i class="fas fa-times"></i> </div> </div> <div class="row"><div class="col-sm-8"><div class="uaTab sentiDistChart  resultDiv chartDiv border" id="' + chartDivID + '" ></div></div><div class="col-sm-4"><div class="sentiDistTweets resultDiv border" id="' + chartTweetDivID + '"></div><div class="sentiDistSummary resultDiv border d-flex pt-2"  id="' + summaryDivID + '" ></div></div></div></div>');
+        $('#' + sentiParentDiv).append('<div class=" mt-2 ' + appendedChartParentID + '"><div class="d-flex"> <div class="mr-auto closeGraph"    value="' + rangeType + '-senti-chart" title="close" >  <i class="fas fa-times"></i> </div> </div> <div class="row"><div class="col-sm-8"><div class="uaTab sentiDistChart  resultDiv chartDiv border" id="' + chartDivID + '" ></div></div><div class="col-sm-4"><div class="sentiDistTweets resultDiv border" id="' + chartTweetDivID + '"></div><div class="sentiDistSummary resultDiv border d-flex pt-2"  id="' + summaryDivID + '" ></div></div></div></div>');
     } else {
         $('#' + div).html('<div><div class="row"><div class="col-sm-8"><div class="uaTab sentiDistChart resultDiv chartDiv border" id="' + chartDivID + '" ></div></div><div class="col-sm-4"><div class="sentiDistTweets resultDiv border" id="' + chartTweetDivID + '"></div><div class="sentiDistSummary resultDiv border d-flex pt-2"  id="' + summaryDivID + '" ></div></div></div></div>');
     }
@@ -634,6 +640,11 @@ export const sentimentDistributionHA = (query = null, rangeType, fromDate = null
                 generateSentiDistBarChart(data, query, rangeType, chartDivID, filename);
                 generateSentimentSummary(data, summaryDivID, rangeType);
             });
+
+            getTweetIDsForAdvanceHA(query, fromDate, toDate, rangeType, null, filename, userID).then(response => {
+                console.log(rangeType);
+                TweetsGenerator(response.data, 6, chartTweetDivID, fromDate, toDate, true, rangeType);
+            });
         } else {
             getSentiDistDataForHA(query, fromDate, toDate, null, rangeType, 0).then(data => {
                 if (data.data.length < 1) {
@@ -641,7 +652,6 @@ export const sentimentDistributionHA = (query = null, rangeType, fromDate = null
                 } else {
                     generateSentiDistBarChart(data, query, rangeType, chartDivID);
                     generateSentimentSummary(data, summaryDivID, rangeType);
-
                     getTweetIDsForHA(query, fromDate, toDate, rangeType, null).then(response => {
                         TweetsGenerator(response.data, 6, chartTweetDivID, fromDate, toDate, true, rangeType);
                     });
@@ -654,6 +664,11 @@ export const sentimentDistributionHA = (query = null, rangeType, fromDate = null
             getSentiDistDataForAdvanceHA(query, fromDate, toDate, rangeType, filename, userID).then(data => {
                 generateSentiDistBarChart(data, query, rangeType, chartDivID, filename);
                 generateSentimentSummary(data, summaryDivID, rangeType);
+            });
+
+            getTweetIDsForAdvanceHA(query, fromDate, toDate, rangeType, null, filename, userID).then(response => {
+                console.log(rangeType);
+                TweetsGenerator(response.data, 6, chartTweetDivID, fromDate, toDate, true, rangeType);
             });
         } else {
             getSentiDistDataForHA(query, fromDate, toDate, null, rangeType, 0).then(data => {
@@ -673,6 +688,11 @@ export const sentimentDistributionHA = (query = null, rangeType, fromDate = null
             getSentiDistDataForAdvanceHA(query, fromDate, toDate, rangeType, filename, userID).then(data => {
                 generateSentiDistLineChart(query, data, rangeType, chartDivID, filename);
                 generateSentimentSummary(data, summaryDivID, rangeType);
+            });
+
+            getTweetIDsForAdvanceHA(query, fromDate, toDate, rangeType, null, filename, userID).then(response => {
+                console.log(rangeType);
+                TweetsGenerator(response.data, 6, chartTweetDivID, fromDate, toDate, true, rangeType);
             });
         } else {
             getSentiDistDataForHA(query, fromDate, toDate, null, rangeType, 1).then(data => {
@@ -704,15 +724,18 @@ const plotDistributionGraphHA = (query, fromDate, toDate, option, uniqueID, user
 
     // $('#' + chartDivID).html('<div class="text-center pt-5 " ><i class="fa fa-circle-o-notch donutSpinner" aria-hidden="true"></i></div>');
     if (filename) {
+        console.log("generate advance");
         getCooccurDataForAdvanceHA(query, fromDate, toDate, option, uniqueID, userID, filename).then(response => {
-            $('#' + div).html('<div class="d-flex " ><span class="ml-auto mr-3"><p class="m-0 smat-box-title-large font-weight-bold text-dark" id="' + option + '-total">0</p><p class="pull-text-top smat-dash-title m-0 ">Total Nodes</p></span><button class="btn btn-primary mt-1  mr-3 analyzeNetworkButton smat-rounded"   value="' + query + '|' + toDate + '|' + fromDate + '|' + option + '|' + uniqueID + '|' + userID + '" > <span> Analyse network </span> </button></div><div class="px-5 co_occur_plot" id="' + chartDivID + '"></div>');
-            response.nodes == 0 ? $('#' + div).html('<div class="alert-danger text-center m-3 p-2 smat-rounded"> No Data Found </div>') : generateBarChartForCooccur(query, response['data'], chartDivID, option,fromDate,toDate);
+            console.log(response);
+            $('#' + div).html('<div class="d-flex " ><span class="ml-auto mr-3"><p class="m-0 smat-box-title-large font-weight-bold text-dark" id="' + option + '-total">0</p><p class="pull-text-top smat-dash-title m-0 ">Total Nodes</p></span><button class="btn btn-primary mt-1  mr-3 analyzeNetworkButton smat-rounded"   value="' + query + '?' + toDate + '?' + fromDate + '?' + option + '?' + uniqueID + '?' + userID + '" > <span> Analyse network </span> </button></div><div class="px-5 co_occur_plot" id="' + chartDivID + '"></div>');
+            response[0].nodes == 0 ? $('#' + div).html('<div class="alert-danger text-center m-3 p-2 smat-rounded"> No Data Found </div>') : generateBarChartForCooccur(query, response[0]['data'], chartDivID, option,fromDate,toDate);
             $('#' + option + '-total').text(response[0]['nodes']);
         });
     } else {
         getCooccurDataForHA(query, fromDate, toDate, option, uniqueID, userID).then(response => {
-            console.log("nodes", response[0].nodes);
-            $('#' + div).html('<div class="d-flex " ><span class="ml-auto mr-3"><p class="m-0 smat-box-title-large font-weight-bold text-dark" id="' + option + '-total">0</p><p class="pull-text-top smat-dash-title m-0 ">Total Nodes</p></span><button class="btn btn-primary mt-1  mr-3 analyzeNetworkButton smat-rounded"   value="' + query + '|' + toDate + '|' + fromDate + '|' + option + '|' + uniqueID + '|' + userID + '" > <span> Analyse network </span> </button></div><div class="px-5 co_occur_plot" id="' + chartDivID + '"></div>');
+            console.log(response);
+            let relType= getRelationType(query,option); 
+            $('#' + div).html('<div class="d-flex " ><span class="ml-auto mr-3"><p class="m-0 smat-box-title-large font-weight-bold text-dark" id="' + option + '-total">0</p><p class="pull-text-top smat-dash-title m-0 ">Total Nodes</p></span><button class="btn btn-primary mt-1  mr-3  analyzeNetworkButton  smat-rounded"   value="' + query + '?' + toDate + '?' + fromDate + '?' + relType + '?' + uniqueID + '?' + userID + '" > <span> Analyse network </span> </button></div><div class="px-5 co_occur_plot" id="' + chartDivID + '"></div>');
             response[0].nodes == 0 ? $('#' + div).html('<div class="alert-danger text-center m-3 p-2 smat-rounded"> No Data Found </div>') : generateBarChartForCooccur(query, response[0]['data'], chartDivID, option,fromDate,toDate);
             $('#' + option + '-total').text(response[0]['nodes']);
         });

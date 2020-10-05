@@ -3,10 +3,10 @@ import { getTopDataHA } from '../historicalAnalysis/helper.js';
 import { getCurrentDate } from '../utilitiesJS/smatDate.js';
 
 export const makeSmatReady = () => {
-    $('body').on('click', 'div .closeGraph', function () {
-        let graphCaptured = $(this).attr('value');
-        $('.' + graphCaptured).remove();
-    });
+    // $('body').on('click', 'div .closeGraph', function () {
+    //     let graphCaptured = $(this).attr('value');
+    //     $('.' + graphCaptured).remove();
+    // });
     //For Feedback Please execute this function
     smatFeedbackMain();
 
@@ -21,7 +21,7 @@ export const makeSuggestionsReady = async (div, limit) => {
     var suggestionsArr = [];
     gloabalArr = await getTopDataHA(date, date, 'top_hashtag', limit).then(response => {
         response = response.data;
-      for (const [key, value] of Object.entries(response)) {
+        for (const [key, value] of Object.entries(response)) {
             suggestionsArr.push(key);
         }
         return suggestionsArr;
@@ -56,4 +56,31 @@ export const makeDropDownReady = (array, div, name) => {
             name: name,
             source: suggestions
         });
+}
+
+
+export const getRelationType = (query, type) => {
+    let relationType = '';
+    if (query.includes('#')) {
+        if (type == 'hashtag')
+            relationType = 'Hashtag-Hashtag';
+        else if (type == 'mention')
+            relationType = 'Hashtag-Mention';
+        else if (type == 'user')
+            relationType = 'Hashtag-User';
+    } else if (query.includes('@')) {
+        if (type == 'hashtag')
+            relationType = 'Mention-Hashtag';
+        else if (type == 'mention')
+            relationType = 'Mention-Mention';
+        else if (type == 'user')
+            relationType = 'Hashtag-User';
+    } else if (query.includes('$')) {
+        if (type == 'hashtag')
+            relationType = 'User-Hashtag';
+        else if (type == 'mention')
+            relationType = 'User-Mention';
+    }
+
+    return relationType;
 }

@@ -522,11 +522,8 @@ export const generateBarChartForCooccur = (query, data = null, div, option,from,
             let queryTemp  = '('+query+'&'+String(item.token)+')';
             forwardToHistoricalAnalysis(queryTemp, from, to);
         }else{
-                    var item = ev.target.dataItem.dataContext.id;
-                    forwardToUserAnalysis(item,from,to);
-        }
-       
+            var item = ev.target.dataItem.dataContext.id;
+            forwardToUserAnalysis(item,from,to);
+        }       
     });
-
-
 }

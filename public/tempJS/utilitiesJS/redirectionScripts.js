@@ -1,5 +1,5 @@
 export const forwardToNetworkAnalysis = (argsArr) => {
-  window.open('networkAnalysis?query=' + encodeURIComponent(argsArr[0]) + '&from=' + argsArr[2] + '&to=' + argsArr[1] + '&uniqueID=' + argsArr[4] + '&relation=' + argsArr[3] + '&user=' + argsArr[5], '_blank');
+  window.open('networkAnalysis?query=' + encodeURIComponent(argsArr[0]) + '&from=' + argsArr[2] + '&to=' + argsArr[1] + '&uniqueID=' + argsArr[4] + '&relation=' + encodeURIComponent(argsArr[3]) + '&user=' + argsArr[5], '_blank');
 }
 
 export const forwardToHistoricalAnalysis = (query, from=null, to=null) => {

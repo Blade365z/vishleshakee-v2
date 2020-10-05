@@ -392,13 +392,13 @@
                                 </div>
                                 <div id="union_displayer" style="height: 90%"> </div> 
                             </div>
-                            <div class="tab-pane fade text-center " id="interSecContentNA" role="tabpanel" aria-labelledby="interSecContentNA">interSecContentNA Tab
+                            <div class="tab-pane fade text-center " id="interSecContentNA" role="tabpanel" aria-labelledby="interSecContentNA">
                                 <div class="form-group mx-1">
                                     <button type="submit" class="btn btn-danger smat-rounded" id="intersection_exec">Execute</button>
                                 </div>
                                 <div id="intersection_displayer" style="height: 90%"> </div> 
                             </div>
-                            <div class="tab-pane fade text-center" id="diffContentNA" role="tabpanel" aria-labelledby="diffContentNA">Active Users Tab
+                            <div class="tab-pane fade text-center" id="diffContentNA" role="tabpanel" aria-labelledby="diffContentNA">
                                 <div class="form-group mx-1">
                                     <input type="text" class="form-control smat-rounded  naInputs " id="difference_sequence" placeholder="Card sequence comma separated" style="border:0px;">
                                     <button type="submit" class="btn btn-danger smat-rounded" id="difference_exec">Execute</button>

@@ -214,8 +214,10 @@ jQuery(function () {
     });
 
     $('body').on('click','div .button1' ,function (e) {
-        $("#queryLM").val($("#location_button").text());
-        console.log($("#location_button").text());
+        var token = $(this).text();
+        console.log(token);
+        $("#queryLM").val(token);
+        // console.log($("#location_button").text());
         trigger();
     });
     
@@ -411,9 +413,9 @@ const rander_map = (data) => {
         if (data[0]["sentiment"]["value"] == "2") {
             LM_Map.setView([parseFloat(data[0]["Latitude"]), parseFloat(data[0]["Longitude"])], 4);
         } else if (data[0]["sentiment"]["value"] == "1") {
-            LM_Map.setView([parseFloat(data[0]["Latitude"]), parseFloat(data[0]["Longitude"])], 6);
+            LM_Map.setView([parseFloat(data[0]["Latitude"]), parseFloat(data[0]["Longitude"])], 4);
         } else if (data[0]["sentiment"]["value"] == "0") {
-            LM_Map.setView([parseFloat(data[0]["Latitude"]), parseFloat(data[0]["Longitude"])], 9);
+            LM_Map.setView([parseFloat(data[0]["Latitude"]), parseFloat(data[0]["Longitude"])], 4);
         }
 
         for (var i = 0; i < data.length; i++) {
